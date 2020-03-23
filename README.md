@@ -1,4 +1,4 @@
-**PAC Framework V1.02** 
+﻿**PAC Framework V1.02** 
 
 ![](media/logo.png)
 
@@ -17,3 +17,5 @@
 3. [Модулі устатковання (EM, Equipment Modules)](em)
 4. [Процедурне керування](proc)
 5. [Системні стандарти HMI (людино-машинного інтерфейсу)](hmi) 
+
+shyshak test
