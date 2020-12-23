@@ -1,0 +1,468 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FBExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2020-12-23-7:57:24" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000" dateTime="date_and_time#2020-12-23-7:55:51"></contentHeader>
+	<FBSource nameOfFBType="PROC_MACH" version="0.33" dateTime="dt#2017-09-09-19:59:59">
+		<attribute name="TypeCodeCheckSumString" value="8E8A"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="6E74"></attribute>
+		<inputParameters>
+			<variables name="ID" typeName="INT">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="CFG" typeName="PROC_CFG">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="HMI" typeName="PROC_HMI">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="CTRL" typeName="PROC_CTRL">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="PROC_BUF" typeName="PROC_CFG">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+			<variables name="PLC" typeName="PLC">
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
+		</inOutParameters>
+		<privateLocalVariables>
+			<variables name="STA" typeName="INT"></variables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="AUTO" typeName="BOOL"></variables>
+			<variables name="SEMI" typeName="BOOL"></variables>
+			<variables name="INBUF" typeName="BOOL"></variables>
+			<variables name="MAN" typeName="BOOL"></variables>
+			<variables name="CMD_ABORT" typeName="BOOL"></variables>
+			<variables name="CMD_HOLD" typeName="BOOL"></variables>
+			<variables name="CMD_PAUSE" typeName="BOOL"></variables>
+			<variables name="CMD_RESET" typeName="BOOL"></variables>
+			<variables name="CMD_RESTART" typeName="BOOL"></variables>
+			<variables name="CMD_RESUME" typeName="BOOL"></variables>
+			<variables name="CMD_START" typeName="BOOL"></variables>
+			<variables name="CMD_STOP" typeName="BOOL"></variables>
+			<variables name="TMAXERR" typeName="BOOL"></variables>
+			<variables name="TMINERR" typeName="BOOL"></variables>
+			<variables name="ALM" typeName="BOOL"></variables>
+			<variables name="AMAXENBL" typeName="BOOL"></variables>
+			<variables name="AMINENBL" typeName="BOOL"></variables>
+		</privateLocalVariables>
+		<FBProgram name="MACHINE">
+			<STSource>(*------------------- обробка автомату станів процедури
+ID
+CFG - конфігурування та плинний стан
+HMI - для роботи з ЛМІ
+CTRL - для спрощення контролю/керування з програми користувача ПЛК
+-------------------------------------------------------*)
+(*для чортківського заводу будуть використовуватися тільки 
+--- стани:
+0 – ініціалізація (тільки при старті ПЛК) не видимий з HMI
+1 – Idle (очікує) (назва Режим Стоп)
+13 – Starting (запускається)
+2 - Running (виконується) (назва режим Робота)
+3 - Pausing
+14- Completing (завершується)
+5 – Holding (утримується)
+6 – Hold (утримуване)
+7 – Restarting (перезапускається)
+8 – Complete (завершено)
+9 – Stopping (зупиняється)
+10 – Stopped (зупинено)
+11 - Aborting
+12 - Aborted
+--- команди HMI
+1 – START (запустити процедуру)
+2 – RESUME (відновити, продовжити)  
+3 – PAUSE (призупинити)
+4 – RESET (скинути)
+5 – RESTART (перезапустити)
+6 – HOLD (утримувати)
+7 – STOP (зупинити виконання процедури)
+8 – ABORT (перервати)
+
+*)
+CFG.ID:=ID;
+(*заглушка від дурака, ID не може = 0*)
+IF ID=0 THEN 
+    CFG.STA:=0;
+    CFG.CMD:=0;
+    RETURN; 
+END_IF;
+
+STA := CFG.STA;
+TMAXERR:=STA.8;
+TMINERR:=STA.9;
+ALM:=STA.10;
+SEMI := STA.11;
+INBUF := STA.12; 
+MAN := STA.13;
+
+
+AUTO := NOT MAN AND NOT SEMI;
+CMD:=CFG.CMD;
+INBUF:=(CFG.ID=PROC_BUF.ID);
+
+(*PRM*)
+AMAXENBL:=CFG.PRM.7;
+AMINENBL:=CFG.PRM.8;
+
+
+(*CMD внутрішній з CFG тут не використовується, потрібен тільки для сумісності типів з BUF*)
+IF INBUF THEN
+    IF PROC_BUF.CMD &lt;&gt; 0 THEN 
+        CMD:=PROC_BUF.CMD; 
+    ELSE CMD:=HMI.CMD;
+    END_IF;
+    PROC_BUF.STA:=CFG.STA;	
+    PROC_BUF.STEP1:=CFG.STEP1;
+    PROC_BUF.STEP2:=CFG.STEP2;        	
+    PROC_BUF.T_STEP1:=CFG.T_STEP1;
+    PROC_BUF.T_STEP2:=CFG.T_STEP2;	
+ELSE
+    CMD:=HMI.CMD;
+END_IF;
+
+(*усі інші команди HMI, які тут не описані, повинні бути оброблені раніше, ніж викличеться ця функція*)
+CASE CMD OF
+ 16#0100: (*прочитати конфігурацію*)
+    PROC_BUF:=CFG;
+    PROC_BUF.CMD:=0;  
+ 16#0101: (*записати конфігурацію*)
+    CFG.PRM :=PROC_BUF.PRM;
+    CFG.TMAX := PROC_BUF.TMAX;
+    CFG.TMIN := PROC_BUF.TMIN;    
+END_CASE;
+
+(*вибір джерела команди керування станом в залежності від режиму*)
+CMD_ABORT := CTRL.CMD_ABORT OR CMD=8 ;
+CMD_HOLD := CTRL.CMD_HOLD OR CMD=6;
+CMD_PAUSE := CTRL.CMD_PAUSE OR CMD=3;
+CMD_RESET := CTRL.CMD_RESET OR CMD=4 OR CMD=1;
+CMD_RESTART := CTRL.CMD_RESTART OR CMD=5 OR CMD=1;
+CMD_RESUME := CTRL.CMD_RESUME OR CTRL.CMD_RESTART OR CMD=2 OR CMD=5 OR CMD=1;
+CMD_START := CTRL.CMD_START OR CMD=1;
+CMD_STOP := CTRL.CMD_STOP OR CMD=7;
+
+CASE CFG.STEP1 OF   
+    0:(*0 - ініціалізація*)
+     CFG.STEP1:=1;   
+    1:(*1 – Idle (очікування)*)
+     CFG.T_STEP1:=0;  TMAXERR:=FALSE; TMINERR:=FALSE; 
+     IF CMD_START AND CTRL.ENBL THEN CFG.STEP1:=13; END_IF;
+     CTRL.PAUSING_CMPLT := FALSE;
+     CTRL.RUNING_CMPLT := FALSE;
+     CTRL.STARTING_CMPLT := false;
+     CTRL.COMPLETING_CMPLT := false;
+     CTRL.HL_RUNNING_CMPLT := FALSE;
+     CTRL.HOLDING_CMPLT := FALSE;
+     CTRL.STOPPING_CMPLT := FALSE;
+     CTRL.ABORTING_CMPLT := FALSE;
+     CTRL.RESUMING_CMPLT := FALSE;
+     CTRL.RESTARTING_CMPLT := FALSE;
+    13:(*13 - Starting*)
+     IF CTRL.STARTING_CMPLT OR CTRL.RUNING_CMPLT THEN
+        CFG.STEP1:=2;  
+     END_IF;
+     IF CMD_STOP THEN CFG.STEP1:=9; END_IF;
+     IF CMD_ABORT THEN CFG.STEP1:=11; END_IF;
+     CTRL.RESTARTING_CMPLT := FALSE;
+     CTRL.RESUMING_CMPLT := FALSE;	
+    2:(*2 - Running then*) 
+     IF CTRL.RUNING_CMPLT AND NOT CTRL.DSBL_CMPLT THEN (*завершення йде тільки при дозволі завершення*) 
+        CFG.STEP1:=14;
+        IF AMINENBL AND CFG.T_STEP1&lt; CFG.TMIN THEN
+            TMINERR:=TRUE;
+        END_IF; 
+     END_IF;
+     IF CMD_PAUSE THEN CFG.STEP1:=3; END_IF;
+     IF CMD_HOLD THEN CFG.STEP1:=5; END_IF;
+     IF CMD_STOP THEN CFG.STEP1:=9; END_IF;
+     IF CMD_ABORT THEN CFG.STEP1:=11; END_IF;
+     IF AMAXENBL AND CFG.T_STEP1&gt;= CFG.TMAX THEN
+        TMAXERR:=TRUE;
+     END_IF;
+     CTRL.PAUSING_CMPLT:=false;
+     CTRL.RESUMING_CMPLT := FALSE;
+     CTRL.RESTARTING_CMPLT := FALSE;
+     CTRL.HOLDING_CMPLT:=false;
+
+    14:(*Completing*)
+     IF CTRL.COMPLETING_CMPLT THEN
+        CFG.STEP1:=8;  
+     END_IF;
+     IF CMD_STOP THEN CFG.STEP1:=9; END_IF;
+     IF CMD_ABORT THEN CFG.STEP1:=11; END_IF;
+    3:(*3 – Pausing*)
+     IF CTRL.PAUSING_CMPLT THEN CFG.STEP1:=4; END_IF;
+     IF CMD_HOLD THEN CFG.STEP1:=5; END_IF;
+     IF CMD_STOP THEN CFG.STEP1:=9; END_IF;
+     IF CMD_ABORT THEN CFG.STEP1:=11; END_IF;    
+    4:(*4 – Paused*)
+     IF CMD_RESUME THEN CFG.STEP1:=15; END_IF;
+     IF CTRL.RUNING_CMPLT THEN 
+           CFG.STEP1 := 14;
+     END_IF;
+     IF CMD_HOLD THEN CFG.STEP1:=5; END_IF;
+     IF CMD_STOP THEN CFG.STEP1:=9; END_IF;
+     IF CMD_ABORT THEN CFG.STEP1:=11; END_IF;
+    15:(*15 - Resuming*)
+     IF CTRL.RESUMING_CMPLT THEN CFG.STEP1:=2; END_IF;
+     IF CMD_HOLD THEN CFG.STEP1:=5; END_IF;
+     IF CMD_STOP THEN CFG.STEP1:=9; END_IF;
+     IF CMD_ABORT THEN CFG.STEP1:=11; END_IF;            
+    5:(*5 – Holding*)
+     IF CTRL.HOLDING_CMPLT THEN CFG.STEP1:=6; END_IF;
+     IF CMD_STOP THEN CFG.STEP1:=9; END_IF;
+     IF CMD_ABORT THEN CFG.STEP1:=11; END_IF;            
+    6:(*6 – Hold*)
+     (*CFG.T_STEP1:=0;*)
+     IF CMD_RESTART THEN CFG.STEP1:=7; END_IF;   
+     IF CMD_STOP THEN CFG.STEP1:=9; END_IF;
+     IF CMD_ABORT THEN CFG.STEP1:=11; END_IF;        
+    7:(*7 – Restarting*)
+     IF CTRL.RESTARTING_CMPLT THEN CFG.STEP1:=2; END_IF;
+     IF CMD_HOLD THEN CFG.STEP1:=5; END_IF;
+     IF CMD_STOP THEN CFG.STEP1:=9; END_IF;
+     IF CMD_ABORT THEN CFG.STEP1:=11; END_IF;            
+    8:(*8 – Complete*)
+     IF CMD_RESET THEN CFG.STEP1:=1; END_IF; 
+    9:(*9 – Stopping*)
+     IF CTRL.STOPPING_CMPLT THEN CFG.STEP1:=10; END_IF;
+     IF CMD_ABORT THEN CFG.STEP1:=11; END_IF;        
+    10:(*10 – Stopped*)
+     IF CMD_RESET THEN CFG.STEP1:=1; END_IF;     
+    11:(*11 - Aborting*)
+     IF CTRL.ABORTING_CMPLT OR CFG.T_STEP2&gt;2 THEN CFG.STEP1:=12; END_IF;      
+    12:(*12 - Aborted*)
+     IF CMD_RESET THEN CFG.STEP1:=1; END_IF; 
+    ELSE
+     CFG.STEP1:=0;
+END_CASE;
+
+IF INBUF THEN
+    PROC_BUF.STA:=STA;
+    PROC_BUF.T_STEP1:=CFG.T_STEP1;
+    PROC_BUF.CMD :=0;
+END_IF;
+
+CTRL.STA_IDLE:=(CFG.STEP1=1);
+CTRL.STA_RUNNING:=(CFG.STEP1=2);
+CTRL.STA_PAUSING:=(CFG.STEP1=3);
+CTRL.STA_PAUSED:=(CFG.STEP1=4);
+CTRL.STA_HOLDING:=(CFG.STEP1=5);
+CTRL.STA_HOLD:=(CFG.STEP1=6);
+CTRL.STA_RESTARTING:=(CFG.STEP1=7);
+CTRL.STA_COMPLETE:=(CFG.STEP1=8);
+CTRL.STA_STOPPING:=(CFG.STEP1=9);
+CTRL.STA_STOPPED:=(CFG.STEP1=10);
+CTRL.STA_ABORTING:=(CFG.STEP1=11);
+CTRL.STA_ABORTED:=(CFG.STEP1=12);
+CTRL.STA_STARTING:=(CFG.STEP1=13);
+CTRL.STA_COMPLETING:=(CFG.STEP1=14);
+CTRL.STA_RESUMING:=(CFG.STEP1=15);
+
+CTRL.CMD_ABORT := FALSE;
+CTRL.CMD_HOLD := FALSE;
+CTRL.CMD_PAUSE := FALSE;
+CTRL.CMD_RESET := FALSE;
+CTRL.CMD_RESTART := FALSE;
+CTRL.CMD_RESUME := FALSE;
+CTRL.CMD_START := FALSE;
+CTRL.CMD_STOP := FALSE;
+
+ALM:=TMINERR OR TMAXERR;
+STA:=STA AND 16#FFF0;
+STA:=STA OR CFG.STEP1;
+STA.8:=TMAXERR;
+STA.9:=TMINERR;
+STA.10:=ALM;
+STA.11:=SEMI;
+STA.12:=INBUF;
+STA.13:=MAN;
+STA.14:=CTRL.ENBL; 
+
+CFG.CMD:=0; HMI.CMD:=0;
+CFG.STA:=STA; HMI.STA :=STA;
+HMI.T_STEP1:=CFG.T_STEP1;
+HMI.T_STEP2:=CFG.T_STEP2;
+HMI.STEP2:=CFG.STEP2;  
+(*рахувати НЕ тільки в стані RUNNING, НЕ обнуляється також при холдінгу*)
+IF PLC.PLS.3 (*AND CFG.STEP1=2*) THEN (*кожну секунду*) 
+    CFG.T_STEP1:=CFG.T_STEP1+1;
+    IF CFG.T_STEP1&gt;16#7fffffff THEN CFG.T_STEP1:=16#7fffffff;END_IF;
+END_IF;
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<DDTSource DDTName="PROC_CFG" version="0.02" dateTime="dt#2017-09-04-09:19:53">
+		<attribute name="TypeSignatureCheckSumString" value="4F6B"></attribute>
+		<structure>
+			<variables name="ID" typeName="INT">
+				<comment>ідентифікатор</comment>
+			</variables>
+			<variables name="STA" typeName="INT">
+				<comment>стан</comment>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>команда</comment>
+			</variables>
+			<variables name="PRM" typeName="INT">
+				<comment>набір бітових параметрів</comment>
+			</variables>
+			<variables name="STEP1" typeName="INT">
+				<comment>крок-стан</comment>
+			</variables>
+			<variables name="STEP2" typeName="INT">
+				<comment>крок всередині стану </comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>час виконання процедури </comment>
+			</variables>
+			<variables name="T_STEP2" typeName="UDINT">
+				<comment>час виконання кроку процедури</comment>
+			</variables>
+			<variables name="TMIN" typeName="UDINT">
+				<comment>обмеження по мінімуму часу виконання, с</comment>
+			</variables>
+			<variables name="TMAX" typeName="UDINT">
+				<comment>обмеження по максимуму часу виконання, с</comment>
+			</variables>
+			<variables name="STEP_BACK" typeName="INT">
+				<comment>значення кроку для повернення</comment>
+			</variables>
+			<variables name="TMP" typeName="INT"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PROC_HMI" version="0.01" dateTime="dt#2017-08-01-11:12:50">
+		<comment>струкутура процедури для HMI</comment>
+		<attribute name="TypeSignatureCheckSumString" value="EEC9"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT"></variables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="T_STEP1" typeName="UDINT"></variables>
+			<variables name="T_STEP2" typeName="UDINT"></variables>
+			<variables name="STEP2" typeName="INT">
+				<comment>крок процедури</comment>
+			</variables>
+			<variables name="ALM" typeName="INT">
+				<comment>тривоги процедури</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PROC_CTRL" version="0.06" dateTime="dt#2017-09-01-12:33:06">
+		<attribute name="TypeSignatureCheckSumString" value="F0BF"></attribute>
+		<structure>
+			<variables name="ENBL" typeName="BOOL"></variables>
+			<variables name="PAUSING_CMPLT" typeName="BOOL"></variables>
+			<variables name="RUNING_CMPLT" typeName="BOOL"></variables>
+			<variables name="HL_RUNNING_CMPLT" typeName="BOOL"></variables>
+			<variables name="RESTARTING_CMPLT" typeName="BOOL"></variables>
+			<variables name="HOLDING_CMPLT" typeName="BOOL"></variables>
+			<variables name="STOPPING_CMPLT" typeName="BOOL"></variables>
+			<variables name="ABORTING_CMPLT" typeName="BOOL"></variables>
+			<variables name="STARTING_CMPLT" typeName="BOOL"></variables>
+			<variables name="COMPLETING_CMPLT" typeName="BOOL"></variables>
+			<variables name="RESUMING_CMPLT" typeName="BOOL"></variables>
+			<variables name="CMD_START" typeName="BOOL"></variables>
+			<variables name="CMD_RESUME" typeName="BOOL"></variables>
+			<variables name="CMD_RESTART" typeName="BOOL"></variables>
+			<variables name="CMD_PAUSE" typeName="BOOL"></variables>
+			<variables name="CMD_HOLD" typeName="BOOL"></variables>
+			<variables name="CMD_STOP" typeName="BOOL"></variables>
+			<variables name="CMD_ABORT" typeName="BOOL"></variables>
+			<variables name="CMD_RESET" typeName="BOOL"></variables>
+			<variables name="STA_RUNNING" typeName="BOOL"></variables>
+			<variables name="STA_IDLE" typeName="BOOL"></variables>
+			<variables name="STA_PAUSING" typeName="BOOL"></variables>
+			<variables name="STA_PAUSED" typeName="BOOL"></variables>
+			<variables name="STA_HOLDING" typeName="BOOL"></variables>
+			<variables name="STA_HOLD" typeName="BOOL"></variables>
+			<variables name="STA_RESTARTING" typeName="BOOL"></variables>
+			<variables name="STA_COMPLETE" typeName="BOOL"></variables>
+			<variables name="STA_STOPPING" typeName="BOOL"></variables>
+			<variables name="STA_STOPPED" typeName="BOOL"></variables>
+			<variables name="STA_ABORTING" typeName="BOOL"></variables>
+			<variables name="STA_ABORTED" typeName="BOOL"></variables>
+			<variables name="STA_STARTING" typeName="BOOL"></variables>
+			<variables name="STA_COMPLETING" typeName="BOOL"></variables>
+			<variables name="STA_RESUMING" typeName="BOOL"></variables>
+			<variables name="DSBL_CMPLT" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLC" version="0.10" dateTime="dt#2017-08-25-10:56:34">
+		<comment>програмований контролер</comment>
+		<attribute name="TypeSignatureCheckSumString" value="75FA"></attribute>
+		<structure>
+			<variables name="ID" typeName="INT">
+				<comment>Унікальний ідентифікатор </comment>
+			</variables>
+			<variables name="CLSID" typeName="INT">
+				<comment> ідентифікатор класу 16#21хх</comment>
+			</variables>
+			<variables name="STA" typeName="INT">
+				<comment>статус</comment>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>команда</comment>
+			</variables>
+			<variables name="CMDPRG" typeName="INT">
+				<comment>команда з програмного керування (побітові)</comment>
+			</variables>
+			<variables name="PRM1" typeName="INT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PRM2" typeName="INT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PLS" typeName="INT">
+				<comment>часові біти, 0-100мс,1-200мс,2-500мс,3-1с,4-2с,5-5с,6-10с,7-60с, 8 - 15 вільні</comment>
+			</variables>
+			<variables name="ALM1" typeName="INT">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="ALM2" typeName="INT">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="STEP1" typeName="INT">
+				<comment>крок основної програми</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="INT">
+				<comment>час кроку основної програми</comment>
+			</variables>
+			<variables name="MSG" typeName="DINT">
+				<comment>формування повідомлень</comment>
+			</variables>
+			<variables name="TQ" typeName="UDINT">
+				<comment>час роботи контролера в секундах з першого циклу</comment>
+			</variables>
+			<variables name="TQM" typeName="UDINT">
+				<comment>загальний час роботи контролера з моменту пуску</comment>
+			</variables>
+			<variables name="DICNT" typeName="INT">
+				<comment>кількість наявних каналів DI</comment>
+			</variables>
+			<variables name="DOCNT" typeName="INT">
+				<comment>кількість наявних каналів DO</comment>
+			</variables>
+			<variables name="AICNT" typeName="INT">
+				<comment>кількість наявних каналів AI</comment>
+			</variables>
+			<variables name="AOCNT" typeName="INT">
+				<comment>кількість наявних каналів AO</comment>
+			</variables>
+			<variables name="NOW" typeName="ARRAY[0..3] OF INT">
+				<comment>плинний час астрономічний час в BCD форматі</comment>
+			</variables>
+			<variables name="SHIFTPARA" typeName="ARRAY[0..3] OF INT">
+				<comment>Години передачі змін (максимум 3 зміни)</comment>
+			</variables>
+			<variables name="SHIFTNMB" typeName="INT">
+				<comment>номер активної зміни</comment>
+			</variables>
+			<variables name="REZ" typeName="INT">
+				<comment>резерв для вирівнювання</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+</FBExchangeFile>
