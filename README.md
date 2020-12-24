@@ -17,3 +17,4 @@
 3. [Модулі устатковання (EM, Equipment Modules)](em/README.md)
 4. [Процедурне керування](proc/README.md)
 5. [Системні стандарти HMI (людино-машинного інтерфейсу)](hmi/README.md) 
+6. [Етапи життєвого циклу](lifecycle/README.md)
