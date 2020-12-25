@@ -18,3 +18,9 @@
 4. [Процедурне керування](proc/README.md)
 5. [Системні стандарти HMI (людино-машинного інтерфейсу)](hmi/README.md) 
 6. [Етапи життєвого циклу](lifecycle/README.md)
+
+
+
+[Основна сторінка](https://pupenasan.github.io/PACFramework/)
+
+[GitHub](https://github.com/pupenasan/PACFramework)
