@@ -1,0 +1,350 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FBExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2020-12-25-18:18:41" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.6" dateTime="date_and_time#2020-12-25-18:8:16"></contentHeader>
+	<FBSource nameOfFBType="PLCFN" version="0.32" dateTime="dt#2020-12-25-18:03:54">
+		<comment>функція обробки роботи системи(відслідковування алармів, імітації, форсуваня...)</comment>
+		<attribute name="TypeCodeCheckSumString" value="D81A"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="4212"></attribute>
+		<inOutParameters>
+			<variables name="PLC" typeName="PLC">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</inOutParameters>
+		<privateLocalVariables>
+			<variables name="PREV" typeName="INT"></variables>
+			<variables name="CUR" typeName="INT"></variables>
+			<variables name="i" typeName="INT"></variables>
+			<variables name="TM200ms" typeName="TON"></variables>
+			<variables name="TM500ms" typeName="TON"></variables>
+			<variables name="NOW" typeName="DT"></variables>
+		</privateLocalVariables>
+		<FBProgram name="PLCFN">
+			<STSource>PLC.CMDACK := (PLC.CMD&lt;&gt;0 AND NOT PLC.CMDACK);
+PLC.SCN1:=%s21;
+IF PLC.SCN1 then (*при першому скані*)
+    PLC.ID:=1;             (*Ідентифікатор завжди 1*)
+    PLC.CLSID:=16#2100;    (*Клас завжди 16#2100*)
+    PLC.TQ:=0;
+    CUR:=0; PREV:=0;
+end_if;
+
+(*--------------------------------- таймерні біти та лічильники*)
+TM200ms (); TM500ms ();
+(*плинні значення*)
+CUR.0:=%S5; 
+CUR.1:=TM200ms.q;
+CUR.2:=TM500ms.q;
+CUR.3:=%S6;(*sec*)
+CUR.7:=%S7;(*min*)
+(*відловлювання імпульсів необхідних часових періодів*)
+PLC.P100MS:=cur.0 and not PREV.0; (*100 мс *)   
+PLC.P200MS:=cur.1 and not PREV.1; (*200 мс*)
+PLC.P500MS:=cur.2 and not PREV.2; (*500 мс*)
+PLC.P1S :=cur.3 and not PREV.3; (*1 с*)
+PLC.P60S :=cur.7 and not PREV.7; (*1 хв*)
+(*підрахунок кількості секунд і хвилин*)
+if PLC.PLS.3 then PLC.TQ:=PLC.TQ+1; end_if;  (*загальний час з початку 1-го циклу контролера (в секундах)*)     
+IF PLC.TQ&gt;16#7FFF_FFFF THEN PLC.TQ:=16#7FFF_FFFF; END_IF;  
+if PLC.PLS.7 then PLC.TQM:=PLC.TQM+1; end_if; (*загальний час роботи ПЛК з моменту пуску (в хвилинах)*)
+IF PLC.TQM&gt;16#7FFF_FFFF THEN PLC.TQM:=16#7FFF_FFFF; END_IF;  
+
+(*розрахунок інших часових періодів*)
+PLC.P2S:=(PLC.TQ mod 2)=0 and PLC.PLS.3;(*2 с*)   
+PLC.P5S:=(PLC.TQ mod 5)=0 and PLC.PLS.3;(*5 с*)
+PLC.P10S:=(PLC.TQ mod 10)=0 and PLC.PLS.3;(*10 с*)
+
+(* меандри *)
+IF TM500ms.Q THEN PLC.M1S:= not PLC.M1S; END_IF;  (*меандр з періодом 1 с (0.5 с + 0.5 с)*)
+PLC.M2S:=%S6;(*меандр з періодом 2 с (1 с + 1 с) *)
+
+(* астрономічний час *)
+RRTC_DT (OUT =&gt; NOW); (*в DT форматі*)
+PLC.NOW := DT_TO_ARINT(NOW); (*у вигляді масиву*)
+
+(* початок години *)
+PLC.PHR:= (PLC.NOW[1] AND 16#00FF)=0 (*хвилини*) AND PLC.P60S (*один раз за хвилину*);
+
+(* початок доби*)
+PLC.PDAY:= PLC.NOW[1]=0 (*години_хвилини*) AND PLC.P60S (*один раз за хвилину*);
+
+(*початок зміни*)
+IF PLC.SHIFTPARA[0]&lt;1 OR PLC.SHIFTPARA[0]&gt;3 then PLC.SHIFTPARA[0]:=2;END_IF;(*коректність кількості змін*)
+PLC.PSHFT:=FALSE; (*скидуємо біт початку зміни*)   
+FOR i:=1 to PLC.SHIFTPARA[0] DO
+  (*хоча б одна з устоавок змін спрацювала*)
+   PLC.PSHFT := PLC.PSHFT OR (PLC.SHIFTPARA[i]=PLC.NOW[1] (*години хвилин*) AND PLC.P60S (*один раз за хвилину*));  
+END_FOR;
+
+(*таймери для тих уставок, на які немає системних меандрів
+два рази викликаються для точності
+*)
+TM200ms (not CUR.1, t#200ms);
+TM500ms (not CUR.2, t#200ms);
+
+PREV:=CUR;(*збереження попередніх значень*)
+
+(*----------- визначеня зміни*)
+IF PLC.SHIFTPARA[0]&gt;3 OR PLC.SHIFTPARA[0]&lt;2 THEN PLC.SHIFTPARA[0]:=3; END_IF;(*якщо кількість змін &gt;3 або &lt;1 - робимо 3*)
+IF PLC.NOW[1]&gt;=PLC.SHIFTPARA[1] AND (PLC.NOW[1]&lt;PLC.SHIFTPARA[2]OR PLC.SHIFTPARA[2]=16#0000) THEN (*1-ша зміна*)
+	PLC.SHIFTNMB:=1; 
+ELSE (*2-га або 3-тя*)
+	IF PLC.SHIFTPARA[0]=2 then (*якщо в 2 зміни*)
+		PLC.SHIFTNMB:=2;	
+	ELSE (*якщо 3 зміни*)
+	  IF PLC.NOW[1]&gt;=PLC.SHIFTPARA[2] and (PLC.NOW[1]&lt;PLC.SHIFTPARA[3] OR PLC.SHIFTPARA[3]=16#0000) THEN 
+	     PLC.SHIFTNMB:=2;
+	  ELSE
+	     PLC.SHIFTNMB:=3;
+	  END_IF;
+	END_IF;
+END_IF;
+(*----------- *)
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<DDTSource DDTName="PLC" version="0.13" dateTime="dt#2020-12-25-16:15:29">
+		<comment>програмований контролер</comment>
+		<attribute name="TypeSignatureCheckSumString" value="EBDC"></attribute>
+		<structure>
+			<variables name="ID" typeName="INT">
+				<comment>Унікальний ідентифікатор </comment>
+			</variables>
+			<variables name="CLSID" typeName="INT">
+				<comment> ідентифікатор класу 16#21хх</comment>
+			</variables>
+			<variables name="STA" typeName="INT">
+				<comment>статус</comment>
+			</variables>
+			<variables name="PLCx0" typeName="BOOL">
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="PLCx1" typeName="BOOL">
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="BLK" typeName="BOOL">
+				<comment>=1 – є хоча б один заблокований ВМ</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 – є хоча б одна відключена тривога</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="PLCx4" typeName="BOOL">
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="PLCx5" typeName="BOOL">
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="PLCx6" typeName="BOOL">
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 – хоча б одна змінна форсована на будь якому рівні</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="SMLALL" typeName="BOOL">
+				<comment>=1 – все в режимі в імітації, примушує усі CM перейти в режим імітації</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="DISP" typeName="BOOL">
+				<comment>=1 – хоча б один елемент в режимі ручного управління</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="FRC2" typeName="BOOL">
+				<comment>=1 – є хоча б один форсований керівний елемент (рівня 2), клапан, двигун</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="FRC1" typeName="BOOL">
+				<comment>=1 – хоча б одна змінна форсована (рівня 1)</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="SCN1" typeName="BOOL">
+				<comment>=1 – перший скан</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="FRC0" typeName="BOOL">
+				<comment>=1 – хоча б одна змінна форсована (рівня 0)</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – хоча б один об’єкт в режимі імітації</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="CMDACK" typeName="BOOL">
+				<comment>=1 - підтвердження команди (команда отримана)</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>команда</comment>
+			</variables>
+			<variables name="CMDPRG" typeName="INT">
+				<comment>команда з програмного керування (побітові)</comment>
+			</variables>
+			<variables name="PRM1" typeName="INT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PRM2" typeName="INT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PLS" typeName="INT">
+				<comment>часові біти</comment>
+			</variables>
+			<variables name="P100MS" typeName="BOOL">
+				<comment>імпульс на один цикл основної задачі з періодичністю 100 мс</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="P200MS" typeName="BOOL">
+				<comment>200 мс</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="P500MS" typeName="BOOL">
+				<comment>500 мс</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="P1S" typeName="BOOL">
+				<comment>1 с</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="P2S" typeName="BOOL">
+				<comment>2 с</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="P5S" typeName="BOOL">
+				<comment>5 с</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="P10S" typeName="BOOL">
+				<comment>10 с</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="P60S" typeName="BOOL">
+				<comment>1 хв</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="M1S" typeName="BOOL">
+				<comment>меандр з періодом 1 с (0.5 с + 0.5 с)</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="M2S" typeName="BOOL">
+				<comment>меандр з періодом 2 с (1 с + 1 с)</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="PLSx10" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="PLSx11" typeName="BOOL">
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="PLSx12" typeName="BOOL">
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="PHR" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок години</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="PDAY" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок доби</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="PSHFT" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок зміни</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="ALM1" typeName="INT">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="ALM" typeName="BOOL">
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="NWALM" typeName="BOOL">
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="ALMNACK" typeName="BOOL">
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="NWWRN" typeName="BOOL">
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="WRNNACK" typeName="BOOL">
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="NWBAD" typeName="BOOL">
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="BADNACK" typeName="BOOL">
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="EMCYSTP" typeName="BOOL">
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STP2RUN" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="ALMx11" typeName="BOOL">
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="ALMx12" typeName="BOOL">
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="ALMx13" typeName="BOOL">
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="PLCERR" typeName="BOOL">
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="ALMx15" typeName="BOOL">
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="ALM2" typeName="INT">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="STEP1" typeName="INT">
+				<comment>крок основної програми</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="INT">
+				<comment>час кроку основної програми</comment>
+			</variables>
+			<variables name="MSG" typeName="DINT">
+				<comment>формування повідомлень</comment>
+			</variables>
+			<variables name="TQ" typeName="UDINT">
+				<comment>час роботи контролера в секундах з першого циклу</comment>
+			</variables>
+			<variables name="TQM" typeName="UDINT">
+				<comment>загальний час роботи контролера з моменту пуску</comment>
+			</variables>
+			<variables name="DICNT" typeName="INT">
+				<comment>кількість наявних каналів DI</comment>
+			</variables>
+			<variables name="DOCNT" typeName="INT">
+				<comment>кількість наявних каналів DO</comment>
+			</variables>
+			<variables name="AICNT" typeName="INT">
+				<comment>кількість наявних каналів AI</comment>
+			</variables>
+			<variables name="AOCNT" typeName="INT">
+				<comment>кількість наявних каналів AO</comment>
+			</variables>
+			<variables name="NOW" typeName="ARRAY[0..3] OF INT">
+				<comment>плинний час астрономічний час в BCD форматі</comment>
+			</variables>
+			<variables name="SHIFTPARA" typeName="ARRAY[0..3] OF INT">
+				<comment>Години передачі змін (максимум 3 зміни)</comment>
+			</variables>
+			<variables name="SHIFTNMB" typeName="INT">
+				<comment>номер активної зміни</comment>
+			</variables>
+			<variables name="REZ" typeName="INT">
+				<comment>резерв для вирівнювання</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+</FBExchangeFile>

@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FBExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2020-12-25-18:17:36" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000" dateTime="date_and_time#2020-12-23-7:55:51"></contentHeader>
+	<FBSource nameOfFBType="CHAIFN" version="0.12" dateTime="dt#2017-08-25-10:56:56">
+		<attribute name="TypeCodeCheckSumString" value="DF5D"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="1314"></attribute>
+		<inputParameters>
+			<variables name="ID" typeName="INT">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="VAL" typeName="REAL">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="CHCFG" typeName="CH_CFG">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+		</inOutParameters>
+		<publicLocalVariables>
+			<variables name="PLC" typeName="PLC"></variables>
+			<variables name="CHBUF" typeName="CH_CFG"></variables>
+		</publicLocalVariables>
+		<privateLocalVariables>
+			<variables name="STA" typeName="INT"></variables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="INBUF" typeName="BOOL"></variables>
+			<variables name="ISBAD" typeName="BOOL"></variables>
+			<variables name="ULNK" typeName="BOOL"></variables>
+			<variables name="MERR" typeName="BOOL"></variables>
+			<variables name="BRK" typeName="BOOL"></variables>
+			<variables name="SHRT" typeName="BOOL"></variables>
+			<variables name="SML" typeName="BOOL"></variables>
+			<variables name="CMDACK" typeName="BOOL"></variables>
+			<variables name="FRC" typeName="BOOL"></variables>
+		</privateLocalVariables>
+		<FBProgram name="CHAIFN">
+			<STSource>CHCFG.ID:=ID;
+CHCFG.CLSID := 16#0030;
+IF ID=0 THEN 
+    CHCFG.STA:=0;
+    CHCFG.CMD:=0;
+    CHCFG.VAL:=0.0;
+    RETURN; 
+END_IF;
+
+STA:=CHCFG.STA;
+CMD:=0;
+FRC:=STA.13;
+CMDACK:=STA.15;
+ULNK :=STA.4;(*якщо верхній рівень звязався то 1 PING-PONG*) 
+INBUF:=(CHCFG.ID=CHBUF.ID) AND (CHCFG.CLSID=CHBUF.CLSID);
+
+
+(*вибір джерела команди згідно пріоритету*)
+IF CHCFG.CMD&lt;&gt;0 AND NOT CMDACK THEN (*з програмного елементу*) 
+    CMD:=CHCFG.CMD;
+    IF INBUF THEN CHBUF.CMD:=0; END_IF;
+    CMDACK:=true;
+ELSIF CHBUF.CMD&lt;&gt;0 AND NOT CMDACK AND INBUF THEN (*з буферу*)
+    CMD:=CHBUF.CMD;
+    CHCFG.CMD:=CMD;(*потворити у себе*)
+    CMDACK:=true;        
+ELSIF CHBUF.CMD.14 AND NOT CMDACK THEN(*широкомовні команди з буферу 14-й біт в 1*)
+    CMD:=CHBUF.CMD;
+    CHCFG.CMD:=CMD;(*потворити у себе*)
+    CMDACK:=true;
+ELSE 
+    CMDACK:=false; CHCFG.CMD:=0; 
+    IF INBUF THEN CHBUF.CMD:=0;END_IF;
+END_IF;
+  
+
+(*val*)
+IF FRC AND INBUF THEN (*режим форсування*)
+    CHCFG.VAL:=CHBUF.VAL;
+ELSIF NOT FRC THEN 
+    CHCFG.VAL:=VAL;
+END_IF;
+
+
+(*commands*)
+CASE CMD OF
+ 16#0100: (*прочитати конфігурацію*)
+     CHBUF:=CHCFG;
+     CHBUF.CMD:=0;
+ 16#0101: (*записати конфігурацію*)
+    ;
+ 16#0300: (*перемкнути форсування*)
+    FRC:= NOT FRC;
+ 16#4301, 16#301: (*форсувати один/усі об'єкти типу*)
+    FRC:= true;
+ 16#302, 16#4302: (*дефорсувати один/усі об'єкти типу*)
+    FRC:= false;           
+END_CASE;
+
+STA.2:=NOT BAD;
+STA.4:=false; (*скидання біту PNG звязку з врехнім рівнем PING-PONG*)
+STA.5:= ULNK;IF NOT ULNK THEN CHCFG.VARID:=0;END_IF;
+STA.12:=INBUF;
+STA.13:=FRC;
+STA.15:=CMDACK;
+
+IF FRC THEN PLC.STA.11:=true; END_IF; (*в загальний статус*)
+
+
+CHCFG.STA:=STA;
+IF INBUF THEN
+    CHBUF.STA:=STA;
+    IF NOT FRC THEN CHBUF.VAL:=VAL;END_IF;
+END_IF;
+
+
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<DDTSource DDTName="CH_CFG" version="0.01" dateTime="dt#2017-07-21-15:52:21">
+		<comment>канали контролера</comment>
+		<attribute name="TypeSignatureCheckSumString" value="30A7"></attribute>
+		<structure>
+			<variables name="ID" typeName="INT">
+				<comment>Унікальний ідентифікатор ID=0 зарезервований для помилкових операцій</comment>
+			</variables>
+			<variables name="CLSID" typeName="INT">
+				<comment> ідентифікатор класу.DICH (CLSID=16#001x) DOCH (CLSID=16#002x) AICH (CLSID=16#003x) AOCH (CLSID=16#004x)</comment>
+			</variables>
+			<variables name="STA" typeName="INT">
+				<comment>статус</comment>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>команда</comment>
+			</variables>
+			<variables name="VAL" typeName="REAL">
+				<comment>значення(для аналогових)</comment>
+			</variables>
+			<variables name="VARID" typeName="INT">
+				<comment>ID прив’язаної технологічної змінної</comment>
+			</variables>
+			<variables name="TMP" typeName="INT">
+				<comment>для вирівнювання</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLC" version="0.10" dateTime="dt#2017-08-25-10:56:34">
+		<comment>програмований контролер</comment>
+		<attribute name="TypeSignatureCheckSumString" value="75FA"></attribute>
+		<structure>
+			<variables name="ID" typeName="INT">
+				<comment>Унікальний ідентифікатор </comment>
+			</variables>
+			<variables name="CLSID" typeName="INT">
+				<comment> ідентифікатор класу 16#21хх</comment>
+			</variables>
+			<variables name="STA" typeName="INT">
+				<comment>статус</comment>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>команда</comment>
+			</variables>
+			<variables name="CMDPRG" typeName="INT">
+				<comment>команда з програмного керування (побітові)</comment>
+			</variables>
+			<variables name="PRM1" typeName="INT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PRM2" typeName="INT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PLS" typeName="INT">
+				<comment>часові біти, 0-100мс,1-200мс,2-500мс,3-1с,4-2с,5-5с,6-10с,7-60с, 8 - 15 вільні</comment>
+			</variables>
+			<variables name="ALM1" typeName="INT">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="ALM2" typeName="INT">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="STEP1" typeName="INT">
+				<comment>крок основної програми</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="INT">
+				<comment>час кроку основної програми</comment>
+			</variables>
+			<variables name="MSG" typeName="DINT">
+				<comment>формування повідомлень</comment>
+			</variables>
+			<variables name="TQ" typeName="UDINT">
+				<comment>час роботи контролера в секундах з першого циклу</comment>
+			</variables>
+			<variables name="TQM" typeName="UDINT">
+				<comment>загальний час роботи контролера з моменту пуску</comment>
+			</variables>
+			<variables name="DICNT" typeName="INT">
+				<comment>кількість наявних каналів DI</comment>
+			</variables>
+			<variables name="DOCNT" typeName="INT">
+				<comment>кількість наявних каналів DO</comment>
+			</variables>
+			<variables name="AICNT" typeName="INT">
+				<comment>кількість наявних каналів AI</comment>
+			</variables>
+			<variables name="AOCNT" typeName="INT">
+				<comment>кількість наявних каналів AO</comment>
+			</variables>
+			<variables name="NOW" typeName="ARRAY[0..3] OF INT">
+				<comment>плинний час астрономічний час в BCD форматі</comment>
+			</variables>
+			<variables name="SHIFTPARA" typeName="ARRAY[0..3] OF INT">
+				<comment>Години передачі змін (максимум 3 зміни)</comment>
+			</variables>
+			<variables name="SHIFTNMB" typeName="INT">
+				<comment>номер активної зміни</comment>
+			</variables>
+			<variables name="REZ" typeName="INT">
+				<comment>резерв для вирівнювання</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+</FBExchangeFile>
