@@ -1,4 +1,4 @@
-# Клас PLC: програмований контролер 
+# Клас PLC: програмований контролер Control Expert 
 
 **CLSID=16#21xx**
 
@@ -107,6 +107,10 @@ ELSE (*2-га або 3-тя*)
 	END_IF;
 END_IF;
 (*----------- *)
+
+(*цикли*)
+PLC.TSK_LTIME :=int_to_uint(%sw30);
+PLC.TSK_MAXTIME :=int_to_uint(%sw31);
 
 (*скидання статусів і тривог*)
 PLC.BLK :=false; 
