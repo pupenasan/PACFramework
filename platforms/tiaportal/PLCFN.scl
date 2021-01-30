@@ -85,10 +85,10 @@ VERSION : 0.1
       MSG : UDInt;   // для формування повідомлень, може бути як бітовим (32 повідомлення), так і числовим (за номером); передбачається, що повідомлення буде скидуватися в 0 автоматично через певний час (не менш ніж 2 інтервали опитування з HMI)
       TQ : UDInt;   // загальний час з початку 1-го циклу контролера (в секундах)
       TQM : UDInt;   // загальний час роботи ПЛК з моменту пуску (в хвилинах)
-      DICNT : UInt;   // кількість наявних каналів DI
-      DOCNT : UInt;   // кількість наявних каналів DO
-      AICNT : UInt;   // кількість наявних каналів AI
-      AOCNT : UInt;   // кількість наявних каналів AO
+      DICNT : Int;   // кількість наявних каналів DI
+      DOCNT : Int;   // кількість наявних каналів DO
+      AICNT : Int;   // кількість наявних каналів AI
+      AOCNT : Int;   // кількість наявних каналів AO
       NOW : Array[0..3] of Int;   // плинний час астрономічний час в BCD форматі: NOW[0] seconds,-- (16#ss,--)  NOW[1] hour, minute (16#hhmm)  NOW[2] month, day (16#mmdd)  NOW[3] year (16#yyyy)
       SHIFTPARA : Array[0..3] of Int;   // Години передачі змін (максимум 3 зміни): SHIFT[0] – кількість змін SHIFT[1] – передача 1-ї зміни (BCD 16#hhmm) SHIFT[2] – передача 2-ї зміни (BCD 16#hhmm)  SHIFT[3] – передача 3-ї зміни (BCD 16#hhmm)
       SHIFTNMB : UInt;   // номер активної зміни
@@ -300,6 +300,13 @@ BEGIN
 	#PLC.ALM1.DIOERR := 0;
 	#PLC.ALM1.PLCERR := 0;
 	#PLC.ALM1.CONHIERR := 0;
+	
+	(*запамятовування лічильників*)
+	#PLC.CNTALM_PERM := #PLC.CNTALM;
+	#PLC.CNTWRN_PERM := #PLC.CNTWRN;
+	#PLC.CNTBAD_PERM := #PLC.CNTBAD;
+	#PLC.CNTFRC_PERM := #PLC.CNTFRC;
+	#PLC.CNTMAN_PERM := #PLC.CNTMAN;
 	
 	(*скидання лічильників*)
 	#PLC.CNTALM := 0;
