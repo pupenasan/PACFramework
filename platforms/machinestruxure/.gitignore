@@ -1,0 +1,7 @@
+﻿*.export
+*.bootinfo
+*.bootinfo_guids
+*.compileinfo
+*.project
+*.map
+*.opt
