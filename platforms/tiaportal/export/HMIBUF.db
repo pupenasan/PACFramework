@@ -1,0 +1,26 @@
+﻿TYPE "CHBUF"
+VERSION : 0.1
+   STRUCT
+      ID : UInt;   // Унікальний ідентифікатор
+      CLSID : UInt;   // ідентифікатор класу
+      STA : Int;   // статус
+      CMD : Int;
+      VAL : Int;   // значення
+      VARID : UInt;   // ІД привязаної змінної
+   END_STRUCT;
+
+END_TYPE
+
+DATA_BLOCK "HMIBUF"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      CHBUF : "CHBUF";
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+
