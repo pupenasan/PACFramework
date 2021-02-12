@@ -307,6 +307,7 @@ END_VAR
 ### Вимоги щодо використання
 
 - Функціональний блок має викликатися у першій секції, наприклад в `Main`: 
+- Підключені бібліотеки `CmpApp`, `CmpIecTask`,`Standart=Standart`,`SysTimeCore`,`SysTimeRtc`,`SysTypes2 Interfaces`,`Util`
 
 ## Структура та змінна PLC_CFG
 
