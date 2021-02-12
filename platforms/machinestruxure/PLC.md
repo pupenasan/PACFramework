@@ -82,6 +82,7 @@ VAR_STAT
 	  iecResult  :    RTS_IEC_RESULT;
 	  pIecInfo   :    POINTER TO CmpIecTask.Task_Info2;
 	  LocalTime_ofset:INT:=2;
+	  nowDT:dword;
 END_VAR
 
 VAR_TEMP 
@@ -199,7 +200,8 @@ END_VAR
 	PLC.PLS.M2S := Clock_0_5Hz;(*меандр з періодом 2 с (1 с + 1 с) *)
 	
 	(* астрономічний час *)
-	SysTimeRtcConvertUtcToDate(dwTimestampUtc:= GetRTC()+LocalTime_ofset*3600, pDate:=NOW );
+	nowDT:=SysTimeRtcGet(pResult:=iecResult );
+	SysTimeRtcConvertUtcToDate(dwTimestampUtc:= nowDT+LocalTime_ofset*3600, pDate:=NOW );
 	PLC.NOW[0] := INT_TO_BCD(NOW.wSECOND); //NOW[0] seconds,-- (16ss,--)
 	PLC.NOW[1] := SHL(INT_TO_BCD(NOW.wHOUR), 8) OR INT_TO_BCD(NOW.wMINUTE);//16hhmm
 	PLC.NOW[2] := SHL(INT_TO_BCD(NOW.wMONTH), 8) OR INT_TO_BCD(NOW.wDAY);  //16mmdd
