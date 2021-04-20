@@ -73,6 +73,42 @@ SUBMODULE - забезпечує відображення конкретної �
 
 - у буфер SUBMODULE при старті повинен завантажитися якийсь підмодуль 
 
+Приклад TIA portal
+
+```pascal
+"SYS".PLCCFG.DICNT := 32;
+"SYS".PLCCFG.DOCNT := 32;
+"SYS".PLCCFG.AICNT := 10;
+"SYS".PLCCFG.AOCNT := 6;
+"SYS".PLCCFG.MODULSCNT := 5;
+"HMI".MODULES[0].STA.%X11 := true;
+//CPU DI(1..14) AI(1..2) DO(1..10) AO(1..2)
+"HMI".MODULES[0].TYPE := 16#1324; //1- DICH, 2- DOCH, 3- AICH, 4 – AOCH, 5 - COM
+"HMI".MODULES[0].CHCNTS := 16#d191;//кількість каналів на кожен Submodule, комбінація в 16-ковому форматі - 1 (16#XYZQ) X - для першого субмодуля 
+"HMI".MODULES[0].STRTNMB[0] := 1;
+"HMI".MODULES[0].STRTNMB[1] := 1;
+"HMI".MODULES[0].STRTNMB[2] := 1;
+"HMI".MODULES[0].STRTNMB[3] := 1;
+//DI16 DI(17..32)
+"HMI".MODULES[1].TYPE := 16#1000; 
+"HMI".MODULES[1].CHCNTS := 16#F000;
+"HMI".MODULES[1].STRTNMB[0] := 17;
+//DQ16 DQ(17..32)
+"HMI".MODULES[2].TYPE := 16#2000;
+"HMI".MODULES[2].CHCNTS := 16#F000;
+"HMI".MODULES[2].STRTNMB[0] := 17;
+//AI8 AI(3..10)
+"HMI".MODULES[3].TYPE := 16#3000;
+"HMI".MODULES[3].CHCNTS := 16#7000;
+"HMI".MODULES[3].STRTNMB[0] := 3;
+//AQ4 AQ(3..6)
+"HMI".MODULES[4].TYPE := 16#4000;
+"HMI".MODULES[4].CHCNTS := 16#3000;
+"HMI".MODULES[4].STRTNMB[0] := 3;
+```
+
+
+
 ### MODULES
 
 - може бути функцією без параметрів або секцією
@@ -85,7 +121,88 @@ SUBMODULE - забезпечує відображення конкретної �
   - 
 
 - має викликатися в кінці основної задачі
-- 
+
+Приклад TIA portal
+
+```pascal
+//перебір усіх модулів
+FOR #i := 0 TO "SYS".PLCCFG.MODULSCNT - 1 DO
+    #modtype := "HMI".MODULES[#i].TYPE; //тип модуля
+    #modchcnts := "HMI".MODULES[#i].CHCNTS;//кількість каналів в кожному підмодулі
+    #modSTA := 0; //стан
+    //проходження по підмодулям
+    FOR #j := 0 TO 3 DO
+        #zm := 12 - 4 * #j; //зміщення для SHIFT
+        //тип підмодуля
+        #sbmtype := SHR(IN := #modtype, N := #zm) AND 16#000F;
+        //кількість каналів у підмодулі
+        #sbmchcnts:= (SHR(IN := #modchcnts, N := #zm) AND 16#000F) + 1;
+        //початковий індекс каналу 
+        #sbmstrtnmb := "HMI".MODULES[#i].STRTNMB[#j];
+        //перевірка бітових команд
+        #mask := 16#0800; //маска для зміщення біту команди
+        #cmdLoadsbm := ("HMI".MODULES[#i].STA AND SHR(IN := #mask, N :=#j))<>0;
+        //завантаження в буфер підмодуля
+        IF #cmdLoadsbm THEN
+            "BUF".SUBMODULE.TYPE := #sbmtype;
+            "BUF".SUBMODULE.CNT := #sbmchcnts;
+            "BUF".SUBMODULE.STRTNMB := #sbmstrtnmb;
+        END_IF;
+        //визначення помилки на модулі по біту MERR першого каналу в модулі
+        CASE #sbmtype OF
+            1:  //DI
+                #sbmbad := "CH".CHDI[#sbmstrtnmb].STA.%X6; //MERR
+            2:  //DQ
+                #sbmbad := "CH".CHDO[#sbmstrtnmb].STA.%X6; //MERR
+            3:  //AI
+                #sbmbad := "CH".CHAI[#sbmstrtnmb].STA.%X6; //MERR
+            4:  //AO
+                #sbmbad := "CH".CHAO[#sbmstrtnmb].STA.%X6; //MERR
+        END_CASE;
+        #mask := 16#0008; //маска для зміщення біту помилки
+        IF #sbmbad THEN
+            #modSTA := #modSTA OR SHR(IN := #mask, N := #j);
+        END_IF;
+        //визначення того, що цей підмодуль в буфері  
+        #inbuf := #sbmtype<>0 AND ("BUF".SUBMODULE.TYPE = #sbmtype) AND ("BUF".SUBMODULE.STRTNMB = #sbmstrtnmb);
+        #mask := 16#0080;
+        IF #inbuf THEN
+            #modSTA := #modSTA OR SHR(IN := #mask, N := #j);
+        END_IF;
+        //робота підмодулем в буфері
+        IF #inbuf THEN
+            #sbmCMD := "BUF".SUBMODULE.CMD;//команда для підмодуля
+            //перевірка команди і завантаження значення каналів в буфер 
+            FOR #k := 0 TO #sbmchcnts DO
+                #cmdLoadch := #sbmCMD = #k + 1; //завантажити канал
+                CASE #sbmtype OF
+                    1:  //DI
+                        "CH".CHDI[#sbmstrtnmb + #k].STA.%X15 := #cmdLoadch;
+                        "BUF".SUBMODULE.CH[#k] := "CH".CHDI[#sbmstrtnmb + #k];
+                    2:  //DQ
+                        ;//"CH".CHDO[#sbmstrtnmb + #k].STA.%X15 := #cmdLoadch;
+                        ;//"BUF".SUBMODULE.CH[#k] := "CH".CHDO[#sbmstrtnmb + #k];
+                    3:  //AI
+                        ;//"CH".CHAI[#sbmstrtnmb + #k].STA.%X15 := #cmdLoadch;
+                        ;//"BUF".SUBMODULE.CH[#k] := "CH".CHAI[#sbmstrtnmb + #k];
+                    4:  //AO
+                        ;//"CH".CHAO[#sbmstrtnmb + #k].STA.%X15 := #cmdLoadch;
+                        ;//"BUF".SUBMODULE.CH[#k] := "CH".CHAO[#sbmstrtnmb + #k];
+                END_CASE;
+            END_FOR;
+            "BUF".SUBMODULE.CMD := 0;
+        END_IF;
+    END_FOR;
+    
+    //запис стану в модуль
+    "HMI".MODULES[#i].STA := #modSTA;
+    
+END_FOR;
+
+
+```
+
+
 
 ## Тестування
 
@@ -97,7 +214,7 @@ SUBMODULE - забезпечує відображення конкретної �
 | ----- | --------------------------------------------------------- | ------------------------- |
 | 1     | ініціалізація Modules                                     | робиться на першому скані |
 | 2     | Тест завантаження необхідного підмодуля в буфер SUBMODULE |                           |
-|       |                                                           |                           |
+|       | to-do                                                     |                           |
 |       |                                                           |                           |
 |       |                                                           |                           |
 |       |                                                           |                           |
