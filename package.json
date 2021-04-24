@@ -1,0 +1,23 @@
+{
+  "name": "PACFramework",
+  "version": "1.0.0",
+  "description": "**PAC Framework V1.02**",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/pupenasan/PACFramework.git"
+  },
+  "keywords": [],
+  "author": "i4u",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/pupenasan/PACFramework/issues"
+  },
+  "homepage": "https://github.com/pupenasan/PACFramework#readme",
+  "dependencies": {
+    "csvtojson": "^2.0.10"
+  }
+}

@@ -1,0 +1,17 @@
+﻿DATA_BLOCK "SYS"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      PLCCFG : "PLC_CFG";
+      CHDI : Array[0..32] of "CHCFG";
+      CHDO : Array[0..32] of "CHCFG";
+      CHAI : Array[0..10] of "CHCFG";
+      CHAO : Array[0..6] of "CHCFG";
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+
