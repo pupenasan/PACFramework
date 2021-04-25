@@ -1,0 +1,412 @@
+﻿TYPE "CHSTA"
+VERSION : 0.1
+   STRUCT
+      VRAW : Bool;   // =1 – значення дискретного сигналу з дискретного входу
+      VAL : Bool;   // =1 – значення дискретного сигналу для CM верхнього рівня, в режимі FRC=1 може змінюватися із-зовні
+      BAD : Bool;   // =1 – є помилка каналу
+      b3 : Bool;
+      PNG : Bool;   // =1 прийшла відповідь від володаря, обнуляється каналом
+      ULNK : Bool;   // =1 – якщо використовується в змінній DIVAR/AIVAR/DOVAR/AOVAR
+      MERR : Bool;   // =1 – є помилка модулю (діагностична інформація)
+      BRK : Bool;   // =1 – помилка обриву каналу
+      SHRT : Bool;   // =1 – помилка КЗ
+      NBD : Bool;   // =1 – фізично канал не існує; наприклад, для відображення в буфері модуля MODULS, для використання резерву каналів не прив’язаних до фізичних
+      b10 : Bool;
+      b11 : Bool;
+      INBUF : Bool;   // =1 – в буфері
+      FRC : Bool;   // =1 – значення форсоване
+      SML : Bool;   // =1 – значення імітується
+      CMDLOAD : Bool;   // =1 - запит на зчитування в буфер (тільки з HMI)
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "CHHMI"
+VERSION : 0.1
+   STRUCT
+      STA : Int;   // STA+CMD (X15 - CMDLOAD)
+      VAL : Int;   // значення
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "PLC_ALM1"
+VERSION : 0.1
+   STRUCT
+      ALM : Bool;
+      NWALM : Bool;
+      ALMNACK : Bool;
+      WRN : Bool;
+      NWWRN : Bool;
+      WRNNACK : Bool;
+      BAD : Bool;
+      NWBAD : Bool;
+      BADNACK : Bool;
+      EMCYSTP : Bool;
+      STP2RUN : Bool;
+      CON2ERR : Bool;
+      PLC2STOP : Bool;
+      DIOERR : Bool;   // =1 - є помилка DIO
+      PLCERR : Bool;   // =1 – є апаратна помилка (ПЛК)
+      CONHIERR : Bool;   // помилка звязку з верхнім рівнем
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "PLS"
+VERSION : 0.1
+   STRUCT
+      P100MS : Bool;   // 100 мс
+      P200MS : Bool;   // 200 мс
+      P500MS : Bool;   // 500 мс
+      P1S : Bool;   // 1 с
+      P2S : Bool;   // 2 с
+      P5S : Bool;   // 5 с
+      P10S : Bool;   // 10 с
+      P60S : Bool;   // 1 хв
+      M1S : Bool;   // меандр з періодом 1 с (0.5 с + 0.5 с)
+      M2S : Bool;   // меандр з періодом 2 с (1 с + 1 с)
+      b10 : Bool;
+      b11 : Bool;
+      NEWMIN : Bool;   // =1 (на один цикл основної задачі) – початок хвилини
+      NEWHR : Bool;   // =1 (на один цикл основної задачі) – початок години
+      NEWDAY : Bool;   // =1 (на один цикл основної задачі) – початок доби
+      NEWSHIFT : Bool;   // =1 (на один цикл основної задачі) – початок зміни
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "PLC_STA"
+VERSION : 0.1
+   STRUCT
+      CON2ERR : Bool;   // =1 - є помилка звязку з сусідні ПЛК в парі (для теплого резерування)
+      PLC2STOP : Bool;   // =1 - спарений ПЛК в стопі (для теплого резерування)
+      BLK : Bool;   // =1 – є хоча б один заблокований ВМ
+      ALDIS : Bool;   // =1 – є хоча б одна відключена тривога
+      DIOON : Bool;   // =1 - йде опитування по мережі (MODBUS або аналогічній) засобів віддаленого вводу/виводу
+      DIOERR : Bool;   // =1 - є помилка на DIO
+      b6 : Bool;
+      FRC : Bool;   // =1 – хоча б одна змінна форсована на будь якому рівні
+      SMLALL : Bool;   // =1 – все в режимі в імітації, примушує усі CM перейти в режим імітації
+      DISP : Bool;   // =1 – хоча б один елемент в режимі ручного управління
+      FRC2 : Bool;   // =1 – є хоча б один форсований керівний елемент (рівня 2), клапан, двигун
+      FRC1 : Bool;   // =1 – хоча б одна змінна форсована (рівня 1)
+      SCN1 : Bool;   // =1 – перший скан
+      FRC0 : Bool;   // =1 – хоча б одна змінна форсована (рівня 0)
+      SML : Bool;   // =1 – хоча б один об’єкт в режимі імітації
+      CMDACK : Bool;   // =1 - підтвердження команди, команда пройшла через весь цикл задачі і отримана усіма
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "CHCFG"
+VERSION : 0.1
+   STRUCT
+      ID : UInt;   // Унікальний ідентифікатор
+      CLSID : UInt;   // ідентифікатор класу
+      STA : "CHSTA";   // статус
+      CMD { S7_SetPoint := 'True'} : Int;
+      VAL : Int;   // значення
+      VARID : UInt;   // ІД привязаної змінної
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "CHBUF"
+VERSION : 0.1
+   STRUCT
+      ID : UInt;   // Унікальний ідентифікатор
+      CLSID : UInt;   // ідентифікатор класу
+      STA : Int;   // статус
+      CMD : Int;
+      VAL : Int;   // значення
+      VARID : UInt;   // ІД привязаної змінної
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "SUBMODULE"
+VERSION : 0.1
+   STRUCT
+      STRTNMB : Int;   // номер початкового каналу для відображення конкретного підмодуля
+      CNT : Int;   // кількість каналів
+      "TYPE" : Int;   // тип каналів
+      CMD : Int;   // команда: 1..16 - завантажити канал в буфер
+      CH : Array[0..15] of "CHHMI";
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "PLC_CFG"
+VERSION : 0.1
+   STRUCT
+      ID : UInt;   // Унікальний ідентифікатор
+      CLSID : UInt;   // 16#21xx
+      STA : "PLC_STA";
+      CMD : UInt;   // Команди з HMI
+      CMDPRG : UInt;   // Команди з програмного керування (побітові)
+      PRM1 : UInt;   // дискретні параметри
+      PRM2 : UInt;   // дискретні параметри
+      PLS : "PLS";   // бітові міандри
+      ALM1 : "PLC_ALM1";   // біти алармів
+      ALM2 : Int;   // біти алармів
+      STEP1 : Int;   // крок основної програми
+      T_STEP1 : Int;   // час кроку основної програми обробки, в (с)
+      MSG : UDInt;   // для формування повідомлень, може бути як бітовим (32 повідомлення), так і числовим (за номером); передбачається, що повідомлення буде скидуватися в 0 автоматично через певний час (не менш ніж 2 інтервали опитування з HMI)
+      TQ : UDInt;   // загальний час з початку 1-го циклу контролера (в секундах)
+      TQM : UDInt;   // загальний час роботи ПЛК з моменту пуску (в хвилинах)
+      DICNT : Int;   // кількість наявних каналів DI
+      DOCNT : Int;   // кількість наявних каналів DO
+      AICNT : Int;   // кількість наявних каналів AI
+      AOCNT : Int;   // кількість наявних каналів AO
+      NOW : Array[0..3] of Int;   // плинний час астрономічний час в BCD форматі: NOW[0] seconds,-- (16#ss,--)  NOW[1] hour, minute (16#hhmm)  NOW[2] month, day (16#mmdd)  NOW[3] year (16#yyyy)
+      SHIFTPARA : Array[0..3] of Int;   // Години передачі змін (максимум 3 зміни): SHIFT[0] – кількість змін SHIFT[1] – передача 1-ї зміни (BCD 16#hhmm) SHIFT[2] – передача 2-ї зміни (BCD 16#hhmm)  SHIFT[3] – передача 3-ї зміни (BCD 16#hhmm)
+      SHIFTNMB : UInt;   // номер активної зміни
+      CNTALM : UInt;   // лічильник кількості активних тривог "аварія"
+      CNTWRN : UInt;   // лічильник кількостіактивних тривог "попередження"
+      CNTBAD : UInt;   // лічильник кількостіактивних тривог "недостовірність"
+      CNTFRC : UInt;   // лічильник кількостіфорсованих об'єктів
+      CNTMAN : UInt;   // лічильник кількості ВМ в ручному режимі
+      TSK_LTIME : UInt;   // плинний (останній) час задачі в мілісекундах
+      TSK_MAXTIME : UInt;   // максимальний час задачі в мілісекундах
+      STA_PERM : UInt;   // повторює STA, який був на початку виклику функції
+      ALM1_PERM : UInt;   // повторює ALM1, який був на початку виклику функції
+      CNTALM_PERM : UInt := 0;   // лічильник кількості активних тривог "аварія"
+      CNTWRN_PERM : UInt := 0;   // лічильник кількостіактивних тривог "попередження"
+      CNTBAD_PERM : UInt := 0;   // лічильник кількостіактивних тривог "недостовірність"
+      CNTFRC_PERM : UInt := 0;   // лічильник кількостіфорсованих об'єктів
+      CNTMAN_PERM : UInt := 0;   // лічильник кількості ВМ в ручному режимі
+      MODULSCNT : Int;   // кількість модулів
+   END_STRUCT;
+
+END_TYPE
+
+DATA_BLOCK "BUF"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      CHBUF : "CHBUF";
+      SUBMODULE : "SUBMODULE";
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+
+DATA_BLOCK "SYS"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      PLCCFG : "PLC_CFG";
+      CHDI : Array[0..32] of "CHCFG";
+      CHDO : Array[0..32] of "CHCFG";
+      CHAI : Array[0..10] of "CHCFG";
+      CHAO : Array[0..6] of "CHCFG";
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+
+FUNCTION "CHAIFN" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      RAWINT : Int;
+   END_VAR
+
+   VAR_IN_OUT 
+      CHCFG : "CHCFG";
+      CHHMI : "CHHMI";
+   END_VAR
+
+   VAR_TEMP 
+      STA : "CHSTA";
+      STAINT : Int;
+      CMD : Int;
+      INBUF : Bool;
+      ULNK : Bool;
+      MERR : Bool;
+      BRK : Bool;
+      SHRT : Bool;
+      SML : Bool;
+      FRC : Bool;
+      BAD : Bool;
+      VRAW : Bool;
+      VAL : Bool;
+      PNG : Bool;
+      NBD : Bool;
+      CMDLOAD : Bool;
+   END_VAR
+
+   VAR CONSTANT 
+      MIN : Int;
+      MAX : Int := 27648;
+      MIDLE : Int := 13824;
+   END_VAR
+
+
+BEGIN
+	#STA := #CHCFG.STA;
+	#CMD := #CHCFG.CMD;
+	(*розпаковка з STA*)
+	#VRAW := #STA.VRAW;
+	#VAL := #STA.VAL;
+	#BAD := #STA.BAD;(*керується ззовні*)
+	#PNG := #STA.PNG;
+	#ULNK := #STA.ULNK;
+	#MERR := #STA.MERR;(*керується ззовні*)
+	#BRK := #STA.BRK;(*керується ззовні*)
+	#SHRT := #STA.SHRT;(*керується ззовні*)
+	#NBD := #STA.NBD;(*керується ззовні*)
+	#INBUF := #STA.INBUF;
+	#FRC := #STA.FRC;
+	#SML := #STA.SML;
+	#CMDLOAD := #STA.CMDLOAD; (*керується бітом*)
+	
+	#INBUF := (#CHCFG.ID = "BUF".CHBUF.ID) AND (#CHCFG.CLSID = "BUF".CHBUF.CLSID);
+	#CMDLOAD := #CHHMI.STA.%X15;
+	#CMD := 0;
+	
+	(* обробник команд*)
+	(* широкомовне форсування/дефорсування*) 
+	IF "SYS".PLCCFG.CMD=16#4301 THEN
+	    #FRC := true; (*форсувати один/усі об'єкти типу*)
+	END_IF;
+	IF "SYS".PLCCFG.CMD=16#4302 THEN
+	    #FRC := false; (*дефорсувати об'єкт типу*)
+	END_IF;
+	(*вибір джерела команди згідно пріоритету*)
+	IF #CMDLOAD THEN (*з HMI CMDLOAD*)
+	    #CMD := 16#0100;  // записати в буфер
+	ELSIF #INBUF AND "BUF".CHBUF.CMD <> 0 THEN (*з буферу*)
+	    #CMD := "BUF".CHBUF.CMD;
+	ELSIF #CHCFG.CMD<>0 THEN
+	    #CMD := #CHCFG.CMD;
+	END_IF;
+	(*commands*)
+	CASE #CMD OF
+	    16#1: (*записати MAX*)
+	        IF #FRC AND #INBUF THEN
+	            "BUF".CHBUF.VAL := #MAX;
+	        END_IF;
+	    16#2: (*записати MIN*)
+	        IF #FRC AND #INBUF THEN
+	            "BUF".CHBUF.VAL:=#MIN;
+	        END_IF;
+	    16#3: (*TOGGLE*)
+	        IF #FRC AND #INBUF THEN
+	            "BUF".CHBUF.VAL := #MIDLE;
+	        END_IF;
+	    16#0100: (*прочитати конфігурацію в буфер*)
+	        "BUF".CHBUF.ID:= #CHCFG.ID;
+	        "BUF".CHBUF.CLSID:=#CHCFG.CLSID;
+	        
+	        "BUF".CHBUF.STA.%X0 := #CHCFG.STA.VRAW;
+	        "BUF".CHBUF.STA.%X1 := #CHCFG.STA.VAL;
+	        "BUF".CHBUF.STA.%X2 := #CHCFG.STA.BAD;
+	        "BUF".CHBUF.STA.%X3 := #CHCFG.STA.b3;
+	        "BUF".CHBUF.STA.%X4 := #CHCFG.STA.PNG;
+	        "BUF".CHBUF.STA.%X5 := #CHCFG.STA.ULNK;
+	        "BUF".CHBUF.STA.%X6 := #CHCFG.STA.MERR;
+	        "BUF".CHBUF.STA.%X7 := #CHCFG.STA.BRK;
+	        "BUF".CHBUF.STA.%X8 := #CHCFG.STA.SHRT;
+	        "BUF".CHBUF.STA.%X9 := #CHCFG.STA.NBD;
+	        "BUF".CHBUF.STA.%X10 := #CHCFG.STA.b10;
+	        "BUF".CHBUF.STA.%X11 := #CHCFG.STA.b11;
+	        "BUF".CHBUF.STA.%X12 := #CHCFG.STA.INBUF;
+	        "BUF".CHBUF.STA.%X13 := #CHCFG.STA.FRC;
+	        "BUF".CHBUF.STA.%X14 := #CHCFG.STA.SML;
+	        "BUF".CHBUF.STA.%X15 := #CHCFG.STA.CMDLOAD;
+	        
+	        "BUF".CHBUF.VAL:=#CHCFG.VAL;
+	        "BUF".CHBUF.VARID:=#CHCFG.VARID;
+	    16#0300: (*перемкнути форсування*)
+	        #FRC := NOT #FRC;
+	    16#301: (*форсувати один/усі об'єкти типу*)
+	        #FRC := true;
+	    16#302: (*дефорсувати один/усі об'єкти типу*)
+	        #FRC := false;
+	END_CASE;
+	
+	(*запис значення змінної*)
+	IF #FRC AND #INBUF THEN (*режим форсування з занятим буфером*)
+	    #CHCFG.VAL := "BUF".CHBUF.VAL;
+	ELSIF #FRC AND NOT #INBUF THEN (*режим форсування без занятого буферу*)
+	    ;(*без змін*)
+	ELSIF NOT #FRC THEN (*не режим форсування*)
+	    #CHCFG.VAL  := #RAWINT;
+	END_IF;
+	
+	(*ping-pong*)
+	#ULNK := #PNG; (*прийшов ping - є звязок з верхнім рівнем*)
+	#PNG := false; (*скидання біту PNG звязку з врехнім рівнем PONG*)
+	IF NOT #ULNK THEN
+	    #CHCFG.VARID := 0;
+	END_IF;
+	
+	(*скидання оброблених команд*)
+	#CMDLOAD := 0;
+	#CMD := 0;
+	
+	(*загальносистемні біти та лічильники*)
+	IF #FRC THEN
+	    "SYS".PLCCFG.STA.FRC0 := true;
+	    "SYS".PLCCFG.CNTFRC := "SYS".PLCCFG.CNTFRC + 1;
+	END_IF; 
+	
+	
+	(*упковка в STA*)
+	#STA.VRAW := #RAWINT>0;
+	#STA.VAL:=#CHCFG.VAL>0;
+	#STA.BAD:=#BAD;(*керується ззовні*)
+	#STA.PNG:=#PNG;
+	#STA.ULNK:=#ULNK;
+	#STA.MERR:=#MERR;(*керується ззовні*)
+	#STA.BRK:=#BRK;(*керується ззовні*)
+	#STA.SHRT:=#SHRT;(*керується ззовні*)
+	#STA.NBD:=#NBD;(*керується ззовні*)
+	#STA.INBUF := #INBUF;
+	#STA.FRC := #FRC;
+	#STA.SML := #SML;
+	#STA.CMDLOAD := #CMDLOAD; (*керується бітом*)
+	
+	#CHCFG.STA := #STA;
+	#CHCFG.CMD := #CMD;
+	
+	(*упаковка в INT*)
+	#STAINT.%X0 := #VRAW;
+	#STAINT.%X1 := #VAL;
+	#STAINT.%X2 := #BAD;
+	//#STAINT.%X3 := #b3;
+	#STAINT.%X4 := #PNG;
+	#STAINT.%X5 := #ULNK;
+	#STAINT.%X6 := #MERR;
+	#STAINT.%X7 := #BRK;
+	#STAINT.%X8 := #SHRT;
+	#STAINT.%X9 := #NBD;
+	//#STAINT.%X10 := #STA.b10;
+	//#STAINT.%X11 := #STA.b11;
+	#STAINT.%X12 := #INBUF;
+	#STAINT.%X13 := #FRC;
+	#STAINT.%X14 := #SML;
+	#STAINT.%X15 := FALSE;
+	
+	#CHHMI.STA := #STAINT;
+	#CHHMI.VAL := #CHCFG.VAL;
+	
+	(*оновлення буферу*)
+	IF #INBUF THEN
+	    "BUF".CHBUF.STA:= #STAINT;
+	    "BUF".CHBUF.VARID := #CHCFG.VARID;
+	    "BUF".CHBUF.CMD := 0;
+	    IF NOT #FRC THEN
+	        "BUF".CHBUF.VAL := #CHCFG.VAL;
+	    END_IF;
+	END_IF;
+END_FUNCTION
+

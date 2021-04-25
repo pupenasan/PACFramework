@@ -1,0 +1,356 @@
+﻿TYPE "PLC_ALM1"
+VERSION : 0.1
+   STRUCT
+      ALM : Bool;
+      NWALM : Bool;
+      ALMNACK : Bool;
+      WRN : Bool;
+      NWWRN : Bool;
+      WRNNACK : Bool;
+      BAD : Bool;
+      NWBAD : Bool;
+      BADNACK : Bool;
+      EMCYSTP : Bool;
+      STP2RUN : Bool;
+      CON2ERR : Bool;
+      PLC2STOP : Bool;
+      DIOERR : Bool;   // =1 - є помилка DIO
+      PLCERR : Bool;   // =1 – є апаратна помилка (ПЛК)
+      CONHIERR : Bool;   // помилка звязку з верхнім рівнем
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "PLS"
+VERSION : 0.1
+   STRUCT
+      P100MS : Bool;   // 100 мс
+      P200MS : Bool;   // 200 мс
+      P500MS : Bool;   // 500 мс
+      P1S : Bool;   // 1 с
+      P2S : Bool;   // 2 с
+      P5S : Bool;   // 5 с
+      P10S : Bool;   // 10 с
+      P60S : Bool;   // 1 хв
+      M1S : Bool;   // меандр з періодом 1 с (0.5 с + 0.5 с)
+      M2S : Bool;   // меандр з періодом 2 с (1 с + 1 с)
+      b10 : Bool;
+      b11 : Bool;
+      NEWMIN : Bool;   // =1 (на один цикл основної задачі) – початок хвилини
+      NEWHR : Bool;   // =1 (на один цикл основної задачі) – початок години
+      NEWDAY : Bool;   // =1 (на один цикл основної задачі) – початок доби
+      NEWSHIFT : Bool;   // =1 (на один цикл основної задачі) – початок зміни
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "PLC_STA"
+VERSION : 0.1
+   STRUCT
+      CON2ERR : Bool;   // =1 - є помилка звязку з сусідні ПЛК в парі (для теплого резерування)
+      PLC2STOP : Bool;   // =1 - спарений ПЛК в стопі (для теплого резерування)
+      BLK : Bool;   // =1 – є хоча б один заблокований ВМ
+      ALDIS : Bool;   // =1 – є хоча б одна відключена тривога
+      DIOON : Bool;   // =1 - йде опитування по мережі (MODBUS або аналогічній) засобів віддаленого вводу/виводу
+      DIOERR : Bool;   // =1 - є помилка на DIO
+      b6 : Bool;
+      FRC : Bool;   // =1 – хоча б одна змінна форсована на будь якому рівні
+      SMLALL : Bool;   // =1 – все в режимі в імітації, примушує усі CM перейти в режим імітації
+      DISP : Bool;   // =1 – хоча б один елемент в режимі ручного управління
+      FRC2 : Bool;   // =1 – є хоча б один форсований керівний елемент (рівня 2), клапан, двигун
+      FRC1 : Bool;   // =1 – хоча б одна змінна форсована (рівня 1)
+      SCN1 : Bool;   // =1 – перший скан
+      FRC0 : Bool;   // =1 – хоча б одна змінна форсована (рівня 0)
+      SML : Bool;   // =1 – хоча б один об’єкт в режимі імітації
+      CMDACK : Bool;   // =1 - підтвердження команди, команда пройшла через весь цикл задачі і отримана усіма
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "CHSTA"
+VERSION : 0.1
+   STRUCT
+      VRAW : Bool;   // =1 – значення дискретного сигналу з дискретного входу
+      VAL : Bool;   // =1 – значення дискретного сигналу для CM верхнього рівня, в режимі FRC=1 може змінюватися із-зовні
+      BAD : Bool;   // =1 – є помилка каналу
+      b3 : Bool;
+      PNG : Bool;   // =1 прийшла відповідь від володаря, обнуляється каналом
+      ULNK : Bool;   // =1 – якщо використовується в змінній DIVAR/AIVAR/DOVAR/AOVAR
+      MERR : Bool;   // =1 – є помилка модулю (діагностична інформація)
+      BRK : Bool;   // =1 – помилка обриву каналу
+      SHRT : Bool;   // =1 – помилка КЗ
+      NBD : Bool;   // =1 – фізично канал не існує; наприклад, для відображення в буфері модуля MODULS, для використання резерву каналів не прив’язаних до фізичних
+      b10 : Bool;
+      b11 : Bool;
+      INBUF : Bool;   // =1 – в буфері
+      FRC : Bool;   // =1 – значення форсоване
+      SML : Bool;   // =1 – значення імітується
+      CMDLOAD : Bool;   // =1 - запит на зчитування в буфер (тільки з HMI)
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "CHHMI"
+VERSION : 0.1
+   STRUCT
+      STA : Int;   // STA+CMD (X15 - CMDLOAD)
+      VAL : Int;   // значення
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "PLC_CFG"
+VERSION : 0.1
+   STRUCT
+      ID : UInt;   // Унікальний ідентифікатор
+      CLSID : UInt;   // 16#21xx
+      STA : "PLC_STA";
+      CMD : UInt;   // Команди з HMI
+      CMDPRG : UInt;   // Команди з програмного керування (побітові)
+      PRM1 : UInt;   // дискретні параметри
+      PRM2 : UInt;   // дискретні параметри
+      PLS : "PLS";   // бітові міандри
+      ALM1 : "PLC_ALM1";   // біти алармів
+      ALM2 : Int;   // біти алармів
+      STEP1 : Int;   // крок основної програми
+      T_STEP1 : Int;   // час кроку основної програми обробки, в (с)
+      MSG : UDInt;   // для формування повідомлень, може бути як бітовим (32 повідомлення), так і числовим (за номером); передбачається, що повідомлення буде скидуватися в 0 автоматично через певний час (не менш ніж 2 інтервали опитування з HMI)
+      TQ : UDInt;   // загальний час з початку 1-го циклу контролера (в секундах)
+      TQM : UDInt;   // загальний час роботи ПЛК з моменту пуску (в хвилинах)
+      DICNT : Int;   // кількість наявних каналів DI
+      DOCNT : Int;   // кількість наявних каналів DO
+      AICNT : Int;   // кількість наявних каналів AI
+      AOCNT : Int;   // кількість наявних каналів AO
+      NOW : Array[0..3] of Int;   // плинний час астрономічний час в BCD форматі: NOW[0] seconds,-- (16#ss,--)  NOW[1] hour, minute (16#hhmm)  NOW[2] month, day (16#mmdd)  NOW[3] year (16#yyyy)
+      SHIFTPARA : Array[0..3] of Int;   // Години передачі змін (максимум 3 зміни): SHIFT[0] – кількість змін SHIFT[1] – передача 1-ї зміни (BCD 16#hhmm) SHIFT[2] – передача 2-ї зміни (BCD 16#hhmm)  SHIFT[3] – передача 3-ї зміни (BCD 16#hhmm)
+      SHIFTNMB : UInt;   // номер активної зміни
+      CNTALM : UInt;   // лічильник кількості активних тривог "аварія"
+      CNTWRN : UInt;   // лічильник кількостіактивних тривог "попередження"
+      CNTBAD : UInt;   // лічильник кількостіактивних тривог "недостовірність"
+      CNTFRC : UInt;   // лічильник кількостіфорсованих об'єктів
+      CNTMAN : UInt;   // лічильник кількості ВМ в ручному режимі
+      TSK_LTIME : UInt;   // плинний (останній) час задачі в мілісекундах
+      TSK_MAXTIME : UInt;   // максимальний час задачі в мілісекундах
+      STA_PERM : UInt;   // повторює STA, який був на початку виклику функції
+      ALM1_PERM : UInt;   // повторює ALM1, який був на початку виклику функції
+      CNTALM_PERM : UInt := 0;   // лічильник кількості активних тривог "аварія"
+      CNTWRN_PERM : UInt := 0;   // лічильник кількостіактивних тривог "попередження"
+      CNTBAD_PERM : UInt := 0;   // лічильник кількостіактивних тривог "недостовірність"
+      CNTFRC_PERM : UInt := 0;   // лічильник кількостіфорсованих об'єктів
+      CNTMAN_PERM : UInt := 0;   // лічильник кількості ВМ в ручному режимі
+      MODULSCNT : Int;   // кількість модулів
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "CHCFG"
+VERSION : 0.1
+   STRUCT
+      ID : UInt;   // Унікальний ідентифікатор
+      CLSID : UInt;   // ідентифікатор класу
+      STA : "CHSTA";   // статус
+      CMD { S7_SetPoint := 'True'} : Int;
+      VAL : Int;   // значення
+      VARID : UInt;   // ІД привязаної змінної
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "MODULE"
+VERSION : 0.1
+   STRUCT
+      STA : Int;   // стан/команда модуля для HMI
+      "TYPE" : Int;   // типи Submodule, комбінація в 16-комвому форматі BCD (0 - відсутній, 1- DICH, 2- DOCH, 3- AICH, 4 – AOCH, 5 - COM)
+      CHCNTS : Int;   // кількість каналів на кожен Submodule, комбінація в 16-ковому форматі + 1 (16#XYZQ) X - для першого субмодуля
+      REZ : Int;
+      STRTNMB : Array[0..3] of Int;   // номер початкового каналу для відображення конкретного підмодуля
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "CHBUF"
+VERSION : 0.1
+   STRUCT
+      ID : UInt;   // Унікальний ідентифікатор
+      CLSID : UInt;   // ідентифікатор класу
+      STA : Int;   // статус
+      CMD : Int;
+      VAL : Int;   // значення
+      VARID : UInt;   // ІД привязаної змінної
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "SUBMODULE"
+VERSION : 0.1
+   STRUCT
+      STRTNMB : Int;   // номер початкового каналу для відображення конкретного підмодуля
+      CNT : Int;   // кількість каналів
+      "TYPE" : Int;   // тип каналів
+      CMD : Int;   // команда: 1..16 - завантажити канал в буфер
+      CH : Array[0..15] of "CHHMI";
+   END_STRUCT;
+
+END_TYPE
+
+DATA_BLOCK "SYS"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      PLCCFG : "PLC_CFG";
+      CHDI : Array[0..32] of "CHCFG";
+      CHDO : Array[0..32] of "CHCFG";
+      CHAI : Array[0..10] of "CHCFG";
+      CHAO : Array[0..6] of "CHCFG";
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+
+DATA_BLOCK "HMI"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      MODULES : Array[0..15] of "MODULE";
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+
+DATA_BLOCK "CH"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      CHDI : Array[0..32] of "CHHMI";
+      CHDO : Array[0..32] of "CHHMI";
+      CHAI : Array[0..10] of "CHHMI";
+      CHAO : Array[0..6] of "CHHMI";
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+
+DATA_BLOCK "BUF"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      CHBUF : "CHBUF";
+      SUBMODULE : "SUBMODULE";
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+
+FUNCTION "MODULES" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_TEMP 
+      i : Int;
+      j : Int;
+      sbmtype : Int;
+      sbmchcnts : Int;
+      sbmstrtnmb : Int;
+      sbmCMD : Int;   // команда на підмодуль
+      modtype : Int;
+      modchcnts : Int;
+      modSTA : Int;
+      mask : Int;
+      cmdLoadsbm : Bool;
+      cmdLoadch : Bool;
+      sbmbad : Bool;
+      inbuf : Bool;
+      zm : Int;
+      k : Int;
+   END_VAR
+
+
+BEGIN
+	//перебір усіх модулів
+	FOR #i := 0 TO "SYS".PLCCFG.MODULSCNT - 1 DO
+	    #modtype := "HMI".MODULES[#i].TYPE; //тип модуля
+	    #modchcnts := "HMI".MODULES[#i].CHCNTS;//кількість каналів в кожному підмодулі
+	    #modSTA := 0; //стан
+	    //проходження по підмодулям
+	    FOR #j := 0 TO 3 DO
+	        #zm := 12 - 4 * #j; //зміщення для SHIFT
+	        //тип підмодуля
+	        #sbmtype := SHR(IN := #modtype, N := #zm) AND 16#000F;
+	        //кількість каналів у підмодулі
+	        #sbmchcnts:= (SHR(IN := #modchcnts, N := #zm) AND 16#000F) + 1;
+	        //початковий індекс каналу 
+	        #sbmstrtnmb := "HMI".MODULES[#i].STRTNMB[#j];
+	        //перевірка бітових команд
+	        #mask := 16#0800; //маска для зміщення біту команди
+	        #cmdLoadsbm := ("HMI".MODULES[#i].STA AND SHR(IN := #mask, N :=#j))<>0;
+	        //завантаження в буфер підмодуля
+	        IF #cmdLoadsbm THEN
+	            "BUF".SUBMODULE.TYPE := #sbmtype;
+	            "BUF".SUBMODULE.CNT := #sbmchcnts;
+	            "BUF".SUBMODULE.STRTNMB := #sbmstrtnmb;
+	        END_IF;
+	        //визначення помилки на модулі по біту MERR першого каналу в модулі
+	        CASE #sbmtype OF
+	            1:  //DI
+	                #sbmbad := "CH".CHDI[#sbmstrtnmb].STA.%X6; //MERR
+	            2:  //DQ
+	                #sbmbad := "CH".CHDO[#sbmstrtnmb].STA.%X6; //MERR
+	            3:  //AI
+	                #sbmbad := "CH".CHAI[#sbmstrtnmb].STA.%X6; //MERR
+	            4:  //AO
+	                #sbmbad := "CH".CHAO[#sbmstrtnmb].STA.%X6; //MERR
+	        END_CASE;
+	        #mask := 16#0008; //маска для зміщення біту помилки
+	        IF #sbmbad THEN
+	            #modSTA := #modSTA OR SHR(IN := #mask, N := #j);
+	        END_IF;
+	        //визначення того, що цей підмодуль в буфері  
+	        #inbuf := #sbmtype<>0 AND ("BUF".SUBMODULE.TYPE = #sbmtype) AND ("BUF".SUBMODULE.STRTNMB = #sbmstrtnmb);
+	        #mask := 16#0080;
+	        IF #inbuf THEN
+	            #modSTA := #modSTA OR SHR(IN := #mask, N := #j);
+	        END_IF;
+	        //робота підмодулем в буфері
+	        IF #inbuf THEN
+	            #sbmCMD := "BUF".SUBMODULE.CMD;//команда для підмодуля
+	            //перевірка команди і завантаження значення каналів в буфер 
+	            FOR #k := 0 TO #sbmchcnts DO
+	                #cmdLoadch := #sbmCMD = #k + 1; //завантажити канал
+	                CASE #sbmtype OF
+	                    1:  //DI
+	                        "CH".CHDI[#sbmstrtnmb + #k].STA.%X15 := #cmdLoadch;
+	                        "BUF".SUBMODULE.CH[#k] := "CH".CHDI[#sbmstrtnmb + #k];
+	                    2:  //DQ
+	                        ;//"CH".CHDO[#sbmstrtnmb + #k].STA.%X15 := #cmdLoadch;
+	                        ;//"BUF".SUBMODULE.CH[#k] := "CH".CHDO[#sbmstrtnmb + #k];
+	                    3:  //AI
+	                        ;//"CH".CHAI[#sbmstrtnmb + #k].STA.%X15 := #cmdLoadch;
+	                        ;//"BUF".SUBMODULE.CH[#k] := "CH".CHAI[#sbmstrtnmb + #k];
+	                    4:  //AO
+	                        ;//"CH".CHAO[#sbmstrtnmb + #k].STA.%X15 := #cmdLoadch;
+	                        ;//"BUF".SUBMODULE.CH[#k] := "CH".CHAO[#sbmstrtnmb + #k];
+	                END_CASE;
+	            END_FOR;
+	            "BUF".SUBMODULE.CMD := 0;
+	        END_IF;
+	    END_FOR;
+	    
+	    //запис стану в модуль
+	    "HMI".MODULES[#i].STA := #modSTA;
+	    
+	END_FOR;
+	
+	
+END_FUNCTION
+

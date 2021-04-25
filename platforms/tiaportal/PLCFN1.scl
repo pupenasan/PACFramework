@@ -107,8 +107,6 @@ VERSION : 0.1
       CNTFRC_PERM : UInt := 0;   // лічильник кількостіфорсованих об'єктів
       CNTMAN_PERM : UInt := 0;   // лічильник кількості ВМ в ручному режимі
       MODULSCNT : Int;   // кількість модулів
-      NOWns : UDInt;   // нс (наносекунди) для плинного астрономічного часу 
-      TQMS : UDInt;   // мілісекундний лічильник, скидається при старті або після переповнення 
    END_STRUCT;
 
 END_TYPE
@@ -145,7 +143,6 @@ BEGIN
 	    #PLC.TQ := 0;
 	    #TMBITS_CUR := 0;
 	    #TMBITS_PREV := 0;
-	    #PLC.TQMS := 0;
 	END_IF;
 	
 	#PLC.STA_PERM.%X0 := #PLC.STA.CON2ERR;
@@ -226,7 +223,6 @@ BEGIN
 	#PLC.NOW[1] := SHL(IN := INT_TO_BCD16(#NOW.HOUR), N := 8) OR INT_TO_BCD16(#NOW.MINUTE);//16#hhmm
 	#PLC.NOW[2] := SHL(IN := INT_TO_BCD16(#NOW.MONTH), N := 8) OR INT_TO_BCD16(#NOW.DAY);  //16#mmdd
 	#PLC.NOW[3] := SHL(IN := INT_TO_BCD16(#NOW.YEAR / 100), N := 8) OR INT_TO_BCD16(#NOW.YEAR MOD 100);; //16#yyyy
-	#PLC.NOWns := #NOW.NANOSECOND;
 	
 	(* початок години *)
 	#PLC.PLS.NEWHR := (#PLC.NOW[1] AND 16#00FF) = 0 (*хвилини*)AND #PLC.PLS.P60S (*один раз за хвилину*);
@@ -278,8 +274,6 @@ BEGIN
 	ELSE
 	    #PLC.TSK_MAXTIME := 0;
 	END_IF;
-	#PLC.TQMS := #PLC.TQMS + #PLC.TSK_LTIME;//лічильник в мс
-	
 	(*скидання статусів і тривог*)
 	#PLC.STA.BLK := false;
 	#PLC.STA.ALDIS := false;
@@ -322,4 +316,14 @@ BEGIN
 	#PLC.CNTFRC := 0;
 	#PLC.CNTMAN := 0;
 END_FUNCTION_BLOCK
+
+DATA_BLOCK "PLCFN1"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+NON_RETAIN
+"PLCFN"
+
+BEGIN
+
+END_DATA_BLOCK
 
