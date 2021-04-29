@@ -99,7 +99,7 @@ END_VAR
 Посилання щодо особливості реалізації деяких частин під блоком коду:
 
 ```pascal
-	IF PLC.STA.CMDACK THEN
+		IF PLC.STA.CMDACK THEN
 	    PLC.CMD := 0;
 	END_IF;
 	PLC.STA.CMDACK := (PLC.CMD <> 0 AND NOT PLC.STA.CMDACK);
@@ -112,6 +112,8 @@ END_VAR
 	ELSE
 		FirstScan := FALSE;
 	END_IF
+
+
 	
 	PLC.STA.SCN1 := FirstScan;
 	IF PLC.STA.SCN1 THEN (*при першому скані*)
@@ -120,6 +122,7 @@ END_VAR
 	    PLC.TQ := 0;
 	    TMBITS_CUR := 0;
 	    TMBITS_PREV := 0;
+		PLC.TQMS := 0;
 	END_IF;
 	
 	PLC.STA_PERM.0 := PLC.STA.CON2ERR;
@@ -155,7 +158,8 @@ END_VAR
 	PLC.ALM1_PERM.13 := PLC.ALM1.DIOERR;
 	PLC.ALM1_PERM.14 := PLC.ALM1.PLCERR;
 	PLC.ALM1_PERM.15 := PLC.ALM1.CONHIERR;
-		
+	
+	
 	(*--------------------------------- таймерні біти та лічильники*)
 	BLINK_10Hz(enable:=TRUE, timelow:=T#50MS, timehigh:=T#50MS, out=>Clock_10Hz);
 	BLINK_5Hz(enable:=TRUE, timelow:=T#100MS, timehigh:=T#100MS, out=>Clock_5Hz);
@@ -200,13 +204,12 @@ END_VAR
 	PLC.PLS.M2S := Clock_0_5Hz;(*меандр з періодом 2 с (1 с + 1 с) *)
 	
 	(* астрономічний час *)
-	nowDT:=SysTimeRtcGet(pResult:=iecResult );
-	SysTimeRtcConvertUtcToDate(dwTimestampUtc:= nowDT+LocalTime_ofset*3600, pDate:=NOW );
+	SysTimeRtcConvertUtcToDate(dwTimestampUtc:= GetRTC()+LocalTime_ofset*3600, pDate:=NOW );
 	PLC.NOW[0] := INT_TO_BCD(NOW.wSECOND); //NOW[0] seconds,-- (16ss,--)
 	PLC.NOW[1] := SHL(INT_TO_BCD(NOW.wHOUR), 8) OR INT_TO_BCD(NOW.wMINUTE);//16hhmm
 	PLC.NOW[2] := SHL(INT_TO_BCD(NOW.wMONTH), 8) OR INT_TO_BCD(NOW.wDAY);  //16mmdd
 	PLC.NOW[3] := SHL(INT_TO_BCD(NOW.wYEAR / 100), 8) OR INT_TO_BCD(NOW.wYEAR MOD 100);; //16yyyy
-	
+	PLC.NOWns := INT_TO_BCD(now.wMilliseconds)*1000000;
 	(* початок години *)
 	PLC.PLS.NEWHR := (PLC.NOW[1] AND 16#00FF) = 0 (*хвилини*)AND PLC.PLS.P60S (*один раз за хвилину*);
 	
@@ -248,6 +251,7 @@ END_VAR
 	pIecInfo := IecTaskGetInfo3(hIecTask := IecTaskGetCurrent(pResult := ADR(iecResult)), pResult := ADR(iecResult));
 	PLC.TSK_LTIME := DWORD_TO_UINT(pIecInfo^.dwCycleTime / 1000);
 	
+	
 	IF NOT FirstScan THEN
 	    //обмеження 
 	    IF PLC.TSK_MAXTIME > 3000 THEN
@@ -259,6 +263,8 @@ END_VAR
 	ELSE
 	    PLC.TSK_MAXTIME := 0;
 	END_IF;
+	PLC.TQMS := PLC.TQMS + PLC.TSK_LTIME;//лічильник в мс
+	
 	(*скидання статусів і тривог*)
 	PLC.STA.BLK := false;
 	PLC.STA.ALDIS := false;
