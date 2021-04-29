@@ -1,6 +1,7 @@
-let bcd = 0x1234;
-console.log (bcd.toString(16)[0]);
-for (let index = 0; index < array.length; index++) {
-  const element = array[index];
-  
+console.log (to2sym(5));
+
+function to2sym (num){
+    let s = num.toString();
+    s = (s.length===1) ? '0'+ s: s;
+   return s 
 }

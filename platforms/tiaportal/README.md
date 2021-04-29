@@ -1,5 +1,7 @@
 # Реалізація в TIA Portal
 
+[Посилання на активну версію проекту (наразі тільки для членів i4u)](https://drive.google.com/drive/folders/1WGcTfy_2IdoN8F4VVAbip47M8mOts2V3)
+
 - [Клас PLC: програмований контролер в TIA для S7 1200/S7 1500](PLC.md)
 
 ## Автоматизовне розгортання в TIA Portal
