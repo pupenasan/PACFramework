@@ -1,0 +1,23 @@
+﻿DATA_BLOCK "DOH"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      LVS_T1IN : "DOVAR_HMI";   // клапан набору Т1 
+      LVS_T2IN : "DOVAR_HMI";   // клапан набору Т2 
+      LVS_T1OUT : "DOVAR_HMI";   // клапан зливу Т1 
+      LVS_T2OUT : "DOVAR_HMI";   // клапан зливу Т2 
+      LVS_D1IN : "DOVAR_HMI";   // клапан набору D1 
+      LVS_D2IN : "DOVAR_HMI";   // клапан набору D2 
+      LVS_D1OUT : "DOVAR_HMI";   // клапан зливу D1 
+      LVS_D2OUT : "DOVAR_HMI";   // клапан зливу D2 
+      XVS_T1T2 : "DOVAR_HMI";   // 3-ходовий клапан T1-T2
+      NS_M1 : "DOVAR_HMI";   // пускач двигуна мішалки Т1
+      NS_M2 : "DOVAR_HMI";   // пускач двигуна мішалки Т2
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+

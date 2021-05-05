@@ -1,0 +1,1 @@
+{"TV_T1":{"type":"AOVAR_HMI","descr":"клапан нагрівання T1","adr":0},"TV_T2":{"type":"AOVAR_HMI","descr":"клапан нагрівання T2","adr":4},"SC_T1":{"type":"AOVAR_HMI","descr":"задана швидкість перемішування Т1","adr":8},"SC_T2":{"type":"AOVAR_HMI","descr":"задана швидкість перемішування Т2","adr":12}}

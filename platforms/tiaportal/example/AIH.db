@@ -1,0 +1,16 @@
+﻿DATA_BLOCK "AIH"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      LT_T1 : "AIVAR_HMI";   // рівень T1
+      LT_T2 : "AIVAR_HMI";   // рівень T2
+      TT_T1 : "AIVAR_HMI";   // тмпература в T1
+      TT_T2 : "AIVAR_HMI";   // тмпература в T2
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+

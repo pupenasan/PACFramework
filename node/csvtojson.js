@@ -6,7 +6,16 @@ const csvpath = [
   './cm/module',
   './cm/submodule',
   './cm/ch_cfg',
-  './cm/ch_hmi'];
+  './cm/ch_hmi',
+  './cm/divar_sta',
+  './cm/divar_cfg',
+  './cm/dovar_sta',
+  './cm/dovar_cfg',
+  './cm/aivar_sta',
+  './cm/aivar_cfg',
+  './cm/aovar_sta',
+  './cm/aovar_cfg',
+];
 const jsonfolder = './json/';
 
 for (path  of csvpath) {

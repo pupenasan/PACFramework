@@ -1,0 +1,32 @@
+﻿DATA_BLOCK "DIH"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      LVZO_T1IN : "DIVAR_HMI";   // клапан набору Т1 відкритий
+      LVZO_T2IN : "DIVAR_HMI";   // клапан набору Т2 відкритий
+      LVZC_T1IN : "DIVAR_HMI";   // клапан набору Т1 закритий
+      LVZC_T2IN : "DIVAR_HMI";   // клапан набору Т2 закритий
+      LVZO_T1OUT : "DIVAR_HMI";   // клапан зливу Т1 відкритий
+      LVZO_T2OUT : "DIVAR_HMI";   // клапан зливу Т2 відкритий
+      LVZC_T1OUT : "DIVAR_HMI";   // клапан зливу Т1 закритий
+      LVZC_T2OUT : "DIVAR_HMI";   // клапан зливу Т2 закритий
+      LVZC_D1IN : "DIVAR_HMI";   // клапан набору D1 закритий
+      LVZC_D2IN : "DIVAR_HMI";   // клапан набору D2 закритий
+      LVZC_D1OUT : "DIVAR_HMI";   // клапан зливу D1 закритий
+      LVZC_D2OUT : "DIVAR_HMI";   // клапан зливу D2 закритий
+      LSH_D1 : "DIVAR_HMI";   // сигналізатор верхнього рівня D1
+      LSL_D1 : "DIVAR_HMI";   // сигналізатор нижнього рівня D1
+      LSH_D2 : "DIVAR_HMI";   // сигналізатор верхнього рівня D2
+      LSL_D2 : "DIVAR_HMI";   // сигналізатор нижнього рівня D2
+      XVZ1_T1T2 : "DIVAR_HMI";   // 3-ходовий клапан в позиції T1
+      XVZ2_T1T2 : "DIVAR_HMI";   // 3-ходовий клапан в позиції T2 
+      GSM1 : "DIVAR_HMI";   // Контакт пускача двигуна мішалки Т1
+      GSM2 : "DIVAR_HMI";   // Контакт пускача двигуна мішалки Т2
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+

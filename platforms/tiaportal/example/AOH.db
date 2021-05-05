@@ -1,0 +1,16 @@
+﻿DATA_BLOCK "AOH"
+{ S7_Optimized_Access := 'FALSE' }
+VERSION : 0.1
+NON_RETAIN
+   STRUCT 
+      TV_T1 : "AOVAR_HMI";   // клапан нагрівання T1
+      TV_T2 : "AOVAR_HMI";   // клапан нагрівання T2
+      SC_T1 : "AOVAR_HMI";   // задана швидкість перемішування Т1
+      SC_T2 : "AOVAR_HMI";   // задана швидкість перемішування Т2
+   END_STRUCT;
+
+
+BEGIN
+
+END_DATA_BLOCK
+
