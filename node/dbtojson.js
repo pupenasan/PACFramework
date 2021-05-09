@@ -1,10 +1,10 @@
 const fs = require ('fs');
 const path = require('path');
-const dbfolder = '../platforms/tiaportal/example'
+const dbfolder = '../platforms/tiaportal/example';
 const jsonfolder = './json/';
 
 const directoryPath = path.join(__dirname, dbfolder);
-console.log (directoryPath);
+//console.log (directoryPath);
 fs.readdir(directoryPath, function (err, files) {
     //handling error
     if (err) {
@@ -44,7 +44,6 @@ fs.readdir(directoryPath, function (err, files) {
           }
           const jsonFilePath = jsonfolder + filename + '.json';
           fs.writeFileSync (jsonFilePath, JSON.stringify(jsonfile));
-          console.log (jsonfile);
           //console.log (JSON.stringify(jsonfile)); 
       }
     });

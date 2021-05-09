@@ -1,0 +1,1 @@
+{"aovar_hmi":{"STA":{"type":"INT","adr":0,"bit":0,"descr":"стани + біт команди завантаження AOVAR_STA"},"VALPROC":{"type":"INT","adr":1,"bit":0,"descr":"значення у % від шкали вимірювання (0-10000)"},"VAL":{"type":"REAL","adr":2,"bit":0,"descr":"масштабоване значення"}}}

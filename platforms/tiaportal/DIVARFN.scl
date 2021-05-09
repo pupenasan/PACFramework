@@ -1,0 +1,320 @@
+﻿FUNCTION "DIVARFN" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_IN_OUT 
+      CHCFG : "CH_CFG";
+      DIVARCFG : "DIVAR_CFG";
+      DIVARHMI : "DIVAR_HMI";
+   END_VAR
+
+   VAR_TEMP 
+      VRAW : Bool;
+      VAL : Bool;
+      BAD : Bool;
+      ALDIS : Bool;
+      DLNK : Bool;
+      ENBL : Bool;
+      ALM : Bool;
+      VALPRV : Bool;
+      ISALM : Bool;
+      ISWRN : Bool;
+      WRN : Bool;
+      INBUF : Bool;
+      FRC : Bool;
+      SML : Bool;
+      CMDLOAD : Bool;
+      PRM_ISALM : Bool;
+      PRM_ISWRN : Bool;
+      PRM_INVERSE : Bool;
+      PRM_NRMVAL : Bool;
+      PRM_QALENBL : Bool;
+      PRM_DSBL : Bool;
+      VARENBL : Bool;
+      CMD : UInt;
+      STA : "DIVAR_STA";
+      PRM : "DIVAR_PRM";
+      "dT" : UDInt;
+      STAINT : Int;
+      tmp : Bool;
+      DI : Bool;
+      SIMON_EDGE : Bool;
+      T_STEPMS : UDInt;
+      ID : UInt;
+      CHID : UInt;
+   END_VAR
+
+
+BEGIN
+	IF "SYS".PLCCFG.STA.SCN1 THEN
+	    #DIVARCFG.CLSID := 16#1010;
+	    #DIVARCFG.PRM.PRM_DSBL := FALSE;
+	    #DIVARCFG.T_PREV := "SYS".PLCCFG.TQMS;
+	    IF #DIVARCFG.CHID = 0 THEN
+	        #DIVARCFG.CHID := #DIVARCFG.CHIDDF;
+	    END_IF;
+	    IF #CHCFG.ID > 0 THEN
+	        #VRAW := #CHCFG.STA.VAL;
+	    ELSE
+	        #VRAW := 0;
+	    END_IF;
+	    #DIVARCFG.STA.VAL := #DIVARCFG.STA.VRAW := #DIVARCFG.STA.VALPRV := #VRAW;
+	    #DIVARCFG.T_STEP1 := 0;
+	    #DIVARCFG.STEP1 := 400;
+	    RETURN;
+	END_IF;
+	
+	#STA := #DIVARCFG.STA; #PRM := #DIVARCFG.PRM;
+	#VRAW := #STA.VRAW; #VAL := #STA.VAL; #BAD := #STA.BAD; #ALDIS := #STA.ALDIS;
+	#DLNK := #STA.DLNK; #ENBL := #STA.ENBL; #ALM := #STA.ALM; #VALPRV := #STA.VALPRV;
+	#ISALM := #STA.ISALM; #ISWRN := #STA.ISWRN; #WRN := #STA.WRN; #INBUF := #STA.INBUF;
+	#FRC := #STA.FRC; #SML := #STA.SML; #CMDLOAD := #STA.CMDLOAD;
+	#PRM_ISALM := #PRM.PRM_ISALM; #PRM_ISWRN := #PRM.PRM_ISWRN; #PRM_INVERSE := #PRM.PRM_INVERSE;
+	#PRM_NRMVAL := #PRM.PRM_NRMVAL; #PRM_QALENBL := #PRM.PRM_QALENBL; #PRM_DSBL := #PRM.PRM_DSBL;
+	
+	#INBUF := (#DIVARCFG.ID = "BUF".VARBUF.ID) AND (#DIVARCFG.CLSID = "BUF".VARBUF.CLSID);
+	#CMDLOAD := #DIVARHMI.STA.%X15;
+	#CMD := 0;
+	#DLNK := (#CHCFG.ID > 0);
+	#VARENBL := NOT #PRM_DSBL AND #DLNK;
+	#VRAW :=  #CHCFG.STA.VAL;
+	
+	//ping-pong
+	IF #DLNK THEN
+	    #CHCFG.STA.PNG := true;
+	    #CHCFG.VARID := #DIVARCFG.ID;
+	END_IF;
+	
+	IF NOT #VARENBL THEN
+	    #DIVARCFG.STA.VRAW := #VRAW;
+	    #DIVARCFG.T_STEP1 := 0; #DIVARCFG.STEP1 := 400;
+	END_IF;
+	
+	#dT := "SYS".PLCCFG.TQMS - #DIVARCFG.T_PREV;
+	
+	(* широкомовне дефорсування*) 
+	IF "SYS".PLCCFG.CMD = 16#4302 THEN
+	    #FRC := false; (*дефорсувати об'єкт типу*)
+	END_IF;
+	
+	IF #CMDLOAD THEN
+	    #CMD := 16#0100;                                      
+	ELSIF #INBUF AND "BUF".VARBUF.CMD <> 0 THEN 
+	    #CMD := "BUF".VARBUF.CMD;                             
+	END_IF;
+	
+	(*commands*)
+	CASE #CMD OF
+	    16#1: (*записати 1*)
+	        IF #FRC AND #INBUF THEN
+	            #DIVARCFG.VALI := 1;
+	            #VAL := true;
+	            #DIVARCFG.STEP1 := 401;
+	            #DIVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    16#2: (*записати 0*)
+	        IF #FRC AND #INBUF THEN
+	            #DIVARCFG.VALI := 0;
+	            #VAL := false;
+	            #DIVARCFG.STEP1 := 400;
+	            #DIVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    16#3: (*TOGGLE*)
+	        IF #FRC AND #INBUF THEN
+	            IF #DIVARCFG.VALI > 0 THEN
+	                #DIVARCFG.VALI := 0;
+	                #VAL := false;
+	                #DIVARCFG.STEP1 := 400;
+	                #DIVARCFG.T_STEP1 := 0;
+	            ELSE
+	                #DIVARCFG.VALI := 1;
+	                #VAL := true;
+	                #DIVARCFG.STEP1 := 401;
+	                #DIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	        END_IF;
+	    16#0100: (*прочитати конфігурацію*)
+	        "BUF".VARBUF.PRM.%X0 := #PRM_ISALM;
+	        "BUF".VARBUF.PRM.%X1 := #PRM_ISWRN;
+	        "BUF".VARBUF.PRM.%X2 := #PRM_INVERSE;
+	        "BUF".VARBUF.PRM.%X5 := #PRM_NRMVAL;
+	        "BUF".VARBUF.PRM.%X6 := #PRM_QALENBL;
+	        "BUF".VARBUF.PRM.%X7 := #PRM_DSBL;
+	        
+	        "BUF".VARBUF.ID := #DIVARCFG.ID;
+	        "BUF".VARBUF.CLSID := #DIVARCFG.CLSID;
+	        "BUF".VARBUF.CHID := #DIVARCFG.CHID;
+	        //"BUF".VARBUF.VALR := INT_TO_REAL(#DIVARCFG.VALI);
+	        "BUF".VARBUF.T_FLTSP := #DIVARCFG.T_FLTSP;
+	        "BUF".VARBUF.T_DEALL := #DIVARCFG.T_DEASP;
+	        //"BUF".VARBUF.STEP1 := #DIVARCFG.STEP1;
+	        //"BUF".VARBUF.T_STEP1 := #DIVARCFG.T_STEP1;
+	        
+	    16#0101: (*записати конфігурацію*)
+	        #DIVARCFG.PRM.PRM_ISALM := "BUF".VARBUF.PRM.%X0;
+	        #DIVARCFG.PRM.PRM_ISWRN := "BUF".VARBUF.PRM.%X1;
+	        #DIVARCFG.PRM.PRM_INVERSE := "BUF".VARBUF.PRM.%X2;
+	        #DIVARCFG.PRM.PRM_NRMVAL := "BUF".VARBUF.PRM.%X5;
+	        #DIVARCFG.PRM.PRM_QALENBL := "BUF".VARBUF.PRM.%X6;
+	        #DIVARCFG.PRM.PRM_DSBL := "BUF".VARBUF.PRM.%X7;
+	        //перевіряти незайнятість каналу треба в функції контролю буферу 
+	        IF "BUF".VARBUF.CHID <= "SYS".PLCCFG.DICNT THEN
+	            #DIVARCFG.CHID := "BUF".VARBUF.CHID;
+	        END_IF;
+	        IF #INBUF THEN
+	            "BUF".VARBUF.CHID := #DIVARCFG.CHID;
+	        END_IF;
+	        #DIVARCFG.T_FLTSP := "BUF".VARBUF.T_FLTSP;
+	        #DIVARCFG.T_DEASP := "BUF".VARBUF.T_DEALL;
+	        
+	    16#0102: (*записати значення за замовченням*)
+	        #DIVARCFG.CHID := #DIVARCFG.CHIDDF;;
+	    16#0300: (*перемкнути форсування*)
+	        #FRC := NOT #FRC;
+	    16#301: (*форсувати один/усі об'єкти типу*)
+	        #FRC := true;
+	    16#302: (*дефорсувати один/усі об'єкти типу*)
+	        #FRC := false;
+	    16#311: (* імітувати*)
+	        #SML := true;
+	    16#312: (* зняти режим імітації*)
+	        #SML := false;
+	END_CASE;
+	
+	(*обробка значень*)
+	IF NOT #FRC AND NOT #SML THEN
+	    IF #PRM_INVERSE THEN
+	        #DI := NOT #VRAW;
+	    ELSE
+	        #DI := #VRAW;
+	    END_IF;
+	    CASE #DIVARCFG.STEP1 OF
+	        400:(*DI =0*)
+	            IF #DI THEN
+	                #DIVARCFG.STEP1 := 401;
+	                #DIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #T_STEPMS >= #DIVARCFG.T_FLTSP THEN
+	                #VAL := FALSE;
+	            END_IF;
+	        401:(*DI =1*)
+	            IF NOT #DI THEN
+	                #DIVARCFG.STEP1 := 400;
+	                #DIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #T_STEPMS >= #DIVARCFG.T_FLTSP THEN
+	                #VAL := true;
+	            END_IF;
+	        ELSE
+	            #DIVARCFG.STEP1 := 400;
+	            #DIVARCFG.T_STEP1 := 0;
+	    END_CASE;
+	    IF #VAL THEN
+	        #DIVARCFG.VALI := 1;
+	    ELSE
+	        #DIVARCFG.VALI := 0;
+	    END_IF;
+	ELSE (*в режимі форсування - відключений режим фільтрації та інверсії*)
+	    CASE #DIVARCFG.STEP1 OF
+	        400:(*DI =0*)
+	            IF #VAL THEN
+	                #DIVARCFG.STEP1 := 401;
+	                #DIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	        401:(*DI =1*)
+	            IF NOT #VAL THEN
+	                #DIVARCFG.STEP1 := 400;
+	                #DIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	        ELSE
+	            #DIVARCFG.STEP1 := 400;
+	            #DIVARCFG.T_STEP1 := 0;
+	    END_CASE;
+	END_IF;
+	
+	(*обробка тривог*)
+	IF #PRM_DSBL AND #DIVARCFG.T_STEP1 >= #DIVARCFG.T_DEASP THEN
+	    #ALM := NOT (#PRM_NRMVAL = #VAL) AND #PRM_ISALM;
+	    #WRN := NOT (#PRM_NRMVAL = #VAL) AND #PRM_ISWRN;
+	ELSE
+	    #ALM := false;
+	    #WRN := false;
+	END_IF;
+	#BAD := #CHCFG.STA.BAD AND #PRM_QALENBL AND NOT #SML;
+	
+	IF #BAD THEN
+	    "SYS".PLCCFG.ALM1.BAD := true;
+	    "SYS".PLCCFG.CNTBAD := "SYS".PLCCFG.CNTBAD + 1;
+	    IF NOT #DIVARCFG.STA.BAD THEN
+	        "SYS".PLCCFG.ALM1.NWBAD := true;
+	    END_IF;
+	END_IF;
+	
+	IF #ALM THEN
+	    "SYS".PLCCFG.ALM1.ALM := true;
+	    "SYS".PLCCFG.CNTALM := "SYS".PLCCFG.CNTALM + 1;
+	    IF NOT #DIVARCFG.STA.ALM THEN
+	        "SYS".PLCCFG.ALM1.NWALM := true;
+	    END_IF;
+	END_IF;
+	IF #WRN THEN
+	    "SYS".PLCCFG.ALM1.WRN := true;
+	    "SYS".PLCCFG.CNTWRN := "SYS".PLCCFG.CNTWRN + 1;
+	    IF NOT #DIVARCFG.STA.WRN THEN
+	        "SYS".PLCCFG.ALM1.NWWRN := true;
+	    END_IF;
+	END_IF;
+	IF #FRC THEN
+	    "SYS".PLCCFG.STA.FRC1 := true;
+	    "SYS".PLCCFG.CNTFRC := "SYS".PLCCFG.CNTFRC + 1;
+	END_IF; 
+	IF #SML THEN
+	    "SYS".PLCCFG.STA.SML := true;
+	END_IF; 
+	
+	
+	#ISALM := #PRM_ISALM;
+	#ISWRN := #PRM_ISWRN;
+	
+	#STAINT.%X0 := #STA.VRAW := #VRAW;
+	#STAINT.%X1 := #STA.VAL := #VAL;
+	#STAINT.%X2 := #STA.BAD := #BAD;
+	#STAINT.%X3 := #STA.ALDIS := #ALDIS;
+	#STAINT.%X4 := #STA.DLNK := #DLNK;
+	#STAINT.%X5 := #STA.ENBL := #ENBL ;
+	#STAINT.%X6 := #STA.ALM := #ALM ;
+	#STA.VALPRV := #VALPRV ;
+	
+	#STAINT.%X9 := #STA.ISALM := #ISALM;
+	#STAINT.%X10 := #STA.ISWRN := #ISWRN;
+	#STAINT.%X11 := #STA.WRN := #WRN;
+	#STAINT.%X12 := #STA.INBUF := #INBUF ;
+	#STAINT.%X13 := #STA.FRC := #FRC ;
+	#STAINT.%X14 := #STA.SML :=  #SML ;
+	#STAINT.%X15 := #STA.CMDLOAD := FALSE ;
+	
+	#PRM.PRM_ISALM := #PRM_ISALM ;
+	#PRM.PRM_ISWRN := #PRM_ISWRN ;
+	#PRM.PRM_INVERSE := #PRM_INVERSE ;
+	#PRM.PRM_NRMVAL := #PRM_NRMVAL ;
+	#PRM.PRM_QALENBL := #PRM_QALENBL ;
+	#PRM.PRM_DSBL := #PRM_DSBL;
+	
+	#DIVARCFG.PRM := #PRM;
+	#DIVARCFG.STA := #STA;
+	#DIVARHMI.STA := #STAINT;
+	
+	#DIVARCFG.T_STEP1 := #DIVARCFG.T_STEP1 + #dT;
+	IF #DIVARCFG.T_STEP1 > 16#7FFF_FFFF THEN
+	    #DIVARCFG.T_STEP1 := 16#7FFF_FFFF;
+	END_IF;
+	
+	IF #INBUF THEN
+	    "BUF".VARBUF.CMD := 0;
+	    "BUF".VARBUF.VALR := INT_TO_REAL(#DIVARCFG.VALI);
+	    "BUF".VARBUF.STA := #STAINT;
+	    "BUF".VARBUF.STEP1 := #DIVARCFG.STEP1;
+	    "BUF".VARBUF.T_STEP1 := #DIVARCFG.T_STEP1;
+	END_IF;
+	
+END_FUNCTION
+
