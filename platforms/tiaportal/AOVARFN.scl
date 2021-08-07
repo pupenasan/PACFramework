@@ -1,0 +1,345 @@
+﻿FUNCTION "AOVARFN" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_IN_OUT 
+      CHCFG : "CH_CFG";
+      AOVARCFG : "AOVAR_CFG";
+      AOVARHMI : "AOVAR_HMI";
+   END_VAR
+
+   VAR_TEMP 
+      STA : "AOVAR_STA";
+      PRM : "AOVAR_PRM";
+      BAD : Bool;
+      ALDIS : Bool;
+      DLNK : Bool;
+      ENBL : Bool;
+      INBUF : Bool;
+      FRC : Bool;
+      SML : Bool;
+      CMDLOAD : Bool;
+      PRM_QALENBL : Bool;
+      PRM_DSBL : Bool;
+      PRM_PWLENBL : Bool;
+      CMD : UInt;
+      VARENBL : Bool;
+      VRAW : Int;
+      T_STEPMS : UDInt;
+      "dT" : UDInt;
+      VAL : Real;
+      LORAW : Int;
+      HIRAW : Int;
+      LOENG : Real;
+      HIENG : Real;
+      MVAL : Real;
+      TFLT : UInt;
+      VAL1PROC : Real;
+      tempBAD : Bool;
+      TDEAQALSP : Int;
+      STAINT : Int;
+      VALPROC : Real;
+   END_VAR
+
+
+BEGIN
+	
+	IF "SYS".PLCCFG.STA.SCN1 THEN
+	    #AOVARCFG.CLSID := 16#1040;
+	    #AOVARCFG.PRM.PRM_DSBL := FALSE;
+	    #AOVARCFG.PRM.PRM_QALENBL := true;
+	    #AOVARCFG.T_PREV := "SYS".PLCCFG.TQMS;
+	    IF #AOVARCFG.CHID = 0 THEN
+	        #AOVARCFG.CHID := #AOVARCFG.CHIDDF;
+	    END_IF;
+	    IF #CHCFG.ID > 0 THEN
+	        #CHCFG.VAL := #AOVARCFG.VRAW;
+	    ELSE
+	        #CHCFG.VAL := 0;
+	    END_IF;
+	    #AOVARCFG.T_STEP1 := 0;
+	    #AOVARCFG.STEP1 := 100;
+	    RETURN;
+	END_IF;
+	
+	#STA := #AOVARCFG.STA;
+	#PRM := #AOVARCFG.PRM;
+	
+	#BAD := #STA.BAD;
+	#ALDIS := #STA.ALDIS;
+	#DLNK := #STA.DLNK;
+	#ENBL := #STA.ENBL;
+	#INBUF := #STA.INBUF;
+	#FRC := #STA.FRC;
+	#SML := #STA.SML;
+	#CMDLOAD := #STA.CMDLOAD;
+	
+	#PRM_QALENBL:= #PRM.#PRM_QALENBL;
+	#PRM_DSBL:= #PRM.#PRM_DSBL;
+	#PRM_PWLENBL:= #PRM.#PRM_PWLENBL;
+	
+	#LORAW:= #AOVARCFG.LORAW;
+	#HIRAW:= #AOVARCFG.HIRAW;
+	#LOENG:= #AOVARCFG.LOENG;
+	#HIENG:= #AOVARCFG.HIENG;
+	#MVAL:= #AOVARCFG.MVAL;
+	#TFLT:= #AOVARCFG.TFLT;
+	
+	#INBUF := (#AOVARCFG.ID = "BUF".VARBUF.ID) AND (#AOVARCFG.CLSID = "BUF".VARBUF.CLSID);
+	#CMDLOAD := #AOVARHMI.STA.%X15;
+	#CMD := 0;
+	#DLNK := (#CHCFG.ID > 0);
+	#VARENBL := NOT #PRM_DSBL AND #DLNK;
+	#T_STEPMS := #AOVARCFG.T_STEP1;
+	
+	#VAL := #AOVARCFG.VAL;
+	#VRAW := #AOVARCFG.VRAW;
+	
+	//ping-pong
+	IF #DLNK THEN
+	    #CHCFG.STA.PNG := true;
+	    #CHCFG.VARID := #AOVARCFG.ID;
+	END_IF;
+	
+	IF NOT #VARENBL THEN
+	    //  #DOVARCFG.STA.VRAW := #VRAW;
+	    #AOVARCFG.T_STEP1 := 0;
+	    #AOVARCFG.STEP1 := 400;
+	END_IF;
+	
+	#dT := "SYS".PLCCFG.TQMS - #AOVARCFG.T_PREV;
+	
+	(* широкомовне дефорсування*) 
+	IF "SYS".PLCCFG.CMD = 16#4302 THEN
+	    #FRC := false; (*дефорсувати об'єкт типу*)
+	END_IF;
+	
+	IF #CMDLOAD THEN
+	    #CMD := 16#0100;
+	ELSIF #INBUF AND "BUF".VARBUF.CMD <> 0 THEN
+	    #CMD := "BUF".VARBUF.CMD;
+	END_IF;
+	
+	(*commands*)
+	CASE #CMD OF
+	    16#1: (*записати максимум діапазону*)
+	        IF #FRC AND #INBUF THEN
+	            #AOVARCFG.VALI := #AOVARCFG.HIENG;
+	            #VAL := #AOVARCFG.HIENG;
+	            #AOVARCFG.STEP1 := 100;
+	            #AOVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    16#2: (*записати мінімум діапазону*)
+	        IF #FRC AND #INBUF THEN
+	            #AOVARCFG.VALI := #AOVARCFG.LOENG;
+	            #VAL := #AOVARCFG.LOENG;
+	            #AOVARCFG.STEP1 := 100;
+	            #AOVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    16#3: (*записати середину діапазону*)
+	        IF #FRC AND #INBUF THEN
+	            #AOVARCFG.VALI := (#AOVARCFG.HIENG - #AOVARCFG.LOENG) / 2;
+	            #VAL := (#AOVARCFG.HIENG - #AOVARCFG.LOENG) / 2;
+	            #AOVARCFG.STEP1 := 100;
+	            #AOVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    16#0100: (*прочитати конфігурацію*)
+	        "BUF".VARBUF.PRM.%X6 := #PRM_QALENBL;
+	        "BUF".VARBUF.PRM.%X7 := #PRM_DSBL;
+	        "BUF".VARBUF.PRM.%X8 := #PRM_PWLENBL;
+	        
+	        "BUF".VARBUF.ID := #AOVARCFG.ID;
+	        "BUF".VARBUF.CLSID := #AOVARCFG.CLSID;
+	        "BUF".VARBUF.CHID := #AOVARCFG.CHID;
+	        "BUF".VARBUF.VALR := #AOVARCFG.VALI;
+	        
+	        "BUF".VARBUF.LORAW :=#LORAW;
+	        "BUF".VARBUF.HIRAW :=#HIRAW;
+	        "BUF".VARBUF.LOENG :=#LOENG;
+	        "BUF".VARBUF.HIENG :=#HIENG;
+	        "BUF".VARBUF.MVAL :=#MVAL;
+	        "BUF".VARBUF.T_FLTSP :=#TFLT;
+	        
+	        //"BUF".VARBUF.STEP1 := #DIVARCFG.STEP1;
+	        //"BUF".VARBUF.T_STEP1 := #DIVARCFG.T_STEP1;
+	        
+	    16#0101: (*записати конфігурацію*)
+	         #PRM_QALENBL := "BUF".VARBUF.PRM.%X6;
+	         #PRM_DSBL := "BUF".VARBUF.PRM.%X7;
+	         #PRM_PWLENBL := "BUF".VARBUF.PRM.%X8;
+	         
+	         #LORAW:= "BUF".VARBUF.LORAW ;
+	         #HIRAW:= "BUF".VARBUF.HIRAW ;
+	         #LOENG:= "BUF".VARBUF.LOENG ;
+	         #HIENG:= "BUF".VARBUF.HIENG ;
+	         #MVAL:= "BUF".VARBUF.MVAL ;
+	         #TFLT:= "BUF".VARBUF.T_FLTSP ;
+	         
+	        //перевіряти незайнятість каналу треба в функції контролю буферу 
+	         IF "BUF".VARBUF.CHID <= "SYS".PLCCFG.DOCNT THEN
+	             #AOVARCFG.CHID := "BUF".VARBUF.CHID;
+	         END_IF;
+	        IF #INBUF THEN
+	            "BUF".VARBUF.CHID := #AOVARCFG.CHID;
+	        END_IF;
+	        
+	        
+	    16#0102: (*записати значення за замовченням*)
+	        #AOVARCFG.CHID := #AOVARCFG.CHIDDF;
+	        ;
+	    16#0300: (*перемкнути форсування*)
+	        #FRC := NOT #FRC;
+	    16#301: (*форсувати один/усі об'єкти типу*)
+	        #FRC := true;
+	    16#302: (*дефорсувати один/усі об'єкти типу*)
+	        #FRC := false;
+	    16#311: (* імітувати*)
+	        #SML := true;
+	    16#312: (* зняти режим імітації*)
+	        #SML := false;
+	END_CASE;
+	
+	IF ABS(#HIRAW - #LORAW) < 1.0 THEN
+	    #LORAW := 0;
+	    #HIRAW := 27647;
+	END_IF;
+	IF ABS(#HIENG - #LOENG) < 0.00001 THEN
+	    #LOENG := 0.0;
+	    #HIENG := 100.0;
+	END_IF;
+	#VAL1PROC := (#HIENG - #LOENG) / 100; (* значення у % від шкали вимірювання *)
+	
+	(*val*)
+	IF #FRC THEN (*режим форсування*)
+	    IF #INBUF THEN
+	        #AOVARCFG.VALI := "BUF".VARBUF.VALR;
+	    END_IF;
+	    #VAL := #AOVARCFG.VALI;
+	ELSE
+	    #VAL := #AOVARCFG.VAL;
+	    #AOVARCFG.VALI := #VAL;
+	END_IF;
+	
+	
+	
+	IF #VARENBL THEN
+	    #VRAW:= #LORAW + (#VAL - #LOENG) * (#HIRAW - #LORAW) / (#HIENG - #LOENG);
+	    IF #VRAW > #HIRAW THEN
+	        #VRAW := #HIRAW;
+	    END_IF;
+	    IF #VRAW < #LORAW THEN
+	        #VRAW := #LORAW;
+	    END_IF;
+	    IF NOT #SML THEN
+	        #CHCFG.VAL := #VRAW;
+	    END_IF;(* режим симуляції - вихідне значення не змінюється *)
+	END_IF;
+	
+	(*недостовірність каналу*)
+	#tempBAD := #CHCFG.STA.BAD AND #PRM_QALENBL AND #VARENBL AND NOT #SML;
+	#TDEAQALSP := 10;     // час затримки на виникнення тривог бед в 0.1 с
+	
+	CASE #AOVARCFG.STEP1 OF
+	    0://init
+	        #AOVARCFG.STEP1 := 100;
+	        #AOVARCFG.T_STEP1 := 0;
+	    100://norma
+	        #BAD := false;
+	        IF #tempBAD THEN
+	            #AOVARCFG.STEP1 := 150;
+	            #AOVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    150://norma to BAD
+	        IF #AOVARCFG.T_STEP1 > #TDEAQALSP THEN
+	            #AOVARCFG.STEP1 := 200;
+	            #AOVARCFG.T_STEP1 := 0;
+	        ELSIF NOT #tempBAD THEN
+	            #AOVARCFG.STEP1 := 100;
+	            #AOVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    200://BAD
+	        #BAD := true;
+	        IF NOT #tempBAD AND #AOVARCFG.T_STEP1 > #TDEAQALSP THEN
+	            #AOVARCFG.STEP1 := 100;
+	            #AOVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    ELSE
+	        #AOVARCFG.STEP1 := 0;
+	END_CASE;
+	
+	
+	IF #BAD THEN
+	    "SYS".PLCCFG.ALM1.BAD := true;
+	    "SYS".PLCCFG.CNTBAD := "SYS".PLCCFG.CNTBAD + 1;
+	    IF NOT #AOVARCFG.STA.BAD THEN
+	        "SYS".PLCCFG.ALM1.NWBAD := true;
+	    END_IF;
+	END_IF;
+	IF #FRC THEN
+	    "SYS".PLCCFG.STA.FRC1 := true;
+	    "SYS".PLCCFG.CNTFRC := "SYS".PLCCFG.CNTFRC + 1;
+	END_IF;
+	IF #SML THEN
+	    "SYS".PLCCFG.STA.SML := true;
+	END_IF;
+	
+	#STAINT.%X2 := #STA.BAD := #BAD;
+	#STAINT.%X3 := #STA.ALDIS := #ALDIS;
+	#STAINT.%X4 := #STA.DLNK := #DLNK;
+	#STAINT.%X5 := #STA.ENBL := #ENBL:=#VARENBL;
+	#STAINT.%X12 := #STA.INBUF := #INBUF;
+	#STAINT.%X13 := #STA.FRC := #FRC;
+	#STAINT.%X14 := #STA.SML := #SML;
+	#STAINT.%X15 := #STA.CMDLOAD := #CMDLOAD := FALSE;
+	
+	
+	#PRM.#PRM_QALENBL := #PRM_QALENBL ;
+	#PRM.#PRM_DSBL := #PRM_DSBL ;
+	#PRM.#PRM_PWLENBL := #PRM_PWLENBL ;
+	
+	#AOVARCFG.PRM := #PRM;
+	#AOVARCFG.STA := #STA;
+	#AOVARHMI.STA := #STAINT;
+	
+	IF #VAL1PROC = 0 THEN
+	    #VAL1PROC := 1;
+	END_IF;
+	#VALPROC := (#VAL - #AOVARCFG.LOENG) / #VAL1PROC;
+	IF #VALPROC < 0.0 THEN
+	    #VALPROC := 0.0;
+	END_IF;
+	IF #VALPROC > 100.0 THEN
+	    #VALPROC := 100.0;
+	END_IF;
+	
+	#AOVARCFG.VAL := #VAL;
+	#AOVARHMI.VAL := #VAL;
+	#AOVARCFG.VRAW := #VRAW;
+	#AOVARCFG.VALPROC := #VALPROC * 100;
+	#AOVARHMI.VALPROC := #AOVARCFG.VALPROC;
+	
+	#AOVARCFG.LORAW := #LORAW;
+	#AOVARCFG.HIRAW:=  #HIRAW;
+	#AOVARCFG.LOENG:=  #LOENG;
+	#AOVARCFG.HIENG:=  #HIENG;
+	#AOVARCFG.MVAL:=  #MVAL;
+	#AOVARCFG.TFLT:=  #TFLT;
+	
+	#AOVARCFG.T_PREV := "SYS".PLCCFG.TQMS;
+	
+	#AOVARCFG.T_STEP1 := #AOVARCFG.T_STEP1 + #dT;
+	IF #AOVARCFG.T_STEP1 > 16#7FFF_FFFF THEN
+	    #AOVARCFG.T_STEP1 := 16#7FFF_FFFF;
+	END_IF;
+	
+	IF #INBUF THEN
+	    "BUF".VARBUF.CMD := 0;
+	    "BUF".VARBUF.STA := #AOVARHMI.STA;
+	    "BUF".VARBUF.VRAWR := #VRAW;
+	    "BUF".VARBUF.VALR := #VAL;
+	    "BUF".VARBUF.VALPROC := #AOVARCFG.VALPROC;
+	    "BUF".VARBUF.STEP1 := #AOVARCFG.STEP1;
+	    "BUF".VARBUF.T_STEP1 := #AOVARCFG.T_STEP1;
+	END_IF;
+	
+END_FUNCTION
+

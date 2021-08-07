@@ -1,0 +1,82 @@
+﻿TYPE "AOVAR_PRM"
+VERSION : 0.1
+   STRUCT
+      PRMb0 : Bool;   // резерв
+      PRMb1 : Bool;   // резерв
+      PRMb2 : Bool;   // резерв
+      PRMb3 : Bool;   // резерв
+      PRMb4 : Bool;   // резерв
+      PRMb5 : Bool;   // резерв
+      PRM_QALENBL : Bool;   // =1 – задіяти тривогу недостовірності каналу
+      PRM_DSBL : Bool;   // =1 – змінна не задіяна
+      PRM_PWLENBL : Bool;   // =1 – задіяна кусочно-лінійна інтерполяція (не використовувати разом з TOTALON)
+      PRMb9 : Bool;   // резерв
+      PRMb10 : Bool;   // резерв
+      PRMb11 : Bool;   // резерв
+      PRMb12 : Bool;   // резерв
+      PRMb13 : Bool;   // резерв
+      PRMb14 : Bool;   // резерв
+      PRMb15 : Bool;   // резерв
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "AOVAR_STA"
+VERSION : 0.1
+   STRUCT
+      STAb0 : Bool;   // резерв
+      STAb1 : Bool;   // резерв
+      BAD : Bool;   // =1 – дані недостовірні
+      ALDIS : Bool;   // =1 – тривога тимчасово виведена з експлуатації
+      DLNK : Bool;   // =1 – якщо прив’язаний до каналу
+      ENBL : Bool;   // =1 – змінна задіяна
+      STAb6 : Bool;   // резерв
+      STAb7 : Bool;   // резерв
+      STAb8 : Bool;   // резерв
+      STAb9 : Bool;   // резерв
+      STAb10 : Bool;   // резерв
+      STAb11 : Bool;   // резерв
+      INBUF : Bool;   // =1 – змінна в буфері
+      FRC : Bool;   // =1 – змінна в режимі форсування
+      SML : Bool;   // =1 – змінна в режимі симуляції
+      CMDLOAD : Bool;   // =1 – команда завантаження в буфер
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "AOVAR_CFG"
+VERSION : 0.1
+   STRUCT
+      ID : UInt;   // Унікальний ідентифікатор
+      CLSID : UInt;   // 16#1010
+      STA { S7_SetPoint := 'False'} : "AOVAR_STA";   // статус (див STC)
+      VRAW : Int;   // сирі значення
+      VAL : Real;   // масштабоване значення
+      VALI : Real;   // масштабоване значення
+      PRM { S7_SetPoint := 'False'} : "AOVAR_PRM";   // параметри
+      CHID : UInt;   // Логічний номер вихідного аналогового каналу CH
+      LORAW : Int;   // Сире (немасштабоване) значення мінімуму
+      HIRAW : Int;   // Сире (немасштабоване) значення максимуму
+      LOENG : Real;   // Інженерне (масштабоване) значення мінімуму
+      HIENG : Real;   // Інженерне (масштабоване) значення максимуму
+      MVAL : Real;   // ручне(форсоване) значення
+      TFLT : UInt;   // час фільтрації в мілісекундах (фільтр - аперіодична ланка)
+      VALPROC : Int;   // значення у відсотках
+      STEP1 : UInt;   // номер кроку
+      CHIDDF : UInt;   // Логічний номер дискретного каналу за замовченням
+      T_STEP1 : UDInt;   // Плинний час кроку в мс
+      T_PREV : UDInt;   // час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "AOVAR_HMI"
+VERSION : 0.1
+   STRUCT
+      STA : Int;   // біти стану
+      VALPROC : Int;   // значення у % від шкали вимірювання (0-10000)
+      VAL : Real;   // масштабоване значення
+   END_STRUCT;
+
+END_TYPE
+

@@ -26,3 +26,10 @@
 [Основна сторінка](https://pupenasan.github.io/PACFramework/)
 
 [GitHub](https://github.com/pupenasan/PACFramework)
+
+
+
+## Вебінари
+
+- [Введение в PACFramework](https://www.tda.in.ua/pacframework)
+

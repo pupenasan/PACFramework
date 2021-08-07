@@ -1,0 +1,71 @@
+﻿TYPE "DOVAR_PRM"
+VERSION : 0.1
+   STRUCT
+      PRMb0 : Bool;
+      PRMb1 : Bool;
+      PRM_INVERSE : Bool;   // =1 – інвертувати сире значення
+      PRMb3 : Bool;
+      PRMb4 : Bool;
+      PRMb5 : Bool;
+      PRM_QALENBL : Bool;   // =1 – задіяти тривогу недостовірності каналу
+      PRM_DSBL : Bool;   // =1 – змінна не задіяна
+      PRMb8 : Bool;
+      PRMb9 : Bool;
+      PRMb10 : Bool;
+      PRMb11 : Bool;
+      PRMb12 : Bool;
+      PRMb13 : Bool;
+      PRMb14 : Bool;
+      PRMb15 : Bool;
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "DOVAR_STA"
+VERSION : 0.1
+   STRUCT
+      VRAW : Bool;   // =1 – значення дискретного сигналу з DOCH
+      VAL : Bool;   // =1 – значення дискретної вихідної змінної після всіх перетворень, в режимі FRC=1 може змінюватися із-зовні
+      BAD : Bool;   // =1 – дані недостовірні
+      STAb3 : Bool;   // =1 – тривога тимчасово виведена з експлуатації
+      DLNK : Bool;   // =1 – якщо прив’язаний до каналу
+      ENBL : Bool;   // =1 – змінна задіяна = (NOT PRM.7 AND DLNK)
+      STAb6 : Bool;   // =1 – активна технологічна тривога
+      VALPRV : Bool;   // значення на попередньому циклі
+      STAb8 : Bool;   // резерв
+      MVAL : Bool;   // =1 – ручне (форсоване) значення
+      STAb10 : Bool;   // дублює аналогічний з PRM (для зручності анімації)
+      STAb11 : Bool;   // =1 – активне технологічне попередження
+      INBUF : Bool;   // =1 – змінна в буфері
+      FRC : Bool;   // =1 – змінна в режимі форсування
+      SML : Bool;   // =1 – змінна в режимі симуляції
+      CMDLOAD : Bool;   // =1 – команда завантаження в буфер
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "DOVAR_CFG"
+VERSION : 0.1
+   STRUCT
+      ID : UInt;   // Унікальний ідентифікатор
+      CLSID : UInt;   // 16#1010
+      STA : "DOVAR_STA";   // статус (див STC)
+      VALI : Int;   // для відображення значення при не форсуванні, використовується для введення значення з буфера при форсуванні
+      PRM : "DOVAR_PRM";   // параметри
+      CHID : UInt;   // Логічний номер дискретного каналу
+      CHIDDF : UInt;   // Логічний номер дискретного каналу за замовченням
+      STEP1 : UInt;   // номер кроку
+      T_STEP1 : UDInt;   // Плинний час кроку в мс
+      T_PREV : UDInt;   // час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS
+   END_STRUCT;
+
+END_TYPE
+
+TYPE "DOVAR_HMI"
+VERSION : 0.1
+   STRUCT
+      STA : Int;
+   END_STRUCT;
+
+END_TYPE
+

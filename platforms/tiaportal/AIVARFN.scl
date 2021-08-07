@@ -1,0 +1,636 @@
+﻿FUNCTION "AIVARFN" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_IN_OUT 
+      CHCFG : "CH_CFG";
+      AIVARCFG : "AIVAR_CFG";
+      AIVARHMI : "AIVAR_HMI";
+   END_VAR
+
+   VAR_TEMP 
+      VRAW : Int;
+      STA : "AIVAR_STA";
+      PRM : "AIVAR_PRM";
+      BRK : Bool;
+      OVRLD : Bool;
+      BAD : Bool;
+      ALDIS : Bool;
+      DLNK : Bool;
+      ENBL : Bool;
+      ALM : Bool;
+      LOLO : Bool;
+      LO : Bool;
+      HI : Bool;
+      HIHI : Bool;
+      WRN : Bool;
+      INBUF : Bool;
+      FRC : Bool;
+      SML : Bool;
+      CMDLOAD : Bool;
+      PRM_LOENBL : Bool;
+      PRM_HIENBL : Bool;
+      PRM_LOLOENBL : Bool;
+      PRM_HIHIENBL : Bool;
+      PRM_BRKENBL : Bool;
+      PRM_OVRLENBL : Bool;
+      PRM_QALENBL : Bool;
+      PRM_DSBL : Bool;
+      PRM_PWLENBL : Bool;
+      PRM_TOTALON : Bool;
+      CMD : UInt;
+      VARENBL : Bool;
+      T_STEPMS : UDInt;
+      "dT" : UDInt;
+      VAL : Real;
+      LORAW : Int;
+      HIRAW : Int;
+      LOENG : Real;
+      HIENG : Real;
+      TFLT : UInt;
+      LOSP : Real;
+      HISP : Real;
+      LOLOSP : Real;
+      HIHISP : Real;
+      THSP : Real;
+      TLSP : Real;
+      HYST : Real;
+      TDEALL : UInt;
+      TDEAL : UInt;
+      TDEAH : UInt;
+      TDEAHH : UInt;
+      tmpDWORD : DWord;
+      VAL1PROC : Real;
+      VALNOFLT : Real;
+      SaveVal : Real;
+      tmpOVRLD : Bool;
+      tmpBRK : Bool;
+      tmpHI : Bool;
+      tmpHIHI : Bool;
+      tmpLO : Bool;
+      tmpLOLO : Bool;
+      TDEAQALSP : Int;
+      STAINT : Int;
+      VALPROC : Real;
+      VALPRV : Real;
+   END_VAR
+
+
+BEGIN
+	IF "SYS".PLCCFG.STA.SCN1 THEN
+	    #AIVARCFG.CLSID := 16#1030;
+	    #AIVARCFG.PRM.PRM_DSBL := FALSE;
+	    #AIVARCFG.PRM.PRM_QALENBL := true;
+	    #AIVARCFG.PRM.PRM_BRKENBL := TRUE;
+	    #AIVARCFG.PRM.PRM_OVRLENBL := TRUE;
+	    #AIVARCFG.T_PREV := "SYS".PLCCFG.TQMS;
+	    IF #AIVARCFG.CHID = 0 THEN
+	        #AIVARCFG.CHID := #AIVARCFG.CHIDDF;
+	    END_IF;
+	    IF #CHCFG.ID > 0 THEN
+	        #VRAW := #CHCFG.VAL;
+	    ELSE
+	        #VRAW := 0;
+	    END_IF;
+	    #AIVARCFG.VAL := #AIVARCFG.VRAW := #AIVARCFG.VALPRV := #VRAW;
+	    #AIVARCFG.T_STEP1 := 0;
+	    #AIVARCFG.STEP1 := 400;
+	    RETURN;
+	END_IF;
+	
+	#STA := #AIVARCFG.STA;
+	#PRM := #AIVARCFG.PRM;
+	
+	#BRK:= #STA.BRK;
+	#OVRLD:= #STA.OVRLD;
+	#BAD:= #STA.BAD;
+	#ALDIS:= #STA.ALDIS;
+	#DLNK:=#STA.DLNK;
+	#ENBL:= #STA.ENBL;
+	#ALM:= #STA.ALM;
+	#LOLO:=#STA.LOLO;
+	#LO:= #STA.LO;
+	#HI:= #STA.HI;
+	#HIHI:= #STA.HIHI;
+	#WRN:= #STA.WRN;
+	#INBUF:= #STA.INBUF;
+	#FRC:= #STA.FRC;
+	#SML:= #STA.SML;
+	#CMDLOAD:= #STA.CMDLOAD;
+	
+	#PRM_LOENBL:=#PRM.PRM_LOENBL;
+	#PRM_HIENBL:=#PRM.PRM_HIENBL;
+	#PRM_LOLOENBL:=#PRM.PRM_LOLOENBL;
+	#PRM_HIHIENBL:=#PRM.PRM_HIHIENBL;
+	#PRM_BRKENBL:=#PRM.PRM_BRKENBL;
+	#PRM_OVRLENBL:=#PRM.PRM_OVRLENBL;
+	#PRM_QALENBL:=#PRM.PRM_QALENBL;
+	#PRM_DSBL:=#PRM.PRM_DSBL;
+	#PRM_PWLENBL:=#PRM.PRM_PWLENBL;
+	#PRM_TOTALON:=#PRM.PRM_TOTALON;
+	
+	#LORAW := #AIVARCFG.LORAW;
+	#HIRAW := #AIVARCFG.HIRAW;
+	#LOENG := #AIVARCFG.LOENG;
+	#HIENG := #AIVARCFG.HIENG;
+	#TFLT := #AIVARCFG.TFLT;
+	#LOSP := #AIVARCFG.LOSP;
+	#HISP := #AIVARCFG.HISP;
+	#LOLOSP := #AIVARCFG.LOLOSP;
+	#HIHISP := #AIVARCFG.HIHISP;
+	#HYST := #AIVARCFG.HYST;
+	#TDEALL := #AIVARCFG.TDEALL;
+	#TDEAL := #AIVARCFG.TDEAL;
+	#TDEAH := #AIVARCFG.TDEAH;
+	#TDEAHH := #AIVARCFG.TDEAHH;
+	
+	#INBUF := (#AIVARCFG.ID = "BUF".VARBUF.ID) AND (#AIVARCFG.CLSID = "BUF".VARBUF.CLSID);
+	#CMDLOAD := #AIVARHMI.STA.%X15;
+	#CMD := 0;
+	#DLNK := (#CHCFG.ID > 0);
+	#VARENBL := NOT #PRM_DSBL AND #DLNK;
+	#VRAW := #CHCFG.VAL;
+	#T_STEPMS := #AIVARCFG.T_STEP1;
+	#VAL := #AIVARCFG.VAL;
+	#VALPRV := #AIVARCFG.VALPRV;
+	
+	//ping-pong
+	IF #DLNK THEN
+	    #CHCFG.STA.PNG := true;
+	    #CHCFG.VARID := #AIVARCFG.ID;
+	END_IF;
+	
+	(*гістерезис*)
+	#VAL1PROC := (#AIVARCFG.HIENG - #AIVARCFG.LOENG) / 100.0; (* 1 % EU*)
+	#HYST := #AIVARCFG.HYST * #VAL1PROC / 10;
+	
+	(*маштабування*)
+	#VALNOFLT := #AIVARCFG.LOENG + (#VRAW - #AIVARCFG.LORAW) * (#AIVARCFG.HIENG - #AIVARCFG.LOENG) / (#AIVARCFG.HIRAW - #AIVARCFG.LORAW);
+	
+	IF NOT #VARENBL THEN
+	    #AIVARCFG.VRAW := #VRAW;
+	    #AIVARCFG.VAL := #VALNOFLT;
+	    #AIVARCFG.T_STEP1 := 0;
+	    #AIVARCFG.STEP1 := 400;
+	    #BAD := false;
+	    #BRK := false;
+	    #LO := false;
+	    #LOLO := false;
+	    #HI := false;
+	    #HIHI := false;
+	    #OVRLD := false;
+	    #ENBL := false;
+	END_IF;
+	
+	#dT := "SYS".PLCCFG.TQMS - #AIVARCFG.T_PREV;
+	
+	(* широкомовне дефорсування*) 
+	IF "SYS".PLCCFG.CMD = 16#4302 THEN
+	    #FRC := false; (*дефорсувати об'єкт типу*)
+	END_IF;
+	
+	IF #CMDLOAD THEN
+	    #CMD := 16#0100;
+	ELSIF #INBUF AND "BUF".VARBUF.CMD <> 0 THEN
+	    #CMD := "BUF".VARBUF.CMD;
+	END_IF;
+	
+	CASE #CMD OF
+	    16#1: (*записати максимум діапазону*)
+	        IF #FRC AND #INBUF THEN
+	            #AIVARCFG.VALI := #AIVARCFG.HIENG;
+	            #VAL := #AIVARCFG.HIENG;
+	            #AIVARCFG.STEP1 := 400;
+	            #AIVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    16#2: (*записати мінімум діапазону*)
+	        IF #FRC AND #INBUF THEN
+	            #AIVARCFG.VALI := #AIVARCFG.LOENG;
+	            #VAL := #AIVARCFG.LOENG;
+	            #AIVARCFG.STEP1 := 400;
+	            #AIVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    16#3: (*записати середину діапазону*)
+	        IF #FRC AND #INBUF THEN
+	            #AIVARCFG.VALI := (#AIVARCFG.HIENG-#AIVARCFG.LOENG)/2;
+	            #VAL := (#AIVARCFG.HIENG-#AIVARCFG.LOENG)/2;
+	            #AIVARCFG.STEP1 := 400;
+	            #AIVARCFG.T_STEP1 := 0;
+	        END_IF;
+	    16#0100: (*прочитати конфігурацію*)
+	        "BUF".VARBUF.PRM.%X0 := #PRM_LOENBL;
+	        "BUF".VARBUF.PRM.%X1 := #PRM_HIENBL;
+	        "BUF".VARBUF.PRM.%X2 := #PRM_LOLOENBL;
+	        "BUF".VARBUF.PRM.%X3 := #PRM_HIHIENBL;
+	        "BUF".VARBUF.PRM.%X4 := #PRM_BRKENBL;
+	        "BUF".VARBUF.PRM.%X5 := #PRM_OVRLENBL;
+	        "BUF".VARBUF.PRM.%X6 := #PRM_QALENBL;
+	        "BUF".VARBUF.PRM.%X7 := #PRM_DSBL;
+	        "BUF".VARBUF.PRM.%X8 := #PRM_PWLENBL;
+	        "BUF".VARBUF.PRM.%X9 := #PRM_TOTALON;
+	        
+	        "BUF".VARBUF.ID := #AIVARCFG.ID;
+	        "BUF".VARBUF.CLSID := #AIVARCFG.CLSID;
+	        "BUF".VARBUF.CHID := #AIVARCFG.CHID;
+	        "BUF".VARBUF.VALR := #AIVARCFG.VALI;
+	        
+	        "BUF".VARBUF.LORAW := #LORAW;
+	        "BUF".VARBUF.HIRAW := #HIRAW;
+	        "BUF".VARBUF.LOENG := #LOENG;
+	        "BUF".VARBUF.HIENG := #HIENG;
+	        "BUF".VARBUF.HIHISP := #HIHISP;
+	        "BUF".VARBUF.HISP := #HISP;
+	        "BUF".VARBUF.LOSP := #LOSP;
+	        "BUF".VARBUF.LOLOSP := #LOLOSP;
+	        "BUF".VARBUF.T_FLTSP := #TFLT;
+	        "BUF".VARBUF.HYST := #HYST;
+	        "BUF".VARBUF.T_DEAHH := #TDEAHH;
+	        "BUF".VARBUF.T_DEAH := #TDEAH;
+	        "BUF".VARBUF.T_DEAL := #TDEAL;
+	        "BUF".VARBUF.T_DEALL := #TDEALL;
+	
+	
+	    16#0101: (*записати конфігурацію*)
+	        #PRM_LOENBL := "BUF".VARBUF.PRM.%X0;
+	        #PRM_HIENBL := "BUF".VARBUF.PRM.%X1;
+	        #PRM_LOLOENBL := "BUF".VARBUF.PRM.%X2;
+	        #PRM_HIHIENBL := "BUF".VARBUF.PRM.%X3;
+	        #PRM_BRKENBL := "BUF".VARBUF.PRM.%X4;
+	        #PRM_OVRLENBL := "BUF".VARBUF.PRM.%X5;
+	        #PRM_QALENBL := "BUF".VARBUF.PRM.%X6;
+	        #PRM_DSBL := "BUF".VARBUF.PRM.%X7;
+	        #PRM_PWLENBL := "BUF".VARBUF.PRM.%X8;
+	        #PRM_TOTALON := "BUF".VARBUF.PRM.%X9;
+	        
+	        #LORAW := "BUF".VARBUF.LORAW;
+	        #HIRAW := "BUF".VARBUF.HIRAW;
+	        #LOENG := "BUF".VARBUF.LOENG;
+	        #HIENG := "BUF".VARBUF.HIENG;
+	        #HIHISP := "BUF".VARBUF.HIHISP;
+	        #HISP := "BUF".VARBUF.HISP;
+	        #LOSP := "BUF".VARBUF.LOSP;
+	        #LOLOSP := "BUF".VARBUF.LOLOSP;
+	        #TFLT := "BUF".VARBUF.T_FLTSP;
+	        #HYST := "BUF".VARBUF.HYST;
+	        #TDEAHH := "BUF".VARBUF.T_DEAHH;
+	        #TDEAH := "BUF".VARBUF.T_DEAH;
+	        #TDEAL := "BUF".VARBUF.T_DEAL;
+	        #TDEALL := "BUF".VARBUF.T_DEALL;
+	
+	        //перевіряти незайнятість каналу треба в функції контролю буферу 
+	        IF "BUF".VARBUF.CHID <= "SYS".PLCCFG.AICNT THEN
+	            #AIVARCFG.CHID := "BUF".VARBUF.CHID;
+	        END_IF;
+	        IF #INBUF THEN
+	            "BUF".VARBUF.CHID := #AIVARCFG.CHID;
+	        END_IF;
+	        
+	    16#0102: (*записати значення за замовченням*)
+	        #AIVARCFG.CHID := #AIVARCFG.CHIDDF;
+	    16#0160: (*інвертувати LOENBL*)
+	        #PRM_LOENBL := NOT #PRM_LOENBL;
+	    16#0161: (*інвертувати HIENBL*)
+	        #PRM_HIENBL := NOT #PRM_HIENBL;
+	    16#0162: (*інвертувати LOLOENBL*)
+	        #PRM_LOLOENBL := NOT #PRM_LOLOENBL;
+	    16#0163: (*інвертувати HIHIENBL*)
+	        #PRM_HIHIENBL := NOT #PRM_HIHIENBL;
+	    16#0300: (*перемкнути форсування*)
+	        #FRC := NOT #FRC;
+	    16#301: (*форсувати один/усі об'єкти типу*)
+	        #FRC := true;
+	    16#302: (*дефорсувати один/усі об'єкти типу*)
+	        #FRC := false;
+	    16#311: (* імітувати*)
+	        #SML := true;
+	    16#312: (* зняти режим імітації*)
+	        #SML := false;
+	END_CASE;
+	
+	(*val*)
+	IF #AIVARCFG.TFLT <= 0 THEN
+	    #AIVARCFG.TFLT := 1;
+	END_IF;
+	
+	(*обнулення некоректних значень + infinity (INF)  - infinity (-INF)  SNAN QNAN *)
+	(*коли експонента (23-30 біти) = 255 *)
+	#tmpDWORD := SHR(IN := REAL_TO_DWORD(#AIVARCFG.VAL), N := 23) AND 16#FF;
+	IF #tmpDWORD = 16#ff THEN
+	    #AIVARCFG.VAL := 0.0;
+	END_IF;
+	
+	(*перевірка на коректність діапазонів*)
+	IF ABS(#HIRAW - #LORAW) < 1.0 THEN
+	    #LORAW := 0;
+	    #HIRAW := 27645;
+	END_IF;
+	IF ABS(#HIENG - #LOENG) < 0.00001 THEN
+	    #LOENG := 0.0;
+	    #HIENG := 100.0;
+	END_IF;
+	
+	(*гістерезис*)
+	#VAL1PROC := (#HIENG - #LOENG) / 100.0; (* 1 % EU*)
+	#HYST := #HYST * #VAL1PROC/10;
+	
+	(*маштабування*)
+	#VALNOFLT := #LOENG + (#VRAW - #LORAW) * (#HIENG - #LOENG) / (#HIRAW - #LORAW);
+	
+	
+	(*обробка значень*)
+	IF #FRC THEN
+	    IF #INBUF THEN
+	        #AIVARCFG.VAL := "BUF".VARBUF.VALR;
+	        #AIVARCFG.VALI := "BUF".VARBUF.VALR;
+	    END_IF;
+	    #VAL := #AIVARCFG.VAL;
+	ELSIF #SML THEN (* режим симуляції - значення змінюється ззовні *)
+	    #VAL := #AIVARCFG.VAL;
+	ELSE
+	    #SaveVal := #VALPRV;
+	    #VAL := (((#dT)) / (2.0 * #TFLT + (#dT))) * (#VALNOFLT - #SaveVal) + #SaveVal;
+	    #VALPRV := #VALNOFLT - (2.0 * #TFLT - (#dT)) / (2.0 * #TFLT + (#dT)) * (#VALNOFLT - #SaveVal);
+	    #AIVARCFG.VALI := #VAL;
+	END_IF;
+	
+	(*обробка тривог*)
+	#BRK := false;
+	#LO := false;
+	#LOLO := false;
+	#HI := false;
+	#HIHI := false;
+	#OVRLD := false;
+	#TDEAQALSP := 10;     // час затримки на виникнення тривог обривів і кз в 0.1 с
+	
+	(*не алармувати*)
+	IF #VARENBL THEN (*тільки при активності змінної обробляються тривоги*)
+	    (*перевірка на спрацювання*)
+	    #tmpOVRLD := (#VALNOFLT > (#AIVARCFG.HIENG + #VAL1PROC * 0.5) AND #CHCFG.VAL <> 32767) AND NOT #FRC;
+	    #tmpBRK := (#VALNOFLT < (#AIVARCFG.LOENG - #VAL1PROC * 0.5) OR #CHCFG.VAL = 32767) AND NOT #FRC;
+	    #tmpHI := (#VAL >= #AIVARCFG.HISP);
+	    #tmpHIHI := (#VAL >= #AIVARCFG.HIHISP);
+	    #tmpLO := (#VAL <= #AIVARCFG.LOSP);
+	    #tmpLOLO := (#VAL <= #AIVARCFG.LOLOSP);
+	    (*якщо активована перевірка якості то PRM_BRKENBL та PRM_OVRLENBL ставимо насильно*)
+	    IF NOT #PRM_QALENBL THEN
+	        #PRM_BRKENBL := false;
+	        #PRM_OVRLENBL := false;
+	    END_IF;
+	    
+	    CASE #AIVARCFG.STEP1 OF
+	        100:  (*BRK - обрив каналу*)
+	            #LO := #PRM_LOENBL;
+	            #LOLO := #PRM_LOLOENBL;
+	            IF NOT #tmpBRK OR NOT #PRM_BRKENBL THEN (*вихід із зони*)
+	                #AIVARCFG.STEP1 := 200;
+	                //#AIVARCFG.T_STEP1 := 0;
+	            ELSIF #T_STEPMS >= #TDEAQALSP * 10 THEN (*тривога*)
+	                #BRK := true;
+	            END_IF;
+	        200: (*LOLO*)
+	            #LO := #PRM_LOENBL;
+	            #LOLO := #PRM_LOLOENBL AND #T_STEPMS >= #AIVARCFG.TDEALL * 10;
+	            IF NOT #LOLO AND NOT #tmpLOLO
+	                OR NOT #PRM_LOLOENBL
+	                OR #AIVARCFG.VAL > (#AIVARCFG.LOLOSP + #HYST) THEN (*вихід із зони*)
+	                #AIVARCFG.STEP1 := 300;
+	                //#AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #LOLO AND #tmpBRK AND #PRM_BRKENBL THEN
+	                #AIVARCFG.STEP1 := 100;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	        300: (*LO*)
+	            #LO := #PRM_LOENBL AND #T_STEPMS >= #AIVARCFG.TDEAL * 10;
+	            IF (NOT #tmpLO AND NOT #LO OR NOT #PRM_LOENBL)   (*вихід із зони*)
+	                OR #AIVARCFG.VAL > (#AIVARCFG.LOSP + #HYST) THEN
+	                #AIVARCFG.STEP1 := 400;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #LO AND #tmpLOLO AND #PRM_LOLOENBL THEN
+	                #AIVARCFG.STEP1 := 200;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #LO AND #tmpBRK AND #PRM_BRKENBL THEN
+	                #AIVARCFG.STEP1 := 100;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	        400: (*norma*)
+	            IF #tmpHI AND #PRM_HIENBL THEN
+	                #AIVARCFG.STEP1 := 500;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #tmpLO AND #PRM_LOENBL THEN
+	                #AIVARCFG.STEP1 := 300;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #tmpHIHI AND #PRM_HIHIENBL THEN
+	                #AIVARCFG.STEP1 := 460;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #tmpLOLO AND #PRM_LOLOENBL THEN
+	                #AIVARCFG.STEP1 := 420;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #tmpBRK AND #PRM_BRKENBL THEN
+	                #AIVARCFG.STEP1 := 410;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #tmpOVRLD AND #PRM_OVRLENBL THEN
+	                #AIVARCFG.STEP1 := 470;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	        410: (*norma -> break*)
+	            IF NOT #tmpBRK OR NOT #PRM_BRKENBL THEN (*вихід із зони*)
+	                #AIVARCFG.STEP1 := 400;
+	                #AIVARCFG.T_STEP1 := 0;
+	            ELSIF #T_STEPMS >= #TDEAQALSP * 10 THEN (*тривога*)
+	                #AIVARCFG.STEP1 := 100;
+	            END_IF;
+	        420: (*norma -> LOLO*)
+	            IF NOT #tmpLOLO OR NOT #PRM_LOLOENBL THEN (*вихід із зони*)
+	                #AIVARCFG.STEP1 := 400;
+	                #AIVARCFG.T_STEP1 := 0;
+	            ELSIF #T_STEPMS >= #AIVARCFG.TDEALL * 10 THEN (*тривога*)
+	                #AIVARCFG.STEP1 := 200;
+	            END_IF;
+	        460: (*norma -> HIHI*)
+	            IF NOT #tmpHIHI OR NOT #PRM_HIHIENBL THEN (*вихід із зони*)
+	                #AIVARCFG.STEP1 := 400;
+	                #AIVARCFG.T_STEP1 := 0;
+	            ELSIF #T_STEPMS >= #AIVARCFG.TDEAHH * 10 THEN (*тривога*)
+	                #AIVARCFG.STEP1 := 600;
+	            END_IF;
+	        470: (*norma -> OVRLD*)
+	            IF NOT #tmpOVRLD OR NOT #PRM_OVRLENBL THEN (*вихід із зони*)
+	                #AIVARCFG.STEP1 := 400;
+	                #AIVARCFG.T_STEP1 := 0;
+	            ELSIF #T_STEPMS >= #TDEAQALSP * 10 THEN (*тривога*)
+	                #AIVARCFG.STEP1 := 700;
+	            END_IF;
+	        500: (*HI*)
+	            #HI := #PRM_HIENBL AND #T_STEPMS >= #AIVARCFG.TDEAH * 10;
+	            IF NOT #tmpHI AND NOT #HI
+	                OR NOT #PRM_HIENBL (*вихід із зони*)
+	                OR #AIVARCFG.VAL < (#AIVARCFG.HISP - #HYST) THEN
+	                #AIVARCFG.STEP1 := 400;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #HI AND #tmpHIHI AND #PRM_HIHIENBL THEN
+	                #AIVARCFG.STEP1 := 600;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #HI AND #tmpOVRLD AND #PRM_OVRLENBL THEN
+	                #AIVARCFG.STEP1 := 700;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	        600: (*HIHI*)
+	            #HI := #PRM_HIENBL;
+	            #HIHI := #PRM_HIHIENBL AND #T_STEPMS >= #AIVARCFG.TDEAHH * 10;
+	            IF NOT #tmpHIHI AND NOT #HIHI OR
+	                NOT #PRM_HIHIENBL OR
+	                #AIVARCFG.VAL < (#AIVARCFG.HIHISP - #HYST) THEN (*вихід із зони*)
+	                #AIVARCFG.STEP1 := 500;
+	                //#AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	            IF #HI AND #tmpOVRLD AND #PRM_OVRLENBL THEN
+	                #AIVARCFG.STEP1 := 700;
+	                #AIVARCFG.T_STEP1 := 0;
+	            END_IF;
+	        700: (*OVRLD - перегурзка/КЗ*)
+	            #HI := #PRM_HIENBL;
+	            #HIHI := #PRM_HIHIENBL;
+	            IF (NOT #tmpOVRLD OR NOT #PRM_OVRLENBL) THEN (*вихід із зони*)
+	                #AIVARCFG.STEP1 := 600;
+	                //#AIVARCFG.T_STEP1 := 0;
+	            ELSIF #T_STEPMS >= #TDEAQALSP * 10 THEN (*тривога*)
+	                #OVRLD := true;
+	            END_IF;
+	        ELSE
+	            #AIVARCFG.STEP1 := 400;
+	    END_CASE;
+	END_IF;
+	
+	#BAD := (#CHCFG.STA.BAD OR #BRK OR #OVRLD) AND #PRM_QALENBL AND #VARENBL AND NOT #SML AND NOT #FRC;
+	#ALM := (#LOLO OR #HIHI) AND NOT #BAD;
+	#WRN := (#LO OR #HI) AND NOT #ALM AND NOT #BAD;
+	IF #BAD THEN
+	    "SYS".PLCCFG.ALM1.BAD := true;
+	    "SYS".PLCCFG.CNTBAD := "SYS".PLCCFG.CNTBAD + 1;
+	    IF NOT #AIVARCFG.STA.BAD THEN
+	        "SYS".PLCCFG.ALM1.NWBAD := true;
+	    END_IF;
+	END_IF;
+	IF #ALM THEN
+	    "SYS".PLCCFG.ALM1.ALM := true;
+	    "SYS".PLCCFG.CNTALM := "SYS".PLCCFG.CNTALM + 1;
+	    IF NOT #AIVARCFG.STA.ALM THEN
+	        "SYS".PLCCFG.ALM1.NWALM := true;
+	    END_IF;
+	END_IF;
+	IF #WRN THEN
+	    "SYS".PLCCFG.ALM1.WRN := true;
+	    "SYS".PLCCFG.CNTWRN := "SYS".PLCCFG.CNTWRN + 1;
+	    IF NOT #AIVARCFG.STA.WRN THEN
+	        "SYS".PLCCFG.ALM1.NWWRN := true;
+	    END_IF;
+	END_IF;
+	IF #FRC THEN
+	    "SYS".PLCCFG.STA.FRC1 := true;
+	    "SYS".PLCCFG.CNTFRC := "SYS".PLCCFG.CNTFRC + 1;
+	END_IF;
+	IF #SML THEN
+	    "SYS".PLCCFG.STA.SML := true;
+	END_IF;
+	
+	#STAINT.%X0 := #STA.BRK:=#BRK;
+	#STAINT.%X1 := #STA.OVRLD:=#OVRLD;
+	#STAINT.%X2 := #STA.BAD:=#BAD;
+	#STAINT.%X3 := #STA.ALDIS:=#ALDIS;
+	#STAINT.%X4 := #STA.DLNK:=#DLNK;
+	#STAINT.%X5 := #STA.ENBL:=#ENBL:=#VARENBL;
+	#STAINT.%X6 := #STA.ALM:=#ALM;
+	#STAINT.%X7 := #STA.LOLO:=#LOLO;
+	#STAINT.%X8 := #STA.LO:=#LO;
+	#STAINT.%X9 := #STA.HI := #HI;
+	#STAINT.%X10 := #STA.HIHI:=#HIHI;
+	#STAINT.%X11 := #STA.WRN:=#WRN;
+	#STAINT.%X12 := #STA.INBUF:=#INBUF;
+	#STAINT.%X13 := #STA.FRC:=#FRC;
+	#STAINT.%X14 := #STA.SML := #SML;
+	#STAINT.%X15 := #STA.CMDLOAD:=FALSE;
+	
+	IF #VAL1PROC = 0 THEN
+	    #VAL1PROC := 1;
+	END_IF;
+	#VALPROC := (#VAL - #AIVARCFG.LOENG) / #VAL1PROC;
+	IF #VALPROC < 0.0 THEN
+	    #VALPROC := 0.0;
+	END_IF;
+	IF #VALPROC > 100.0 THEN
+	    #VALPROC := 100.0;
+	END_IF;
+	
+	#PRM.PRM_LOENBL :=#PRM_LOENBL;
+	#PRM.PRM_HIENBL :=#PRM_HIENBL;
+	#PRM.PRM_LOLOENBL :=#PRM_LOLOENBL;
+	#PRM.PRM_HIHIENBL :=#PRM_HIHIENBL;
+	#PRM.PRM_BRKENBL :=#PRM_BRKENBL;
+	#PRM.PRM_OVRLENBL :=#PRM_OVRLENBL;
+	#PRM.PRM_QALENBL :=#PRM_QALENBL;
+	#PRM.PRM_DSBL :=#PRM_DSBL;
+	#PRM.PRM_PWLENBL :=#PRM_PWLENBL;
+	#PRM.PRM_TOTALON :=#PRM_TOTALON;
+	
+	#AIVARCFG.PRM := #PRM;
+	#AIVARCFG.STA := #STA;
+	#AIVARHMI.STA := #STAINT;
+	#AIVARCFG.VAL := #VAL;
+	#AIVARHMI.VAL := #VAL;
+	#AIVARCFG.VRAW := #VRAW;
+	#AIVARCFG.VALPRV := #VALPRV;
+	#AIVARCFG.VALPROC := REAL_TO_INT(#VALPROC * 100);
+	#AIVARHMI.VALPROC := #AIVARCFG.VALPROC;
+	
+	#AIVARCFG.LORAW := #LORAW;
+	#AIVARCFG.HIRAW:= #HIRAW ;
+	#AIVARCFG.LOENG:= #LOENG ;
+	#AIVARCFG.HIENG:= #HIENG ;
+	#AIVARCFG.TFLT:= #TFLT ;
+	#AIVARCFG.LOSP:= #LOSP ;
+	#AIVARCFG.HISP:= #HISP ;
+	#AIVARCFG.LOLOSP:= #LOLOSP ;
+	#AIVARCFG.HIHISP:= #HIHISP ;
+	#AIVARCFG.HYST:= #HYST ;
+	#AIVARCFG.TDEALL:= #TDEALL ;
+	#AIVARCFG.TDEAL:= #TDEAL ;
+	#AIVARCFG.TDEAH:= #TDEAH ;
+	#AIVARCFG.TDEAHH:= #TDEAHH ;
+	
+	#AIVARCFG.T_PREV := "SYS".PLCCFG.TQMS;
+	
+	#AIVARCFG.T_STEP1 := #AIVARCFG.T_STEP1 + #dT;
+	IF #AIVARCFG.T_STEP1 > 16#7FFF_FFFF THEN
+	    #AIVARCFG.T_STEP1 := 16#7FFF_FFFF;
+	END_IF;
+	
+	IF #INBUF THEN
+	    "BUF".VARBUF.CMD := 0;
+	    "BUF".VARBUF.VALR := #AIVARCFG.VAL;
+	    "BUF".VARBUF.STA := #STAINT;
+	    "BUF".VARBUF.VRAWR := #VRAW;
+	    IF NOT #FRC THEN
+	        "BUF".VARBUF.VALR := #VAL;
+	    END_IF;
+	    "BUF".VARBUF.STEP1 := #AIVARCFG.STEP1;
+	    "BUF".VARBUF.T_STEP1 := #AIVARCFG.T_STEP1;
+	    "BUF".VARBUF.VALPROC := #AIVARCFG.VALPROC;
+	    "BUF".VARBUF.LOLOSP_PRC := REAL_TO_INT(#AIVARCFG.LOLOSP / #VAL1PROC * 100.0);
+	    "BUF".VARBUF.LOSP_PRC := REAL_TO_INT(#AIVARCFG.LOSP / #VAL1PROC * 100.0);
+	    "BUF".VARBUF.HISP_PRC := REAL_TO_INT(#AIVARCFG.HISP / #VAL1PROC * 100.0);
+	    "BUF".VARBUF.HIHISP_PRC := REAL_TO_INT(#AIVARCFG.HIHISP / #VAL1PROC * 100.0);
+	
+	END_IF;
+	
+	
+END_FUNCTION
+
