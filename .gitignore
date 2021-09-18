@@ -3,5 +3,6 @@
 *.ppt
 *.docx
 *.doc
+*.rar
 node_modules
 source/

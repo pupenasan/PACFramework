@@ -1,0 +1,420 @@
+﻿FUNCTION_BLOCK "smTankT"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      INIT : Bool;   // команда ініціалізації (задання початкових умов)
+      Fin : Real;   // вхідна витрата рідини, м3/с
+      Fout : Real;   // вихідна витрата рідини, м3/с
+      Fa : Real;   // витрата теплоагента, м3/с
+      Tin : Real;   // вхідна температура, град C
+      Tain : Real;   // температура теплоагента,  град С
+   END_VAR
+
+   VAR_OUTPUT 
+      L : Real;   // рівень рідини в ємності, м
+      V : Real;   // об'єм рідини в ємності, м3
+      T : Real;   // температура рідини в ємності, град С
+      Ta : Real;   // температура теплоагента в кожусі, град С
+   END_VAR
+
+   VAR 
+      K1 : Real;   // коефіцієнт 
+      K2 : Real;   // коефіцієнт 
+      Vold : Real;   // об'єм на попередньому кроці, м3
+      S : Real;   // ефективна поверхня теплообміну кожуха з ємністю, м2/с
+      d_t : Real := 0.1;   // періодичність виклику, с
+      Vmax : Real := 10.0;   // об'єм ємності, м3
+      Sv : Real := 1.0;   // поперечний переріз ємності, м2 
+      V0 : Real := 0.0;   // початк. обєм рідини  в ємності, м3
+      T0 : Real := 20.0;   // початк. темпеаратура рідини в ємності, м3
+      Ta0 : Real := 20.0;   // початк. температура теплоносія в кожусі, град С
+      Sa : Real := 10.0;   // повна поверхня теплообміну кожуха, м2
+      C : Real := 4.19;   // теплоємність рідини, кДж/(кг*К)
+      Ca : Real;   // теплоємність теплоносія, кДж/(кг*К)
+      k : Real := 2.0;   // коефіцієнт теплопередачі, кВт/(м2*градС)
+      ro : Real := 1000.0;   // густина рідини, кг*м3
+      roa : Real := 1000.0;   // густина теплоносія, кг*м3
+      Va : Real := 1.0;   // об'єм кожуха, м3
+      La : Real := 1.0;   // висота кожуха, м
+   END_VAR
+
+
+BEGIN
+	IF #INIT THEN
+	    #V := #V0; #T := #T0; #Ta := #Ta0;
+	END_IF;
+	(*-------розрахунок обєму*)
+	#Vold := #V;
+	#V := #V + #d_t * (#Fin - #Fout);
+	IF #V < 0.0 THEN #V := 0.0; END_IF;
+	IF #V > #Vmax THEN #V := #Vmax; END_IF;
+	#L := #V / #Sv;
+	(*--------розрахунок температур*)
+	IF #L > #La THEN
+	    #S := (#L / #La) * #Sa;
+	ELSE
+	    #S := #Sa;
+	END_IF;
+	#K1 := #k * #S / (#ro * #C);
+	#K2 := #k * #S / (#roa * #Ca);
+	IF #V > #Vmax / 1000.0 THEN (*обєм відмінний від нуля*)
+	    IF #V < #Vmax THEN (*ємність не повна*)
+	        #T := #T * (#Vold / #V) + (#d_t / #V) * (#Fin * #Tin + #K1 * (#Ta - #T) - #Fout * #T);
+	    ELSE (*ємність повна*)
+	        #T := #T + (#d_t / #Vmax) * #K1 * (#Ta - #T);
+	    END_IF;
+	    #Ta := #Ta + (#d_t / #Va) * (#Fa * (#Tain - #Ta) - #K2 * (#Ta - #T));
+	ELSE (*порожня ємінсть*)
+	    #T := #Tin;
+	    #Ta := #Ta + (#d_t / #Va) * (#Fa * (#Tain - #Ta));
+	END_IF;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK "smLevelCyl1"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      INIT : Bool;   // команда ініціалізації (задання початкових умов)
+      Fin : Real;   // вхідна витрата задається в м3/с або в л/с
+      Fout : Real;   // вихідна витрата задається в м3/с або в л/с
+   END_VAR
+
+   VAR_OUTPUT 
+      L : Real;   // рівень в метрах або в сантиметрах
+      LSH : Bool;   // сигналізатор верхнього рівня
+      LSL : Bool;   // сигналізатор нижнього рівня
+   END_VAR
+
+   VAR 
+      d_t : Real := 0.1;   // періодичність виклику в сек
+      V0 : Real;   // значення обєму при ініціалізації моделі
+      V : Real;   // об'єм рідини в ємності
+      Vmax : Real := 50.0;   // об'єм ємності 
+      S : Real := 20.0;   // задається в м2 при витратах м3/с або см2 при витратах л/с
+   END_VAR
+
+
+BEGIN
+	IF #INIT THEN
+	    #V := #V0; (*мінімальний обєм*)
+	ELSE
+	    #V := #V + #d_t * (#Fin - #Fout); (* приріст об'єму *)
+	    IF #V < 0.0 THEN #V := 0.0; END_IF; (* обмеження по мінімуму *)
+	    IF #V > #Vmax THEN #V := #Vmax; END_IF; (* обмеження по максимуму*)
+	    #L := #V / #S; 
+	    #LSH := (#V / #Vmax) > 0.999; (* сигналізатор верхнього рівня*)
+	    #LSL := (#V / #Vmax) > 0.001; (* сигналізатор нижнього рівня*)
+	END_IF;
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK "smValve"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      INIT : Bool;   // ініціалізація
+      cmdOPN : Bool;   // команда відкривати/більше
+      cmdCLS : Bool;   // команда закривати/менше
+      cmdPOS : Int;   // задане значення позиціонеру 0-10000
+   END_VAR
+
+   VAR_OUTPUT 
+      stOPN : Bool;   // клапан відкритий
+      stCLS : Bool;   // клапан закритий
+      stPOS : Int;   // положення штока/заслінки 0-10000
+      Kf : Real;   // коефіцієнт витрати від 0 до 1
+   END_VAR
+
+   VAR 
+      POS : Real;   // положення штока/заслінки 0-100%
+      d_t : Real := 0.1;   // періодичність виклику
+      t_valve : Real := 10.0;   // час повного відкриття клапану/заслінки (с)
+      APOS : Bool;   // TRUE - клапан з позиціонером, управління аналогове
+      v_type : Int;   // хар-ка, 0- лінійна, 1-швидкого відкриття, 2-рівнопроцентна
+   END_VAR
+
+   VAR_TEMP 
+      cmdPOSr : Real;
+      dposr : Real;
+   END_VAR
+
+
+BEGIN
+	IF #INIT THEN #POS := 0; END_IF;
+	#cmdPOSr := INT_TO_REAL(#cmdPOS) * 0.01;
+	#dposr := #d_t * 100.0 / #t_valve;
+	IF #APOS THEN //аналогове керування
+	    IF #cmdPOSr > #POS + 0.5 THEN
+	        #POS := #POS + #dposr;
+	    ELSIF #cmdPOSr < #POS - 0.5 THEN
+	        #POS := #POS - #dposr;
+	    END_IF;
+	ELSE    
+	    IF #cmdOPN THEN
+	        #POS := #POS + #dposr;
+	    ELSIF #cmdCLS THEN
+	        #POS := #POS - #dposr;
+	    END_IF;
+	END_IF;
+	IF #POS > 100.0 THEN
+	    #POS := 100.0;
+	ELSIF #POS<0.0 THEN
+	    #POS := 0.0;
+	END_IF;
+	#stOPN := #POS > 99.999;
+	#stCLS := #POS < 0.001;
+	#stPOS := REAL_TO_INT(#POS * 100.0);
+	CASE #v_type OF
+	    0:
+	        #Kf := #POS * 0.01;
+	    1:
+	        #Kf := SQRT(#POS * 0.01);
+	    ELSE:
+	        #Kf := #POS * 0.01;
+	END_CASE;
+	        
+	
+	
+	    
+END_FUNCTION_BLOCK
+
+FUNCTION_BLOCK "smObject1"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_INPUT 
+      INIT : Bool;   // ініціалізація
+      cmdOPN_Vnabor_T1 : Bool;   // команда відкрити кл набору Т1
+      cmdOPN_Vsliv_T1 : Bool;   // команда відкрити кл зливу Т1
+      cmdOPN_Vnabor_T2 : Bool;   // команда відкрити кл набору Т2
+      cmdOPN_Vsliv_T2 : Bool;   // команда відкрити кл зливу Т2
+      cmdOPN_Vnabor_D1 : Bool;   // команда відкрити кл набору дозатору D1
+      cmdOPN_Vnabor_D2 : Bool;   // команда відкрити кл набору дозатору D2
+      cmdOPN_Vsliv_D1 : Bool;   // команда відкрити кл зливу дозатору D1
+      cmdOPN_Vsliv_D2 : Bool;   // команда відкрити кл зливу дозатору D2
+      cmdPOS_Vnagrev_T1 : Int;   // команда ступінь відкриття РО подачі теплоагента в Т1 
+      cmdPOS_Vnagrev_T2 : Int;   // команда ступінь відкриття РО подачі теплоагента в Т2
+      cndSEL_Vdoz_T1_T2 : Bool;   // TRUE команда перемкнути РО подачі дози на Т2, FALSE на T1
+      cmdON_MixerT1 : Bool;   // ВКЛ мішалку
+      cmdON_MixerT2 : Bool;   // ВКЛ мішалку
+   END_VAR
+
+   VAR_OUTPUT 
+      stOPN_Vnabor_T1 : Bool;   // клапан набору Т1 відкритий 
+      stOPN_Vnabor_T2 : Bool;   // клапан набору Т2 відкритий
+      stOPN_Vsliv_T1 : Bool;   // клапан зливу Т1 відкритий
+      stOPN_Vsliv_T2 : Bool;   // клапан зливу Т2 відкритий
+      stCLS_Vnabor_T1 : Bool;   // клапан набору Т1 закритий
+      stCLS_Vnabor_T2 : Bool;   // клапан набору Т2 закритий
+      stCLS_Vsliv_T1 : Bool;   // клапан зливу Т1 закритий
+      stCLS_Vsliv_T2 : Bool;   // клапан зливу Т2 закритий
+      stCLS_Vnabor_D1 : Bool;   // клапан набору дозатору D1 закритий
+      stCLS_Vnabor_D2 : Bool;   // клапан  набору дозатору D2 закритий
+      stCLS_Vsliv_D1 : Bool;   // клапан зливу дозатору D1 закритий
+      stCLS_Vsliv_D2 : Bool;   // клапан зливу дозатору D2 закритий
+      stLSH_D1 : Bool;   // сигналізатор верхнього рівня дозатору D1
+      stLSL_D1 : Bool;   // сигналізатор нижнього рівня дозатору D1
+      stLSH_D2 : Bool;   // сигналізатор верхнього рівня дозатору D2
+      stLSL_D2 : Bool;   // сигналізатор нижнього рівня дозатору D2
+      stLE_T1 : Int;   // датчик рівня танка Т1
+      stLE_T2 : Int;   // датчик рівня Т2
+      stTE_T1 : Int;   // датчик температури Т1
+      stTE_T2 : Int;   // датчик температури Т2
+      stOPN_Vdoz_T1 : Bool;   // клапан дозування переключений на Т1
+      stOPN_Vdoz_T2 : Bool;   // клапан дозування переключений на Т2
+      stON_MixerT1 : Bool;   // мішалка включена
+      stON_MixerT2 : Bool;   // мішалка відключена
+   END_VAR
+
+   VAR 
+      smTank2 { S7_SetPoint := 'False'} : "smTankT";
+      smD1 : "smLevelCyl1";
+      smVnaborT2 : "smValve";
+      smVslivT2 : "smValve";
+      smVnaborD1 : "smValve";
+      smVslivD1 : "smValve";
+      smTank1 : "smTankT";
+      smVNaborT1 : "smValve";
+      smVSlivT1 : "smValve";
+      smVnagrevT1 : "smValve";
+      smVnagrevT2 : "smValve";
+      smD2 : "smLevelCyl1";
+      smVslivD2 : "smValve";
+      smVnaborD2 : "smValve";
+      smVdoz_T1_T2 : "smValve";
+      Ta { S7_SetPoint := 'True'} : Real;   // періодичність виклику, с
+      L_D1 : Real;
+      L_D2 : Real;
+      d_t : Real := 0.1;
+      meaprev : Bool;
+   END_VAR
+
+
+BEGIN
+	IF "Clock_10Hz" AND NOT #meaprev OR #INIT THEN
+	    #smTank1.d_t := #d_t;
+	    #smVNaborT1.d_t := #d_t;
+	    #smVSlivT1.d_t := #d_t;
+	    #smVnagrevT1.d_t := #d_t;
+	    #smTank2.d_t := #d_t;
+	    #smVnaborT2.d_t := #d_t;
+	    #smVslivT2.d_t := #d_t;
+	    #smVnagrevT2.d_t := #d_t;
+	    #smD1.d_t := #d_t;
+	    #smVnaborD1.d_t := #d_t;
+	    #smVslivD1.d_t := #d_t;
+	    #smD2.d_t := #d_t;
+	    #smVnaborD2.d_t := #d_t;
+	    #smVslivD2.d_t := #d_t;
+	    #smVdoz_T1_T2.d_t := #d_t;
+	    
+	    #smVNaborT1(INIT := #INIT,
+	                cmdOPN := #cmdOPN_Vnabor_T1,
+	                cmdCLS := NOT #cmdOPN_Vnabor_T1);
+	    #smVSlivT1(INIT := #INIT,
+	               cmdOPN := #cmdOPN_Vsliv_T1,
+	               cmdCLS := NOT #cmdOPN_Vsliv_T1);
+	    #smVnagrevT1(INIT := #INIT,
+	                 cmdPOS := #cmdPOS_Vnagrev_T1);
+	    #smTank1(INIT := #INIT,
+	             Fin := #smVNaborT1.Kf * 0.025,
+	             Fout := #smVSlivT1.Kf * 0.025,
+	             Fa := #smVnagrevT1.Kf * 0.035,
+	             Tin := 20.0,
+	             Tain := 90.0);
+	    
+	    #smVnaborT2(INIT := #INIT,
+	                cmdOPN := #cmdOPN_Vnabor_T2,
+	                cmdCLS := NOT #cmdOPN_Vnabor_T2);
+	    #smVslivT2(INIT := #INIT,
+	               cmdOPN := #cmdOPN_Vsliv_T2,
+	               cmdCLS := NOT #cmdOPN_Vsliv_T2);
+	    #smVnagrevT2(INIT := #INIT,
+	                 cmdPOS := #cmdPOS_Vnagrev_T2);
+	    #smTank2(INIT := #INIT,
+	             Fin := #smVnaborT2.Kf * 0.025,
+	             Fout := #smVslivT2.Kf * 0.025,
+	             Fa := #smVnagrevT2.Kf * 0.035,
+	             Tin := 20.0,
+	             Tain := 90.0);
+	    
+	    #smVNaborT1(INIT := #INIT,
+	                cmdOPN := #cmdOPN_Vnabor_D1,
+	                cmdCLS := NOT #cmdOPN_Vnabor_D1);
+	    #smVslivD1(INIT := #INIT,
+	               cmdOPN := #cmdOPN_Vsliv_D1,
+	               cmdCLS := NOT #cmdOPN_Vsliv_D1);
+	    #smD1(INIT := #INIT,
+	          Fin := #smVNaborT1.Kf * 1.0,
+	          Fout := #smVslivD1.Kf * 1.0,
+	          L => #L_D1);
+	    
+	    #smVnaborT2(INIT := #INIT,
+	                cmdOPN := #cmdOPN_Vnabor_D2,
+	                cmdCLS := NOT #cmdOPN_Vnabor_D2);
+	    #smVslivD2(INIT := #INIT,
+	               cmdOPN := #cmdOPN_Vsliv_D2,
+	               cmdCLS := NOT #cmdOPN_Vsliv_D2);
+	    #smD2(INIT := #INIT,
+	          Fin := #smVnaborT2.Kf * 1.0,
+	          Fout := #smVslivD2.Kf * 1.0,
+	          L => #L_D2);
+	    
+	    #smVdoz_T1_T2(INIT := #INIT,
+	                  cmdOPN := #cndSEL_Vdoz_T1_T2,
+	                  cmdCLS := NOT #cndSEL_Vdoz_T1_T2);
+	END_IF;
+	
+	#stOPN_Vnabor_T1 := #smVNaborT1.stOPN;
+	#stCLS_Vnabor_T1 := #smVNaborT1.stCLS;
+	#stOPN_Vnabor_T2 := #smVnaborT2.stOPN;
+	#stCLS_Vnabor_T2 := #smVnaborT2.stCLS;
+	#stOPN_Vsliv_T1 := #smVSlivT1.stOPN;
+	#stCLS_Vsliv_T1 := #smVSlivT1.stCLS;
+	#stOPN_Vsliv_T2 := #smVslivT2.stOPN;
+	#stCLS_Vsliv_T2 := #smVslivT2.stCLS;
+	#stLE_T1 := REAL_TO_INT(#smTank1.L * 10000.0);
+	#stTE_T1 := REAL_TO_INT(#smTank1.T * 100.0);
+	#stLE_T2 := REAL_TO_INT(#smTank2.L * 10000.0);
+	#stTE_T2 := REAL_TO_INT(#smTank2.T * 100.0);
+	#Ta := #smTank1.T;
+	#Ta := #smTank2.T;
+	#stON_MixerT1 := #cmdON_MixerT1;
+	#stON_MixerT2 := #cmdON_MixerT2;
+	#stLSH_D1 := #smD1.LSH;
+	#stLSL_D1 := #smD1.LSL;
+	#stLSH_D2 := #smD2.LSH;
+	#stLSL_D2 := #smD2.LSL;
+	#stOPN_Vdoz_T2 := #smVdoz_T1_T2.stOPN;
+	#stOPN_Vdoz_T1 := #smVdoz_T1_T2.stCLS;
+	
+	#meaprev := "Clock_10Hz";
+	
+END_FUNCTION_BLOCK
+
+DATA_BLOCK "smObject1_DB"
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+NON_RETAIN
+"smObject1"
+
+BEGIN
+
+END_DATA_BLOCK
+
+FUNCTION "SML" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_TEMP 
+      init : Bool;
+   END_VAR
+
+
+BEGIN
+	IF "FirstScan" THEN
+	    #init := true;
+	ELSE
+	    #init := FALSE;
+	END_IF;
+	"smObject1_DB"(INIT:=#init,
+	               cmdOPN_Vnabor_T1:= "Dq1",
+	               cmdOPN_Vsliv_T1:="Dq2",
+	               cmdOPN_Vnabor_T2:="Dq3",
+	               cmdOPN_Vsliv_T2:="Dq4",
+	               cmdOPN_Vnabor_D1:="Dq5",
+	               cmdOPN_Vnabor_D2:="Dq6",
+	               cmdOPN_Vsliv_D1:="Dq7",
+	               cmdOPN_Vsliv_D2:="Dq8",
+	               cmdPOS_Vnagrev_T1:="AO1",
+	               cmdPOS_Vnagrev_T2:="AO2",
+	               cndSEL_Vdoz_T1_T2:="Dq9",
+	               cmdON_MixerT1:="Dq10",
+	               cmdON_MixerT2:="Dq11",
+	               stOPN_Vnabor_T1=>"Di1",
+	               stOPN_Vnabor_T2=>"Di2",
+	               stOPN_Vsliv_T1=>"Di3",
+	               stOPN_Vsliv_T2=>"Di4",
+	               stCLS_Vnabor_T1=>"Di5",
+	               stCLS_Vnabor_T2=>"Di6",
+	               stCLS_Vsliv_T1=>"Di7",
+	               stCLS_Vsliv_T2=>"Di8",
+	               stCLS_Vnabor_D1=>"Di9",
+	               stCLS_Vnabor_D2=>"Di10",
+	               stCLS_Vsliv_D1=>"Di11",
+	               stCLS_Vsliv_D2=>"Di12",
+	               stLSH_D1=>"Di13",
+	               stLSL_D1=>"Di14",
+	               stLSH_D2=>"Di15",
+	               stLSL_D2=>"Di16",
+	               stLE_T1=>"AI1",
+	               stLE_T2=>"AI2",
+	               stTE_T1=>"AI3",
+	               stTE_T2=>"AI4",
+	               stOPN_Vdoz_T1=>"Di17",
+	               stOPN_Vdoz_T2=>"Di18",
+	               stON_MixerT1=>"Di19",
+	               stON_MixerT2=>"Di20");
+	
+	#init := false;
+	
+	
+END_FUNCTION
+
