@@ -45,6 +45,6 @@
 
 Є експортні варіанти проектів, реалізованих на різних платформах
 
-- [Unity PRO/Control Expert (XEF)](../../platforms/unitypro/sim_wthout_framework.xef)
+- [Unity PRO/Control Expert (XEF)](../../platforms/unitypro/sim_wthout_framework.xef) - відеопрезентація доступна [за посиланням](https://youtu.be/Z-4kppWeiFM)
 - [TIA Portal (SCL)]( ../../platforms/tiaportal/sim_wthout_framework.scl)
 
