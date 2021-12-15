@@ -18,6 +18,9 @@
   },
   "homepage": "https://github.com/pupenasan/PACFramework#readme",
   "dependencies": {
-    "csvtojson": "^2.0.10"
+    "csvtojson": "^2.0.10",
+    "node-gyp": "^8.4.1",
+    "xlsx": "^0.17.4",
+    "xml-js": "^1.6.11"
   }
 }

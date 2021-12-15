@@ -1,7 +1,2 @@
-console.log (to2sym(5));
-
-function to2sym (num){
-    let s = num.toString();
-    s = (s.length===1) ? '0'+ s: s;
-   return s 
-}
+const settingsRed =  require ('C:\\Users\\san\\.node-red\\settings.js'); 
+console.log (JSON.stringify (settingsRed));
