@@ -1,0 +1,1708 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FBExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-12-16:59:27" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<FBSource nameOfFBType="AIVARFN" version="0.05" dateTime="dt#2022-01-12-16:53:28">
+		<attribute name="TypeCodeCheckSumString" value="C059"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="EDAC"></attribute>
+		<inOutParameters>
+			<variables name="CHCFG" typeName="CH_CFG">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="AIVARCFG" typeName="AIVAR_CFG">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="AIVARHMI" typeName="AIVAR_HMI">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="VARBUF" typeName="VARBUF">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+			<variables name="CHAI" typeName="ARRAY[0..8] OF CH_CFG">
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
+		</inOutParameters>
+		<privateLocalVariables>
+			<variables name="VRAW" typeName="INT"></variables>
+			<variables name="STA" typeName="AIVAR_STA"></variables>
+			<variables name="BRK" typeName="BOOL"></variables>
+			<variables name="OVRLD" typeName="BOOL"></variables>
+			<variables name="BAD" typeName="BOOL"></variables>
+			<variables name="ALDIS" typeName="BOOL"></variables>
+			<variables name="DLNK" typeName="BOOL"></variables>
+			<variables name="ENBL" typeName="BOOL"></variables>
+			<variables name="ALM" typeName="BOOL"></variables>
+			<variables name="LOLO" typeName="BOOL"></variables>
+			<variables name="LO" typeName="BOOL"></variables>
+			<variables name="HI" typeName="BOOL"></variables>
+			<variables name="HIHI" typeName="BOOL"></variables>
+			<variables name="WRN" typeName="BOOL"></variables>
+			<variables name="INBUF" typeName="BOOL"></variables>
+			<variables name="FRC" typeName="BOOL"></variables>
+			<variables name="SML" typeName="BOOL"></variables>
+			<variables name="CMDLOAD" typeName="BOOL"></variables>
+			<variables name="CMD" typeName="UINT"></variables>
+			<variables name="VARENBL" typeName="BOOL"></variables>
+			<variables name="T_STEPMS" typeName="UDINT"></variables>
+			<variables name="dT1" typeName="UDINT"></variables>
+			<variables name="VAL" typeName="REAL"></variables>
+			<variables name="LORAW" typeName="INT"></variables>
+			<variables name="HIRAW" typeName="INT"></variables>
+			<variables name="LOENG" typeName="REAL"></variables>
+			<variables name="HIENG" typeName="REAL"></variables>
+			<variables name="LOSP" typeName="REAL"></variables>
+			<variables name="HISP" typeName="REAL"></variables>
+			<variables name="LOLOSP" typeName="REAL"></variables>
+			<variables name="HIHISP" typeName="REAL"></variables>
+			<variables name="T_FLT" typeName="UDINT"></variables>
+			<variables name="THSP" typeName="UDINT"></variables>
+			<variables name="TLSP" typeName="UDINT"></variables>
+			<variables name="T_DEALL" typeName="UDINT"></variables>
+			<variables name="T_DEAL" typeName="UDINT"></variables>
+			<variables name="T_DEAH" typeName="UDINT"></variables>
+			<variables name="T_DEAHH" typeName="UDINT"></variables>
+			<variables name="HYST" typeName="REAL"></variables>
+			<variables name="tmpDWORD" typeName="DWORD"></variables>
+			<variables name="VAL1PROC" typeName="REAL"></variables>
+			<variables name="VALNOFLT" typeName="REAL"></variables>
+			<variables name="SaveVal" typeName="REAL"></variables>
+			<variables name="tmpOVRLD" typeName="BOOL"></variables>
+			<variables name="tmpBRK" typeName="BOOL"></variables>
+			<variables name="tmpHI" typeName="BOOL"></variables>
+			<variables name="tmpHIHI" typeName="BOOL"></variables>
+			<variables name="tmpLO" typeName="BOOL"></variables>
+			<variables name="tmpLOLO" typeName="BOOL"></variables>
+			<variables name="tmpAFRZ" typeName="BOOL"></variables>
+			<variables name="tmpASPD" typeName="BOOL"></variables>
+			<variables name="tmpAOVRFL" typeName="BOOL"></variables>
+			<variables name="tmpAUNDRFL" typeName="BOOL"></variables>
+			<variables name="T_DEAQALSP" typeName="INT"></variables>
+			<variables name="STAINT" typeName="INT"></variables>
+			<variables name="VALPROC" typeName="REAL"></variables>
+			<variables name="VALPRV" typeName="REAL"></variables>
+			<variables name="tmpreal" typeName="REAL"></variables>
+			<variables name="tmpint" typeName="INT"></variables>
+			<variables name="tmpuint" typeName="INT"></variables>
+			<variables name="PRM_SCL" typeName="INT"></variables>
+			<variables name="STA_SCL" typeName="INT"></variables>
+			<variables name="SCALING" typeName="SCALING"></variables>
+			<variables name="A_FLTR" typeName="A_FLTR"></variables>
+			<variables name="INT_TO_SIGU" typeName="INT_TO_SIGU"></variables>
+		</privateLocalVariables>
+		<FBProgram name="AIVARFN">
+			<STSource>IF PLCCFG.STA.SCN1 THEN
+    IF AIVARCFG.CLSID = 0 THEN
+        AIVARCFG.CLSID := 16#1030;
+    END_IF;
+    AIVARCFG.PRM.PRM_DSBL := FALSE;
+    AIVARCFG.PRM.PRM_QALENBL := true;
+    AIVARCFG.PRM.PRM_BRKENBL := TRUE;
+    AIVARCFG.PRM.PRM_OVRLENBL := TRUE;
+    AIVARCFG.T_PREV := PLCCFG.TQMS;
+    IF AIVARCFG.CHID = 0 THEN
+        AIVARCFG.CHID := AIVARCFG.CHIDDF;
+    END_IF;
+    IF CHCFG.ID &gt; 0 THEN
+        VRAW := CHCFG.VAL;
+    ELSE
+        VRAW := 0;
+    END_IF;
+    AIVARCFG.VALPRV := INT_TO_REAL(VRAW);
+    AIVARCFG.VRAW := REAL_TO_INT(AIVARCFG.VALPRV);
+    AIVARCFG.VAL := INT_TO_REAL(AIVARCFG.VRAW) ;
+    AIVARCFG.T_STEP1 := 0;
+    AIVARCFG.STEP1 := 400;
+    RETURN;
+END_IF;
+
+
+    STA := AIVARCFG.STA;
+    BRK := STA.BRK;
+    OVRLD := STA.OVRLD;
+    BAD := STA.BAD;
+    ALDIS := STA.ALDIS;
+    ENBL := STA.ENBL;
+    ALM := STA.ALM;
+    LOLO := STA.LOLO;
+    LO := STA.LO;
+    HI := STA.HI;
+    HIHI := STA.HIHI;
+    WRN := STA.WRN;
+    FRC := STA.FRC;
+    SML := STA.SML;
+    INBUF := (AIVARCFG.ID = VARBUF.ID) AND (AIVARCFG.CLSID = VARBUF.CLSID);
+    CMDLOAD := AIVARHMI.STA.15;
+    DLNK := (CHCFG.ID &gt; 0);
+    VARENBL := NOT AIVARCFG.PRM.PRM_DSBL AND DLNK;
+
+    (*переводимо в реальні одиниці з урахуванням масштабування при необхідності*)
+    LORAW := AIVARCFG.LORAW;
+    HIRAW := AIVARCFG.HIRAW;
+    LOENG := AIVARCFG.LOENG;
+    HIENG := AIVARCFG.HIENG;
+    LOSP := AIVARCFG.LOSP;
+    HISP := AIVARCFG.HISP;
+    LOLOSP := AIVARCFG.LOLOSP;
+    HIHISP := AIVARCFG.HIHISP;
+    IF AIVARCFG.T_FLT &lt;= 0 THEN
+        AIVARCFG.T_FLT := 1;
+    END_IF;
+    T_FLT := UINT_TO_UDINT(AIVARCFG.T_FLT);
+    T_DEALL := UINT_TO_UDINT(AIVARCFG.T_DEALL*100);
+    T_DEAL := UINT_TO_UDINT(AIVARCFG.T_DEAL*100);
+    T_DEAH := UINT_TO_UDINT(AIVARCFG.T_DEAH*100);
+    T_DEAHH := UINT_TO_UDINT(AIVARCFG.T_DEAHH*100);
+
+(*ping-pong*)
+IF DLNK THEN
+    CHCFG.STA.PNG := true;
+    CHCFG.VARID := AIVARCFG.ID;
+END_IF;
+
+    dT1 := PLCCFG.TQMS - AIVARCFG.T_PREV;
+    CMD := 0;
+    VRAW := CHCFG.VAL;
+    T_STEPMS := AIVARCFG.T_STEP1;
+    VAL := AIVARCFG.VAL;
+    VALPRV := AIVARCFG.VALPRV;
+    IF VALPRV &lt;= AIVARCFG.LOENG THEN 
+        VALPRV:=AIVARCFG.LOENG;
+    ELSIF VALPRV&gt;AIVARCFG.HIENG THEN 
+        VALPRV:=AIVARCFG.HIENG; 
+    END_IF;
+    (*перевірка NaN*)
+    IF NOT (VALPRV&lt;AIVARCFG.LOENG OR VALPRV&gt;=AIVARCFG.LOENG) THEN 
+        VALPRV:=AIVARCFG.LOENG;
+    END_IF;
+    (*1% від шкали*)
+    VAL1PROC := (AIVARCFG.HIENG - AIVARCFG.LOENG) / 100.0; (* 1 % EU*)
+    IF VAL1PROC = 0.0 THEN
+        VAL1PROC := 1.0;
+    END_IF;
+    (*гістерезис в залежності від параметра вказівки гістерезису*)
+    IF AIVARCFG.PRM.PRM_PARAISPROC THEN (*%*)
+        HYST := AIVARCFG.HYST * VAL1PROC;
+    ELSE (*real units*)
+        HYST := AIVARCFG.HYST;
+    END_IF;
+    (*перевірка на коректність діапазонів*)
+    IF ABS(AIVARCFG.HIRAW - AIVARCFG.LORAW) &lt; 1 THEN
+        AIVARCFG.LORAW := 0;
+        AIVARCFG.HIRAW := 10000;
+    END_IF;
+    IF ABS(AIVARCFG.HIENG - AIVARCFG.LOENG) &lt; 0.00001 THEN
+        AIVARCFG.LOENG := 0.0;
+        AIVARCFG.HIENG := 100.0;
+    END_IF;
+
+    (*обнулення некоректних значень + infinity (INF)  - infinity (-INF)  SNAN QNAN *)
+    (*коли експонента (23-30 біти) = 255 *)
+    tmpDWORD := SHR(IN := REAL_TO_DWORD(AIVARCFG.VAL), N := 23) AND 16#00FF;
+    IF tmpDWORD = 16#00ff THEN
+        AIVARCFG.VAL := 0.0;
+    END_IF;
+    (*масштабування*)
+    PRM_SCL:=0;STA_SCL:=0;
+    PRM_SCL.0 := AIVARCFG.PRM.PRM_SQRT;(*квадратнокоренева залежність, X0  *)
+    PRM_SCL.1 := true; (*обмежувати вихідну величину, X1*)
+    SCALING (IN := INT_TO_REAL(VRAW),
+         in_min := INT_TO_REAL(LORAW),
+         in_max := INT_TO_REAL(HIRAW),
+         out_min := LOENG,
+         out_max := HIENG,
+         STA := STA_SCL,
+         PRM := PRM_SCL,
+         SCALING =&gt; VALNOFLT);
+    (* якщо відсічка нуля активна(більше нуля) і значення менше то значення нуль, інакше маштабуєм значення*)
+    IF AIVARCFG.ZERO_CUT_VAL &gt; 0.0 AND (LOENG + INT_TO_REAL(VRAW - LORAW) * (HIENG - LOENG) / INT_TO_REAL(HIRAW - LORAW)) &lt;= AIVARCFG.ZERO_CUT_VAL THEN
+        VALNOFLT := 0.0;
+    END_IF;
+
+    (*фільтрація*)
+    A_FLTR (IN := VALNOFLT,
+        dT1 := dT1,
+        T_FLT := T_FLT,
+        PRM := tmpuint,
+        STA := tmpuint,
+        VALPRV := VALPRV,
+        A_FLTR =&gt; VAL);
+ 
+     (* широкомовне дефорсування*) 
+    IF PLCCFG.CMD = 16#4302 THEN
+        FRC := false; (*дефорсувати об'єкт типу*)
+    END_IF;
+
+    IF CMDLOAD THEN
+        CMD := 16#0100;
+    ELSIF INBUF AND VARBUF.CMD &lt;&gt; 0 THEN
+        CMD := VARBUF.CMD;
+    END_IF;
+
+    CASE CMD OF
+        16#0001: (*записати максимум діапазону*)
+            IF FRC AND INBUF THEN
+                AIVARCFG.VALFRC := AIVARCFG.HIENG;
+                VAL := AIVARCFG.HIENG;
+                AIVARCFG.STEP1 := 400;
+                AIVARCFG.T_STEP1 := 0;
+            END_IF;
+        16#0002: (*записати мінімум діапазону*)
+            IF FRC AND INBUF THEN
+                AIVARCFG.VALFRC := AIVARCFG.LOENG;
+                VAL := AIVARCFG.LOENG;
+                AIVARCFG.STEP1 := 400;
+                AIVARCFG.T_STEP1 := 0;
+            END_IF;
+        16#0003: (*записати середину діапазону*)
+            IF FRC AND INBUF THEN
+                AIVARCFG.VALFRC := (AIVARCFG.HIENG - AIVARCFG.LOENG) / 2.0;
+                VAL := (AIVARCFG.HIENG - AIVARCFG.LOENG) / 2.0;
+                AIVARCFG.STEP1 := 400;
+                AIVARCFG.T_STEP1 := 0;
+            END_IF;
+        16#0100: (*прочитати конфігурацію 256*)
+            VARBUF.MSG := 201; 
+            VARBUF.PRM.0 := AIVARCFG.PRM.PRM_LOENBL;
+            VARBUF.PRM.1 := AIVARCFG.PRM.PRM_HIENBL;
+            VARBUF.PRM.2 := AIVARCFG.PRM.PRM_LOLOENBL;
+            VARBUF.PRM.3 := AIVARCFG.PRM.PRM_HIHIENBL;
+            VARBUF.PRM.4 := AIVARCFG.PRM.PRM_BRKENBL;
+            VARBUF.PRM.5 := AIVARCFG.PRM.PRM_OVRLENBL;
+            VARBUF.PRM.6 := AIVARCFG.PRM.PRM_QALENBL;
+            VARBUF.PRM.7 := AIVARCFG.PRM.PRM_DSBL;
+            VARBUF.PRM.8 := AIVARCFG.PRM.PRM_PWLENBL;
+            VARBUF.PRM.9 := AIVARCFG.PRM.PRM_TOTALON;
+            VARBUF.PRM.10 := AIVARCFG.PRM.PRM_SQRT;
+            VARBUF.PRM.11 := AIVARCFG.PRM.PRM_PARAISPROC;
+            VARBUF.PRM.12 := AIVARCFG.PRM.PRM_AFRZENBL;        
+            VARBUF.PRM.13 := AIVARCFG.PRM.PRM_ASPDENBL;
+            VARBUF.PRM.14 := AIVARCFG.PRM.PRMb14;
+            VARBUF.PRM.15 := AIVARCFG.PRM.PRMb15;
+    
+            VARBUF.ID := AIVARCFG.ID;
+            VARBUF.CLSID := AIVARCFG.CLSID;
+            VARBUF.CHID := AIVARCFG.CHID;
+            VARBUF.VALR := AIVARCFG.VALFRC;
+            
+            VARBUF.LORAW := AIVARCFG.LORAW;
+            VARBUF.HIRAW := AIVARCFG.HIRAW;
+            VARBUF.LOENG := AIVARCFG.LOENG;
+            VARBUF.HIENG := AIVARCFG.HIENG;
+            VARBUF.HIHISP := AIVARCFG.HIHISP;
+            VARBUF.HISP := AIVARCFG.HISP;
+            VARBUF.LOSP := AIVARCFG.LOSP;
+            VARBUF.LOLOSP := AIVARCFG.LOLOSP;
+            VARBUF.T_FLTSP := AIVARCFG.T_FLT;
+            VARBUF.HYST := AIVARCFG.HYST;
+            VARBUF.T_DEAHH := AIVARCFG.T_DEAHH;
+            VARBUF.T_DEAH := AIVARCFG.T_DEAH;
+            VARBUF.T_DEAL := AIVARCFG.T_DEAL;
+            VARBUF.T_DEALL := AIVARCFG.T_DEALL;
+            
+            VARBUF.VALPRV_AFRZ :=AIVARCFG.VALPRV_AFRZ;
+            VARBUF.VALPRV_ASPD :=AIVARCFG.VALPRV_ASPD;
+            VARBUF.DEASP_AFRZ :=AIVARCFG.DEASP_AFRZ;
+            VARBUF.DOPSP_ASPD := AIVARCFG.DOPSP_ASPD;
+            VARBUF.ZERO_CUT_VAL := AIVARCFG.ZERO_CUT_VAL;
+            
+        16#0101: (*записати конфігурацію 257*)
+            (* MSG 200-Ok 400-Error
+            // 200 - Дані записані
+            // 201 - Дані прочитані 
+            // 403 - канал вже зайнятий 
+            // 404 - номер каналу не відповідає діапазону   *)
+    
+            AIVARCFG.PRM.PRM_LOENBL := VARBUF.PRM.0;
+            AIVARCFG.PRM.PRM_HIENBL := VARBUF.PRM.1;
+            AIVARCFG.PRM.PRM_LOLOENBL := VARBUF.PRM.2;
+            AIVARCFG.PRM.PRM_HIHIENBL := VARBUF.PRM.3;
+            AIVARCFG.PRM.PRM_BRKENBL := VARBUF.PRM.4;
+            AIVARCFG.PRM.PRM_OVRLENBL := VARBUF.PRM.5;
+            AIVARCFG.PRM.PRM_QALENBL := VARBUF.PRM.6;
+            AIVARCFG.PRM.PRM_DSBL := VARBUF.PRM.7;
+            AIVARCFG.PRM.PRM_PWLENBL := VARBUF.PRM.8;
+            AIVARCFG.PRM.PRM_TOTALON := VARBUF.PRM.9;
+            AIVARCFG.PRM.PRM_SQRT := VARBUF.PRM.10;
+            AIVARCFG.PRM.PRM_PARAISPROC := VARBUF.PRM.11;
+            AIVARCFG.PRM.PRM_AFRZENBL := VARBUF.PRM.12;
+            AIVARCFG.PRM.PRM_ASPDENBL := VARBUF.PRM.13;
+            AIVARCFG.PRM.PRMb14 := VARBUF.PRM.14;
+            AIVARCFG.PRM.PRMb15 := VARBUF.PRM.15;
+    
+            AIVARCFG.LORAW := VARBUF.LORAW;
+            AIVARCFG.HIRAW := VARBUF.HIRAW;
+            AIVARCFG.LOENG := VARBUF.LOENG;
+            AIVARCFG.HIENG := VARBUF.HIENG;
+            AIVARCFG.HIHISP := VARBUF.HIHISP;
+            AIVARCFG.HISP := VARBUF.HISP;
+            AIVARCFG.LOSP := VARBUF.LOSP;
+            AIVARCFG.LOLOSP := VARBUF.LOLOSP;
+            AIVARCFG.T_FLT := VARBUF.T_FLTSP;
+            AIVARCFG.HYST := VARBUF.HYST;
+            AIVARCFG.T_DEAHH := VARBUF.T_DEAHH;
+            AIVARCFG.T_DEAH := VARBUF.T_DEAH;
+            AIVARCFG.T_DEAL := VARBUF.T_DEAL;
+            AIVARCFG.T_DEALL := VARBUF.T_DEALL;
+     
+            AIVARCFG.VALPRV_AFRZ := VARBUF.VALPRV_AFRZ ;
+            AIVARCFG.VALPRV_ASPD := VARBUF.VALPRV_ASPD ;
+            AIVARCFG.DEASP_AFRZ := VARBUF.DEASP_AFRZ ;
+            AIVARCFG.DOPSP_ASPD :=  VARBUF.DOPSP_ASPD ;
+            AIVARCFG.ZERO_CUT_VAL := VARBUF.ZERO_CUT_VAL  ;       
+            
+            (*зміна 27.10.2021 Пупена*)
+            VARBUF.MSG:=200; 
+            IF VARBUF.CHID&gt;=0 AND VARBUF.CHID &lt;= INT_TO_UINT(PLCCFG.AICNT) THEN
+                IF CHAI[VARBUF.CHID].VARID = 0 THEN 
+                    AIVARCFG.CHID := VARBUF.CHID;
+                ELSIF VARBUF.CHID &lt;&gt; AIVARCFG.CHID THEN 
+                    VARBUF.MSG := 403;(* канал вже зайнятий*)
+                END_IF;
+            ELSE 
+                VARBUF.MSG := 404; (*номер каналу не відповідає діапазону*)
+            END_IF;
+            IF INBUF THEN
+                VARBUF.CHID := AIVARCFG.CHID;
+            END_IF;
+            
+        16#0102: (*записати значення за замовченням*)
+            AIVARCFG.CHID := AIVARCFG.CHIDDF;
+        16#0160: (*інвертувати LOENBL*)
+            AIVARCFG.PRM.PRM_LOENBL := NOT AIVARCFG.PRM.PRM_LOENBL;
+        16#0161: (*інвертувати HIENBL*)
+            AIVARCFG.PRM.PRM_HIENBL := NOT AIVARCFG.PRM.PRM_HIENBL;
+        16#0162: (*інвертувати LOLOENBL*)
+            AIVARCFG.PRM.PRM_LOLOENBL := NOT AIVARCFG.PRM.PRM_LOLOENBL;
+        16#0163: (*інвертувати HIHIENBL*)
+            AIVARCFG.PRM.PRM_HIHIENBL := NOT AIVARCFG.PRM.PRM_HIHIENBL;
+        16#0300: (*перемкнути форсування*)
+            FRC := NOT FRC;
+        16#0301: (*форсувати один/усі об'єкти типу*)
+            FRC := true;
+        16#0302: (*дефорсувати один/усі об'єкти типу*)
+            FRC := false;
+        16#0311: (* імітувати*)
+            SML := true;
+        16#0312: (* зняти режим імітації*)
+            SML := false;
+    END_CASE;
+
+
+IF FRC THEN
+    IF INBUF THEN
+        AIVARCFG.VAL := VARBUF.VALR;
+        AIVARCFG.VALFRC := VARBUF.VALR;
+    END_IF;
+    VAL := AIVARCFG.VALFRC;(*змінив на VALI 5.11.21*)
+ELSIF SML THEN (* режим симуляції - значення змінюється ззовні *)
+    VAL := AIVARCFG.VAL;
+ELSE  
+    AIVARCFG.VALFRC := VAL; 
+END_IF;
+
+
+
+    (*обробка тривог*)
+    BRK := false;
+    LO := false;
+    LOLO := false;
+    HI := false;
+    HIHI := false;
+    OVRLD := false;
+    T_DEAQALSP := 10;     (* час затримки на виникнення тривог обривів і кз в 0.1 с*)
+    
+    (*варто VAL замість VARCFG.VAL примітка 29.08 *)
+    (*не алармувати*)
+    IF VARENBL THEN (*тільки при активності змінної обробляються тривоги*)
+        (*перевірка на спрацювання*)
+        tmpOVRLD := CHCFG.VAL&gt;=11000;(*виправлено Міркевич, пізніше обговорити(VALNOFLT &gt; (AIVARCFG.HIENG + VAL1PROC * 0.5) AND CHCFG.VAL &lt;&gt; 32767) AND NOT FRC;*)
+        tmpBRK := CHCFG.VAL&lt;=-1000;  (*виправлено Міркевич (VALNOFLT &lt; (AIVARCFG.LOENG - VAL1PROC * 0.5) OR CHCFG.VAL = 32767) AND NOT FRC;*)
+        tmpHI := (VAL &gt;= AIVARCFG.HISP);
+        tmpHIHI := (VAL &gt;= AIVARCFG.HIHISP);
+        tmpLO := (VAL &lt;= AIVARCFG.LOSP);
+        tmpLOLO := (VAL &lt;= AIVARCFG.LOLOSP);
+        (*якщо активована перевірка якості то PRM_BRKENBL та PRM_OVRLENBL ставимо насильно*)
+        IF NOT AIVARCFG.PRM.PRM_QALENBL THEN
+            AIVARCFG.PRM.PRM_BRKENBL := false;
+            AIVARCFG.PRM.PRM_OVRLENBL := false;
+        END_IF;
+        
+        CASE AIVARCFG.STEP1 OF
+            100:  (*BRK - обрив каналу*)
+                LO := AIVARCFG.PRM.PRM_LOENBL;
+                LOLO := AIVARCFG.PRM.PRM_LOLOENBL;
+                IF NOT tmpBRK OR NOT AIVARCFG.PRM.PRM_BRKENBL THEN (*вихід із зони*)
+                    AIVARCFG.STEP1 := 200;
+                    (*AIVARCFG.T_STEP1 := 0;*)
+                ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP) THEN (*тривога*)
+                    BRK := true;
+                END_IF;
+            200: (*LOLO*)
+                LO := AIVARCFG.PRM.PRM_LOENBL;
+                LOLO := AIVARCFG.PRM.PRM_LOLOENBL AND T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEALL);
+                IF NOT LOLO AND NOT tmpLOLO
+                    OR NOT AIVARCFG.PRM.PRM_LOLOENBL
+                    OR AIVARCFG.VAL &gt; (AIVARCFG.LOLOSP + HYST) THEN (*вихід із зони*)
+                    AIVARCFG.STEP1 := 300;
+                    (*AIVARCFG.T_STEP1 := 0;*)
+                END_IF;
+                IF LOLO AND tmpBRK AND AIVARCFG.PRM.PRM_BRKENBL THEN
+                    AIVARCFG.STEP1 := 100;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+            300: (*LO*)
+                LO := AIVARCFG.PRM.PRM_LOENBL AND T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEAL);
+                IF (NOT tmpLO AND NOT LO OR NOT AIVARCFG.PRM.PRM_LOENBL)   (*вихід із зони*)
+                    OR AIVARCFG.VAL &gt; (AIVARCFG.LOSP + HYST) THEN
+                    AIVARCFG.STEP1 := 400;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+                IF LO AND tmpLOLO AND AIVARCFG.PRM.PRM_LOLOENBL THEN
+                    AIVARCFG.STEP1 := 200;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+                IF LO AND tmpBRK AND AIVARCFG.PRM.PRM_BRKENBL THEN
+                    AIVARCFG.STEP1 := 100;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+            400: (*norma*)
+                IF tmpHI AND AIVARCFG.PRM.PRM_HIENBL THEN
+                    AIVARCFG.STEP1 := 500;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+                IF tmpLO AND AIVARCFG.PRM.PRM_LOENBL THEN
+                    AIVARCFG.STEP1 := 300;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+                IF tmpHIHI AND AIVARCFG.PRM.PRM_HIHIENBL THEN
+                    AIVARCFG.STEP1 := 460;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+                IF tmpLOLO AND AIVARCFG.PRM.PRM_LOLOENBL THEN
+                    AIVARCFG.STEP1 := 420;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+                IF tmpBRK AND AIVARCFG.PRM.PRM_BRKENBL THEN
+                    AIVARCFG.STEP1 := 410;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+                IF tmpOVRLD AND AIVARCFG.PRM.PRM_OVRLENBL THEN
+                    AIVARCFG.STEP1 := 470;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+            410: (*norma -&gt; break*)
+                IF NOT tmpBRK OR NOT AIVARCFG.PRM.PRM_BRKENBL THEN (*вихід із зони*)
+                    AIVARCFG.STEP1 := 400;
+                    AIVARCFG.T_STEP1 := 0;
+                ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP) THEN (*тривога*)
+                    AIVARCFG.STEP1 := 100;
+                END_IF;
+            420: (*norma -&gt; LOLO*)
+                IF NOT tmpLOLO OR NOT AIVARCFG.PRM.PRM_LOLOENBL THEN (*вихід із зони*)
+                    AIVARCFG.STEP1 := 400;
+                    AIVARCFG.T_STEP1 := 0;
+                ELSIF T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEALL) THEN (*тривога*)
+                    AIVARCFG.STEP1 := 200;
+                END_IF;
+            460: (*norma -&gt; HIHI*)
+                IF NOT tmpHIHI OR NOT AIVARCFG.PRM.PRM_HIHIENBL THEN (*вихід із зони*)
+                    AIVARCFG.STEP1 := 400;
+                    AIVARCFG.T_STEP1 := 0;
+                ELSIF T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEAHH) THEN (*тривога*)
+                    AIVARCFG.STEP1 := 600;
+                END_IF;
+            470: (*norma -&gt; OVRLD*)
+                IF NOT tmpOVRLD OR NOT AIVARCFG.PRM.PRM_OVRLENBL THEN (*вихід із зони*)
+                    AIVARCFG.STEP1 := 400;
+                    AIVARCFG.T_STEP1 := 0;
+                ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP) THEN (*тривога*)
+                    AIVARCFG.STEP1 := 700;
+                END_IF;
+            500: (*HI*)
+                HI := AIVARCFG.PRM.PRM_HIENBL AND T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEAH);
+                IF NOT tmpHI AND NOT HI
+                    OR NOT AIVARCFG.PRM.PRM_HIENBL (*вихід із зони*)
+                    OR AIVARCFG.VAL &lt; (AIVARCFG.HISP - HYST) THEN
+                    AIVARCFG.STEP1 := 400;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+                IF HI AND tmpHIHI AND AIVARCFG.PRM.PRM_HIHIENBL THEN
+                    AIVARCFG.STEP1 := 600;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+                IF HI AND tmpOVRLD AND AIVARCFG.PRM.PRM_OVRLENBL THEN
+                    AIVARCFG.STEP1 := 700;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+            600: (*HIHI*)
+                HI := AIVARCFG.PRM.PRM_HIENBL;
+                HIHI := AIVARCFG.PRM.PRM_HIHIENBL AND T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEAHH);
+                IF NOT tmpHIHI AND NOT HIHI OR
+                    NOT AIVARCFG.PRM.PRM_HIHIENBL OR
+                    AIVARCFG.VAL &lt; (AIVARCFG.HIHISP - HYST) THEN (*вихід із зони*)
+                    AIVARCFG.STEP1 := 500;
+                    (*AIVARCFG.T_STEP1 := 0;*)
+                END_IF;
+                IF HI AND tmpOVRLD AND AIVARCFG.PRM.PRM_OVRLENBL THEN
+                    AIVARCFG.STEP1 := 700;
+                    AIVARCFG.T_STEP1 := 0;
+                END_IF;
+            700: (*OVRLD - перегурзка/КЗ*)
+                HI := AIVARCFG.PRM.PRM_HIENBL;
+                HIHI := AIVARCFG.PRM.PRM_HIHIENBL;
+                IF (NOT tmpOVRLD OR NOT AIVARCFG.PRM.PRM_OVRLENBL) THEN (*вихід із зони*)
+                    AIVARCFG.STEP1 := 600;
+                    (*AIVARCFG.T_STEP1 := 0;*)
+                ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP) THEN (*тривога*)
+                    OVRLD := true;
+                END_IF;
+            ELSE
+                AIVARCFG.STEP1 := 400;
+        END_CASE;
+    ELSE 
+        AIVARCFG.VRAW := VRAW;
+        AIVARCFG.VAL := VALNOFLT;
+        AIVARCFG.T_STEP1 := 0;
+        AIVARCFG.STEP1 := 400;
+        BAD := false;
+        BRK := false;
+        LO := false;
+        LOLO := false;
+        HI := false;
+        HIHI := false;
+        OVRLD := false;
+        ENBL := false;
+    END_IF;
+
+    (*-------- не є частиною каркасу, кастом для Енікон*)
+    IF PLCCFG.STA.SCN1 THEN
+       AIVARCFG.VALPRV_AFRZ := VAL;
+       AIVARCFG.VALPRV_ASPD := VAL;
+    END_IF;
+    (* Перевірка на зависання *)
+    (*протягом 20 сек значення повинно змінитися більш ніж на задану уставку у од.вимір якщо уставка 0 - по дефолту*)
+    IF AIVARCFG.PRM.PRM_AFRZENBL THEN
+        tmpAFRZ:=AIVARCFG.STA2.AFRZ;
+        (*перевіряти на кожній 20 сек на один цикл*)
+        IF (PLCCFG.TQ MOD 20) = 0 AND PLCCFG.PLS.P1S THEN
+            IF ABS(AIVARCFG.VALPRV_AFRZ - VAL) &lt; AIVARCFG.DEASP_AFRZ THEN
+                tmpAFRZ:=true;
+            ELSE 
+                tmpAFRZ:=false; (*самоскидання*)
+            END_IF; 
+            AIVARCFG.VALPRV_AFRZ := VAL;
+        END_IF;
+        (*якщо значення зміниться у будь який час оновити його (відкидання помилки випадкової рівності через вказаний час)  *)
+        IF  ABS(VAL - AIVARCFG.VALPRV) &gt; AIVARCFG.DEASP_AFRZ THEN
+            AIVARCFG.VALPRV_AFRZ := VAL;
+        END_IF; 
+        AIVARCFG.STA2.AFRZ := tmpAFRZ;
+    END_IF;
+    (* Перевірка на скачок *)
+    IF AIVARCFG.PRM.PRM_ASPDENBL THEN 
+        (* аларм швидкості зміни, якщо через заданий час значення скочило більше ніж допуск - помилка WRN*)
+        tmpASPD:=false;
+        AIVARCFG.STA2.ASPD := tmpASPD;
+        (*перевіряти на кожній 5 сек на один цикл*)
+        IF (PLCCFG.TQ MOD 5) = 0 AND PLCCFG.PLS.P1S THEN
+            IF ABS(AIVARCFG.VALPRV_ASPD - VAL) &gt; AIVARCFG.DOPSP_ASPD THEN
+                tmpASPD:=true;
+            ELSE 
+                tmpASPD:=false; (*самоскидання*)
+            END_IF; 
+            AIVARCFG.VALPRV_ASPD := VAL;
+        END_IF;
+
+	AIVARCFG.STA2.AOVRFL:=VRAW&gt;10100 AND VRAW&lt;10999;
+        AIVARCFG.STA2.AUNDRFL:=VRAW&lt;-100 AND VRAW&gt;-999;
+        tmpAOVRFL:=AIVARCFG.STA2.AOVRFL;
+        tmpAUNDRFL:=AIVARCFG.STA2.AUNDRFL;
+    END_IF;
+    (*------------------------*)
+    BAD := (CHCFG.STA.BAD OR BRK OR OVRLD OR tmpAOVRFL OR tmpAUNDRFL OR tmpAFRZ) AND AIVARCFG.PRM.PRM_QALENBL AND VARENBL AND NOT SML AND NOT FRC;
+    ALM := (LOLO OR HIHI) AND NOT BAD;
+    WRN := (LO OR HI OR tmpASPD) AND NOT ALM AND NOT BAD;
+
+    IF BAD THEN
+        PLCCFG.ALM1.BAD := true;
+        PLCCFG.CNTBAD := PLCCFG.CNTBAD + 1;
+        IF NOT AIVARCFG.STA.BAD THEN
+            PLCCFG.ALM1.NWBAD := true;
+        END_IF;
+    END_IF;
+    IF ALM THEN
+        PLCCFG.ALM1.ALM := true;
+        PLCCFG.CNTALM := PLCCFG.CNTALM + 1;
+        IF NOT AIVARCFG.STA.ALM THEN
+            PLCCFG.ALM1.NWALM := true;
+        END_IF;
+    END_IF;
+    IF WRN THEN
+        PLCCFG.ALM1.WRN := true;
+        PLCCFG.CNTWRN := PLCCFG.CNTWRN + 1;
+        IF NOT AIVARCFG.STA.WRN THEN
+            PLCCFG.ALM1.NWWRN := true;
+        END_IF;
+    END_IF;
+    IF FRC THEN
+        PLCCFG.STA.FRC1 := true;
+        PLCCFG.CNTFRC := PLCCFG.CNTFRC + 1;
+    END_IF;
+    IF SML THEN
+        PLCCFG.STA.SML := true;
+    END_IF;
+
+    STA.BRK := BRK;
+    STA.OVRLD := OVRLD;
+    STA.BAD := BAD;
+    STA.ALDIS := ALDIS;
+    STA.DLNK := DLNK;
+    STA.ENBL := VARENBL;
+    STA.ALM := ALM;
+    STA.LOLO := LOLO;
+    STA.LO := LO;
+    STA.HI := HI;
+    STA.HIHI := HIHI;
+    STA.WRN := WRN;
+    STA.INBUF := INBUF;
+    STA.FRC := FRC;
+    STA.SML := SML;
+    STA.CMDLOAD := FALSE;
+
+    STAINT.0 := STA.BRK;
+    STAINT.1 := STA.OVRLD;
+    STAINT.2 := STA.BAD;
+    STAINT.3 := STA.ALDIS;
+    STAINT.4 := STA.DLNK;
+    STAINT.5 := STA.ENBL;
+    STAINT.6 := STA.ALM;
+    STAINT.7 := STA.LOLO;
+    STAINT.8 := STA.LO;
+    STAINT.9 := STA.HI;
+    STAINT.10 := STA.HIHI;
+    STAINT.11 := STA.WRN;
+    STAINT.12 := STA.INBUF;
+    STAINT.13 := STA.FRC;
+    STAINT.14 := STA.SML;
+    STAINT.15 := FALSE;
+
+    (*у %    *)
+    VALPROC := (VAL - AIVARCFG.LOENG) / VAL1PROC;
+    IF VALPROC &lt; 0.0 THEN
+        VALPROC := 0.0;
+    END_IF;
+    IF VALPROC &gt; 100.0 THEN
+        VALPROC := 100.0;
+    END_IF;
+
+    AIVARCFG.STA := STA;
+    AIVARCFG.VAL := VAL;
+    AIVARCFG.VRAW := VRAW;
+    AIVARCFG.VALPRV := VALPRV;
+    (* зміна 27.08 VALPROC: старший байт вміщує значення від 0-100%, молодший - біти STA2*)
+    (* може бути частиною каркасу при необхідності статусних бітів і ларамів &gt;15*)
+    AIVARCFG.VALPRCSTA2 := REAL_TO_INT(VALPROC)*256 AND 16#FF00;
+    AIVARCFG.VALPRCSTA2.0 := AIVARCFG.STA2.ASPD;
+    AIVARCFG.VALPRCSTA2.1 := AIVARCFG.STA2.AFRZ;
+    AIVARCFG.VALPRCSTA2.2 := AIVARCFG.STA2.AOVRFL;
+    AIVARCFG.VALPRCSTA2.3 := AIVARCFG.STA2.AUNDRFL;
+    AIVARCFG.T_PREV := PLCCFG.TQMS;
+    AIVARCFG.T_STEP1 := AIVARCFG.T_STEP1 + dT1;
+
+    AIVARHMI.STA := STAINT;
+    AIVARHMI.VAL := VAL;
+    AIVARHMI.VALPRCSTA2 := AIVARCFG.VALPRCSTA2;
+
+
+IF AIVARCFG.T_STEP1 &gt; 16#7FFF_FFFF THEN
+    AIVARCFG.T_STEP1 := 16#7FFF_FFFF;
+END_IF;
+
+IF INBUF THEN
+    VARBUF.CMD := 0;
+    VARBUF.VALR := AIVARCFG.VAL;
+    VARBUF.STA := STAINT;
+    VARBUF.VRAWR := INT_TO_REAL(VRAW);
+    IF NOT FRC THEN
+        VARBUF.VALR := VAL;
+    END_IF;
+    VARBUF.STEP1 := AIVARCFG.STEP1;
+    VARBUF.T_STEP1 := AIVARCFG.T_STEP1;
+    VARBUF.VALPROC := AIVARCFG.VALPRCSTA2;
+    VARBUF.LOLOSP_PRC := REAL_TO_INT(AIVARCFG.LOLOSP / VAL1PROC * 100.0);
+    VARBUF.LOSP_PRC := REAL_TO_INT(AIVARCFG.LOSP / VAL1PROC * 100.0);
+    VARBUF.HISP_PRC := REAL_TO_INT(AIVARCFG.HISP / VAL1PROC * 100.0);
+    VARBUF.HIHISP_PRC := REAL_TO_INT(AIVARCFG.HIHISP / VAL1PROC * 100.0);
+
+    VARBUF.CH_CLSID := CHCFG.CLSID;
+    VARBUF.CH_STA.0 := CHCFG.STA.VRAW;
+    VARBUF.CH_STA.1 := CHCFG.STA.VALB;
+    VARBUF.CH_STA.2 := CHCFG.STA.BAD;
+    VARBUF.CH_STA.3 := CHCFG.STA.b3;
+    VARBUF.CH_STA.4 := CHCFG.STA.PNG;
+    VARBUF.CH_STA.5 := CHCFG.STA.ULNK;
+    VARBUF.CH_STA.6 := CHCFG.STA.MERR;
+    VARBUF.CH_STA.7 := CHCFG.STA.BRK;
+    VARBUF.CH_STA.8 := CHCFG.STA.SHRT;
+    VARBUF.CH_STA.9 := CHCFG.STA.NBD;
+    VARBUF.CH_STA.10 := CHCFG.STA.b10;
+    VARBUF.CH_STA.11 := CHCFG.STA.INIOTBUF;
+    VARBUF.CH_STA.12 := CHCFG.STA.INBUF;
+    VARBUF.CH_STA.13 := CHCFG.STA.FRC;
+    VARBUF.CH_STA.14 := CHCFG.STA.SML;
+    VARBUF.CH_STA.15 := CHCFG.STA.CMDLOAD;
+
+    INT_TO_SIGU (CLSID := CHCFG.CLSID,
+             	 VALINT := VRAW,
+                 INT_TO_SIGU =&gt; VARBUF.CH_VALSIG);
+    
+END_IF;
+
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<DDTSource DDTName="CH_CFG" version="0.01" dateTime="dt#2022-01-04-12:29:57">
+		<attribute name="TypeSignatureCheckSumString" value="C66E"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>ідентифікатор класу</comment>
+			</variables>
+			<variables name="STA" typeName="CH_STA">
+				<comment>біти статусу</comment>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>командне слово</comment>
+			</variables>
+			<variables name="VAL" typeName="INT">
+				<comment>значення змінної</comment>
+			</variables>
+			<variables name="VARID" typeName="UINT">
+				<comment>ID привязаної змінної</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="CH_STA" version="0.01" dateTime="dt#2022-01-04-12:25:41">
+		<attribute name="TypeSignatureCheckSumString" value="0E47"></attribute>
+		<structure>
+			<variables name="VRAW" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу з дискретного входу</comment>
+			</variables>
+			<variables name="VALB" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу для CM верхнього рівня, в режимі FRC=1 може змінюватися із-зовні</comment>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 – є помилка каналу</comment>
+			</variables>
+			<variables name="b3" typeName="BOOL"></variables>
+			<variables name="PNG" typeName="BOOL">
+				<comment>=1 прийшла відповідь від володаря, обнуляється каналом</comment>
+			</variables>
+			<variables name="ULNK" typeName="BOOL">
+				<comment>=1 – якщо використовується в змінній DIVAR/AIVAR/DOVAR/AOVAR</comment>
+			</variables>
+			<variables name="MERR" typeName="BOOL">
+				<comment>=1 – є помилка модулю (діагностична інформація)</comment>
+			</variables>
+			<variables name="BRK" typeName="BOOL">
+				<comment>=1 – помилка обриву каналу</comment>
+			</variables>
+			<variables name="SHRT" typeName="BOOL">
+				<comment>=1 – помилка КЗ</comment>
+			</variables>
+			<variables name="NBD" typeName="BOOL">
+				<comment>=1 – фізично канал не існує; наприклад, для відображення в буфері модуля MODULS, для використання резерву каналів не прив’язаних до фізичних</comment>
+			</variables>
+			<variables name="b10" typeName="BOOL"></variables>
+			<variables name="INIOTBUF" typeName="BOOL">
+				<comment>=1 - в буфері IoT </comment>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 – в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 – значення форсоване</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – значення імітується</comment>
+			</variables>
+			<variables name="CMDLOAD" typeName="BOOL">
+				<comment>=1 - запит на зчитування в буфер (тільки з HMI)</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AIVAR_CFG" version="0.01" dateTime="dt#2022-01-04-19:55:55">
+		<attribute name="TypeSignatureCheckSumString" value="0BBF"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#1030</comment>
+			</variables>
+			<variables name="STA" typeName="AIVAR_STA">
+				<comment>статус (див STC)</comment>
+			</variables>
+			<variables name="VALPRCSTA2" typeName="INT">
+				<comment>значення у % від шкали вимірювання (0-10000)</comment>
+			</variables>
+			<variables name="PRM" typeName="AIVAR_PRM">
+				<comment>параметри</comment>
+			</variables>
+			<variables name="CHID" typeName="UINT">
+				<comment>Логічний номер дискретного каналу</comment>
+			</variables>
+			<variables name="LORAW" typeName="INT">
+				<comment>Сире (немасштабоване) значення мінімуму</comment>
+			</variables>
+			<variables name="HIRAW" typeName="INT">
+				<comment>Сире (немасштабоване) значення максимуму</comment>
+			</variables>
+			<variables name="VAL" typeName="REAL">
+				<comment>масштабоване значення</comment>
+			</variables>
+			<variables name="VALFRC" typeName="REAL">
+				<comment>зберігає форсоване значення</comment>
+			</variables>
+			<variables name="LOENG" typeName="REAL">
+				<comment>Інженерне (масштабоване) значення мінімуму</comment>
+			</variables>
+			<variables name="HIENG" typeName="REAL">
+				<comment>Інженерне (масштабоване) значення максимуму</comment>
+			</variables>
+			<variables name="LOSP" typeName="REAL">
+				<comment>Уставка тривоги HI</comment>
+			</variables>
+			<variables name="HISP" typeName="REAL">
+				<comment>Уставка тривоги LO</comment>
+			</variables>
+			<variables name="LOLOSP" typeName="REAL">
+				<comment>Уставка тривоги LOLO</comment>
+			</variables>
+			<variables name="HIHISP" typeName="REAL">
+				<comment>Уставка тривоги HIHI</comment>
+			</variables>
+			<variables name="THSP" typeName="REAL">
+				<comment>Технологічна уставка HI (для регулятора)</comment>
+			</variables>
+			<variables name="TLSP" typeName="REAL">
+				<comment>Технологічна уставка LO (для регулятора)</comment>
+			</variables>
+			<variables name="T_FLT" typeName="UINT">
+				<comment>час фільтрації в мілісекундах (фільтр - аперіодична ланка)</comment>
+			</variables>
+			<variables name="VRAW" typeName="INT">
+				<comment>сире значення</comment>
+			</variables>
+			<variables name="STA2" typeName="AIVAR_VALPRCSTA2">
+				<comment>додаткові біти статусу та тривоги</comment>
+			</variables>
+			<variables name="tmp" typeName="INT"></variables>
+			<variables name="HYST" typeName="REAL">
+				<comment>гістерезис в реальних одиницях або % (PRM_PARAISPROC)</comment>
+			</variables>
+			<variables name="T_DEALL" typeName="UINT">
+				<comment>Час затримки на виникнення тривоги LL в 0.1 секундах</comment>
+			</variables>
+			<variables name="T_DEAL" typeName="UINT">
+				<comment>Час затримки на виникнення тривоги L в 0.1 секундах (за необхідністю)</comment>
+			</variables>
+			<variables name="T_DEAH" typeName="UINT">
+				<comment>Час затримки на виникнення тривоги H в 0.1 секундах (за необхідністю)</comment>
+			</variables>
+			<variables name="T_DEAHH" typeName="UINT">
+				<comment>Час затримки на виникнення тривоги HH в 0.1 секундах (за необхідністю)</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>номер кроку</comment>
+			</variables>
+			<variables name="CHIDDF" typeName="UINT">
+				<comment>Логічний номер каналу за замовченням</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+			<variables name="VALPRV" typeName="REAL">
+				<comment>значення на попередньому циклі (для реалізації фільтрації)</comment>
+			</variables>
+			<variables name="VALPRV_AFRZ" typeName="REAL">
+				<comment>значення на попередньому перерахунку контролю зависання (Енікон)</comment>
+			</variables>
+			<variables name="VALPRV_ASPD" typeName="REAL">
+				<comment>значення на попередньому перерахунку контролю скачку (Енікон)</comment>
+			</variables>
+			<variables name="DEASP_AFRZ" typeName="REAL">
+				<comment>уставка нечутливості контролю зависання (Енікон)</comment>
+			</variables>
+			<variables name="DOPSP_ASPD" typeName="REAL">
+				<comment>уставка допуску контролю швидкості (Енікон)</comment>
+			</variables>
+			<variables name="ZERO_CUT_VAL" typeName="REAL">
+				<comment>відсічка нуля </comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AIVAR_STA" version="0.01" dateTime="dt#2022-01-04-18:53:22">
+		<attribute name="TypeSignatureCheckSumString" value="E9FE"></attribute>
+		<structure>
+			<variables name="BRK" typeName="BOOL">
+				<comment>=1 – Обрив каналу {A.BAD.0}</comment>
+			</variables>
+			<variables name="OVRLD" typeName="BOOL">
+				<comment>=1 – КЗ або перевантаження каналу {A.BAD.1}</comment>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 – Дані недостовірні {A.BAD.2}</comment>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 – Тривога виведена з експлуатації {A.MSG.3}</comment>
+			</variables>
+			<variables name="DLNK" typeName="BOOL">
+				<comment>=1 – якщо прив’язаний до каналу</comment>
+			</variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>=1 – змінна задіяна = (NOT PRM.7 AND DLNK)</comment>
+			</variables>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 – активна технологічна тривога і не активна BAD</comment>
+			</variables>
+			<variables name="LOLO" typeName="BOOL">
+				<comment>=1 – Критично низьке значення {A.ALM.7}</comment>
+			</variables>
+			<variables name="LO" typeName="BOOL">
+				<comment>=1 – Низьке значення {A.WRN.8}</comment>
+			</variables>
+			<variables name="HI" typeName="BOOL">
+				<comment>=1 – Високе значення {A.WRN.9}</comment>
+			</variables>
+			<variables name="HIHI" typeName="BOOL">
+				<comment>=1 – Критично високе значення {A.ALM.10}</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 – активне технологічне попередження і не активні BAD та ALM</comment>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 – змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 – Режим форсування{A.MSG.13}</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – змінна в режимі симуляції</comment>
+			</variables>
+			<variables name="CMDLOAD" typeName="BOOL">
+				<comment>=1 – команда завантаження в буфер</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AIVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:56:39">
+		<attribute name="TypeSignatureCheckSumString" value="033C"></attribute>
+		<structure>
+			<variables name="PRM_LOENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога LO /MASK 16#1</comment>
+			</variables>
+			<variables name="PRM_HIENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога HI /MASK 16#2</comment>
+			</variables>
+			<variables name="PRM_LOLOENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога LOLO /MASK 16#4</comment>
+			</variables>
+			<variables name="PRM_HIHIENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога HIHI/MASK 16#8</comment>
+			</variables>
+			<variables name="PRM_BRKENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога обриву</comment>
+			</variables>
+			<variables name="PRM_OVRLENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога перевантаження</comment>
+			</variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога перевірки якості даних</comment>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+			</variables>
+			<variables name="PRM_PWLENBL" typeName="BOOL">
+				<comment>=1 – задіяна кусочно-лінійна інтерполяція (не використовувати разом з TOTALON)</comment>
+			</variables>
+			<variables name="PRM_TOTALON" typeName="BOOL">
+				<comment>=1 – задіяне інтегрування (не використовувати разом з PWLENBL)</comment>
+			</variables>
+			<variables name="PRM_SQRT" typeName="BOOL">
+				<comment>=1 - задіяне квадратичне (квадратний корінь) масштабування</comment>
+			</variables>
+			<variables name="PRM_PARAISPROC" typeName="BOOL">
+				<comment>=1 - параметри налаштування (гістерезис, нечутл) задається в процентах</comment>
+			</variables>
+			<variables name="PRM_AFRZENBL" typeName="BOOL">
+				<comment>=1 - активна тривога нечутливості контролю зависання</comment>
+			</variables>
+			<variables name="PRM_ASPDENBL" typeName="BOOL">
+				<comment>=1 - активна тривога допуску контролю швидкості</comment>
+			</variables>
+			<variables name="PRMb14" typeName="BOOL"></variables>
+			<variables name="PRMb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AIVAR_VALPRCSTA2" version="0.01" dateTime="dt#2022-01-04-18:58:45">
+		<attribute name="TypeSignatureCheckSumString" value="9AF1"></attribute>
+		<structure>
+			<variables name="ASPD" typeName="BOOL">
+				<comment>Шивдка зміна сигналу {A.BAD.0}</comment>
+			</variables>
+			<variables name="AFRZ" typeName="BOOL">
+				<comment>Сигнал не змінюється {A.BAD.1}</comment>
+			</variables>
+			<variables name="AOVRFL" typeName="BOOL">
+				<comment>Перехід через верхнє значення {A.BAD.2}</comment>
+			</variables>
+			<variables name="AUNDRFL" typeName="BOOL">
+				<comment>Перехід через нижнє значення  {A.BAD.3}</comment>
+			</variables>
+			<variables name="STA2b4" typeName="BOOL"></variables>
+			<variables name="STA2b5" typeName="BOOL"></variables>
+			<variables name="STA2b6" typeName="BOOL"></variables>
+			<variables name="STA2b7" typeName="BOOL"></variables>
+			<variables name="STA2b8" typeName="BOOL"></variables>
+			<variables name="STA2b9" typeName="BOOL"></variables>
+			<variables name="STA2b10" typeName="BOOL"></variables>
+			<variables name="STA2b11" typeName="BOOL"></variables>
+			<variables name="STA2b12" typeName="BOOL"></variables>
+			<variables name="STA2b13" typeName="BOOL"></variables>
+			<variables name="STA2b14" typeName="BOOL"></variables>
+			<variables name="STA2b15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AIVAR_HMI" version="0.01" dateTime="dt#2022-01-06-17:21:54">
+		<attribute name="TypeSignatureCheckSumString" value="3237"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT">
+				<comment>біти стану</comment>
+			</variables>
+			<variables name="VALPRCSTA2" typeName="INT">
+				<comment>значення у % від шкали вимірювання (0-10000) + додаткові біти статусу</comment>
+			</variables>
+			<variables name="VAL" typeName="REAL">
+				<comment>масштабоване значення</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VARBUF" version="0.03" dateTime="dt#2022-01-08-17:23:40">
+		<attribute name="TypeSignatureCheckSumString" value="0E8F"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор завантаженої в буфер змінної</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>CLSID завантаженої в буфер змінної</comment>
+			</variables>
+			<variables name="STA" typeName="INT">
+				<comment>статус + біт команди завантаження в буфер</comment>
+			</variables>
+			<variables name="CMD" typeName="UINT">
+				<comment>команда</comment>
+			</variables>
+			<variables name="VALPROC" typeName="INT">
+				<comment>значення у % від шкали вимірювання (0-10000)</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>номер кроку</comment>
+			</variables>
+			<variables name="PRM" typeName="INT">
+				<comment>бітові параметри</comment>
+			</variables>
+			<variables name="CHID" typeName="UINT">
+				<comment>Логічний номер вхідного аналогового каналу CH</comment>
+			</variables>
+			<variables name="VALR" typeName="REAL">
+				<comment>масштабоване значення</comment>
+			</variables>
+			<variables name="VRAWR" typeName="REAL">
+				<comment>сире значення</comment>
+			</variables>
+			<variables name="LORAW" typeName="INT">
+				<comment>AI/AO – Сире (немасштабоване) значення мінімуму</comment>
+			</variables>
+			<variables name="HIRAW" typeName="INT">
+				<comment>AI/AO – Сире (немасштабоване) значення максимуму</comment>
+			</variables>
+			<variables name="LOENG" typeName="REAL">
+				<comment>AI/AO – Інженерне (масштабоване) значення мінімуму</comment>
+			</variables>
+			<variables name="HIENG" typeName="REAL">
+				<comment>AI/AO – Інженерне (масштабоване) значення максимуму</comment>
+			</variables>
+			<variables name="TMPR" typeName="REAL">
+				<comment>резерв</comment>
+			</variables>
+			<variables name="MVAL" typeName="REAL">
+				<comment>AO – значення форсування</comment>
+			</variables>
+			<variables name="HIHISP" typeName="REAL">
+				<comment>AI  - Уставка тривоги HIHI</comment>
+			</variables>
+			<variables name="HISP" typeName="REAL">
+				<comment>AI – Уставка тривоги HI</comment>
+			</variables>
+			<variables name="LOSP" typeName="REAL">
+				<comment>AI – Уставка тривоги LO</comment>
+			</variables>
+			<variables name="LOLOSP" typeName="REAL">
+				<comment>AI  - Уставка тривоги LOLO</comment>
+			</variables>
+			<variables name="HIHISP_PRC" typeName="INT">
+				<comment>AI – Уставка тривоги HIHI у 0.01 % (для відображення)</comment>
+			</variables>
+			<variables name="HISP_PRC" typeName="INT">
+				<comment>AI – Уставка тривоги HI у 0.01 % (для відображення)</comment>
+			</variables>
+			<variables name="LOSP_PRC" typeName="INT">
+				<comment>AI – Уставка тривоги LO у 0.01 % (для відображення)</comment>
+			</variables>
+			<variables name="LOLOSP_PRC" typeName="INT">
+				<comment>AI – Уставка тривоги LOLO у 0.01 % (для відображення)</comment>
+			</variables>
+			<variables name="T_FLTSP" typeName="UINT">
+				<comment>AI – заданий час фільтрації для експоненціального фільтру 0 – не фільтрувати; DI – час фільтрації для дискретного фільтру 0 – не фільтрувати</comment>
+			</variables>
+			<variables name="MSG" typeName="UINT">
+				<comment>повідомлення</comment>
+			</variables>
+			<variables name="HYST" typeName="REAL">
+				<comment>AI – гістерезис в реальних одиницях або % (PRM_PARAISPROC)</comment>
+			</variables>
+			<variables name="T_DEAHH" typeName="UINT">
+				<comment>AI  Час затримки на виникнення тривоги HH в 0.1 секундах</comment>
+			</variables>
+			<variables name="T_DEAH" typeName="UINT">
+				<comment>AI  Час затримки на виникнення тривоги H в 0.1 секундах</comment>
+			</variables>
+			<variables name="T_DEAL" typeName="UINT">
+				<comment>AI  Час затримки на виникнення тривоги L в 0.1 секундах</comment>
+			</variables>
+			<variables name="T_DEALL" typeName="UINT">
+				<comment>AI – Час затримки на виникнення тривоги LL в 0.1 секундах; DI – Час затримки на виникнення тривоги в секундах</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Час кроку в мілісекундах</comment>
+			</variables>
+			<variables name="OPTR" typeName="ARRAY[0..3] OF REAL">
+				<comment>Масив додаткових змінних REAL</comment>
+			</variables>
+			<variables name="OPTD" typeName="ARRAY[0..3] OF DINT">
+				<comment>Масив додаткових змінних UDINT</comment>
+			</variables>
+			<variables name="VALPRV_AFRZ" typeName="REAL">
+				<comment>значення на попередньому перерахунку контролю зависання (Енікон)</comment>
+			</variables>
+			<variables name="VALPRV_ASPD" typeName="REAL">
+				<comment>значення на попередньому перерахунку контролю скачку (Енікон)</comment>
+			</variables>
+			<variables name="DEASP_AFRZ" typeName="REAL">
+				<comment>уставка нечутливості контролю зависання (Енікон)</comment>
+			</variables>
+			<variables name="DOPSP_ASPD" typeName="REAL">
+				<comment>уставка допуску контролю швидкості (Енікон)</comment>
+			</variables>
+			<variables name="ZERO_CUT_VAL" typeName="REAL">
+				<comment>відсічка нуля </comment>
+			</variables>
+			<variables name="CH_CLSID" typeName="UINT">
+				<comment>ідентифікатор класу каналу</comment>
+			</variables>
+			<variables name="CH_STA" typeName="INT">
+				<comment>стани каналу</comment>
+			</variables>
+			<variables name="CH_VALSIG" typeName="REAL">
+				<comment>значення каналу в одиницях вимірювання</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLC_CFG" version="0.06" dateTime="dt#2022-01-04-10:29:24">
+		<attribute name="TypeSignatureCheckSumString" value="BF83"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#21xx</comment>
+			</variables>
+			<variables name="STA" typeName="PLC_STA">
+				<comment>біти статусу</comment>
+			</variables>
+			<variables name="CMD" typeName="UINT">
+				<comment>Команди з HMI</comment>
+			</variables>
+			<variables name="CMDPRG" typeName="UINT">
+				<comment>Команди з програмного керування (побітові)</comment>
+			</variables>
+			<variables name="PRM1" typeName="UINT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PRM2" typeName="UINT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PLS" typeName="PLS">
+				<comment>бітові міандри</comment>
+			</variables>
+			<variables name="ALM1" typeName="PLC_ALM1">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="ALM2" typeName="INT">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="STEP1" typeName="INT">
+				<comment>крок основної програми</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="INT">
+				<comment>час кроку основної програми обробки, в (с)</comment>
+			</variables>
+			<variables name="MSG" typeName="UDINT">
+				<comment>час кроку основної програми обробки, в (с)</comment>
+			</variables>
+			<variables name="TQ" typeName="UDINT">
+				<comment>загальний час з початку 1-го циклу контролера (в секундах)</comment>
+			</variables>
+			<variables name="TQM" typeName="UDINT">
+				<comment>загальний час роботи ПЛК з моменту пуску (в хвилинах)</comment>
+			</variables>
+			<variables name="DICNT" typeName="INT">
+				<comment>кількість наявних каналів DI</comment>
+			</variables>
+			<variables name="DOCNT" typeName="INT">
+				<comment>кількість наявних каналів DO</comment>
+			</variables>
+			<variables name="AICNT" typeName="INT">
+				<comment>кількість наявних каналів AI</comment>
+			</variables>
+			<variables name="AOCNT" typeName="INT">
+				<comment>кількість наявних каналів AO</comment>
+			</variables>
+			<variables name="NOW" typeName="ARRAY[0..3] OF INT">
+				<comment>плинний час астрономічний час в BCD форматі: NOW[0] seconds,-- (16#ss,--)  NOW[1] hour, minute (16#hhmm)  NOW[2] month, day (16#mmdd)  NOW[3] year (16#yyyy)</comment>
+			</variables>
+			<variables name="SHIFTPARA" typeName="ARRAY[0..3] OF INT">
+				<comment>Години передачі змін (максимум 3 зміни): SHIFT[0] – кількість змін SHIFT[1] – передача 1-ї зміни (BCD 16#hhmm) SHIFT[2] – передача 2-ї зміни (BCD 16#hhmm)  SHIFT[3] – передача 3-ї зміни (BCD 16#hhmm)</comment>
+			</variables>
+			<variables name="SHIFTNMB" typeName="UINT">
+				<comment>номер активної зміни</comment>
+			</variables>
+			<variables name="CNTALM" typeName="UINT">
+				<comment>лічильник кількості активних тривог "аварія"</comment>
+			</variables>
+			<variables name="CNTWRN" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "попередження"</comment>
+			</variables>
+			<variables name="CNTBAD" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "недостовірність"</comment>
+			</variables>
+			<variables name="CNTFRC" typeName="UINT">
+				<comment>лічильник кількостіфорсованих об'єктів</comment>
+			</variables>
+			<variables name="CNTMAN" typeName="UINT">
+				<comment>лічильник кількості ВМ в ручному режимі</comment>
+			</variables>
+			<variables name="TSK_LTIME" typeName="UINT">
+				<comment>плинний (останній) час задачі в мілісекундах</comment>
+			</variables>
+			<variables name="TSK_MAXTIME" typeName="UINT">
+				<comment>максимальний час задачі в мілісекундах</comment>
+			</variables>
+			<variables name="STA_PERM" typeName="INT">
+				<comment>повторює STA, який був на початку виклику функції</comment>
+			</variables>
+			<variables name="ALM1_PERM" typeName="INT">
+				<comment>повторює ALM1, який був на початку виклику функції</comment>
+			</variables>
+			<variables name="CNTALM_PERM" typeName="UINT">
+				<comment>лічильник кількості активних тривог "аварія"</comment>
+			</variables>
+			<variables name="CNTWRN_PERM" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "попередження"</comment>
+			</variables>
+			<variables name="CNTBAD_PERM" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "недостовірність"</comment>
+			</variables>
+			<variables name="CNTFRC_PERM" typeName="UINT">
+				<comment>лічильник кількостіфорсованих об'єктів</comment>
+			</variables>
+			<variables name="CNTMAN_PERM" typeName="UINT">
+				<comment>лічильник кількості ВМ в ручному режимі</comment>
+			</variables>
+			<variables name="MODULSCNT" typeName="INT">
+				<comment>кількість модулів</comment>
+			</variables>
+			<variables name="NOWns" typeName="UDINT">
+				<comment>нс (наносекунди) для плинного астрономічного часу</comment>
+			</variables>
+			<variables name="TQMS" typeName="UDINT">
+				<comment>мілісекундний лічильник, скидається при старті або після переповнення</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLC_STA" version="0.01" dateTime="dt#2022-01-04-09:59:51">
+		<attribute name="TypeSignatureCheckSumString" value="DBBA"></attribute>
+		<structure>
+			<variables name="CON2ERR" typeName="BOOL">
+				<comment>=1 - є помилка звязку з сусідні ПЛК в парі (для теплого резерування)</comment>
+			</variables>
+			<variables name="PLC2STOP" typeName="BOOL">
+				<comment>=1 - спарений ПЛК в стопі (для теплого резерування)</comment>
+			</variables>
+			<variables name="BLK" typeName="BOOL">
+				<comment>=1 – є хоча б один заблокований ВМ</comment>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 – є хоча б одна відключена тривога</comment>
+			</variables>
+			<variables name="DIOON" typeName="BOOL">
+				<comment>=1 - йде опитування по мережі (MODBUS або аналогічній) засобів віддаленого вводу/виводу</comment>
+			</variables>
+			<variables name="DIOERR" typeName="BOOL">
+				<comment>=1 - є помилка на DIO</comment>
+			</variables>
+			<variables name="DBLCKALL" typeName="BOOL">
+				<comment>=1 - усі приводи розблоковані</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 – хоча б одна змінна форсована на будь якому рівні</comment>
+			</variables>
+			<variables name="SMLALL" typeName="BOOL">
+				<comment>=1 – все в режимі в імітації, примушує усі CM перейти в режим імітації</comment>
+			</variables>
+			<variables name="DISP" typeName="BOOL">
+				<comment>=1 – хоча б один елемент в режимі ручного управління</comment>
+			</variables>
+			<variables name="FRC2" typeName="BOOL">
+				<comment>=1 – є хоча б один форсований керівний елемент (рівня 2), клапан, двигун</comment>
+			</variables>
+			<variables name="FRC1" typeName="BOOL">
+				<comment>=1 – хоча б одна змінна форсована (рівня 1)</comment>
+			</variables>
+			<variables name="SCN1" typeName="BOOL">
+				<comment>=1 – перший скан</comment>
+			</variables>
+			<variables name="FRC0" typeName="BOOL">
+				<comment>=1 – хоча б одна змінна форсована (рівня 0)</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – хоча б один об’єкт в режимі імітації</comment>
+			</variables>
+			<variables name="CMDACK" typeName="BOOL">
+				<comment>=1 - підтвердження команди, команда пройшла через весь цикл задачі і отримана усіма</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLS" version="0.01" dateTime="dt#2022-01-04-10:03:28">
+		<attribute name="TypeSignatureCheckSumString" value="3421"></attribute>
+		<structure>
+			<variables name="P100MS" typeName="BOOL">
+				<comment>100 мс</comment>
+			</variables>
+			<variables name="P200MS" typeName="BOOL">
+				<comment>200 мс</comment>
+			</variables>
+			<variables name="P500MS" typeName="BOOL">
+				<comment>500 мс</comment>
+			</variables>
+			<variables name="P1S" typeName="BOOL">
+				<comment>1 с</comment>
+			</variables>
+			<variables name="P2S" typeName="BOOL">
+				<comment>2 с</comment>
+			</variables>
+			<variables name="P5S" typeName="BOOL">
+				<comment>5 с</comment>
+			</variables>
+			<variables name="P10S" typeName="BOOL">
+				<comment>10 с</comment>
+			</variables>
+			<variables name="P60S" typeName="BOOL">
+				<comment>1 хв</comment>
+			</variables>
+			<variables name="M1S" typeName="BOOL">
+				<comment>меандр з періодом 1 с (0.5 с + 0.5 с)</comment>
+			</variables>
+			<variables name="M2S" typeName="BOOL">
+				<comment>меандр з періодом 2 с (1 с + 1 с)</comment>
+			</variables>
+			<variables name="b10" typeName="BOOL"></variables>
+			<variables name="b11" typeName="BOOL"></variables>
+			<variables name="NEWMIN" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок хвилини</comment>
+			</variables>
+			<variables name="NEWHR" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок години</comment>
+			</variables>
+			<variables name="NEWDAY" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок доби</comment>
+			</variables>
+			<variables name="NEWSHIFT" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок зміни</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLC_ALM1" version="0.01" dateTime="dt#2022-01-04-10:12:23">
+		<attribute name="TypeSignatureCheckSumString" value="6ADE"></attribute>
+		<structure>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 - активна технологічна тривога</comment>
+			</variables>
+			<variables name="NWALM" typeName="BOOL">
+				<comment>=1 - зявилась нова технологічна тривога</comment>
+			</variables>
+			<variables name="ALMNACK" typeName="BOOL">
+				<comment>=1 - квітування технологічної тривоги</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 - активне технологічне попередження</comment>
+			</variables>
+			<variables name="NWWRN" typeName="BOOL">
+				<comment>=1 - зявилось нове технологічне попередження</comment>
+			</variables>
+			<variables name="WRNNACK" typeName="BOOL">
+				<comment>=1 - квітування технологічного попередження</comment>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 - активна тривога недостовірності даних</comment>
+			</variables>
+			<variables name="NWBAD" typeName="BOOL">
+				<comment>=1 - нова тривога недостовірності даних</comment>
+			</variables>
+			<variables name="BADNACK" typeName="BOOL">
+				<comment>=1 - квітування тривоги недостовірності даних</comment>
+			</variables>
+			<variables name="EMCYSTP" typeName="BOOL">
+				<comment>=1 - швидкий зупин</comment>
+			</variables>
+			<variables name="STP2RUN" typeName="BOOL">
+				<comment>=1 - зперехід з стану стоп в стан ран</comment>
+			</variables>
+			<variables name="CON2ERR" typeName="BOOL">
+				<comment>=1 - є помилка звязку з сусідні ПЛК в парі (для теплого резерування)</comment>
+			</variables>
+			<variables name="PLC2STOP" typeName="BOOL">
+				<comment>=1 - спарений ПЛК в стопі (для теплого резерування)</comment>
+			</variables>
+			<variables name="DIOERR" typeName="BOOL">
+				<comment>=1 - є помилка DIO</comment>
+			</variables>
+			<variables name="PLCERR" typeName="BOOL">
+				<comment>=1 – є апаратна помилка (ПЛК)</comment>
+			</variables>
+			<variables name="CONHIERR" typeName="BOOL">
+				<comment>=1 - помилка звязку з верхнім рівнем</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<FBSource nameOfFBType="SCALING" version="0.02" dateTime="dt#2022-01-12-16:53:04">
+		<attribute name="TypeCodeCheckSumString" value="77C7"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="CCDF"></attribute>
+		<inputParameters>
+			<variables name="IN" typeName="REAL">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="in_min" typeName="REAL">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="in_max" typeName="REAL">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="out_min" typeName="REAL">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="out_max" typeName="REAL">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="STA" typeName="INT">
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
+			<variables name="PRM" typeName="INT">
+				<attribute name="PositionPin" value="7"></attribute>
+			</variables>
+		</inOutParameters>
+		<outputParameters>
+			<variables name="SCALING" typeName="REAL">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</outputParameters>
+		<privateLocalVariables>
+			<variables name="PRM_SQRT" typeName="BOOL"></variables>
+			<variables name="PRM_CUT" typeName="BOOL"></variables>
+			<variables name="STA_ERR" typeName="BOOL"></variables>
+			<variables name="STA_EQINLIMS" typeName="BOOL"></variables>
+			<variables name="STA_EQOUTLIMS" typeName="BOOL"></variables>
+			<variables name="tmpOUT" typeName="REAL"></variables>
+			<variables name="tmpIN" typeName="REAL"></variables>
+			<variables name="tmpDWORD" typeName="DWORD"></variables>
+		</privateLocalVariables>
+		<FBProgram name="SCALING">
+			<STSource>PRM_SQRT := PRM.0;
+PRM_CUT := PRM.1;
+STA_ERR :=0;
+STA_EQINLIMS :=0;
+STA_EQOUTLIMS :=0;
+SCALING:=out_min;
+
+IF ABS(out_max - out_min)&lt;0.00001 THEN
+    STA_EQOUTLIMS:=true; STA_ERR:=true;
+END_IF; 
+IF ABS(in_max - in_min)&lt;0.00001 THEN
+    STA_EQINLIMS:=true; STA_ERR:=true;
+END_IF;
+
+IF NOT STA_ERR THEN  
+    tmpIN := IN; 
+    IF PRM_SQRT THEN (*квадратичне масштабування*)
+        IF tmpIN&gt;0.0 and out_max&gt;0.0 THEN    
+        	tmpIN:=SQRT(tmpIN)*SQRT(out_max);
+	else
+		tmpIN:=0.0;
+	END_IF;
+    ELSE (*лінійне масштабування*)
+        tmpIN:=IN;
+    END_IF;  
+    
+    tmpOUT := out_min + (tmpIN - in_min) * (out_max - out_min) / (in_max - in_min);
+    IF PRM_CUT THEN
+        IF tmpOUT &gt; out_max THEN
+            tmpOUT:=out_max; 
+        END_IF;
+        IF tmpOUT &lt; out_min THEN
+            tmpOUT:=out_min; 
+        END_IF;
+    END_IF;
+    SCALING:=tmpOUT;
+ELSE 
+    ;
+END_IF;
+
+STA.0:= STA_ERR;
+STA.1:= STA_EQINLIMS;
+STA.2:= STA_EQOUTLIMS;
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="A_FLTR" version="0.02" dateTime="dt#2022-01-12-16:53:04">
+		<attribute name="TypeCodeCheckSumString" value="FDD3"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="C4BD"></attribute>
+		<inputParameters>
+			<variables name="IN" typeName="REAL">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="dT1" typeName="UDINT">
+				<comment>час між викликами в мс</comment>
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="T_FLT" typeName="UDINT">
+				<comment>час фільтрації</comment>
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="PRM" typeName="INT">
+				<comment>бітові параметри</comment>
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="STA" typeName="INT">
+				<comment>стан</comment>
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+			<variables name="VALPRV" typeName="REAL">
+				<comment>значення з поепереднього та для наступного виклику</comment>
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
+		</inOutParameters>
+		<outputParameters>
+			<variables name="A_FLTR" typeName="REAL">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</outputParameters>
+		<privateLocalVariables>
+			<variables name="tmpOUT" typeName="REAL"></variables>
+			<variables name="SaveVal" typeName="REAL"></variables>
+			<variables name="dTr" typeName="REAL"></variables>
+			<variables name="T_FLTr" typeName="REAL"></variables>
+		</privateLocalVariables>
+		<FBProgram name="A_FLTR">
+			<STSource>(*експоненційна фільтрація*)
+dTr:=UDINT_TO_REAL(dT1);
+T_FLTr:=UDINT_TO_REAL(T_FLT);
+SaveVal := VALPRV;
+A_FLTR := dTr / (2.0 * T_FLTr + (dTr)) * (IN - SaveVal) + SaveVal;
+VALPRV := IN - (2.0 * T_FLTr - (dTr)) / (2.0 * T_FLTr + (dTr)) * (IN - SaveVal); 
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="INT_TO_SIGU" version="0.02" dateTime="dt#2022-01-12-16:53:04">
+		<attribute name="TypeCodeCheckSumString" value="57B7"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="9477"></attribute>
+		<inputParameters>
+			<variables name="CLSID" typeName="UINT">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="VALINT" typeName="INT">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+		</inputParameters>
+		<outputParameters>
+			<variables name="INT_TO_SIGU" typeName="REAL">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</outputParameters>
+		<privateLocalVariables>
+			<variables name="RAWMIN" typeName="REAL"></variables>
+			<variables name="RAWMAX" typeName="REAL"></variables>
+			<variables name="SIGMIN" typeName="REAL"></variables>
+			<variables name="SIGMAX" typeName="REAL"></variables>
+			<variables name="VALREAL" typeName="REAL"></variables>
+		</privateLocalVariables>
+		<FBProgram name="INT_TO_SIGU">
+			<STSource>(*перетворення одиниць ПЛК в вимірювальні одиниці
+ CHAI
+- 16#0030 - загальний клас без означення типу сигналу
+- 16#0031 - 4..20 mA
+- 16#0032 - 0..20 mA
+- 16#0033 - 0..10 V
+- 16#0034 - термометр опору (без означення типу)
+- 16#0035 - термопара (без означення типу)
+ CHAO
+- 16#0040 - загальний клас без означення типу сигналу
+- 16#0041 - 4..20 mA
+- 16#0042 - 0..20 mA
+- 16#0043 - 0..10 V
+
+Інші класи задаються при необхідності.
+*)
+(*10000*)
+RAWMIN := 0.0;
+RAWMAX := 10000.0;
+VALREAL := INT_TO_REAL (VALINT);
+CASE CLSID OF
+  16#0031,16#0041 :  (*// 4..20 mA*)
+    SIGMIN := 4.0; SIGMAX := 20.0;
+  16#0032,16#0042 :  (*// 0..20 mA*)
+    SIGMIN := 0.0; SIGMAX := 20.0;
+  16#0033, 16#0043:  (*// 0..10 V*)
+    SIGMIN := 0.0; SIGMAX := 10.0;
+
+ELSE  (*%*)
+    SIGMIN := 0.0; SIGMAX := 100.0;
+END_CASE;
+
+INT_TO_SIGU := SIGMIN + (INT_TO_REAL(VALINT) - RAWMIN)*(SIGMAX-SIGMIN)/(RAWMAX - RAWMIN);
+</STSource>
+		</FBProgram>
+	</FBSource>
+</FBExchangeFile>

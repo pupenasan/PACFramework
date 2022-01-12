@@ -1,0 +1,1132 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FBExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-12-17:0:51" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<FBSource nameOfFBType="INITVARS" version="0.06" dateTime="dt#2022-01-12-16:53:04">
+		<attribute name="TypeCodeCheckSumString" value="7D99"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="D3E6"></attribute>
+		<inOutParameters>
+			<variables name="VARS" typeName="VARS">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="VLVDS" typeName="VLVDS">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+		</inOutParameters>
+		<FBProgram name="INITVARS">
+			<STSource>VARS.VNabor_T1_OPN.ID:=10001;  VARS.VNabor_T1_OPN.CHID:=1;   VARS.VNabor_T1_OPN.CHIDDF:=1;
+VARS.VNabor_T2_OPN.ID:=10002;  VARS.VNabor_T2_OPN.CHID:=2;   VARS.VNabor_T2_OPN.CHIDDF:=2;
+VARS.DI3.ID:=10003;  VARS.DI3.CHID:=3;   VARS.DI3.CHIDDF:=3;
+VARS.DI4.ID:=10004;  VARS.DI4.CHID:=4;   VARS.DI4.CHIDDF:=4;
+VARS.VNabor_T1_CLS.ID:=10005;  VARS.VNabor_T1_CLS.CHID:=5;   VARS.VNabor_T1_CLS.CHIDDF:=5;
+VARS.VNabor_T2_CLS.ID:=10006;  VARS.VNabor_T2_CLS.CHID:=6;   VARS.VNabor_T2_CLS.CHIDDF:=6;
+VARS.VSliv_T1_CLS.ID:=10007;  VARS.VSliv_T1_CLS.CHID:=7;   VARS.VSliv_T1_CLS.CHIDDF:=7;
+VARS.VSliv_T2_CLS.ID:=10008;  VARS.VSliv_T2_CLS.CHID:=8;   VARS.VSliv_T2_CLS.CHIDDF:=8;
+VARS.VNabor_D1_CLS.ID:=10009;  VARS.VNabor_D1_CLS.CHID:=9;   VARS.VNabor_D1_CLS.CHIDDF:=9;
+VARS.VNabor_D2_CLS.ID:=10010; VARS.VNabor_D2_CLS.CHID:=10; VARS.VNabor_D2_CLS.CHIDDF:=10;
+VARS.VSliv_D1_CLS.ID:=10011; VARS.VSliv_D1_CLS.CHID:=11; VARS.VSliv_D1_CLS.CHIDDF:=11;
+VARS.VSliv_D2_CLS.ID:=10012; VARS.VSliv_D2_CLS.CHID:=12; VARS.VSliv_D2_CLS.CHIDDF:=12;
+VARS.LSH_D1.ID:=10013; VARS.LSH_D1.CHID:=13; VARS.LSH_D1.CHIDDF:=13;
+VARS.LSL_D1.ID:=10014; VARS.LSL_D1.CHID:=14; VARS.LSL_D1.CHIDDF:=14;
+VARS.LSH_D2.ID:=10015; VARS.LSH_D2.CHID:=15; VARS.LSH_D2.CHIDDF:=15;
+VARS.LSL_D2.ID:=10016; VARS.LSL_D2.CHID:=16; VARS.LSL_D2.CHIDDF:=16;
+VARS.VDoz_T1_OPN.ID:=10017; VARS.VDoz_T1_OPN.CHID:=17; VARS.VDoz_T1_OPN.CHIDDF:=17;
+VARS.VDoz_T2_OPN.ID:=10018; VARS.VDoz_T2_OPN.CHID:=18; VARS.VDoz_T2_OPN.CHIDDF:=18;
+VARS.GSM1.ID:=10019; VARS.GSM1.CHID:=19; VARS.GSM1.CHIDDF:=19;
+VARS.GSM2.ID:=10020; VARS.GSM2.CHID:=20; VARS.GSM2.CHIDDF:=20;
+VARS.DI21.ID:=10021; VARS.DI21.CHID:=21; VARS.DI21.CHIDDF:=21;
+VARS.DI22.ID:=10022; VARS.DI22.CHID:=22; VARS.DI22.CHIDDF:=22;
+VARS.DI23.ID:=10023; VARS.DI23.CHID:=23; VARS.DI23.CHIDDF:=23;
+VARS.DI24.ID:=10024; VARS.DI24.CHID:=24; VARS.DI24.CHIDDF:=24;
+VARS.DI25.ID:=10025; VARS.DI25.CHID:=25; VARS.DI25.CHIDDF:=25;
+VARS.DI26.ID:=10026; VARS.DI26.CHID:=26; VARS.DI26.CHIDDF:=26;
+VARS.DI27.ID:=10027; VARS.DI27.CHID:=27; VARS.DI27.CHIDDF:=27;
+VARS.DI28.ID:=10028; VARS.DI28.CHID:=28; VARS.DI28.CHIDDF:=28;
+VARS.DI29.ID:=10029; VARS.DI29.CHID:=29; VARS.DI29.CHIDDF:=29;
+VARS.DI30.ID:=10030; VARS.DI30.CHID:=30; VARS.DI30.CHIDDF:=30;
+VARS.DI31.ID:=10031; VARS.DI31.CHID:=31; VARS.DI31.CHIDDF:=31;
+VARS.DI32.ID:=10032; VARS.DI32.CHID:=32; VARS.DI32.CHIDDF:=32;
+
+
+VARS.DO1.ID:=20001;  VARS.DO1.CHID:=1;   VARS.DO1.CHIDDF:=1;
+VARS.VNabor_T1.ID:=20002;  VARS.VNabor_T1.CHID:=2;   VARS.VNabor_T1.CHIDDF:=2;
+VARS.VSliv_T1.ID:=20003;  VARS.VSliv_T1.CHID:=3;   VARS.VSliv_T1.CHIDDF:=3;
+VARS.VNabor_T2.ID:=20004;  VARS.VNabor_T2.CHID:=4;   VARS.VNabor_T2.CHIDDF:=4;
+VARS.VSliv_T2.ID:=20005;  VARS.VSliv_T2.CHID:=5;   VARS.VSliv_T2.CHIDDF:=5;
+VARS.VNabor_D1.ID:=20006;  VARS.VNabor_D1.CHID:=6;   VARS.VNabor_D1.CHIDDF:=6;
+VARS.VNabor_D2.ID:=20007;  VARS.VNabor_D2.CHID:=7;   VARS.VNabor_D2.CHIDDF:=7;
+VARS.VSliv_D1.ID:=20008;  VARS.VSliv_D1.CHID:=8;   VARS.VSliv_D1.CHIDDF:=8;
+VARS.VSliv_D2.ID:=20009;  VARS.VSliv_D2.CHID:=9;   VARS.VSliv_D2.CHIDDF:=9;
+VARS.VDoz_T1toT2.ID:=20010; VARS.VDoz_T1toT2.CHID:=10; VARS.VDoz_T1toT2.CHIDDF:=10;
+VARS.KM1.ID:=20011; VARS.KM1.CHID:=11; VARS.KM1.CHIDDF:=11;
+VARS.KM2.ID:=20012; VARS.KM2.CHID:=12; VARS.KM2.CHIDDF:=12;
+VARS.DO13.ID:=20013; VARS.DO13.CHID:=13; VARS.DO13.CHIDDF:=13;
+VARS.DO14.ID:=20014; VARS.DO14.CHID:=14; VARS.DO14.CHIDDF:=14;
+VARS.DO15.ID:=20015; VARS.DO15.CHID:=15; VARS.DO15.CHIDDF:=15;
+VARS.DO16.ID:=20016; VARS.DO16.CHID:=16; VARS.DO16.CHIDDF:=16;
+VARS.DO17.ID:=20017; VARS.DO17.CHID:=17; VARS.DO17.CHIDDF:=17;
+VARS.DO18.ID:=20018; VARS.DO18.CHID:=18; VARS.DO18.CHIDDF:=18;
+VARS.DO19.ID:=20019; VARS.DO19.CHID:=19; VARS.DO19.CHIDDF:=19;
+VARS.DO20.ID:=20020; VARS.DO20.CHID:=20; VARS.DO20.CHIDDF:=20;
+VARS.DO21.ID:=20021; VARS.DO21.CHID:=21; VARS.DO21.CHIDDF:=21;
+VARS.DO22.ID:=20022; VARS.DO22.CHID:=22; VARS.DO22.CHIDDF:=22;
+VARS.DO23.ID:=20023; VARS.DO23.CHID:=23; VARS.DO23.CHIDDF:=23;
+VARS.DO24.ID:=20024; VARS.DO24.CHID:=24; VARS.DO24.CHIDDF:=24;
+VARS.DO25.ID:=20025; VARS.DO25.CHID:=25; VARS.DO25.CHIDDF:=25;
+VARS.DO26.ID:=20026; VARS.DO26.CHID:=26; VARS.DO26.CHIDDF:=26;
+VARS.DO27.ID:=20027; VARS.DO27.CHID:=27; VARS.DO27.CHIDDF:=27;
+VARS.DO28.ID:=20028; VARS.DO28.CHID:=28; VARS.DO28.CHIDDF:=28;
+VARS.DO29.ID:=20029; VARS.DO29.CHID:=29; VARS.DO29.CHIDDF:=29;
+VARS.DO30.ID:=20030; VARS.DO30.CHID:=30; VARS.DO30.CHIDDF:=30;
+VARS.DO31.ID:=20031; VARS.DO31.CHID:=31; VARS.DO31.CHIDDF:=31;
+VARS.DO32.ID:=20032; VARS.DO32.CHID:=32; VARS.DO32.CHIDDF:=32;
+
+VARS.LE_T1.ID:=30001; VARS.LE_T1.CHID:=1; VARS.LE_T1.CHIDDF:=1;
+VARS.LE_T2.ID:=30002; VARS.LE_T2.CHID:=2; VARS.LE_T2.CHIDDF:=2;
+VARS.TE_T1.ID:=30003; VARS.TE_T1.CHID:=3; VARS.TE_T1.CHIDDF:=3;
+VARS.TE_T2.ID:=30004; VARS.TE_T2.CHID:=4; VARS.TE_T2.CHIDDF:=4;
+VARS.AI5.ID:=30005; VARS.AI5.CHID:=5; VARS.AI5.CHIDDF:=5;
+VARS.AI6.ID:=30006; VARS.AI6.CHID:=6; VARS.AI6.CHIDDF:=6;
+VARS.AI7.ID:=30007; VARS.AI7.CHID:=7; VARS.AI7.CHIDDF:=7;
+VARS.AI8.ID:=30008; VARS.AI8.CHID:=8; VARS.AI8.CHIDDF:=8;
+
+VARS.VNagrev_T1.ID:=40001; VARS.VNagrev_T1.CHID:=1; VARS.VNagrev_T1.CHIDDF:=1;
+VARS.VNagrev_T2.ID:=40002; VARS.VNagrev_T2.CHID:=2; VARS.VNagrev_T2.CHIDDF:=2;
+VARS.SC1.ID:=40003; VARS.SC1.CHID:=3; VARS.SC1.CHIDDF:=3;
+VARS.SC2.ID:=40004; VARS.SC2.CHID:=4; VARS.SC2.CHIDDF:=4;
+
+VLVDS.VNabor_T1.ID:=1001;
+VLVDS.VNabor_T2.ID:=1002;
+VLVDS.VSliv_T1.ID:=1003;
+VLVDS.VSliv_T2.ID:=1004;
+VLVDS.VNabor_D1.ID:=1005;
+VLVDS.VNabor_D2.ID:=1006;
+VLVDS.VSliv_D1.ID:=1007;
+VLVDS.VSliv_D2.ID:=1008;
+VLVDS.VDoz_T1toT2.ID:=1009;
+
+VLVDS.VNabor_T1.CLSID:=16#2011;
+VLVDS.VNabor_T2.CLSID:=16#2011;
+VLVDS.VSliv_T1.CLSID:=16#2011;
+VLVDS.VSliv_T2.CLSID:=16#2011;
+VLVDS.VNabor_D1.CLSID:=16#2011;
+VLVDS.VNabor_D2.CLSID:=16#2011;
+VLVDS.VSliv_D1.CLSID:=16#2011;
+VLVDS.VSliv_D2.CLSID:=16#2011;
+VLVDS.VDoz_T1toT2.CLSID:=16#2011;
+
+
+
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<DDTSource DDTName="VARS" version="0.02" dateTime="dt#2022-01-08-19:11:34">
+		<attribute name="TypeSignatureCheckSumString" value="BE3E"></attribute>
+		<structure>
+			<variables name="VNabor_T1_OPN" typeName="DIVAR_CFG"></variables>
+			<variables name="VNabor_T2_OPN" typeName="DIVAR_CFG"></variables>
+			<variables name="DI3" typeName="DIVAR_CFG"></variables>
+			<variables name="DI4" typeName="DIVAR_CFG"></variables>
+			<variables name="VNabor_T1_CLS" typeName="DIVAR_CFG"></variables>
+			<variables name="VNabor_T2_CLS" typeName="DIVAR_CFG"></variables>
+			<variables name="VSliv_T1_CLS" typeName="DIVAR_CFG"></variables>
+			<variables name="VSliv_T2_CLS" typeName="DIVAR_CFG"></variables>
+			<variables name="VNabor_D1_CLS" typeName="DIVAR_CFG"></variables>
+			<variables name="VNabor_D2_CLS" typeName="DIVAR_CFG"></variables>
+			<variables name="VSliv_D1_CLS" typeName="DIVAR_CFG"></variables>
+			<variables name="VSliv_D2_CLS" typeName="DIVAR_CFG"></variables>
+			<variables name="LSH_D1" typeName="DIVAR_CFG"></variables>
+			<variables name="LSL_D1" typeName="DIVAR_CFG"></variables>
+			<variables name="LSH_D2" typeName="DIVAR_CFG"></variables>
+			<variables name="LSL_D2" typeName="DIVAR_CFG"></variables>
+			<variables name="VDoz_T1_OPN" typeName="DIVAR_CFG"></variables>
+			<variables name="VDoz_T2_OPN" typeName="DIVAR_CFG"></variables>
+			<variables name="GSM1" typeName="DIVAR_CFG"></variables>
+			<variables name="GSM2" typeName="DIVAR_CFG"></variables>
+			<variables name="DI21" typeName="DIVAR_CFG"></variables>
+			<variables name="DI22" typeName="DIVAR_CFG"></variables>
+			<variables name="DI23" typeName="DIVAR_CFG"></variables>
+			<variables name="DI24" typeName="DIVAR_CFG"></variables>
+			<variables name="DI25" typeName="DIVAR_CFG"></variables>
+			<variables name="DI26" typeName="DIVAR_CFG"></variables>
+			<variables name="DI27" typeName="DIVAR_CFG"></variables>
+			<variables name="DI28" typeName="DIVAR_CFG"></variables>
+			<variables name="DI29" typeName="DIVAR_CFG"></variables>
+			<variables name="DI30" typeName="DIVAR_CFG"></variables>
+			<variables name="DI31" typeName="DIVAR_CFG"></variables>
+			<variables name="DI32" typeName="DIVAR_CFG"></variables>
+			<variables name="DO1" typeName="DOVAR_CFG"></variables>
+			<variables name="VNabor_T1" typeName="DOVAR_CFG"></variables>
+			<variables name="VSliv_T1" typeName="DOVAR_CFG"></variables>
+			<variables name="VNabor_T2" typeName="DOVAR_CFG"></variables>
+			<variables name="VSliv_T2" typeName="DOVAR_CFG"></variables>
+			<variables name="VNabor_D1" typeName="DOVAR_CFG"></variables>
+			<variables name="VNabor_D2" typeName="DOVAR_CFG"></variables>
+			<variables name="VSliv_D1" typeName="DOVAR_CFG"></variables>
+			<variables name="VSliv_D2" typeName="DOVAR_CFG"></variables>
+			<variables name="VDoz_T1toT2" typeName="DOVAR_CFG"></variables>
+			<variables name="KM1" typeName="DOVAR_CFG"></variables>
+			<variables name="KM2" typeName="DOVAR_CFG"></variables>
+			<variables name="DO13" typeName="DOVAR_CFG"></variables>
+			<variables name="DO14" typeName="DOVAR_CFG"></variables>
+			<variables name="DO15" typeName="DOVAR_CFG"></variables>
+			<variables name="DO16" typeName="DOVAR_CFG"></variables>
+			<variables name="DO17" typeName="DOVAR_CFG"></variables>
+			<variables name="DO18" typeName="DOVAR_CFG"></variables>
+			<variables name="DO19" typeName="DOVAR_CFG"></variables>
+			<variables name="DO20" typeName="DOVAR_CFG"></variables>
+			<variables name="DO21" typeName="DOVAR_CFG"></variables>
+			<variables name="DO22" typeName="DOVAR_CFG"></variables>
+			<variables name="DO23" typeName="DOVAR_CFG"></variables>
+			<variables name="DO24" typeName="DOVAR_CFG"></variables>
+			<variables name="DO25" typeName="DOVAR_CFG"></variables>
+			<variables name="DO26" typeName="DOVAR_CFG"></variables>
+			<variables name="DO27" typeName="DOVAR_CFG"></variables>
+			<variables name="DO28" typeName="DOVAR_CFG"></variables>
+			<variables name="DO29" typeName="DOVAR_CFG"></variables>
+			<variables name="DO30" typeName="DOVAR_CFG"></variables>
+			<variables name="DO31" typeName="DOVAR_CFG"></variables>
+			<variables name="DO32" typeName="DOVAR_CFG"></variables>
+			<variables name="LE_T1" typeName="AIVAR_CFG"></variables>
+			<variables name="LE_T2" typeName="AIVAR_CFG"></variables>
+			<variables name="TE_T1" typeName="AIVAR_CFG"></variables>
+			<variables name="TE_T2" typeName="AIVAR_CFG"></variables>
+			<variables name="AI5" typeName="AIVAR_CFG"></variables>
+			<variables name="AI6" typeName="AIVAR_CFG"></variables>
+			<variables name="AI7" typeName="AIVAR_CFG"></variables>
+			<variables name="AI8" typeName="AIVAR_CFG"></variables>
+			<variables name="VNagrev_T1" typeName="AOVAR_CFG"></variables>
+			<variables name="VNagrev_T2" typeName="AOVAR_CFG"></variables>
+			<variables name="SC1" typeName="AOVAR_CFG"></variables>
+			<variables name="SC2" typeName="AOVAR_CFG"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DIVAR_CFG" version="0.02" dateTime="dt#2022-01-04-20:09:05">
+		<attribute name="TypeSignatureCheckSumString" value="BF12"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#1010</comment>
+			</variables>
+			<variables name="STA" typeName="DIVAR_STA">
+				<comment>статус (див STC)</comment>
+			</variables>
+			<variables name="VALI" typeName="INT">
+				<comment>для відображення значення при не форсуванні, використовується для введення значення з буфера при форсуванні</comment>
+			</variables>
+			<variables name="PRM" typeName="DIVAR_PRM">
+				<comment>параметри</comment>
+			</variables>
+			<variables name="CHID" typeName="UINT">
+				<comment>Логічний номер дискретного каналу</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>номер кроку</comment>
+			</variables>
+			<variables name="T_DEASP" typeName="UINT">
+				<comment>Час затримки тривоги в 0.1 секундах</comment>
+			</variables>
+			<variables name="T_FLTSP" typeName="UINT">
+				<comment>Заданий час фільтрації в мілісекундах</comment>
+			</variables>
+			<variables name="CHIDDF" typeName="UINT">
+				<comment>Логічний номер дискретного каналу за замовченням</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DIVAR_STA" version="0.01" dateTime="dt#2022-01-04-18:26:09">
+		<attribute name="TypeSignatureCheckSumString" value="EBC8"></attribute>
+		<structure>
+			<variables name="VRAW" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу з DICH</comment>
+			</variables>
+			<variables name="VALB" typeName="BOOL">
+				<comment>=1 – значення дискретної вхідної змінної після всіх перетворень, в режимі FRC=1 може змінюватися із-зовні</comment>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 - Дані недостовірні {A.BAD.2}</comment>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 - Тривога виведена з експлуатації {A.MSG.3}</comment>
+			</variables>
+			<variables name="DLNK" typeName="BOOL">
+				<comment>=1 – якщо прив’язаний до каналу</comment>
+			</variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>=1 – змінна задіяна  = (NOT PRM.7 AND  DLNK)</comment>
+			</variables>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 - Тривога {A.ALM.6}</comment>
+			</variables>
+			<variables name="VALPRV" typeName="BOOL">
+				<comment>значення на попередньому циклі</comment>
+			</variables>
+			<variables name="ISALM" typeName="BOOL">
+				<comment>=1 - задіяна тривога </comment>
+			</variables>
+			<variables name="SPDMONON" typeName="BOOL">
+				<comment>=1 - включений контроль швидкості (SPDMON) </comment>
+			</variables>
+			<variables name="ISWRN" typeName="BOOL">
+				<comment>=1 - задіяне попередження</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 - Попередження {A.ALM.11}</comment>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 – змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 - Режим форсування{A.MSG.13}</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – змінна в режимі симуляції</comment>
+			</variables>
+			<variables name="CMDLOAD" typeName="BOOL">
+				<comment>=1 – команда завантаження в буфер</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DIVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:28:44">
+		<attribute name="TypeSignatureCheckSumString" value="3F6A"></attribute>
+		<structure>
+			<variables name="PRM_ISALM" typeName="BOOL">
+				<comment>=1 – задіяти як технологічну тривогу</comment>
+			</variables>
+			<variables name="PRM_ISWRN" typeName="BOOL">
+				<comment>=1 – задіяти як технологічне попередження</comment>
+			</variables>
+			<variables name="PRM_INVERSE" typeName="BOOL">
+				<comment>=1 – інвертувати сире значення</comment>
+			</variables>
+			<variables name="PRMb3" typeName="BOOL"></variables>
+			<variables name="PRMb4" typeName="BOOL"></variables>
+			<variables name="PRM_NRMVAL" typeName="BOOL">
+				<comment>значення норми</comment>
+			</variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяти тривогу недостовірності каналу</comment>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+			</variables>
+			<variables name="PRM_SPEEDENBL" typeName="BOOL">
+				<comment>=1 – активація блоку розрахунку швидкості</comment>
+			</variables>
+			<variables name="PRMb9" typeName="BOOL"></variables>
+			<variables name="PRMb10" typeName="BOOL"></variables>
+			<variables name="PRMb11" typeName="BOOL"></variables>
+			<variables name="PRMb12" typeName="BOOL"></variables>
+			<variables name="PRMb13" typeName="BOOL"></variables>
+			<variables name="PRMb14" typeName="BOOL"></variables>
+			<variables name="PRMb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DOVAR_CFG" version="0.01" dateTime="dt#2022-01-04-18:47:03">
+		<attribute name="TypeSignatureCheckSumString" value="45AC"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#1010</comment>
+			</variables>
+			<variables name="STA" typeName="DOVAR_STA">
+				<comment>статус (див STC)</comment>
+			</variables>
+			<variables name="VALI" typeName="INT">
+				<comment>для відображення значення при не форсуванні, використовується для введення значення з буфера при форсуванні</comment>
+			</variables>
+			<variables name="PRM" typeName="DOVAR_PRM">
+				<comment>параметри</comment>
+			</variables>
+			<variables name="CHID" typeName="UINT">
+				<comment>Логічний номер дискретного каналу</comment>
+			</variables>
+			<variables name="CHIDDF" typeName="UINT">
+				<comment>Логічний номер дискретного каналу за замовченням</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>номер кроку</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DOVAR_STA" version="0.01" dateTime="dt#2022-01-04-18:37:17">
+		<attribute name="TypeSignatureCheckSumString" value="A198"></attribute>
+		<structure>
+			<variables name="VRAW" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу з DOCH</comment>
+			</variables>
+			<variables name="VALB" typeName="BOOL">
+				<comment>=1 – значення дискретної вихідної змінної після всіх перетворень, в режимі FRC=1 може змінюватися із-зовні</comment>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 – Дані недостовірні {A.BAD.2}</comment>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 - Тривога виведена з експлуатації {A.MSG.3}</comment>
+			</variables>
+			<variables name="DLNK" typeName="BOOL">
+				<comment>=1 – якщо прив’язаний до каналу</comment>
+			</variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>=1 – змінна задіяна = (NOT PRM.7 AND DLNK)</comment>
+			</variables>
+			<variables name="STAb6" typeName="BOOL"></variables>
+			<variables name="VALPRV" typeName="BOOL">
+				<comment>значення на попередньому циклі</comment>
+			</variables>
+			<variables name="STAb8" typeName="BOOL"></variables>
+			<variables name="MVAL" typeName="BOOL">
+				<comment>=1 – ручне (форсоване) значення</comment>
+			</variables>
+			<variables name="STAb10" typeName="BOOL"></variables>
+			<variables name="STAb11" typeName="BOOL"></variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 – змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 - Режим форсування{A.MSG.13}</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – змінна в режимі симуляції</comment>
+			</variables>
+			<variables name="CMDLOAD" typeName="BOOL">
+				<comment>=1 – команда завантаження в буфер</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DOVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:39:46">
+		<attribute name="TypeSignatureCheckSumString" value="BDE9"></attribute>
+		<structure>
+			<variables name="PRMb0" typeName="BOOL"></variables>
+			<variables name="PRMb1" typeName="BOOL"></variables>
+			<variables name="PRM_INVERSE" typeName="BOOL">
+				<comment>=1 – інвертувати сире значення</comment>
+			</variables>
+			<variables name="PRMb3" typeName="BOOL"></variables>
+			<variables name="PRMb4" typeName="BOOL"></variables>
+			<variables name="PRMb5" typeName="BOOL"></variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяти тривогу недостовірності каналу</comment>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+			</variables>
+			<variables name="PRMb8" typeName="BOOL"></variables>
+			<variables name="PRMb9" typeName="BOOL"></variables>
+			<variables name="PRMb10" typeName="BOOL"></variables>
+			<variables name="PRMb11" typeName="BOOL"></variables>
+			<variables name="PRMb12" typeName="BOOL"></variables>
+			<variables name="PRMb13" typeName="BOOL"></variables>
+			<variables name="PRMb14" typeName="BOOL"></variables>
+			<variables name="PRMb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AIVAR_CFG" version="0.01" dateTime="dt#2022-01-04-19:55:55">
+		<attribute name="TypeSignatureCheckSumString" value="0BBF"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#1030</comment>
+			</variables>
+			<variables name="STA" typeName="AIVAR_STA">
+				<comment>статус (див STC)</comment>
+			</variables>
+			<variables name="VALPRCSTA2" typeName="INT">
+				<comment>значення у % від шкали вимірювання (0-10000)</comment>
+			</variables>
+			<variables name="PRM" typeName="AIVAR_PRM">
+				<comment>параметри</comment>
+			</variables>
+			<variables name="CHID" typeName="UINT">
+				<comment>Логічний номер дискретного каналу</comment>
+			</variables>
+			<variables name="LORAW" typeName="INT">
+				<comment>Сире (немасштабоване) значення мінімуму</comment>
+			</variables>
+			<variables name="HIRAW" typeName="INT">
+				<comment>Сире (немасштабоване) значення максимуму</comment>
+			</variables>
+			<variables name="VAL" typeName="REAL">
+				<comment>масштабоване значення</comment>
+			</variables>
+			<variables name="VALFRC" typeName="REAL">
+				<comment>зберігає форсоване значення</comment>
+			</variables>
+			<variables name="LOENG" typeName="REAL">
+				<comment>Інженерне (масштабоване) значення мінімуму</comment>
+			</variables>
+			<variables name="HIENG" typeName="REAL">
+				<comment>Інженерне (масштабоване) значення максимуму</comment>
+			</variables>
+			<variables name="LOSP" typeName="REAL">
+				<comment>Уставка тривоги HI</comment>
+			</variables>
+			<variables name="HISP" typeName="REAL">
+				<comment>Уставка тривоги LO</comment>
+			</variables>
+			<variables name="LOLOSP" typeName="REAL">
+				<comment>Уставка тривоги LOLO</comment>
+			</variables>
+			<variables name="HIHISP" typeName="REAL">
+				<comment>Уставка тривоги HIHI</comment>
+			</variables>
+			<variables name="THSP" typeName="REAL">
+				<comment>Технологічна уставка HI (для регулятора)</comment>
+			</variables>
+			<variables name="TLSP" typeName="REAL">
+				<comment>Технологічна уставка LO (для регулятора)</comment>
+			</variables>
+			<variables name="T_FLT" typeName="UINT">
+				<comment>час фільтрації в мілісекундах (фільтр - аперіодична ланка)</comment>
+			</variables>
+			<variables name="VRAW" typeName="INT">
+				<comment>сире значення</comment>
+			</variables>
+			<variables name="STA2" typeName="AIVAR_VALPRCSTA2">
+				<comment>додаткові біти статусу та тривоги</comment>
+			</variables>
+			<variables name="tmp" typeName="INT"></variables>
+			<variables name="HYST" typeName="REAL">
+				<comment>гістерезис в реальних одиницях або % (PRM_PARAISPROC)</comment>
+			</variables>
+			<variables name="T_DEALL" typeName="UINT">
+				<comment>Час затримки на виникнення тривоги LL в 0.1 секундах</comment>
+			</variables>
+			<variables name="T_DEAL" typeName="UINT">
+				<comment>Час затримки на виникнення тривоги L в 0.1 секундах (за необхідністю)</comment>
+			</variables>
+			<variables name="T_DEAH" typeName="UINT">
+				<comment>Час затримки на виникнення тривоги H в 0.1 секундах (за необхідністю)</comment>
+			</variables>
+			<variables name="T_DEAHH" typeName="UINT">
+				<comment>Час затримки на виникнення тривоги HH в 0.1 секундах (за необхідністю)</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>номер кроку</comment>
+			</variables>
+			<variables name="CHIDDF" typeName="UINT">
+				<comment>Логічний номер каналу за замовченням</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+			<variables name="VALPRV" typeName="REAL">
+				<comment>значення на попередньому циклі (для реалізації фільтрації)</comment>
+			</variables>
+			<variables name="VALPRV_AFRZ" typeName="REAL">
+				<comment>значення на попередньому перерахунку контролю зависання (Енікон)</comment>
+			</variables>
+			<variables name="VALPRV_ASPD" typeName="REAL">
+				<comment>значення на попередньому перерахунку контролю скачку (Енікон)</comment>
+			</variables>
+			<variables name="DEASP_AFRZ" typeName="REAL">
+				<comment>уставка нечутливості контролю зависання (Енікон)</comment>
+			</variables>
+			<variables name="DOPSP_ASPD" typeName="REAL">
+				<comment>уставка допуску контролю швидкості (Енікон)</comment>
+			</variables>
+			<variables name="ZERO_CUT_VAL" typeName="REAL">
+				<comment>відсічка нуля </comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AIVAR_STA" version="0.01" dateTime="dt#2022-01-04-18:53:22">
+		<attribute name="TypeSignatureCheckSumString" value="E9FE"></attribute>
+		<structure>
+			<variables name="BRK" typeName="BOOL">
+				<comment>=1 – Обрив каналу {A.BAD.0}</comment>
+			</variables>
+			<variables name="OVRLD" typeName="BOOL">
+				<comment>=1 – КЗ або перевантаження каналу {A.BAD.1}</comment>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 – Дані недостовірні {A.BAD.2}</comment>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 – Тривога виведена з експлуатації {A.MSG.3}</comment>
+			</variables>
+			<variables name="DLNK" typeName="BOOL">
+				<comment>=1 – якщо прив’язаний до каналу</comment>
+			</variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>=1 – змінна задіяна = (NOT PRM.7 AND DLNK)</comment>
+			</variables>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 – активна технологічна тривога і не активна BAD</comment>
+			</variables>
+			<variables name="LOLO" typeName="BOOL">
+				<comment>=1 – Критично низьке значення {A.ALM.7}</comment>
+			</variables>
+			<variables name="LO" typeName="BOOL">
+				<comment>=1 – Низьке значення {A.WRN.8}</comment>
+			</variables>
+			<variables name="HI" typeName="BOOL">
+				<comment>=1 – Високе значення {A.WRN.9}</comment>
+			</variables>
+			<variables name="HIHI" typeName="BOOL">
+				<comment>=1 – Критично високе значення {A.ALM.10}</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 – активне технологічне попередження і не активні BAD та ALM</comment>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 – змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 – Режим форсування{A.MSG.13}</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – змінна в режимі симуляції</comment>
+			</variables>
+			<variables name="CMDLOAD" typeName="BOOL">
+				<comment>=1 – команда завантаження в буфер</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AIVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:56:39">
+		<attribute name="TypeSignatureCheckSumString" value="033C"></attribute>
+		<structure>
+			<variables name="PRM_LOENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога LO /MASK 16#1</comment>
+			</variables>
+			<variables name="PRM_HIENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога HI /MASK 16#2</comment>
+			</variables>
+			<variables name="PRM_LOLOENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога LOLO /MASK 16#4</comment>
+			</variables>
+			<variables name="PRM_HIHIENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога HIHI/MASK 16#8</comment>
+			</variables>
+			<variables name="PRM_BRKENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога обриву</comment>
+			</variables>
+			<variables name="PRM_OVRLENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога перевантаження</comment>
+			</variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога перевірки якості даних</comment>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+			</variables>
+			<variables name="PRM_PWLENBL" typeName="BOOL">
+				<comment>=1 – задіяна кусочно-лінійна інтерполяція (не використовувати разом з TOTALON)</comment>
+			</variables>
+			<variables name="PRM_TOTALON" typeName="BOOL">
+				<comment>=1 – задіяне інтегрування (не використовувати разом з PWLENBL)</comment>
+			</variables>
+			<variables name="PRM_SQRT" typeName="BOOL">
+				<comment>=1 - задіяне квадратичне (квадратний корінь) масштабування</comment>
+			</variables>
+			<variables name="PRM_PARAISPROC" typeName="BOOL">
+				<comment>=1 - параметри налаштування (гістерезис, нечутл) задається в процентах</comment>
+			</variables>
+			<variables name="PRM_AFRZENBL" typeName="BOOL">
+				<comment>=1 - активна тривога нечутливості контролю зависання</comment>
+			</variables>
+			<variables name="PRM_ASPDENBL" typeName="BOOL">
+				<comment>=1 - активна тривога допуску контролю швидкості</comment>
+			</variables>
+			<variables name="PRMb14" typeName="BOOL"></variables>
+			<variables name="PRMb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AIVAR_VALPRCSTA2" version="0.01" dateTime="dt#2022-01-04-18:58:45">
+		<attribute name="TypeSignatureCheckSumString" value="9AF1"></attribute>
+		<structure>
+			<variables name="ASPD" typeName="BOOL">
+				<comment>Шивдка зміна сигналу {A.BAD.0}</comment>
+			</variables>
+			<variables name="AFRZ" typeName="BOOL">
+				<comment>Сигнал не змінюється {A.BAD.1}</comment>
+			</variables>
+			<variables name="AOVRFL" typeName="BOOL">
+				<comment>Перехід через верхнє значення {A.BAD.2}</comment>
+			</variables>
+			<variables name="AUNDRFL" typeName="BOOL">
+				<comment>Перехід через нижнє значення  {A.BAD.3}</comment>
+			</variables>
+			<variables name="STA2b4" typeName="BOOL"></variables>
+			<variables name="STA2b5" typeName="BOOL"></variables>
+			<variables name="STA2b6" typeName="BOOL"></variables>
+			<variables name="STA2b7" typeName="BOOL"></variables>
+			<variables name="STA2b8" typeName="BOOL"></variables>
+			<variables name="STA2b9" typeName="BOOL"></variables>
+			<variables name="STA2b10" typeName="BOOL"></variables>
+			<variables name="STA2b11" typeName="BOOL"></variables>
+			<variables name="STA2b12" typeName="BOOL"></variables>
+			<variables name="STA2b13" typeName="BOOL"></variables>
+			<variables name="STA2b14" typeName="BOOL"></variables>
+			<variables name="STA2b15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AOVAR_CFG" version="0.01" dateTime="dt#2022-01-04-20:09:06">
+		<attribute name="TypeSignatureCheckSumString" value="A26C"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#1040</comment>
+			</variables>
+			<variables name="STA" typeName="AOVAR_STA">
+				<comment>статус (див STC)</comment>
+			</variables>
+			<variables name="VRAW" typeName="INT">
+				<comment>сирі значення</comment>
+			</variables>
+			<variables name="VAL" typeName="REAL">
+				<comment>масштабоване значення</comment>
+			</variables>
+			<variables name="VALFRC" typeName="REAL">
+				<comment>зберігає форсоване значення</comment>
+			</variables>
+			<variables name="VALPRV" typeName="REAL">
+				<comment>зберігає попереднє значення</comment>
+			</variables>
+			<variables name="PRM" typeName="AOVAR_PRM">
+				<comment>параметри</comment>
+			</variables>
+			<variables name="CHID" typeName="UINT">
+				<comment>Логічний номер вихідного аналогового каналу CH</comment>
+			</variables>
+			<variables name="LORAW" typeName="INT">
+				<comment>Сире (немасштабоване) значення мінімуму</comment>
+			</variables>
+			<variables name="HIRAW" typeName="INT">
+				<comment>Сире (немасштабоване) значення максимуму</comment>
+			</variables>
+			<variables name="LOENG" typeName="REAL">
+				<comment>Інженерне (масштабоване) значення мінімуму</comment>
+			</variables>
+			<variables name="HIENG" typeName="REAL">
+				<comment>Інженерне (масштабоване) значення максимуму</comment>
+			</variables>
+			<variables name="MVAL" typeName="REAL">
+				<comment>ручне(форсоване) значення</comment>
+			</variables>
+			<variables name="T_FLT" typeName="UINT">
+				<comment>час фільтрації в мілісекундах (фільтр - аперіодична ланка)</comment>
+			</variables>
+			<variables name="VALPROC" typeName="INT">
+				<comment>значення у відсотках</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>номер кроку</comment>
+			</variables>
+			<variables name="CHIDDF" typeName="UINT">
+				<comment>Логічний номер дискретного каналу за замовченням</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AOVAR_STA" version="0.01" dateTime="dt#2022-01-04-19:58:50">
+		<attribute name="TypeSignatureCheckSumString" value="D2B2"></attribute>
+		<structure>
+			<variables name="STAb0" typeName="BOOL"></variables>
+			<variables name="STAb1" typeName="BOOL"></variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 – Дані недостовірні {A.BAD.2}</comment>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 – Тривога виведена з експлуатації {A.MSG.3}</comment>
+			</variables>
+			<variables name="DLNK" typeName="BOOL">
+				<comment>=1 – якщо прив’язаний до каналу</comment>
+			</variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>=1 – змінна задіяна</comment>
+			</variables>
+			<variables name="STAb6" typeName="BOOL"></variables>
+			<variables name="STAb7" typeName="BOOL"></variables>
+			<variables name="STAb8" typeName="BOOL"></variables>
+			<variables name="STAb9" typeName="BOOL"></variables>
+			<variables name="STAb10" typeName="BOOL"></variables>
+			<variables name="STAb11" typeName="BOOL"></variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 – змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 – Режим форсування{A.MSG.13}</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – змінна в режимі симуляції</comment>
+			</variables>
+			<variables name="CMDLOAD" typeName="BOOL">
+				<comment>=1 – команда завантаження в буфер</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AOVAR_PRM" version="0.02" dateTime="dt#2022-01-04-20:01:35">
+		<attribute name="TypeSignatureCheckSumString" value="E684"></attribute>
+		<structure>
+			<variables name="PRMb0" typeName="BOOL"></variables>
+			<variables name="PRMb1" typeName="BOOL"></variables>
+			<variables name="PRMb2" typeName="BOOL"></variables>
+			<variables name="PRMb3" typeName="BOOL"></variables>
+			<variables name="PRMb4" typeName="BOOL"></variables>
+			<variables name="PRMb5" typeName="BOOL"></variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяти тривогу недостовірності каналу</comment>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+			</variables>
+			<variables name="PRM_PWLENBL" typeName="BOOL">
+				<comment>=1 – задіяна кусочно-лінійна інтерполяція (не використовувати разом з TOTALON)</comment>
+			</variables>
+			<variables name="PRMb9" typeName="BOOL"></variables>
+			<variables name="PRMb10" typeName="BOOL"></variables>
+			<variables name="PRMb11" typeName="BOOL"></variables>
+			<variables name="PRMb12" typeName="BOOL"></variables>
+			<variables name="PRMb13" typeName="BOOL"></variables>
+			<variables name="PRMb14" typeName="BOOL"></variables>
+			<variables name="PRMb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VLVDS" version="0.01" dateTime="dt#2022-01-09-14:14:55">
+		<attribute name="TypeSignatureCheckSumString" value="D182"></attribute>
+		<structure>
+			<variables name="VNabor_T1" typeName="VLVD_CFG"></variables>
+			<variables name="VNabor_T2" typeName="VLVD_CFG"></variables>
+			<variables name="VSliv_T1" typeName="VLVD_CFG"></variables>
+			<variables name="VSliv_T2" typeName="VLVD_CFG"></variables>
+			<variables name="VNabor_D1" typeName="VLVD_CFG"></variables>
+			<variables name="VNabor_D2" typeName="VLVD_CFG"></variables>
+			<variables name="VSliv_D1" typeName="VLVD_CFG"></variables>
+			<variables name="VSliv_D2" typeName="VLVD_CFG"></variables>
+			<variables name="VDoz_T1toT2" typeName="VLVD_CFG"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VLVD_CFG" version="0.01" dateTime="dt#2022-01-09-12:00:21">
+		<attribute name="TypeSignatureCheckSumString" value="507A"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>ідентифікатор класу</comment>
+			</variables>
+			<variables name="STA" typeName="VLVD_STA">
+				<comment>біти статусу</comment>
+			</variables>
+			<variables name="ALM" typeName="VLVD_ALM">
+				<comment>біти тривог</comment>
+			</variables>
+			<variables name="CMD" typeName="ACTTR_CMD">
+				<comment>біти команд</comment>
+			</variables>
+			<variables name="PRM" typeName="ACTTR_PRM">
+				<comment>біти параметрів</comment>
+			</variables>
+			<variables name="T_DEASP" typeName="UINT">
+				<comment>Час затримки тривоги в 0.1 секунди</comment>
+			</variables>
+			<variables name="T_OPNSP" typeName="UINT">
+				<comment>Час повного переміщення в 0.1 секундах</comment>
+			</variables>
+			<variables name="POS" typeName="REAL">
+				<comment>позиціяВМ (0-100%)</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>крок</comment>
+			</variables>
+			<variables name="CNTPER" typeName="UINT">
+				<comment>Кількість змін положення</comment>
+			</variables>
+			<variables name="CNTALM" typeName="UINT">
+				<comment>Кількість аварій</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VLVD_STA" version="0.01" dateTime="dt#2022-01-09-11:51:32">
+		<attribute name="TypeSignatureCheckSumString" value="C23C"></attribute>
+		<structure>
+			<variables name="IMSTPD" typeName="BOOL">
+				<comment>=1 зупинився в проміжному стані</comment>
+			</variables>
+			<variables name="MANRUNING" typeName="BOOL">
+				<comment>=1 рухається в невизначеному напрямку (ручний зі щита)</comment>
+			</variables>
+			<variables name="DBLCKACT" typeName="BOOL">
+				<comment>=1 Включено режим ігнорування блокування керування {A.MSG.2} </comment>
+			</variables>
+			<variables name="OPNING" typeName="BOOL">
+				<comment>=1 Відкривається</comment>
+			</variables>
+			<variables name="CLSING" typeName="BOOL">
+				<comment>=1 Закривається</comment>
+			</variables>
+			<variables name="OPND" typeName="BOOL">
+				<comment>=1 Відкритий (16#0080)</comment>
+			</variables>
+			<variables name="CLSD" typeName="BOOL">
+				<comment>=1 Закритий (16#0100)</comment>
+			</variables>
+			<variables name="MANBXOUT" typeName="BOOL">
+				<comment>=1 Включення ручного зі щита</comment>
+			</variables>
+			<variables name="WRKED" typeName="BOOL">
+				<comment>=1 В роботі</comment>
+			</variables>
+			<variables name="DISP" typeName="BOOL">
+				<comment>=1 Включено ручний режим з ПК/ОП {A.MSG.9}</comment>
+			</variables>
+			<variables name="MANBX" typeName="BOOL">
+				<comment>=1 Включений ручний зі щита {A.MSG.10}</comment>
+			</variables>
+			<variables name="INIOTBUF" typeName="BOOL">
+				<comment>=1 У бефері IoT</comment>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 - змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 хоча би одна зі змінних в об’єкті форсована (для зручності відображення при наладці)</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 режим симуляції</comment>
+			</variables>
+			<variables name="BLCK" typeName="BOOL">
+				<comment>=1 Привід заблоковано {A.MSG.15}</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VLVD_ALM" version="0.01" dateTime="dt#2022-01-09-11:55:57">
+		<attribute name="TypeSignatureCheckSumString" value="8FC8"></attribute>
+		<structure>
+			<variables name="ALMOPN" typeName="BOOL">
+				<comment>=1 Не відкрився (Несправність схеми управління) {A.ALM.0}</comment>
+			</variables>
+			<variables name="ALMCLS" typeName="BOOL">
+				<comment>=1 Не закрився (Несправність схеми управління) {A.ALM.1}</comment>
+			</variables>
+			<variables name="ALMSHFT" typeName="BOOL">
+				<comment>=1 Порушення стану приводу {A.ALM.2}</comment>
+			</variables>
+			<variables name="ALMOPN2" typeName="BOOL">
+				<comment>=1 Не відкрився (Несправність обладнання по місцю) {A.ALM.3}</comment>
+			</variables>
+			<variables name="ALMCLS2" typeName="BOOL">
+				<comment>=1 Не закрився (Несправність обладнання по місцю) {A.ALM.4}</comment>
+			</variables>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 Помилка приводу (по OR)</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 Попередження приводу (по OR)</comment>
+			</variables>
+			<variables name="ALMSTP" typeName="BOOL">
+				<comment>=1 Не зупинився {A.ALM.7}</comment>
+			</variables>
+			<variables name="ALMBELL" typeName="BOOL">
+				<comment>=1 Команда включення дзвоника (на один цикл ПЛК)</comment>
+			</variables>
+			<variables name="ALMPWR1" typeName="BOOL">
+				<comment>=1 Немає живлення у привода {A.ALM.9}</comment>
+			</variables>
+			<variables name="ALMSTPBTN" typeName="BOOL">
+				<comment>=1 Натиснута кнопка СТОП по місцю {A.ALM.10}</comment>
+			</variables>
+			<variables name="STOPING" typeName="BOOL">
+				<comment>=1 Зупиняється</comment>
+			</variables>
+			<variables name="almb12" typeName="BOOL"></variables>
+			<variables name="almb13" typeName="BOOL"></variables>
+			<variables name="almb14" typeName="BOOL"></variables>
+			<variables name="almb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="ACTTR_CMD" version="0.01" dateTime="dt#2022-01-09-11:05:46">
+		<attribute name="TypeSignatureCheckSumString" value="7F2B"></attribute>
+		<structure>
+			<variables name="OPN" typeName="BOOL">
+				<comment>Відкрити 16#0001</comment>
+			</variables>
+			<variables name="CLS" typeName="BOOL">
+				<comment>Закрити  16#0002</comment>
+			</variables>
+			<variables name="TOGGLE" typeName="BOOL">
+				<comment>Переключити (відкрити&lt;-&gt;закрити, включити &lt;-&gt; відключити) 16#0003</comment>
+			</variables>
+			<variables name="ALMACK" typeName="BOOL">
+				<comment>Підтвердити тривогу 16#0004</comment>
+			</variables>
+			<variables name="ALMRESET" typeName="BOOL">
+				<comment>Скинути тривоги 16#0005</comment>
+			</variables>
+			<variables name="BLCK" typeName="BOOL">
+				<comment>Заблокувати 16#0006</comment>
+			</variables>
+			<variables name="DBLCK" typeName="BOOL">
+				<comment>Розблокувати 16#0007</comment>
+			</variables>
+			<variables name="STOPTUN" typeName="BOOL">
+				<comment>Зупинити автоналаштування 16#0008</comment>
+			</variables>
+			<variables name="TUNING" typeName="BOOL">
+				<comment>Запустити автоналаштування 16#0009</comment>
+			</variables>
+			<variables name="MAN" typeName="BOOL">
+				<comment>Перевести в ручний з SCADA/HMI 16#0301</comment>
+			</variables>
+			<variables name="AUTO" typeName="BOOL">
+				<comment>Перевести в автоматичний з SCADA/HMI 16#0302</comment>
+			</variables>
+			<variables name="PROTECT" typeName="BOOL">
+				<comment>Включити алгоритм захисту 16#000A</comment>
+			</variables>
+			<variables name="START" typeName="BOOL">
+				<comment>Запустити 16#0011</comment>
+			</variables>
+			<variables name="STOP" typeName="BOOL">
+				<comment>Зупинити 16#0012</comment>
+			</variables>
+			<variables name="UP" typeName="BOOL">
+				<comment>Більше 16#0021</comment>
+			</variables>
+			<variables name="DWN" typeName="BOOL">
+				<comment>Менше 16#0022</comment>
+			</variables>
+			<variables name="CRMT" typeName="BOOL">
+				<comment>Відключити локальне керування (по місцю) 16#0314</comment>
+			</variables>
+			<variables name="RESOLUTION" typeName="BOOL">
+				<comment>=1 дозвіл на керування 16#000B</comment>
+			</variables>
+			<variables name="REVERS" typeName="BOOL">
+				<comment>Включити реверс 16#0013</comment>
+			</variables>
+			<variables name="CLCL" typeName="BOOL">
+				<comment>Включити локальне керування (по місцю) 16#0313</comment>
+			</variables>
+			<variables name="DBLCKACTTOGGLE" typeName="BOOL">
+				<comment>Переключення дозволу на ігнорування CMRESOLUTION 16#000C</comment>
+			</variables>
+			<variables name="STARTDELAY" typeName="BOOL">
+				<comment>запуск з затримкою (тільки автомат)</comment>
+			</variables>
+			<variables name="STOPDELAY" typeName="BOOL">
+				<comment>зупин з затримкою (тільки автомат)</comment>
+			</variables>
+			<variables name="P_RESOLUTION" typeName="BOOL">
+				<comment>дозвіл по наявності тиску в системі</comment>
+			</variables>
+			<variables name="BUFLOAD" typeName="BOOL">
+				<comment>завантажити в буфер</comment>
+			</variables>
+			<variables name="cmdrezb25" typeName="BOOL"></variables>
+			<variables name="cmdrezb26" typeName="BOOL"></variables>
+			<variables name="cmdrezb27" typeName="BOOL"></variables>
+			<variables name="cmdrezb28" typeName="BOOL"></variables>
+			<variables name="cmdrezb29" typeName="BOOL"></variables>
+			<variables name="cmdrezb30" typeName="BOOL"></variables>
+			<variables name="cmdrezb31" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="ACTTR_PRM" version="0.01" dateTime="dt#2022-01-09-11:14:37">
+		<attribute name="TypeSignatureCheckSumString" value="D8EB"></attribute>
+		<structure>
+			<variables name="PRM_b0" typeName="BOOL">
+				<comment>=1 </comment>
+			</variables>
+			<variables name="PRM_ZWRKENBL" typeName="BOOL">
+				<comment>=1 є звонішній вхід - зворотній звязок про роботу</comment>
+			</variables>
+			<variables name="PRM_ZPOSENBL" typeName="BOOL">
+				<comment>=1 є аналоговий зворотній звязок частоти/позиції</comment>
+			</variables>
+			<variables name="PRM_PWRENBL" typeName="BOOL">
+				<comment>=1 є звонішній вхід по стану живлення</comment>
+			</variables>
+			<variables name="PRM_MANCFG" typeName="BOOL">
+				<comment>=1 ручне керування налаштуванням</comment>
+			</variables>
+			<variables name="PRM_ZOPNENBL" typeName="BOOL">
+				<comment>=1 є датчик відкритості</comment>
+			</variables>
+			<variables name="PRM_ZCLSENBL" typeName="BOOL">
+				<comment>=1 є датчик закритості</comment>
+			</variables>
+			<variables name="PRM_AUTOACK" typeName="BOOL">
+				<comment>=1, автоматичне підтвердження тривог</comment>
+			</variables>
+			<variables name="PRM_BTNSTPENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - включена кнопка STOP</comment>
+			</variables>
+			<variables name="PRM_ALMENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - сигнал аварії від приводу</comment>
+			</variables>
+			<variables name="PRM_SELLCLENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - сигнал включення місцевого керування</comment>
+			</variables>
+			<variables name="PRM_PULSCTRLENBL" typeName="BOOL">
+				<comment>=1 схема керування імпулсами (команди на 2с)</comment>
+			</variables>
+			<variables name="PRM_ZRUNENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід про рух приводу</comment>
+			</variables>
+			<variables name="PRM_ZSPDENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід про датчику швидкості приводу</comment>
+			</variables>
+			<variables name="PRM_CRVRSENBL" typeName="BOOL">
+				<comment>=1 ВМ з виходом керування реверсом</comment>
+			</variables>
+			<variables name="PRM_BLCKOFSPD" typeName="BOOL">
+				<comment>=1 зупиняти по зниженні швидкості</comment>
+			</variables>
+			<variables name="PRM_NOPRES" typeName="BOOL">
+				<comment>=1 довзолити рух без включеного маслонасоса</comment>
+			</variables>
+			<variables name="PRM_b17" typeName="BOOL"></variables>
+			<variables name="PRM_b18" typeName="BOOL"></variables>
+			<variables name="PRM_b19" typeName="BOOL"></variables>
+			<variables name="PRM_b20" typeName="BOOL"></variables>
+			<variables name="PRM_b21" typeName="BOOL"></variables>
+			<variables name="PRM_b22" typeName="BOOL"></variables>
+			<variables name="PRM_b23" typeName="BOOL"></variables>
+			<variables name="PRM_b24" typeName="BOOL"></variables>
+			<variables name="PRM_b25" typeName="BOOL"></variables>
+			<variables name="PRM_b26" typeName="BOOL"></variables>
+			<variables name="PRM_b27" typeName="BOOL"></variables>
+			<variables name="PRM_b28" typeName="BOOL"></variables>
+			<variables name="PRM_b29" typeName="BOOL"></variables>
+			<variables name="PRM_b30" typeName="BOOL"></variables>
+			<variables name="PRM_b31" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+</FBExchangeFile>

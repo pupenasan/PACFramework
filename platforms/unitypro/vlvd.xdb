@@ -1,0 +1,2279 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FBExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-12-17:1:42" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<FBSource nameOfFBType="VLVD" version="0.06" dateTime="dt#2022-01-12-16:53:16">
+		<attribute name="TypeCodeCheckSumString" value="F591"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="140C"></attribute>
+		<inOutParameters>
+			<variables name="ACTCFG" typeName="VLVD_CFG">
+				<comment>CFG ВМ</comment>
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="ACTHMI" typeName="VLVD_HMI">
+				<comment>HMI ВМ</comment>
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="LSTP" typeName="DIVAR_CFG">
+				<comment>Контроль кнопки "Місцевий стоп"</comment>
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="RUN" typeName="DIVAR_CFG">
+				<comment>контакт Хід</comment>
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="PWR" typeName="DIVAR_CFG">
+				<comment>контакт Контроль живлення схеми управл</comment>
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+			<variables name="SOPN" typeName="DIVAR_CFG">
+				<comment>Датчик Відкрито</comment>
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
+			<variables name="SCLS" typeName="DIVAR_CFG">
+				<comment>Датчик Закрито</comment>
+				<attribute name="PositionPin" value="7"></attribute>
+			</variables>
+			<variables name="ALM" typeName="DIVAR_CFG">
+				<comment>стан Аварія</comment>
+				<attribute name="PositionPin" value="8"></attribute>
+			</variables>
+			<variables name="RMT" typeName="DIVAR_CFG">
+				<comment>стан місцевий/дистанційний</comment>
+				<attribute name="PositionPin" value="9"></attribute>
+			</variables>
+			<variables name="CBLC" typeName="DOVAR_CFG">
+				<comment>керування місцевий/дистанційний</comment>
+				<attribute name="PositionPin" value="10"></attribute>
+			</variables>
+			<variables name="CSTP" typeName="DOVAR_CFG">
+				<comment>керування Стоп</comment>
+				<attribute name="PositionPin" value="11"></attribute>
+			</variables>
+			<variables name="COPN" typeName="DOVAR_CFG">
+				<comment>керування відкрити</comment>
+				<attribute name="PositionPin" value="12"></attribute>
+			</variables>
+			<variables name="CCLS" typeName="DOVAR_CFG">
+				<comment>керування закрити</comment>
+				<attribute name="PositionPin" value="13"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="14"></attribute>
+			</variables>
+			<variables name="ACTBUF" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="15"></attribute>
+			</variables>
+		</inOutParameters>
+		<privateLocalVariables>
+			<variables name="ACTCFGu" typeName="ACTTR_CFG">
+				<comment>універсальна структура CFG</comment>
+			</variables>
+			<variables name="STA" typeName="ACTTR_STA">
+				<comment>структура STA</comment>
+			</variables>
+			<variables name="ALMWORD" typeName="ACTTR_ALM">
+				<comment>структура ALM</comment>
+			</variables>
+			<variables name="CMD" typeName="ACTTR_CMD">
+				<comment>структура CMD</comment>
+			</variables>
+			<variables name="SOPN1" typeName="BOOL">
+				<comment>значення датчика SOPN</comment>
+			</variables>
+			<variables name="SCLS1" typeName="BOOL">
+				<comment>значення датчика SCLS</comment>
+			</variables>
+			<variables name="SRUN1" typeName="BOOL">
+				<comment>значення датчика RUN</comment>
+			</variables>
+			<variables name="SPWR1" typeName="BOOL">
+				<comment>значення датчика PWR</comment>
+			</variables>
+			<variables name="SALM1" typeName="BOOL">
+				<comment>значення датчика ALM</comment>
+			</variables>
+			<variables name="SPOS1" typeName="INT">
+				<comment>значення віртуального датчика позиції</comment>
+			</variables>
+			<variables name="dT1" typeName="UDINT">
+				<comment>різниця часу між викликами блоку в мс</comment>
+			</variables>
+			<variables name="dpos" typeName="REAL">
+				<comment>приріст відкриття/закриття у 0.01% для імітації</comment>
+			</variables>
+			<variables name="ZERO" typeName="ARRAY[0..3] OF BYTE">
+				<comment>масив нулів для обнулення структур</comment>
+			</variables>
+			<variables name="BufferPos" typeName="DINT">
+				<comment>позиція для Deserialize</comment>
+			</variables>
+			<variables name="rez" typeName="INT">
+				<comment>для результату Deserialize</comment>
+			</variables>
+			<variables name="VLVD_to_ACT" typeName="VLVD_to_ACT"></variables>
+			<variables name="ACT_PRE" typeName="ACT_PRE"></variables>
+			<variables name="ACT_CMDCTRL" typeName="ACT_CMDCTRL"></variables>
+			<variables name="ACT_POST" typeName="ACT_POST"></variables>
+			<variables name="ACT_to_VLVD" typeName="ACT_to_VLVD"></variables>
+		</privateLocalVariables>
+		<FBProgram name="VLVD">
+			<STSource>VLVD_to_ACT (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
+
+(*попередня обробка: ініт STA, ALM, CMD, INBUF, SML, dt *)
+ACT_PRE (ACTCFG := ACTCFGu, STA := STA, ALMs := ALMWORD, CMD := CMD, dt1 := dT1, PLCCFG := PLCCFG, ACTBUF := ACTBUF);
+(*значення за замовченням*)
+IF PLCCFG.STA.SCN1 THEN (*first scan*)
+    IF ACTCFGu.T_OPNSP &lt;= 0 THEN (*якщо уставка часу выдкриття не виставлена*)
+        ACTCFGu.T_OPNSP := 500; (*5 секунд*)
+    END_IF;
+    IF ACTCFGu.T_DEASP &lt;= 0 THEN (*якщо уставка затримки часу тривоги не виставлена*)
+        ACTCFGu.T_DEASP := 200; (*2 секунди*)
+    END_IF;
+    (*технологічні тривоги для датчиків не використовуються*)
+    IF SOPN.ID &lt;&gt; 0 THEN
+        SOPN.PRM.PRM_ISALM := false; (*ISALM*)
+        SOPN.PRM.PRM_ISWRN := false; (*ISWRN*)
+    END_IF;
+    IF SCLS.ID &lt;&gt; 0 THEN
+        SCLS.PRM.PRM_ISALM := false; (*ISALM*)
+        SCLS.PRM.PRM_ISWRN := false; (*ISWRN*)
+    END_IF;
+END_IF;
+
+(* --------------------- блок параметрів*)
+(*параметри перевірка наявності/використання датчиків на вході*)
+ACTCFGu.PRM.PRM_MANCFG:=false;(*у цьому проекті не буде ручного конфігурування параметрів IO*)
+ACTCFGu.PRM.PRM_ZCLSENBL := NOT SCLS.PRM.PRM_DSBL AND SCLS.ID &lt;&gt; 0;
+ACTCFGu.PRM.PRM_ZOPNENBL := NOT SOPN.PRM.PRM_DSBL AND SOPN.ID &lt;&gt; 0;
+ACTCFGu.PRM.PRM_b0 := NOT ALM.PRM.PRM_DSBL AND ALM.ID &lt;&gt; 0;
+ACTCFGu.PRM.PRM_ZWRKENBL := NOT RUN.PRM.PRM_DSBL AND RUN.ID &lt;&gt; 0;
+ACTCFGu.PRM.PRM_ZPOSENBL := FALSE;
+ACTCFGu.PRM.PRM_PWRENBL := NOT PWR.PRM.PRM_DSBL AND PWR.ID &lt;&gt; 0;
+ACTCFGu.PRM.PRM_BTNSTPENBL := NOT LSTP.PRM.PRM_DSBL AND LSTP.ID &lt;&gt; 0;
+ACTCFGu.PRM.PRM_ALMENBL := NOT ALM.PRM.PRM_DSBL AND ALM.ID &lt;&gt; 0;
+ACTCFGu.PRM.PRM_SELLCLENBL := NOT RMT.PRM.PRM_DSBL AND RMT.ID &lt;&gt; 0;
+(*параметри імпульсного керування*)
+ACTCFGu.PRM.PRM_PULSCTRLENBL := ACTCFGu.CLSID=16#2014;
+
+(*------------------- блок для режиму імітації*)
+(*режим імітації підлеглих від хозяїна*)
+RUN.STA.SML := STA.SML;     
+PWR.STA.SML := STA.SML;
+LSTP.STA.SML := STA.SML;       
+SOPN.STA.SML := STA.SML;        
+SCLS.STA.SML := STA.SML;        
+ALM.STA.SML := STA.SML;
+RMT.STA.SML := STA.SML;      
+CBLC.STA.SML := STA.SML;        
+CSTP.STA.SML := STA.SML;        
+COPN.STA.SML := STA.SML;        
+CCLS.STA.SML := STA.SML;
+(*логіка для режиму імітації *) 
+IF STA.SML THEN
+    dpos:= UDINT_TO_REAL(dT1)*100.0/(UDINT_TO_REAL(UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100));(*%*)
+    (*IF COPN.STA.VAL і CCLS.STA.VAL замінено на кроки ACTCFG.STEP1 для універсальності імітації схем керування*)
+    IF ACTCFGu.STEP1=2 AND (PWR.STA.VALB OR NOT ACTCFGu.PRM.PRM_PWRENBL) AND NOT (CSTP.ID&lt;&gt;0 AND CSTP.STA.VALB) THEN
+        ACTCFGu.POS := ACTCFGu.POS + dpos; (*0-10000*)
+    END_IF;
+    IF ACTCFGu.STEP1=3 AND (PWR.STA.VALB OR NOT ACTCFGu.PRM.PRM_PWRENBL) AND NOT (CSTP.ID&lt;&gt;0 AND CSTP.STA.VALB) THEN
+        ACTCFGu.POS := ACTCFGu.POS - dpos; (*0-10000*)
+    END_IF;
+    IF ACTCFGu.POS&lt;0.0 THEN ACTCFGu.POS:=0.0; END_IF;
+    IF ACTCFGu.POS&gt;100.0 THEN ACTCFGu.POS:=100.0; END_IF;  
+    
+    (*імітація датчиків *)
+    (*класична схема Енікон*)
+    IF PWR.STA.VALB AND ACTCFGu.PRM.PRM_PWRENBL THEN (*якщо задіяно сигнал живлення і своно є*)
+        (*обидва дачтики включені в проміжному положенні*)
+        IF NOT SCLS.STA.FRC THEN
+            SCLS.STA.VALB:= ACTCFGu.POS&lt;1.00 OR (ACTCFGu.POS&gt;1.00 AND ACTCFGu.POS&lt;99.0) ; 
+        END_IF;
+        IF NOT SOPN.STA.FRC THEN
+            SOPN.STA.VALB:= ACTCFGu.POS&gt;99.00 OR (ACTCFGu.POS&gt;1.00 AND ACTCFGu.POS&lt;99.0); 
+        END_IF; 
+    ELSIF NOT ACTCFGu.PRM.PRM_PWRENBL THEN (*якщо не задіяно сигнал живлення класична схема неЕнікон*)
+        IF NOT SOPN.STA.FRC THEN
+            SOPN.STA.VALB:= ACTCFGu.POS&gt;99.00; 
+        END_IF;
+        IF NOT SCLS.STA.FRC THEN
+            SCLS.STA.VALB:= ACTCFGu.POS&gt;1.00; 
+        END_IF;          
+    ELSIF NOT PWR.STA.VALB AND ACTCFGu.PRM.PRM_PWRENBL THEN(*якщо немає сигналу живлення*)
+        (*обидва датчики відключені *)
+        IF NOT SOPN.STA.FRC THEN SOPN.STA.VALB:=false;END_IF;
+        IF NOT SCLS.STA.FRC THEN SCLS.STA.VALB:=false;END_IF; 
+    END_IF;       
+    IF NOT PWR.STA.FRC THEN PWR.STA.VALB:=true; END_IF; (*живлення є*)
+    IF NOT ALM.STA.FRC THEN ALM.STA.VALB := false; END_IF;(*тривоги немає*)
+    IF NOT RMT.STA.FRC THEN RMT.STA.VALB := NOT CBLC.STA.VALB AND CBLC.T_STEP1&gt;1000;END_IF; (*дистанційний режим повторює команду через певний час  *)   
+END_IF;
+
+(*-------------------- блок обробки команд *)
+(*стандартний обробник команд*)
+ACT_CMDCTRL (ACTCFG := ACTCFGu, STA := STA, CMD := CMD, ACTBUF := ACTBUF);
+
+(**переключення в ручний режим при включенні локального ручного і блокування усіх команд*)
+IF RMT.STA.VALB AND NOT RMT.PRM.PRM_DSBL THEN
+    STA.DISP := TRUE;
+    (*CMD_RESET*)
+    ACTCFGu.CMD.OPN:=FALSE;
+    ACTCFGu.CMD.CLS:=FALSE;
+    ACTCFGu.CMD.TOGGLE:=FALSE;
+    ACTCFGu.CMD.ALMACK:=FALSE;
+    ACTCFGu.CMD.ALMRESET:=FALSE;
+    ACTCFGu.CMD.BLCK:=FALSE;
+    ACTCFGu.CMD.DBLCK:=FALSE;
+    ACTCFGu.CMD.STOPTUN:=FALSE;
+    ACTCFGu.CMD.TUNING:=FALSE;
+    ACTCFGu.CMD.MAN:=FALSE;
+    ACTCFGu.CMD.AUTO:=FALSE;
+    ACTCFGu.CMD.PROTECT:=FALSE;
+    ACTCFGu.CMD.START:=FALSE;
+    ACTCFGu.CMD.STOP:=FALSE;
+    ACTCFGu.CMD.UP:=FALSE;
+    ACTCFGu.CMD.DWN:=FALSE;
+    ACTCFGu.CMD.CRMT:=FALSE;
+    ACTCFGu.CMD.RESOLUTION:=FALSE;
+    ACTCFGu.CMD.REVERS:=FALSE;
+    ACTCFGu.CMD.CLCL:=FALSE;
+    ACTCFGu.CMD.DBLCKACTTOGGLE:=FALSE;
+    ACTCFGu.CMD.STARTDELAY:=FALSE;
+    ACTCFGu.CMD.STOPDELAY:=FALSE;
+    ACTCFGu.CMD.P_RESOLUTION:=FALSE;
+    ACTCFGu.CMD.BUFLOAD:=FALSE;
+    ACTCFGu.CMD.cmdrezb25:=FALSE;
+    ACTCFGu.CMD.cmdrezb26:=FALSE;
+    ACTCFGu.CMD.cmdrezb27:=FALSE;
+    ACTCFGu.CMD.cmdrezb28:=FALSE;
+    ACTCFGu.CMD.cmdrezb29:=FALSE;
+    ACTCFGu.CMD.cmdrezb30:=FALSE;
+    ACTCFGu.CMD.cmdrezb31:=FALSE;
+END_IF;
+(*---*)
+
+(* -------------------  блок обробки станів датчиків відкриття/закриття, або їх заміна на логіку*)
+IF NOT ACTCFGu.PRM.PRM_ZOPNENBL THEN
+    SOPN1:= STA.OPNING AND ACTCFGu.T_STEP1 &gt;= (UINT_TO_UDINT(ACTCFGu.T_OPNSP) + UINT_TO_UDINT(ACTCFGu.T_DEASP))*100
+    OR STA.OPND;
+ELSE
+    SOPN1:=SOPN.STA.VALB;
+END_IF;
+IF NOT ACTCFGu.PRM.PRM_ZCLSENBL THEN
+    SCLS1:=STA.CLSING AND ACTCFGu.T_STEP1 &gt;= (UINT_TO_UDINT(ACTCFGu.T_OPNSP) + UINT_TO_UDINT(ACTCFGu.T_DEASP))*100
+    OR STA.CLSD;
+ELSE
+    SCLS1:=SCLS.STA.VALB;
+END_IF;
+IF NOT ACTCFGu.PRM.PRM_ZWRKENBL THEN
+    SRUN1:=STA.CLSING OR STA.OPNING OR STA.MANRUNING;
+ELSE
+    SRUN1:=RUN.STA.VALB;
+END_IF;
+IF NOT ACTCFGu.PRM.PRM_PWRENBL THEN
+    SPWR1:=true;
+ELSE
+    SPWR1:=PWR.STA.VALB;
+END_IF;
+IF NOT ACTCFGu.PRM.PRM_ALMENBL THEN
+    SALM1:=FALSE;
+ELSE
+    SALM1:=ALM.STA.VALB;
+END_IF;
+IF NOT ACTCFGu.PRM.PRM_ZPOSENBL THEN
+    SPOS1:=-10000;
+ELSE
+    ;(*//SPOS1:=POS.VALPROC * 100;*)
+END_IF;
+
+(*//----------------- автомат станів позиції та тривог позиції та основне керування
+//0 -  ініціалізація, 1- зупинено в проміжному стані, 4 - зупинений у відкритому стані, 5 - зупинений в закритому стані  
+//7 - рухається в довільному напрямку (ручний зі щита),  2 - відкривається , 3 - закривається  
+//керування автоматом станів див в наступному блоці
+//керування виходами COPN, CCLS згідно логіки*)
+CASE ACTCFGu.STEP1 OF
+    0:(*ініціалізація*)
+        ACTCFGu.STEP1 := 1;
+        ACTCFGu.T_STEP1 := 0;
+    1, 4, 5: (*зупинений, 1 - зупинено в проміжному стані 4 - зупинений у відкритому стані, 5 - зупинений в закритому стані*)
+        IF SOPN1 AND NOT SCLS1 THEN
+            IF ACTCFGu.STEP1&lt;&gt;4 THEN ACTCFGu.T_STEP1 := 0;END_IF;
+            ACTCFGu.STEP1 := 4;
+        END_IF;
+        IF SCLS1 AND NOT SOPN1 THEN
+            IF ACTCFGu.STEP1&lt;&gt;5 THEN ACTCFGu.T_STEP1 := 0;END_IF;
+            ACTCFGu.STEP1 := 5;
+        END_IF;
+        (*здвиг (показують датчики)*)
+        IF (ACTCFGu.STEP1 = 4 AND NOT SOPN1 OR (ACTCFGu.STEP1 = 5 AND NOT SCLS1)) THEN
+            ACTCFGu.T_STEP1 := 0;
+            IF SRUN1 THEN
+                ACTCFGu.STEP1 := 7; (*рухається в невизначеному напрямку (ручний зі щита)*)
+            ELSE
+                ACTCFGu.STEP1 := 1; (*зупинений в проміжному стані*)
+            END_IF;
+        END_IF;
+    2:  (*відкривається*)
+        ALMWORD.ALMSTP:=false;
+        IF SOPN1 AND NOT SCLS1 THEN
+            ACTCFGu.STEP1 := 4; (*у стан відкрито*)
+            ACTCFGu.T_STEP1 := 0;
+        END_IF;        
+        ALMWORD.ALMOPN := FALSE; ALMWORD.ALMCLS := FALSE;ALMWORD.ALMSTP:= false;
+        IF ACTCFGu.T_STEP1 &gt;= (UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100 + UINT_TO_UDINT(ACTCFGu.T_DEASP)*100) THEN
+            ALMWORD.ALMOPN := TRUE;
+            ALMWORD.ALMCLS := FALSE;
+            (*якщо ще довше перейти в зупинений стан в невизначеності*)
+            IF NOT SRUN1 AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*150 THEN
+                ACTCFGu.STEP1 := 1; (*у стан зупинено в проміжному стані*)
+                ACTCFGu.T_STEP1 := 0;
+            END_IF;
+            IF SCLS1 AND NOT SOPN1 THEN
+                ACTCFGu.STEP1 := 5; (*у стан закрито*)
+                ACTCFGu.T_STEP1 := 0;
+            END_IF;
+        END_IF;
+    3:(*закривається*)
+        ALMWORD.ALMSTP:=false;
+        IF SCLS1 AND NOT SOPN1 THEN
+            ACTCFGu.STEP1 := 5;
+            ACTCFGu.T_STEP1 := 0;
+        END_IF;
+        IF ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100 +  UINT_TO_UDINT(ACTCFGu.T_DEASP)*100 THEN
+            ALMWORD.ALMCLS := TRUE;
+            ALMWORD.ALMOPN := FALSE;
+            (*якщо ще довше перейти в зупинений стан в невизначеності*)
+            IF NOT SRUN1 AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*150 THEN
+                ACTCFGu.STEP1 := 1; (*у стан зупинено в проміжному стані*)
+                ACTCFGu.T_STEP1 := 0;
+            END_IF;
+            IF SOPN1 AND NOT SCLS1 THEN 
+                ACTCFGu.STEP1 := 2;
+                ACTCFGu.T_STEP1 := 0;
+            END_IF;
+        END_IF;
+    6: (*зупиняється*)
+        ALMWORD.ALMSTP:= ACTCFGu.T_STEP1 &gt;  UINT_TO_UDINT(ACTCFGu.T_DEASP)*100;
+        IF NOT SRUN1 THEN
+            ACTCFGu.STEP1 := 1;
+            ACTCFGu.T_STEP1 := 0;
+        END_IF; 
+    7: (*рухається в довільному напрямку (ручний зі щита)*)
+        IF NOT SRUN1 THEN
+            ACTCFGu.STEP1 := 1;
+            ACTCFGu.T_STEP1 := 0;
+        END_IF;
+    ELSE  (*невизначеність*)
+        ACTCFGu.STEP1 := 0;
+END_CASE;
+(*автомат станів побітово*)
+STA.IMSTPD:= ACTCFGu.STEP1 = 1;
+STA.MANRUNING:= ACTCFGu.STEP1 = 7;
+STA.STOPING:= ACTCFGu.STEP1 = 6;
+STA.OPNING:= ACTCFGu.STEP1 = 2;
+STA.CLSING := ACTCFGu.STEP1 = 3;
+STA.OPND:= ACTCFGu.STEP1 = 4;
+STA.CLSD:= ACTCFGu.STEP1 = 5;
+STA.WRKED := SRUN1;
+
+IF ACTCFGu.PRM.PRM_ZPOSENBL THEN
+    ;(*ACTCFG.POS := REAL_TO_INT(POS.VAL * 0.01);*)
+ELSIF NOT STA.SML THEN
+    ACTCFGu.POS := -32768.0; (*відключено для показу*)
+END_IF;
+
+(*-------- блокуання приводу*)
+(*умова розблокуання *)
+IF CMD.DBLCK THEN
+    STA.BLCK:=FALSE;
+    ALMWORD.ALMSTP:=false;
+END_IF; 
+(*умова блокуання , умова спрацьовує тільки при початку блокування *)
+IF (ALMWORD.ALMPWR1 OR ALM.STA.ALM OR CMD.PROTECT) AND NOT STA.BLCK THEN 
+   STA.BLCK:=true;
+   CMD.STOP:=true; 
+END_IF;
+(*стан блокування*)
+IF STA.BLCK THEN
+    ;(*//*)
+END_IF;
+(*зупинка *)
+IF CMD.STOP OR LSTP.STA.VALB THEN
+    (*коли в стані відкривається або закривається рухається   *) 
+    IF ACTCFGu.STEP1=2 OR ACTCFGu.STEP1=3 THEN
+        ACTCFGu.STEP1 := 6;
+        ACTCFGu.T_STEP1 := 0;
+    END_IF;  
+END_IF;
+(*-----------------------------*)
+
+(*------------------------виходи керування *)
+(*керування OPN/CLS тільки при дозволі керування або тимчасовому розблокуванні та при відсутності блокування*)
+IF (CMD.RESOLUTION OR STA.DBLCKACT OR PLCCFG.STA.DBLCKALL) AND NOT STA.BLCK THEN
+    IF CMD.CLS THEN CMD.OPN:=FALSE; END_IF;(*CLS має пріоритет над OPN*)
+    IF CMD.CLS AND ACTCFGu.STEP1 &lt;&gt; 5 AND ACTCFGu.STEP1 &lt;&gt; 3 THEN
+        ACTCFGu.STEP1 := 3;
+        ACTCFGu.T_STEP1 := 0;
+        ACTCFGu.CNTPER := ACTCFGu.CNTPER + 1;
+    END_IF;
+    IF CMD.OPN AND ACTCFGu.STEP1 &lt;&gt; 4 AND ACTCFGu.STEP1 &lt;&gt; 2 THEN
+        ACTCFGu.STEP1 := 2;
+        ACTCFGu.T_STEP1 := 0;
+        ACTCFGu.CNTPER := ACTCFGu.CNTPER + 1;
+    END_IF;
+    IF ACTCFGu.PRM.PRM_PULSCTRLENBL THEN (*схема керування імпульсами *)
+        (*на кроці 2 - відкривається*)
+       COPN.STA.VALB:= (ACTCFGu.STEP1=2 AND ACTCFGu.T_STEP1&lt;2000);
+        (*на кроці 3 - закривається*)
+       CCLS.STA.VALB:= (ACTCFGu.STEP1=3 AND ACTCFGu.T_STEP1&lt;2000);
+    ELSE
+       COPN.STA.VALB:= ACTCFGu.STEP1=2;
+       CCLS.STA.VALB:= ACTCFGu.STEP1=3; 
+    END_IF;    
+ELSE
+    COPN.STA.VALB:=FALSE;
+    CCLS.STA.VALB:=FALSE;
+END_IF;
+(*керування стоп*)
+CSTP.STA.VALB:=ACTCFGu.STEP1=6;
+
+(*-------------------- режими*)
+CBLC.STA.VALB := NOT STA.MANBXOUT; (*блокування місцевого керування*)
+(*місцевий режим керування*)
+STA.MANBX := (NOT RMT.STA.VALB AND RMT.STA.ENBL AND NOT (CBLC.STA.VALB AND CBLC.T_STEP1&lt;2000)) OR 
+    (LSTP.STA.VALB AND LSTP.STA.ENBL) OR 
+    (CMD.CLCL); 
+(*у місцевому режимі керування відключати усі виходи і перевести в ручний режим*)
+IF STA.MANBX THEN
+    COPN.STA.VALB:=FALSE;
+    CCLS.STA.VALB:=FALSE;
+    CSTP.STA.VALB:=false;
+    STA.DISP:=true;    
+END_IF;
+
+STA.FRC := COPN.STA.FRC AND COPN.ID&lt;&gt;0 
+    OR CCLS.STA.FRC AND CCLS.ID&lt;&gt;0 
+    OR SOPN.STA.FRC AND SOPN.ID&lt;&gt;0  
+    OR SCLS.STA.FRC AND SCLS.ID&lt;&gt;0
+    OR LSTP.STA.FRC AND LSTP.ID&lt;&gt;0
+    OR RUN.STA.FRC AND RUN.ID&lt;&gt;0
+    OR PWR.STA.FRC AND PWR.ID&lt;&gt;0
+    OR ALM.STA.FRC AND ALM.ID&lt;&gt;0
+    OR RMT.STA.FRC AND RMT.ID&lt;&gt;0
+    OR CBLC.STA.FRC AND CBLC.ID&lt;&gt;0
+    OR CSTP.STA.FRC AND CSTP.ID&lt;&gt;0;
+
+(*------------------- зведення кастомних тривог, режимів, бітів*)
+IF ALMWORD.ALMOPN THEN
+    PLCCFG.ALM1.ALM := TRUE;
+    IF NOT ACTCFGu.ALM.ALMOPN THEN
+        PLCCFG.ALM1.NWALM := TRUE;
+        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    END_IF;
+END_IF;
+IF ALMWORD.ALMCLS THEN
+    PLCCFG.ALM1.ALM := TRUE;
+    IF NOT ACTCFGu.ALM.ALMCLS THEN
+        PLCCFG.ALM1.NWALM := TRUE;
+        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    END_IF;
+END_IF;
+IF ALMWORD.ALMOPN2 THEN
+    PLCCFG.ALM1.ALM := TRUE;
+    IF NOT ACTCFGu.ALM.ALMOPN2 THEN
+        PLCCFG.ALM1.NWALM := TRUE;
+        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    END_IF;
+END_IF;
+IF ALMWORD.ALMCLS2 THEN
+    PLCCFG.ALM1.ALM := TRUE;
+    IF NOT ACTCFGu.ALM.ALMCLS2 THEN
+        PLCCFG.ALM1.NWALM := TRUE;
+        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    END_IF;
+END_IF;
+IF ALMWORD.ALMSTP THEN
+    PLCCFG.ALM1.ALM := TRUE;
+    IF NOT ACTCFGu.ALM.ALMSTP THEN
+        PLCCFG.ALM1.NWALM := TRUE;
+        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    END_IF;
+END_IF;
+(*по відсутності живлення*)
+ALMWORD.ALMPWR1 := PWR.STA.ALM;
+(*по кнопці стоп*)
+ALMWORD.ALMSTPBTN := LSTP.STA.ALM;
+
+ALMWORD.ALM := ALMWORD.ALMOPN OR ALMWORD.ALMCLS OR ALMWORD.ALMOPN2 OR ALMWORD.ALMCLS2 OR ALMWORD.ALMSTP 
+            OR ALMWORD.ALMSTPBTN OR LSTP.STA.ALM OR ALMWORD.ALMPWR1 OR ALM.STA.ALM OR STA.BLCK;
+
+
+(*заключна обробка: зведення в PLC.CFG, STA, ALM, CMD, INBUF, SML, dt *)
+ACT_POST (ACTCFG := ACTCFGu, STA := STA, ALMs := ALMWORD, CMD := CMD, dt1 := dt1, ACTBUF := ACTBUF, PLCCFG := PLCCFG);
+
+ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<DDTSource DDTName="VLVD_CFG" version="0.01" dateTime="dt#2022-01-09-12:00:21">
+		<attribute name="TypeSignatureCheckSumString" value="507A"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>ідентифікатор класу</comment>
+			</variables>
+			<variables name="STA" typeName="VLVD_STA">
+				<comment>біти статусу</comment>
+			</variables>
+			<variables name="ALM" typeName="VLVD_ALM">
+				<comment>біти тривог</comment>
+			</variables>
+			<variables name="CMD" typeName="ACTTR_CMD">
+				<comment>біти команд</comment>
+			</variables>
+			<variables name="PRM" typeName="ACTTR_PRM">
+				<comment>біти параметрів</comment>
+			</variables>
+			<variables name="T_DEASP" typeName="UINT">
+				<comment>Час затримки тривоги в 0.1 секунди</comment>
+			</variables>
+			<variables name="T_OPNSP" typeName="UINT">
+				<comment>Час повного переміщення в 0.1 секундах</comment>
+			</variables>
+			<variables name="POS" typeName="REAL">
+				<comment>позиціяВМ (0-100%)</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>крок</comment>
+			</variables>
+			<variables name="CNTPER" typeName="UINT">
+				<comment>Кількість змін положення</comment>
+			</variables>
+			<variables name="CNTALM" typeName="UINT">
+				<comment>Кількість аварій</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VLVD_STA" version="0.01" dateTime="dt#2022-01-09-11:51:32">
+		<attribute name="TypeSignatureCheckSumString" value="C23C"></attribute>
+		<structure>
+			<variables name="IMSTPD" typeName="BOOL">
+				<comment>=1 зупинився в проміжному стані</comment>
+			</variables>
+			<variables name="MANRUNING" typeName="BOOL">
+				<comment>=1 рухається в невизначеному напрямку (ручний зі щита)</comment>
+			</variables>
+			<variables name="DBLCKACT" typeName="BOOL">
+				<comment>=1 Включено режим ігнорування блокування керування {A.MSG.2} </comment>
+			</variables>
+			<variables name="OPNING" typeName="BOOL">
+				<comment>=1 Відкривається</comment>
+			</variables>
+			<variables name="CLSING" typeName="BOOL">
+				<comment>=1 Закривається</comment>
+			</variables>
+			<variables name="OPND" typeName="BOOL">
+				<comment>=1 Відкритий (16#0080)</comment>
+			</variables>
+			<variables name="CLSD" typeName="BOOL">
+				<comment>=1 Закритий (16#0100)</comment>
+			</variables>
+			<variables name="MANBXOUT" typeName="BOOL">
+				<comment>=1 Включення ручного зі щита</comment>
+			</variables>
+			<variables name="WRKED" typeName="BOOL">
+				<comment>=1 В роботі</comment>
+			</variables>
+			<variables name="DISP" typeName="BOOL">
+				<comment>=1 Включено ручний режим з ПК/ОП {A.MSG.9}</comment>
+			</variables>
+			<variables name="MANBX" typeName="BOOL">
+				<comment>=1 Включений ручний зі щита {A.MSG.10}</comment>
+			</variables>
+			<variables name="INIOTBUF" typeName="BOOL">
+				<comment>=1 У бефері IoT</comment>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 - змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 хоча би одна зі змінних в об’єкті форсована (для зручності відображення при наладці)</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 режим симуляції</comment>
+			</variables>
+			<variables name="BLCK" typeName="BOOL">
+				<comment>=1 Привід заблоковано {A.MSG.15}</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VLVD_ALM" version="0.01" dateTime="dt#2022-01-09-11:55:57">
+		<attribute name="TypeSignatureCheckSumString" value="8FC8"></attribute>
+		<structure>
+			<variables name="ALMOPN" typeName="BOOL">
+				<comment>=1 Не відкрився (Несправність схеми управління) {A.ALM.0}</comment>
+			</variables>
+			<variables name="ALMCLS" typeName="BOOL">
+				<comment>=1 Не закрився (Несправність схеми управління) {A.ALM.1}</comment>
+			</variables>
+			<variables name="ALMSHFT" typeName="BOOL">
+				<comment>=1 Порушення стану приводу {A.ALM.2}</comment>
+			</variables>
+			<variables name="ALMOPN2" typeName="BOOL">
+				<comment>=1 Не відкрився (Несправність обладнання по місцю) {A.ALM.3}</comment>
+			</variables>
+			<variables name="ALMCLS2" typeName="BOOL">
+				<comment>=1 Не закрився (Несправність обладнання по місцю) {A.ALM.4}</comment>
+			</variables>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 Помилка приводу (по OR)</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 Попередження приводу (по OR)</comment>
+			</variables>
+			<variables name="ALMSTP" typeName="BOOL">
+				<comment>=1 Не зупинився {A.ALM.7}</comment>
+			</variables>
+			<variables name="ALMBELL" typeName="BOOL">
+				<comment>=1 Команда включення дзвоника (на один цикл ПЛК)</comment>
+			</variables>
+			<variables name="ALMPWR1" typeName="BOOL">
+				<comment>=1 Немає живлення у привода {A.ALM.9}</comment>
+			</variables>
+			<variables name="ALMSTPBTN" typeName="BOOL">
+				<comment>=1 Натиснута кнопка СТОП по місцю {A.ALM.10}</comment>
+			</variables>
+			<variables name="STOPING" typeName="BOOL">
+				<comment>=1 Зупиняється</comment>
+			</variables>
+			<variables name="almb12" typeName="BOOL"></variables>
+			<variables name="almb13" typeName="BOOL"></variables>
+			<variables name="almb14" typeName="BOOL"></variables>
+			<variables name="almb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="ACTTR_CMD" version="0.01" dateTime="dt#2022-01-09-11:05:46">
+		<attribute name="TypeSignatureCheckSumString" value="7F2B"></attribute>
+		<structure>
+			<variables name="OPN" typeName="BOOL">
+				<comment>Відкрити 16#0001</comment>
+			</variables>
+			<variables name="CLS" typeName="BOOL">
+				<comment>Закрити  16#0002</comment>
+			</variables>
+			<variables name="TOGGLE" typeName="BOOL">
+				<comment>Переключити (відкрити&lt;-&gt;закрити, включити &lt;-&gt; відключити) 16#0003</comment>
+			</variables>
+			<variables name="ALMACK" typeName="BOOL">
+				<comment>Підтвердити тривогу 16#0004</comment>
+			</variables>
+			<variables name="ALMRESET" typeName="BOOL">
+				<comment>Скинути тривоги 16#0005</comment>
+			</variables>
+			<variables name="BLCK" typeName="BOOL">
+				<comment>Заблокувати 16#0006</comment>
+			</variables>
+			<variables name="DBLCK" typeName="BOOL">
+				<comment>Розблокувати 16#0007</comment>
+			</variables>
+			<variables name="STOPTUN" typeName="BOOL">
+				<comment>Зупинити автоналаштування 16#0008</comment>
+			</variables>
+			<variables name="TUNING" typeName="BOOL">
+				<comment>Запустити автоналаштування 16#0009</comment>
+			</variables>
+			<variables name="MAN" typeName="BOOL">
+				<comment>Перевести в ручний з SCADA/HMI 16#0301</comment>
+			</variables>
+			<variables name="AUTO" typeName="BOOL">
+				<comment>Перевести в автоматичний з SCADA/HMI 16#0302</comment>
+			</variables>
+			<variables name="PROTECT" typeName="BOOL">
+				<comment>Включити алгоритм захисту 16#000A</comment>
+			</variables>
+			<variables name="START" typeName="BOOL">
+				<comment>Запустити 16#0011</comment>
+			</variables>
+			<variables name="STOP" typeName="BOOL">
+				<comment>Зупинити 16#0012</comment>
+			</variables>
+			<variables name="UP" typeName="BOOL">
+				<comment>Більше 16#0021</comment>
+			</variables>
+			<variables name="DWN" typeName="BOOL">
+				<comment>Менше 16#0022</comment>
+			</variables>
+			<variables name="CRMT" typeName="BOOL">
+				<comment>Відключити локальне керування (по місцю) 16#0314</comment>
+			</variables>
+			<variables name="RESOLUTION" typeName="BOOL">
+				<comment>=1 дозвіл на керування 16#000B</comment>
+			</variables>
+			<variables name="REVERS" typeName="BOOL">
+				<comment>Включити реверс 16#0013</comment>
+			</variables>
+			<variables name="CLCL" typeName="BOOL">
+				<comment>Включити локальне керування (по місцю) 16#0313</comment>
+			</variables>
+			<variables name="DBLCKACTTOGGLE" typeName="BOOL">
+				<comment>Переключення дозволу на ігнорування CMRESOLUTION 16#000C</comment>
+			</variables>
+			<variables name="STARTDELAY" typeName="BOOL">
+				<comment>запуск з затримкою (тільки автомат)</comment>
+			</variables>
+			<variables name="STOPDELAY" typeName="BOOL">
+				<comment>зупин з затримкою (тільки автомат)</comment>
+			</variables>
+			<variables name="P_RESOLUTION" typeName="BOOL">
+				<comment>дозвіл по наявності тиску в системі</comment>
+			</variables>
+			<variables name="BUFLOAD" typeName="BOOL">
+				<comment>завантажити в буфер</comment>
+			</variables>
+			<variables name="cmdrezb25" typeName="BOOL"></variables>
+			<variables name="cmdrezb26" typeName="BOOL"></variables>
+			<variables name="cmdrezb27" typeName="BOOL"></variables>
+			<variables name="cmdrezb28" typeName="BOOL"></variables>
+			<variables name="cmdrezb29" typeName="BOOL"></variables>
+			<variables name="cmdrezb30" typeName="BOOL"></variables>
+			<variables name="cmdrezb31" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="ACTTR_PRM" version="0.01" dateTime="dt#2022-01-09-11:14:37">
+		<attribute name="TypeSignatureCheckSumString" value="D8EB"></attribute>
+		<structure>
+			<variables name="PRM_b0" typeName="BOOL">
+				<comment>=1 </comment>
+			</variables>
+			<variables name="PRM_ZWRKENBL" typeName="BOOL">
+				<comment>=1 є звонішній вхід - зворотній звязок про роботу</comment>
+			</variables>
+			<variables name="PRM_ZPOSENBL" typeName="BOOL">
+				<comment>=1 є аналоговий зворотній звязок частоти/позиції</comment>
+			</variables>
+			<variables name="PRM_PWRENBL" typeName="BOOL">
+				<comment>=1 є звонішній вхід по стану живлення</comment>
+			</variables>
+			<variables name="PRM_MANCFG" typeName="BOOL">
+				<comment>=1 ручне керування налаштуванням</comment>
+			</variables>
+			<variables name="PRM_ZOPNENBL" typeName="BOOL">
+				<comment>=1 є датчик відкритості</comment>
+			</variables>
+			<variables name="PRM_ZCLSENBL" typeName="BOOL">
+				<comment>=1 є датчик закритості</comment>
+			</variables>
+			<variables name="PRM_AUTOACK" typeName="BOOL">
+				<comment>=1, автоматичне підтвердження тривог</comment>
+			</variables>
+			<variables name="PRM_BTNSTPENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - включена кнопка STOP</comment>
+			</variables>
+			<variables name="PRM_ALMENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - сигнал аварії від приводу</comment>
+			</variables>
+			<variables name="PRM_SELLCLENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - сигнал включення місцевого керування</comment>
+			</variables>
+			<variables name="PRM_PULSCTRLENBL" typeName="BOOL">
+				<comment>=1 схема керування імпулсами (команди на 2с)</comment>
+			</variables>
+			<variables name="PRM_ZRUNENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід про рух приводу</comment>
+			</variables>
+			<variables name="PRM_ZSPDENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід про датчику швидкості приводу</comment>
+			</variables>
+			<variables name="PRM_CRVRSENBL" typeName="BOOL">
+				<comment>=1 ВМ з виходом керування реверсом</comment>
+			</variables>
+			<variables name="PRM_BLCKOFSPD" typeName="BOOL">
+				<comment>=1 зупиняти по зниженні швидкості</comment>
+			</variables>
+			<variables name="PRM_NOPRES" typeName="BOOL">
+				<comment>=1 довзолити рух без включеного маслонасоса</comment>
+			</variables>
+			<variables name="PRM_b17" typeName="BOOL"></variables>
+			<variables name="PRM_b18" typeName="BOOL"></variables>
+			<variables name="PRM_b19" typeName="BOOL"></variables>
+			<variables name="PRM_b20" typeName="BOOL"></variables>
+			<variables name="PRM_b21" typeName="BOOL"></variables>
+			<variables name="PRM_b22" typeName="BOOL"></variables>
+			<variables name="PRM_b23" typeName="BOOL"></variables>
+			<variables name="PRM_b24" typeName="BOOL"></variables>
+			<variables name="PRM_b25" typeName="BOOL"></variables>
+			<variables name="PRM_b26" typeName="BOOL"></variables>
+			<variables name="PRM_b27" typeName="BOOL"></variables>
+			<variables name="PRM_b28" typeName="BOOL"></variables>
+			<variables name="PRM_b29" typeName="BOOL"></variables>
+			<variables name="PRM_b30" typeName="BOOL"></variables>
+			<variables name="PRM_b31" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VLVD_HMI" version="0.01" dateTime="dt#2022-01-09-12:03:49">
+		<attribute name="TypeSignatureCheckSumString" value="6639"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT"></variables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="ALM" typeName="INT"></variables>
+			<variables name="POS" typeName="INT"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DIVAR_CFG" version="0.02" dateTime="dt#2022-01-04-20:09:05">
+		<attribute name="TypeSignatureCheckSumString" value="BF12"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#1010</comment>
+			</variables>
+			<variables name="STA" typeName="DIVAR_STA">
+				<comment>статус (див STC)</comment>
+			</variables>
+			<variables name="VALI" typeName="INT">
+				<comment>для відображення значення при не форсуванні, використовується для введення значення з буфера при форсуванні</comment>
+			</variables>
+			<variables name="PRM" typeName="DIVAR_PRM">
+				<comment>параметри</comment>
+			</variables>
+			<variables name="CHID" typeName="UINT">
+				<comment>Логічний номер дискретного каналу</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>номер кроку</comment>
+			</variables>
+			<variables name="T_DEASP" typeName="UINT">
+				<comment>Час затримки тривоги в 0.1 секундах</comment>
+			</variables>
+			<variables name="T_FLTSP" typeName="UINT">
+				<comment>Заданий час фільтрації в мілісекундах</comment>
+			</variables>
+			<variables name="CHIDDF" typeName="UINT">
+				<comment>Логічний номер дискретного каналу за замовченням</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DIVAR_STA" version="0.01" dateTime="dt#2022-01-04-18:26:09">
+		<attribute name="TypeSignatureCheckSumString" value="EBC8"></attribute>
+		<structure>
+			<variables name="VRAW" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу з DICH</comment>
+			</variables>
+			<variables name="VALB" typeName="BOOL">
+				<comment>=1 – значення дискретної вхідної змінної після всіх перетворень, в режимі FRC=1 може змінюватися із-зовні</comment>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 - Дані недостовірні {A.BAD.2}</comment>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 - Тривога виведена з експлуатації {A.MSG.3}</comment>
+			</variables>
+			<variables name="DLNK" typeName="BOOL">
+				<comment>=1 – якщо прив’язаний до каналу</comment>
+			</variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>=1 – змінна задіяна  = (NOT PRM.7 AND  DLNK)</comment>
+			</variables>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 - Тривога {A.ALM.6}</comment>
+			</variables>
+			<variables name="VALPRV" typeName="BOOL">
+				<comment>значення на попередньому циклі</comment>
+			</variables>
+			<variables name="ISALM" typeName="BOOL">
+				<comment>=1 - задіяна тривога </comment>
+			</variables>
+			<variables name="SPDMONON" typeName="BOOL">
+				<comment>=1 - включений контроль швидкості (SPDMON) </comment>
+			</variables>
+			<variables name="ISWRN" typeName="BOOL">
+				<comment>=1 - задіяне попередження</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 - Попередження {A.ALM.11}</comment>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 – змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 - Режим форсування{A.MSG.13}</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – змінна в режимі симуляції</comment>
+			</variables>
+			<variables name="CMDLOAD" typeName="BOOL">
+				<comment>=1 – команда завантаження в буфер</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DIVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:28:44">
+		<attribute name="TypeSignatureCheckSumString" value="3F6A"></attribute>
+		<structure>
+			<variables name="PRM_ISALM" typeName="BOOL">
+				<comment>=1 – задіяти як технологічну тривогу</comment>
+			</variables>
+			<variables name="PRM_ISWRN" typeName="BOOL">
+				<comment>=1 – задіяти як технологічне попередження</comment>
+			</variables>
+			<variables name="PRM_INVERSE" typeName="BOOL">
+				<comment>=1 – інвертувати сире значення</comment>
+			</variables>
+			<variables name="PRMb3" typeName="BOOL"></variables>
+			<variables name="PRMb4" typeName="BOOL"></variables>
+			<variables name="PRM_NRMVAL" typeName="BOOL">
+				<comment>значення норми</comment>
+			</variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяти тривогу недостовірності каналу</comment>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+			</variables>
+			<variables name="PRM_SPEEDENBL" typeName="BOOL">
+				<comment>=1 – активація блоку розрахунку швидкості</comment>
+			</variables>
+			<variables name="PRMb9" typeName="BOOL"></variables>
+			<variables name="PRMb10" typeName="BOOL"></variables>
+			<variables name="PRMb11" typeName="BOOL"></variables>
+			<variables name="PRMb12" typeName="BOOL"></variables>
+			<variables name="PRMb13" typeName="BOOL"></variables>
+			<variables name="PRMb14" typeName="BOOL"></variables>
+			<variables name="PRMb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DOVAR_CFG" version="0.01" dateTime="dt#2022-01-04-18:47:03">
+		<attribute name="TypeSignatureCheckSumString" value="45AC"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#1010</comment>
+			</variables>
+			<variables name="STA" typeName="DOVAR_STA">
+				<comment>статус (див STC)</comment>
+			</variables>
+			<variables name="VALI" typeName="INT">
+				<comment>для відображення значення при не форсуванні, використовується для введення значення з буфера при форсуванні</comment>
+			</variables>
+			<variables name="PRM" typeName="DOVAR_PRM">
+				<comment>параметри</comment>
+			</variables>
+			<variables name="CHID" typeName="UINT">
+				<comment>Логічний номер дискретного каналу</comment>
+			</variables>
+			<variables name="CHIDDF" typeName="UINT">
+				<comment>Логічний номер дискретного каналу за замовченням</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>номер кроку</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DOVAR_STA" version="0.01" dateTime="dt#2022-01-04-18:37:17">
+		<attribute name="TypeSignatureCheckSumString" value="A198"></attribute>
+		<structure>
+			<variables name="VRAW" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу з DOCH</comment>
+			</variables>
+			<variables name="VALB" typeName="BOOL">
+				<comment>=1 – значення дискретної вихідної змінної після всіх перетворень, в режимі FRC=1 може змінюватися із-зовні</comment>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 – Дані недостовірні {A.BAD.2}</comment>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 - Тривога виведена з експлуатації {A.MSG.3}</comment>
+			</variables>
+			<variables name="DLNK" typeName="BOOL">
+				<comment>=1 – якщо прив’язаний до каналу</comment>
+			</variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>=1 – змінна задіяна = (NOT PRM.7 AND DLNK)</comment>
+			</variables>
+			<variables name="STAb6" typeName="BOOL"></variables>
+			<variables name="VALPRV" typeName="BOOL">
+				<comment>значення на попередньому циклі</comment>
+			</variables>
+			<variables name="STAb8" typeName="BOOL"></variables>
+			<variables name="MVAL" typeName="BOOL">
+				<comment>=1 – ручне (форсоване) значення</comment>
+			</variables>
+			<variables name="STAb10" typeName="BOOL"></variables>
+			<variables name="STAb11" typeName="BOOL"></variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 – змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 - Режим форсування{A.MSG.13}</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – змінна в режимі симуляції</comment>
+			</variables>
+			<variables name="CMDLOAD" typeName="BOOL">
+				<comment>=1 – команда завантаження в буфер</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DOVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:39:46">
+		<attribute name="TypeSignatureCheckSumString" value="BDE9"></attribute>
+		<structure>
+			<variables name="PRMb0" typeName="BOOL"></variables>
+			<variables name="PRMb1" typeName="BOOL"></variables>
+			<variables name="PRM_INVERSE" typeName="BOOL">
+				<comment>=1 – інвертувати сире значення</comment>
+			</variables>
+			<variables name="PRMb3" typeName="BOOL"></variables>
+			<variables name="PRMb4" typeName="BOOL"></variables>
+			<variables name="PRMb5" typeName="BOOL"></variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяти тривогу недостовірності каналу</comment>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+			</variables>
+			<variables name="PRMb8" typeName="BOOL"></variables>
+			<variables name="PRMb9" typeName="BOOL"></variables>
+			<variables name="PRMb10" typeName="BOOL"></variables>
+			<variables name="PRMb11" typeName="BOOL"></variables>
+			<variables name="PRMb12" typeName="BOOL"></variables>
+			<variables name="PRMb13" typeName="BOOL"></variables>
+			<variables name="PRMb14" typeName="BOOL"></variables>
+			<variables name="PRMb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLC_CFG" version="0.06" dateTime="dt#2022-01-04-10:29:24">
+		<attribute name="TypeSignatureCheckSumString" value="BF83"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#21xx</comment>
+			</variables>
+			<variables name="STA" typeName="PLC_STA">
+				<comment>біти статусу</comment>
+			</variables>
+			<variables name="CMD" typeName="UINT">
+				<comment>Команди з HMI</comment>
+			</variables>
+			<variables name="CMDPRG" typeName="UINT">
+				<comment>Команди з програмного керування (побітові)</comment>
+			</variables>
+			<variables name="PRM1" typeName="UINT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PRM2" typeName="UINT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PLS" typeName="PLS">
+				<comment>бітові міандри</comment>
+			</variables>
+			<variables name="ALM1" typeName="PLC_ALM1">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="ALM2" typeName="INT">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="STEP1" typeName="INT">
+				<comment>крок основної програми</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="INT">
+				<comment>час кроку основної програми обробки, в (с)</comment>
+			</variables>
+			<variables name="MSG" typeName="UDINT">
+				<comment>час кроку основної програми обробки, в (с)</comment>
+			</variables>
+			<variables name="TQ" typeName="UDINT">
+				<comment>загальний час з початку 1-го циклу контролера (в секундах)</comment>
+			</variables>
+			<variables name="TQM" typeName="UDINT">
+				<comment>загальний час роботи ПЛК з моменту пуску (в хвилинах)</comment>
+			</variables>
+			<variables name="DICNT" typeName="INT">
+				<comment>кількість наявних каналів DI</comment>
+			</variables>
+			<variables name="DOCNT" typeName="INT">
+				<comment>кількість наявних каналів DO</comment>
+			</variables>
+			<variables name="AICNT" typeName="INT">
+				<comment>кількість наявних каналів AI</comment>
+			</variables>
+			<variables name="AOCNT" typeName="INT">
+				<comment>кількість наявних каналів AO</comment>
+			</variables>
+			<variables name="NOW" typeName="ARRAY[0..3] OF INT">
+				<comment>плинний час астрономічний час в BCD форматі: NOW[0] seconds,-- (16#ss,--)  NOW[1] hour, minute (16#hhmm)  NOW[2] month, day (16#mmdd)  NOW[3] year (16#yyyy)</comment>
+			</variables>
+			<variables name="SHIFTPARA" typeName="ARRAY[0..3] OF INT">
+				<comment>Години передачі змін (максимум 3 зміни): SHIFT[0] – кількість змін SHIFT[1] – передача 1-ї зміни (BCD 16#hhmm) SHIFT[2] – передача 2-ї зміни (BCD 16#hhmm)  SHIFT[3] – передача 3-ї зміни (BCD 16#hhmm)</comment>
+			</variables>
+			<variables name="SHIFTNMB" typeName="UINT">
+				<comment>номер активної зміни</comment>
+			</variables>
+			<variables name="CNTALM" typeName="UINT">
+				<comment>лічильник кількості активних тривог "аварія"</comment>
+			</variables>
+			<variables name="CNTWRN" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "попередження"</comment>
+			</variables>
+			<variables name="CNTBAD" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "недостовірність"</comment>
+			</variables>
+			<variables name="CNTFRC" typeName="UINT">
+				<comment>лічильник кількостіфорсованих об'єктів</comment>
+			</variables>
+			<variables name="CNTMAN" typeName="UINT">
+				<comment>лічильник кількості ВМ в ручному режимі</comment>
+			</variables>
+			<variables name="TSK_LTIME" typeName="UINT">
+				<comment>плинний (останній) час задачі в мілісекундах</comment>
+			</variables>
+			<variables name="TSK_MAXTIME" typeName="UINT">
+				<comment>максимальний час задачі в мілісекундах</comment>
+			</variables>
+			<variables name="STA_PERM" typeName="INT">
+				<comment>повторює STA, який був на початку виклику функції</comment>
+			</variables>
+			<variables name="ALM1_PERM" typeName="INT">
+				<comment>повторює ALM1, який був на початку виклику функції</comment>
+			</variables>
+			<variables name="CNTALM_PERM" typeName="UINT">
+				<comment>лічильник кількості активних тривог "аварія"</comment>
+			</variables>
+			<variables name="CNTWRN_PERM" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "попередження"</comment>
+			</variables>
+			<variables name="CNTBAD_PERM" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "недостовірність"</comment>
+			</variables>
+			<variables name="CNTFRC_PERM" typeName="UINT">
+				<comment>лічильник кількостіфорсованих об'єктів</comment>
+			</variables>
+			<variables name="CNTMAN_PERM" typeName="UINT">
+				<comment>лічильник кількості ВМ в ручному режимі</comment>
+			</variables>
+			<variables name="MODULSCNT" typeName="INT">
+				<comment>кількість модулів</comment>
+			</variables>
+			<variables name="NOWns" typeName="UDINT">
+				<comment>нс (наносекунди) для плинного астрономічного часу</comment>
+			</variables>
+			<variables name="TQMS" typeName="UDINT">
+				<comment>мілісекундний лічильник, скидається при старті або після переповнення</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLC_STA" version="0.01" dateTime="dt#2022-01-04-09:59:51">
+		<attribute name="TypeSignatureCheckSumString" value="DBBA"></attribute>
+		<structure>
+			<variables name="CON2ERR" typeName="BOOL">
+				<comment>=1 - є помилка звязку з сусідні ПЛК в парі (для теплого резерування)</comment>
+			</variables>
+			<variables name="PLC2STOP" typeName="BOOL">
+				<comment>=1 - спарений ПЛК в стопі (для теплого резерування)</comment>
+			</variables>
+			<variables name="BLK" typeName="BOOL">
+				<comment>=1 – є хоча б один заблокований ВМ</comment>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 – є хоча б одна відключена тривога</comment>
+			</variables>
+			<variables name="DIOON" typeName="BOOL">
+				<comment>=1 - йде опитування по мережі (MODBUS або аналогічній) засобів віддаленого вводу/виводу</comment>
+			</variables>
+			<variables name="DIOERR" typeName="BOOL">
+				<comment>=1 - є помилка на DIO</comment>
+			</variables>
+			<variables name="DBLCKALL" typeName="BOOL">
+				<comment>=1 - усі приводи розблоковані</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 – хоча б одна змінна форсована на будь якому рівні</comment>
+			</variables>
+			<variables name="SMLALL" typeName="BOOL">
+				<comment>=1 – все в режимі в імітації, примушує усі CM перейти в режим імітації</comment>
+			</variables>
+			<variables name="DISP" typeName="BOOL">
+				<comment>=1 – хоча б один елемент в режимі ручного управління</comment>
+			</variables>
+			<variables name="FRC2" typeName="BOOL">
+				<comment>=1 – є хоча б один форсований керівний елемент (рівня 2), клапан, двигун</comment>
+			</variables>
+			<variables name="FRC1" typeName="BOOL">
+				<comment>=1 – хоча б одна змінна форсована (рівня 1)</comment>
+			</variables>
+			<variables name="SCN1" typeName="BOOL">
+				<comment>=1 – перший скан</comment>
+			</variables>
+			<variables name="FRC0" typeName="BOOL">
+				<comment>=1 – хоча б одна змінна форсована (рівня 0)</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – хоча б один об’єкт в режимі імітації</comment>
+			</variables>
+			<variables name="CMDACK" typeName="BOOL">
+				<comment>=1 - підтвердження команди, команда пройшла через весь цикл задачі і отримана усіма</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLS" version="0.01" dateTime="dt#2022-01-04-10:03:28">
+		<attribute name="TypeSignatureCheckSumString" value="3421"></attribute>
+		<structure>
+			<variables name="P100MS" typeName="BOOL">
+				<comment>100 мс</comment>
+			</variables>
+			<variables name="P200MS" typeName="BOOL">
+				<comment>200 мс</comment>
+			</variables>
+			<variables name="P500MS" typeName="BOOL">
+				<comment>500 мс</comment>
+			</variables>
+			<variables name="P1S" typeName="BOOL">
+				<comment>1 с</comment>
+			</variables>
+			<variables name="P2S" typeName="BOOL">
+				<comment>2 с</comment>
+			</variables>
+			<variables name="P5S" typeName="BOOL">
+				<comment>5 с</comment>
+			</variables>
+			<variables name="P10S" typeName="BOOL">
+				<comment>10 с</comment>
+			</variables>
+			<variables name="P60S" typeName="BOOL">
+				<comment>1 хв</comment>
+			</variables>
+			<variables name="M1S" typeName="BOOL">
+				<comment>меандр з періодом 1 с (0.5 с + 0.5 с)</comment>
+			</variables>
+			<variables name="M2S" typeName="BOOL">
+				<comment>меандр з періодом 2 с (1 с + 1 с)</comment>
+			</variables>
+			<variables name="b10" typeName="BOOL"></variables>
+			<variables name="b11" typeName="BOOL"></variables>
+			<variables name="NEWMIN" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок хвилини</comment>
+			</variables>
+			<variables name="NEWHR" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок години</comment>
+			</variables>
+			<variables name="NEWDAY" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок доби</comment>
+			</variables>
+			<variables name="NEWSHIFT" typeName="BOOL">
+				<comment>=1 (на один цикл основної задачі) – початок зміни</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLC_ALM1" version="0.01" dateTime="dt#2022-01-04-10:12:23">
+		<attribute name="TypeSignatureCheckSumString" value="6ADE"></attribute>
+		<structure>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 - активна технологічна тривога</comment>
+			</variables>
+			<variables name="NWALM" typeName="BOOL">
+				<comment>=1 - зявилась нова технологічна тривога</comment>
+			</variables>
+			<variables name="ALMNACK" typeName="BOOL">
+				<comment>=1 - квітування технологічної тривоги</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 - активне технологічне попередження</comment>
+			</variables>
+			<variables name="NWWRN" typeName="BOOL">
+				<comment>=1 - зявилось нове технологічне попередження</comment>
+			</variables>
+			<variables name="WRNNACK" typeName="BOOL">
+				<comment>=1 - квітування технологічного попередження</comment>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 - активна тривога недостовірності даних</comment>
+			</variables>
+			<variables name="NWBAD" typeName="BOOL">
+				<comment>=1 - нова тривога недостовірності даних</comment>
+			</variables>
+			<variables name="BADNACK" typeName="BOOL">
+				<comment>=1 - квітування тривоги недостовірності даних</comment>
+			</variables>
+			<variables name="EMCYSTP" typeName="BOOL">
+				<comment>=1 - швидкий зупин</comment>
+			</variables>
+			<variables name="STP2RUN" typeName="BOOL">
+				<comment>=1 - зперехід з стану стоп в стан ран</comment>
+			</variables>
+			<variables name="CON2ERR" typeName="BOOL">
+				<comment>=1 - є помилка звязку з сусідні ПЛК в парі (для теплого резерування)</comment>
+			</variables>
+			<variables name="PLC2STOP" typeName="BOOL">
+				<comment>=1 - спарений ПЛК в стопі (для теплого резерування)</comment>
+			</variables>
+			<variables name="DIOERR" typeName="BOOL">
+				<comment>=1 - є помилка DIO</comment>
+			</variables>
+			<variables name="PLCERR" typeName="BOOL">
+				<comment>=1 – є апаратна помилка (ПЛК)</comment>
+			</variables>
+			<variables name="CONHIERR" typeName="BOOL">
+				<comment>=1 - помилка звязку з верхнім рівнем</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="ACTTR_CFG" version="0.02" dateTime="dt#2022-01-09-12:06:29">
+		<attribute name="TypeSignatureCheckSumString" value="9D9B"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>ідентифікатор класу</comment>
+			</variables>
+			<variables name="STA" typeName="ACTTR_STA">
+				<comment>біти стану</comment>
+			</variables>
+			<variables name="ALM" typeName="ACTTR_ALM">
+				<comment>біти тривог</comment>
+			</variables>
+			<variables name="CMD" typeName="ACTTR_CMD">
+				<comment>біти команд</comment>
+			</variables>
+			<variables name="PRM" typeName="ACTTR_PRM">
+				<comment>біти параметрыв</comment>
+			</variables>
+			<variables name="STAHMI1" typeName="INT">
+				<comment>біти стану для НМІ</comment>
+			</variables>
+			<variables name="STAHMI2" typeName="INT">
+				<comment>біти стану для НМІ</comment>
+			</variables>
+			<variables name="ALMHMI1" typeName="INT">
+				<comment>біти тривог для НМІ</comment>
+			</variables>
+			<variables name="ALMHMI2" typeName="INT">
+				<comment>біти тривог для НМІ</comment>
+			</variables>
+			<variables name="CMDHMI" typeName="INT">
+				<comment>команди НМІ</comment>
+			</variables>
+			<variables name="PRMHMI" typeName="INT">
+				<comment>параметри НМІ</comment>
+			</variables>
+			<variables name="T_DEASP" typeName="UINT">
+				<comment>час затримки тривоги 0.1 с</comment>
+			</variables>
+			<variables name="T_OPNSP" typeName="UINT">
+				<comment>Максимальний час відкриття в 0.1 секундах</comment>
+			</variables>
+			<variables name="POS" typeName="REAL">
+				<comment>позиціяВМ (0-100%)</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>крок</comment>
+			</variables>
+			<variables name="CNTPER" typeName="UINT">
+				<comment>кількість перестановок</comment>
+			</variables>
+			<variables name="CNTALM" typeName="UINT">
+				<comment>кількість тривог</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+			<variables name="VALPREV" typeName="REAL">
+				<comment>значення на попередньому циклі</comment>
+			</variables>
+			<variables name="MVAL" typeName="REAL">
+				<comment>значення в ручному режимі</comment>
+			</variables>
+			<variables name="POWER_IN" typeName="REAL">
+				<comment>потужність, кВт</comment>
+			</variables>
+			<variables name="tmp2" typeName="REAL">
+				<comment>------------ тимачсова - задане значення</comment>
+			</variables>
+			<variables name="SPD" typeName="INT">
+				<comment>Обрахунок швидкості обертання ДАТЧЧИК 1, %</comment>
+			</variables>
+			<variables name="SPD2" typeName="INT">
+				<comment>Обрахунок швидкості обертання ДАТЧЧИК 2, %</comment>
+			</variables>
+			<variables name="SPDWRNSP" typeName="UINT">
+				<comment>вставка попередження на пробуксовку привода, %</comment>
+			</variables>
+			<variables name="SPDALMSP" typeName="UINT">
+				<comment>вставка тривоги на пробуксовку привода, %</comment>
+			</variables>
+			<variables name="STRT_DELAY" typeName="UINT">
+				<comment>ЗАТРИМКА НА ВКЛЮЧЕННЯ 0.1 С</comment>
+			</variables>
+			<variables name="STOP_DELAY" typeName="UINT">
+				<comment>ЗАТРИМКА НА ВИКЛЮЧЕННЯ 0.1 С</comment>
+			</variables>
+			<variables name="TQ_TOTAL" typeName="UDINT">
+				<comment>Загальний час напрацювання в хв</comment>
+			</variables>
+			<variables name="TQ_LAST" typeName="UDINT">
+				<comment>Час роботи з останнього пуску в с</comment>
+			</variables>
+			<variables name="FRQ_IN" typeName="REAL">
+				<comment>поточна частота</comment>
+			</variables>
+			<variables name="FRQ_OUT" typeName="REAL">
+				<comment>задана частота</comment>
+			</variables>
+			<variables name="CURR_IN" typeName="REAL">
+				<comment>струм зворотній звязок</comment>
+			</variables>
+			<variables name="SPDMON_DELAY" typeName="UINT">
+				<comment>затримка на початок обрахунку швидкості 0.1 с</comment>
+			</variables>
+			<variables name="MSG" typeName="UINT">
+				<comment>повідомлення</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="ACTTR_STA" version="0.01" dateTime="dt#2022-01-09-11:24:16">
+		<attribute name="TypeSignatureCheckSumString" value="33D5"></attribute>
+		<structure>
+			<variables name="IMSTPD" typeName="BOOL">
+				<comment>=1 зупинився в проміжному стані</comment>
+			</variables>
+			<variables name="MANRUNING" typeName="BOOL">
+				<comment>=1 рухається в невизначеному напрямку (ручний зі щита)</comment>
+			</variables>
+			<variables name="STOPING" typeName="BOOL">
+				<comment>=1 Зупиняється</comment>
+			</variables>
+			<variables name="OPNING" typeName="BOOL">
+				<comment>=1 Відкривається</comment>
+			</variables>
+			<variables name="CLSING" typeName="BOOL">
+				<comment>=1 Закривається</comment>
+			</variables>
+			<variables name="OPND" typeName="BOOL">
+				<comment>=1 Відкритий (16#0080)</comment>
+			</variables>
+			<variables name="CLSD" typeName="BOOL">
+				<comment>=1 Закритий (16#0100)</comment>
+			</variables>
+			<variables name="MANBXOUT" typeName="BOOL">
+				<comment>=1 Включення ручного зі щита</comment>
+			</variables>
+			<variables name="WRKED" typeName="BOOL">
+				<comment>=1 В роботі</comment>
+			</variables>
+			<variables name="DISP" typeName="BOOL">
+				<comment>=1 дистанційний режим (з ПК/ОП) (16#0200)</comment>
+			</variables>
+			<variables name="MANBX" typeName="BOOL">
+				<comment>=1 Ручний зі щита (за зворотнім зв'язком)</comment>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 - змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 хоча би одна зі змінних в об’єкті форсована (для зручності відображення при наладці)</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 режим симуляції</comment>
+			</variables>
+			<variables name="BLCK" typeName="BOOL">
+				<comment>=1 Заблокований</comment>
+			</variables>
+			<variables name="STRTING" typeName="BOOL">
+				<comment>=1 Запускається</comment>
+			</variables>
+			<variables name="STOPED" typeName="BOOL">
+				<comment>=1 Зупинений(16#0100)</comment>
+			</variables>
+			<variables name="SLNDBRK" typeName="BOOL">
+				<comment>=1 Помилка датчику</comment>
+			</variables>
+			<variables name="CMDACK" typeName="BOOL">
+				<comment>=1 підтвердження команди</comment>
+			</variables>
+			<variables name="SPD1" typeName="BOOL">
+				<comment>= 1 Робота, 1-ша швидкість</comment>
+			</variables>
+			<variables name="SPD2" typeName="BOOL">
+				<comment>= 1 Робота, 2-га швидкість</comment>
+			</variables>
+			<variables name="WRNSPD2" typeName="BOOL">
+				<comment>= 1 попередження на пробуксовку привода 2, %</comment>
+			</variables>
+			<variables name="STRT_DELAY" typeName="BOOL">
+				<comment>=1 - йде затримка перед запуском</comment>
+			</variables>
+			<variables name="STOP_DELAY" typeName="BOOL">
+				<comment>=1 - йде затримка перед зупинкою</comment>
+			</variables>
+			<variables name="DBLCKACT" typeName="BOOL">
+				<comment>=1 - режим ігнорування CMDRESOLUTION</comment>
+			</variables>
+			<variables name="ISREVERS" typeName="BOOL">
+				<comment>=1 - пуск з реверсом</comment>
+			</variables>
+			<variables name="ISANALOG" typeName="BOOL">
+				<comment>=1 з аналоговим керуванням (для зрeчності відображення)</comment>
+			</variables>
+			<variables name="INIOTBUF" typeName="BOOL">
+				<comment>=1 змінна в буфері IoT</comment>
+			</variables>
+			<variables name="SPDMONON" typeName="BOOL">
+				<comment>=1 включений контроль швидкості (SPDMON) </comment>
+			</variables>
+			<variables name="SPDCALIBRON" typeName="BOOL">
+				<comment>=1 включене калібрування по швидкості</comment>
+			</variables>
+			<variables name="rezb30" typeName="BOOL"></variables>
+			<variables name="rezb31" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="ACTTR_ALM" version="0.01" dateTime="dt#2022-01-09-10:59:46">
+		<attribute name="TypeSignatureCheckSumString" value="2065"></attribute>
+		<structure>
+			<variables name="ALMSTRT" typeName="BOOL">
+				<comment>=1 Не включився (скидається при зміні команди або стану) датчика)</comment>
+			</variables>
+			<variables name="ALMSTP" typeName="BOOL">
+				<comment>=1 Не відключився (скидається при зміні команди або стану) датчика)</comment>
+			</variables>
+			<variables name="ALMOPN" typeName="BOOL">
+				<comment>=1 Не відкрився (Несправність схеми управління)</comment>
+			</variables>
+			<variables name="ALMCLS" typeName="BOOL">
+				<comment>=1 Не закрився (Несправність схеми управління)</comment>
+			</variables>
+			<variables name="ALMOPN2" typeName="BOOL">
+				<comment>=1 Не відкрився</comment>
+			</variables>
+			<variables name="ALMCLS2" typeName="BOOL">
+				<comment>=1 Не закрився (Несправність обладнання по місцю)</comment>
+			</variables>
+			<variables name="ALMSHFT" typeName="BOOL">
+				<comment>=1 Порушення стану</comment>
+			</variables>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 Помилка приводу (по OR)</comment>
+			</variables>
+			<variables name="ALMBELL" typeName="BOOL">
+				<comment>=1 Команда включення дзвоника (на один цикл ПЛК)</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 Попередження приводу (по OR)</comment>
+			</variables>
+			<variables name="WRNSPD" typeName="BOOL">
+				<comment>= 1 попередження на пробуксовку привода, %</comment>
+			</variables>
+			<variables name="ALMSPD" typeName="BOOL">
+				<comment>= 1 аварія на пробуксовку привода, %</comment>
+			</variables>
+			<variables name="WRNSPD2" typeName="BOOL">
+				<comment>= 1 попередження на пробуксовку привода 2, %</comment>
+			</variables>
+			<variables name="ALMSPD2" typeName="BOOL">
+				<comment>= 1 тривога на пробуксовку привода 2, %</comment>
+			</variables>
+			<variables name="ALMPWR1" typeName="BOOL">
+				<comment>= 1 - немає живлення</comment>
+			</variables>
+			<variables name="ALMSTPBTN" typeName="BOOL">
+				<comment>= 1 - натиснута кнопка стоп</comment>
+			</variables>
+			<variables name="almrez16" typeName="BOOL"></variables>
+			<variables name="almrez17" typeName="BOOL"></variables>
+			<variables name="almrez18" typeName="BOOL"></variables>
+			<variables name="almrez19" typeName="BOOL"></variables>
+			<variables name="almrez20" typeName="BOOL"></variables>
+			<variables name="almrez21" typeName="BOOL"></variables>
+			<variables name="almrez22" typeName="BOOL"></variables>
+			<variables name="almrez23" typeName="BOOL"></variables>
+			<variables name="almrez24" typeName="BOOL"></variables>
+			<variables name="almrez25" typeName="BOOL"></variables>
+			<variables name="almrez26" typeName="BOOL"></variables>
+			<variables name="almrez27" typeName="BOOL"></variables>
+			<variables name="almrez28" typeName="BOOL"></variables>
+			<variables name="almrez29" typeName="BOOL"></variables>
+			<variables name="almrez30" typeName="BOOL"></variables>
+			<variables name="almrez31" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<FBSource nameOfFBType="VLVD_to_ACT" version="0.01" dateTime="dt#2022-01-12-16:53:13">
+		<attribute name="TypeCodeCheckSumString" value="CDEB"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="6000"></attribute>
+		<inOutParameters>
+			<variables name="VLVDCFG" typeName="VLVD_CFG">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="VLVDHMI" typeName="VLVD_HMI">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="ACTCFG" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+		</inOutParameters>
+		<FBProgram name="VLVD_to_ACT">
+			<STSource>ACTCFG.ID:= VLVDCFG.ID;
+ACTCFG.CLSID:= VLVDCFG.CLSID;
+ACTCFG.CMD:= VLVDCFG.CMD;
+ACTCFG.PRM:= VLVDCFG.PRM;
+ACTCFG.T_DEASP:= VLVDCFG.T_DEASP;
+ACTCFG.T_OPNSP:= VLVDCFG.T_OPNSP;
+ACTCFG.POS:= VLVDCFG.POS;
+ACTCFG.STEP1:= VLVDCFG.STEP1;
+ACTCFG.CNTPER:= VLVDCFG.CNTPER;
+ACTCFG.CNTALM:= VLVDCFG.CNTALM;
+ACTCFG.T_STEP1:= VLVDCFG.T_STEP1;
+ACTCFG.T_PREV:= VLVDCFG.T_PREV;
+
+ACTCFG.STA.IMSTPD:= VLVDCFG.STA.IMSTPD;
+ACTCFG.STA.MANRUNING:= VLVDCFG.STA.MANRUNING;
+ACTCFG.STA.DBLCKACT:= VLVDCFG.STA.DBLCKACT;
+ACTCFG.STA.OPNING:= VLVDCFG.STA.OPNING;
+ACTCFG.STA.CLSING:= VLVDCFG.STA.CLSING;
+ACTCFG.STA.OPND:= VLVDCFG.STA.OPND;
+ACTCFG.STA.CLSD:= VLVDCFG.STA.CLSD;
+ACTCFG.STA.MANBXOUT:= VLVDCFG.STA.MANBXOUT;
+ACTCFG.STA.WRKED:= VLVDCFG.STA.WRKED;
+ACTCFG.STA.DISP:= VLVDCFG.STA.DISP;
+ACTCFG.STA.MANBX:= VLVDCFG.STA.MANBX;
+ACTCFG.STA.INBUF:= VLVDCFG.STA.INBUF;
+ACTCFG.STA.INIOTBUF:= VLVDCFG.STA.INIOTBUF;
+ACTCFG.STA.FRC:= VLVDCFG.STA.FRC;
+ACTCFG.STA.SML:= VLVDCFG.STA.SML;
+ACTCFG.STA.BLCK:= VLVDCFG.STA.BLCK;
+ACTCFG.STA.STOPING:=VLVDCFG.ALM.STOPING;
+
+ACTCFG.ALM.ALMOPN:= VLVDCFG.ALM.ALMOPN;
+ACTCFG.ALM.ALMCLS:= VLVDCFG.ALM.ALMCLS;
+ACTCFG.ALM.ALMSHFT:= VLVDCFG.ALM.ALMSHFT;
+ACTCFG.ALM.ALMOPN2:= VLVDCFG.ALM.ALMOPN2;
+ACTCFG.ALM.ALMCLS2:= VLVDCFG.ALM.ALMCLS2;
+ACTCFG.ALM.ALM:= VLVDCFG.ALM.ALM;
+ACTCFG.ALM.WRN:= VLVDCFG.ALM.WRN;
+ACTCFG.ALM.ALMSTP:= VLVDCFG.ALM.ALMSTP;
+ACTCFG.ALM.ALMBELL:= VLVDCFG.ALM.ALMBELL;
+ACTCFG.ALM.ALMPWR1:= VLVDCFG.ALM.ALMPWR1;
+ACTCFG.ALM.ALMSTPBTN := VLVDCFG.ALM.ALMSTPBTN;
+ACTCFG.ALM.almrez31 := false;
+ACTCFG.ALM.almrez31 := VLVDCFG.ALM.almb12;
+ACTCFG.ALM.almrez31 := VLVDCFG.ALM.almb13;
+ACTCFG.ALM.almrez31 := VLVDCFG.ALM.almb14;
+ACTCFG.ALM.almrez31 := VLVDCFG.ALM.almb15;
+
+ACTCFG.CMDHMI:=VLVDHMI.CMD;
+
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="ACT_PRE" version="0.02" dateTime="dt#2022-01-12-16:53:14">
+		<attribute name="TypeCodeCheckSumString" value="8D0C"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="58F3"></attribute>
+		<inOutParameters>
+			<variables name="ACTCFG" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="STA" typeName="ACTTR_STA">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="ALMs" typeName="ACTTR_ALM">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="CMD" typeName="ACTTR_CMD">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="dt1" typeName="UDINT">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
+			<variables name="ACTBUF" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="7"></attribute>
+			</variables>
+		</inOutParameters>
+		<FBProgram name="ACT_PRE">
+			<STSource>(*початкова обробка для усіх ВМ: інціалізація, присвоєння у внутрішні STA, ALM; визначення INBUF, SML, #dt *)
+(*first scan*)
+IF PLCCFG.STA.SCN1 THEN 
+    (*обнулення бітів структури STA*)
+    ACTCFG.STA.IMSTPD:=FALSE;
+    ACTCFG.STA.MANRUNING:=FALSE;
+    ACTCFG.STA.STOPING:=FALSE;
+    ACTCFG.STA.OPNING:=FALSE;
+    ACTCFG.STA.CLSING:=FALSE;
+    ACTCFG.STA.OPND:=FALSE;
+    ACTCFG.STA.CLSD:=FALSE;
+    ACTCFG.STA.MANBXOUT:=FALSE;
+    ACTCFG.STA.WRKED:=FALSE;
+    ACTCFG.STA.DISP:=FALSE;
+    ACTCFG.STA.MANBX:=FALSE;
+    ACTCFG.STA.INBUF:=FALSE;
+    ACTCFG.STA.FRC:=FALSE;
+    ACTCFG.STA.SML:=FALSE;
+    ACTCFG.STA.BLCK:=FALSE;
+    ACTCFG.STA.STRTING:=FALSE;
+    ACTCFG.STA.STOPED:=FALSE;
+    ACTCFG.STA.SLNDBRK:=FALSE;
+    ACTCFG.STA.CMDACK:=FALSE;
+    ACTCFG.STA.SPD1:=FALSE;
+    ACTCFG.STA.SPD2:=FALSE;
+    ACTCFG.STA.WRNSPD2:=FALSE;
+    ACTCFG.STA.STRT_DELAY:=FALSE;
+    ACTCFG.STA.STOP_DELAY:=FALSE;
+    ACTCFG.STA.DBLCKACT:=FALSE;
+    ACTCFG.STA.ISREVERS:=FALSE;
+    ACTCFG.STA.ISANALOG:=FALSE;
+    ACTCFG.STA.INIOTBUF:=FALSE;
+    ACTCFG.STA.SPDMONON:=FALSE;
+    ACTCFG.STA.SPDCALIBRON:=FALSE;
+    ACTCFG.STA.rezb30:=FALSE;
+    ACTCFG.STA.rezb31:=FALSE;
+    (*обнулення бітів структури ALM*)
+    ACTCFG.ALM.ALMSTRT:=FALSE;
+    ACTCFG.ALM.ALMSTP:=FALSE;
+    ACTCFG.ALM.ALMOPN:=FALSE;
+    ACTCFG.ALM.ALMCLS:=FALSE;
+    ACTCFG.ALM.ALMOPN2:=FALSE;
+    ACTCFG.ALM.ALMCLS2:=FALSE;
+    ACTCFG.ALM.ALMSHFT:=FALSE;
+    ACTCFG.ALM.ALM:=FALSE;
+    ACTCFG.ALM.ALMBELL:=FALSE;
+    ACTCFG.ALM.WRN:=FALSE;
+    ACTCFG.ALM.WRNSPD:=FALSE;
+    ACTCFG.ALM.ALMSPD:=FALSE;
+    ACTCFG.ALM.WRNSPD2:=FALSE;
+    ACTCFG.ALM.ALMSPD2:=FALSE;
+    ACTCFG.ALM.ALMPWR1:=FALSE;
+    ACTCFG.ALM.ALMSTPBTN:=FALSE;
+    ACTCFG.ALM.almrez16:=FALSE;
+    ACTCFG.ALM.almrez17:=FALSE;
+    ACTCFG.ALM.almrez18:=FALSE;
+    ACTCFG.ALM.almrez19:=FALSE;
+    ACTCFG.ALM.almrez20:=FALSE;
+    ACTCFG.ALM.almrez21:=FALSE;
+    ACTCFG.ALM.almrez22:=FALSE;
+    ACTCFG.ALM.almrez23:=FALSE;
+    ACTCFG.ALM.almrez24:=FALSE;
+    ACTCFG.ALM.almrez25:=FALSE;
+    ACTCFG.ALM.almrez26:=FALSE;
+    ACTCFG.ALM.almrez27:=FALSE;
+    ACTCFG.ALM.almrez28:=FALSE;
+    ACTCFG.ALM.almrez29:=FALSE;
+    ACTCFG.ALM.almrez30:=FALSE;
+    ACTCFG.ALM.almrez31:=FALSE;
+    IF ACTCFG.T_OPNSP = 0 THEN ACTCFG.T_OPNSP:=50; END_IF;  
+END_IF;
+(*//читання інформації з контурів, якщо вони привязані
+"RW_LOOP_SEL"(direct:='r', ACT:=#ACTCFG);*)
+
+STA := ACTCFG.STA;
+ALMs := ACTCFG.ALM;
+CMD := ACTCFG.CMD;
+ALMs.ALMBELL:= false; (*дзвінок знімається через один цикл*)
+STA.INBUF := (ACTCFG.ID = ACTBUF.ID AND ACTBUF.ID &lt;&gt; 0 AND ACTCFG.CLSID = ACTBUF.CLSID);(*знаходиться в буфері конфігурування*)
+STA.SML := PLCCFG.STA.SMLALL;(*режим імітації*)
+dt1 := PLCCFG.TQMS - ACTCFG.T_PREV; (*різниця між викликами в мс*)
+IF dt1&lt;1 THEN dt1:=1; END_IF;
+
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="ACT_CMDCTRL" version="0.01" dateTime="dt#2022-01-12-16:53:13">
+		<attribute name="TypeCodeCheckSumString" value="A172"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="B4F1"></attribute>
+		<inOutParameters>
+			<variables name="ACTCFG" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="STA" typeName="ACTTR_STA">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="CMD" typeName="ACTTR_CMD">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="ACTBUF" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+		</inOutParameters>
+		<privateLocalVariables>
+			<variables name="CMDINT" typeName="INT"></variables>
+			<variables name="INIoTBUF" typeName="BOOL"></variables>
+		</privateLocalVariables>
+		<FBProgram name="ACT_CMDCTRL">
+			<STSource>(*блок обробляє команди з HMI та IOT, формує на основі них CMD, змінює статусні біти стану, обнуляє автоматичні команди в ручному режимі *)
+(*вибір джерела конфігураційної/керівної команди HMI згідно пріоритету якщо команди надійшли одночасно*)
+IF ACTCFG.CMDHMI &gt; 16#80 THEN (*конфіг кмд з HMI*)
+    CMDINT := ACTCFG.CMDHMI;
+ELSIF STA.INBUF AND ACTBUF.CMDHMI &gt; 16#80 THEN (*конфіг кмд з буферу*)
+    CMDINT := ACTBUF.CMDHMI;
+ELSIF ACTCFG.CMDHMI &lt; 16#80 AND ACTCFG.CMDHMI &gt; 0 AND STA.DISP THEN(*керування клапаном з елементу в ручному режимі*)
+    CMDINT := ACTCFG.CMDHMI;
+ELSIF STA.INBUF AND ACTBUF.CMDHMI &lt; 16#80 AND ACTBUF.CMDHMI &gt; 0 AND STA.DISP THEN (* керування клапаном з буферу в ручному режимі*)
+    CMDINT := ACTBUF.CMDHMI; (* команда звідти інакше ігнорити*)
+ELSE
+    CMDINT := 0;
+END_IF;
+(*
+(*---------------------- команди з IoT буферу, для керування тільки в ручному режимі  
+//16#2xxx - команди для ВМ
+#INIoTBUF:= ("IOTDB".IOTBUF.ACT.ID = #ACTCFG.ID);
+#STA.INIOTBUF := #INIoTBUF;
+IF ("IOTDB".IOTBUF.CMD AND 16#F000) = 16#2000 AND ("IOTDB".IOTBUF.ID = #ACTCFG.ID) THEN
+    "IOTDB".IOTBUF.ACTH_ID := #ACTCFG.ID; //для запису в BUF
+    IF #STA.DISP THEN 
+        CASE "IOTDB".IOTBUF.CMD OF
+            16#2001: //відкрити
+                #CMDINT:=16#1;
+            16#2002: //закрити
+                #CMDINT:=16#2;
+            16#2003: //перемкнути
+                #CMDINT:=16#3;
+        END_CASE;
+    END_IF;
+    CASE "IOTDB".IOTBUF.CMD OF
+        16#2011: //завантажити буфер
+            "IOTDB".IOTBUF.ACT := #ACTCFG;
+        16#2012: //запис з буферу в змінну
+            ;//
+        16#2031: //переведення в ручний
+            #CMDINT:=16#0301;
+        16#2032: //переведення в автомат
+            #CMDINT:=16#0302;
+        16#2033: //тогл режиму
+            #CMDINT:=16#0303;
+    END_CASE;
+
+    "IOTDB".IOTBUF.CMD:=0; "IOTDB".IOTBUF.ID:=0;
+END_IF;
+// #INIoTBUF Тепер в "ACT" POST 
+//------------
+*)
+
+(*у рчуному режимі усі автоматичні команди керування обнуляються*)
+IF STA.DISP THEN
+    CMD.OPN:=FALSE;
+    CMD.CLS:=FALSE;
+    CMD.TOGGLE:=false;
+    CMD.START:=false;
+    CMD.STOP:=false;
+    CMD.REVERS:=false;
+    CMD.TOGGLE:=FALSE;
+END_IF;
+
+(*команди операторського керування
+16#0001 - CMD_OPN
+16#0002 - CMD_CLS
+16#0004 - CMD_ALMRST
+16#0008 - CMD_DBLK
+16#0010 - CMD_STOP
+*)
+
+(* команди HMI*)
+CASE CMDINT OF
+    16#0001:(*відкрити *)
+        CMD.OPN := TRUE;
+        CMD.CLS := FALSE;
+    16#0002:(*закрити *)
+        CMD.CLS := TRUE;
+        CMD.OPN := FALSE;
+    16#0003:(*перемкнути*)
+        CMD.TOGGLE := TRUE;
+    16#0004:(* Підтвердити тривогу*)
+        CMD.ALMACK:= TRUE; 
+    16#0005:(*Скинути тривоги *)
+        CMD.ALMRESET:= TRUE; 
+    16#0006:
+        CMD.BLCK:= TRUE; (*Заблокувати*)
+    16#0007:
+        CMD.DBLCK:= TRUE; (*Розблокувати*)
+    16#0008:
+        CMD.STOPTUN:= TRUE;(*Зупинити автоналаштування*)
+    16#0009:
+        CMD.TUNING:= TRUE;(*Запустити автоналаштування *)
+    16#000A:
+        CMD.PROTECT:= TRUE;(*Включити алгоритм захисту *)
+    16#000B: (*=1 дозвіл на керування*)
+        CMD.RESOLUTION:= TRUE; (*//на один цикл*)
+    16#000C: (*=1 запуск калібрування датчика шивдкості*)
+        CMD.P_RESOLUTION := TRUE; (*//на один цикл*)  
+    16#000D: (*=1 запуск калібрування датчика шивдкості*)
+        CMD.DBLCKACTTOGGLE := true;
+        STA.DBLCKACT := NOT STA.DBLCKACT;      
+    (*E..10 - вільні*)
+    16#0011:(*Запустити*)
+        CMD.START:= TRUE; 
+        CMD.STOP:= false;
+    16#0012: (*Зупинити*)
+        CMD.STOP:= TRUE;
+        CMD.START:= false;
+    16#0013:(*19*)
+        CMD.REVERS:= TRUE;(*Включити реверс *)
+    (*14-20 - вільні*)
+    16#0021:
+        CMD.UP:= TRUE; (*Більше*)
+    16#0022: 
+        CMD.DWN:= TRUE; (*Менше*)
+    (*23-9F - вільні*)
+    (*починаючи з 16#0080 тільки для роботи з буфера і керування режимом*)
+    16#0100: (*прочитати конфігурацію*)
+        CMD.BUFLOAD:=true;
+        ACTBUF := ACTCFG;
+    16#0101: (*записати конфігурацію*)
+        ACTCFG.PRM := ACTBUF.PRM;
+        ACTCFG.T_DEASP := ACTBUF.T_DEASP;
+        ACTCFG.T_OPNSP := ACTBUF.T_OPNSP;
+        ACTCFG.STOP_DELAY := ACTBUF.STOP_DELAY;
+        (*запис конфігураційних параметрів в контур, якщо він є*)
+        (*"RW_LOOP_SEL"(direct:='c', ACT:=#ACTCFG);*)
+    (*102-2FF вільні*)
+    16#0300: (*перемкнути ручний/автомат*)
+        STA.DISP := NOT STA.DISP;
+    16#0301: (*РУЧНИЙ РЕЖИМ*)
+        STA.DISP := TRUE;
+    16#0302: (*АВТО РЕЖИМ*)
+        STA.DISP := FALSE;
+    16#0313:(* включити місцевий режим*)
+        STA.MANBXOUT := true;
+        (*#CMD.CRMT:= TRUE; //чи потрібен з програми?*)
+    16#0314:(* відключити місцевий режим*)
+        STA.MANBXOUT := false;
+        STA.MANBX := false;
+        (*#CMD.CLCL:= TRUE; //чи потрібен з програми?*)
+    (*керування статистикою*)
+    16#0401:(* скинути лічильник тривог 1025*)
+        ACTCFG.CNTALM:=0;
+    16#0402:(* скинути лічильник спрацювань/переміщень 1026*)
+        ACTCFG.CNTPER:=0;
+    16#0403:(* скинути лічильник спрацювань/переміщень 1027*)
+        ACTCFG.TQ_TOTAL:=0;
+    16#0404:(* скинути лічильник спрацювань/переміщень 1028*)
+        ACTCFG.TQ_LAST :=0;
+END_CASE;
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="ACT_POST" version="0.02" dateTime="dt#2022-01-12-16:53:14">
+		<attribute name="TypeCodeCheckSumString" value="0A6C"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="7336"></attribute>
+		<inOutParameters>
+			<variables name="ACTCFG" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="STA" typeName="ACTTR_STA">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="ALMs" typeName="ACTTR_ALM">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="CMD" typeName="ACTTR_CMD">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="dt1" typeName="UDINT">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+			<variables name="ACTBUF" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="7"></attribute>
+			</variables>
+		</inOutParameters>
+		<FBProgram name="ACT_POST">
+			<STSource>(*кінцева обробка ВМ перед фцією act_to_XXX: оновлення загальних статусних бітів PLC, 
+обмеження лічильників тривог, запис в STA, ALM, оновлення буферу*)
+(*режими - в PLC*)
+(*загальний біт хоча б одного ручного*)
+IF STA.DISP THEN
+    PLCCFG.STA.DISP := true;
+END_IF; 
+IF STA.SML THEN
+    PLCCFG.STA.SML := true;
+END_IF;
+IF ACTCFG.CNTALM &gt; 30000 THEN
+    ACTCFG.CNTALM := 30000;
+END_IF;
+IF ACTCFG.CNTPER &gt; 30000 THEN
+    ACTCFG.CNTPER := 30000;
+END_IF;
+ACTCFG.STA := STA;
+ACTCFG.ALM := ALMs;
+(*обнулення усіх команд з HMI*)
+ACTCFG.CMDHMI := 0;
+(*обнулення усіх команд з програми*)
+
+ACTCFG.CMD.OPN:=FALSE;
+ACTCFG.CMD.CLS:=FALSE;
+ACTCFG.CMD.TOGGLE:=FALSE;
+ACTCFG.CMD.ALMACK:=FALSE;
+ACTCFG.CMD.ALMRESET:=FALSE;
+ACTCFG.CMD.BLCK:=FALSE;
+ACTCFG.CMD.DBLCK:=FALSE;
+ACTCFG.CMD.STOPTUN:=FALSE;
+ACTCFG.CMD.TUNING:=FALSE;
+ACTCFG.CMD.MAN:=FALSE;
+ACTCFG.CMD.AUTO:=FALSE;
+ACTCFG.CMD.PROTECT:=FALSE;
+ACTCFG.CMD.START:=FALSE;
+ACTCFG.CMD.STOP:=FALSE;
+ACTCFG.CMD.UP:=FALSE;
+ACTCFG.CMD.DWN:=FALSE;
+ACTCFG.CMD.CRMT:=FALSE;
+ACTCFG.CMD.RESOLUTION:=FALSE;
+ACTCFG.CMD.REVERS:=FALSE;
+ACTCFG.CMD.CLCL:=FALSE;
+ACTCFG.CMD.DBLCKACTTOGGLE:=FALSE;
+ACTCFG.CMD.STARTDELAY:=FALSE;
+ACTCFG.CMD.STOPDELAY:=FALSE;
+ACTCFG.CMD.P_RESOLUTION:=FALSE;
+ACTCFG.CMD.BUFLOAD:=FALSE;
+ACTCFG.CMD.cmdrezb25:=FALSE;
+ACTCFG.CMD.cmdrezb26:=FALSE;
+ACTCFG.CMD.cmdrezb27:=FALSE;
+ACTCFG.CMD.cmdrezb28:=FALSE;
+ACTCFG.CMD.cmdrezb29:=FALSE;
+ACTCFG.CMD.cmdrezb30:=FALSE;
+ACTCFG.CMD.cmdrezb31:=FALSE;
+
+(*sta bits pack*)
+ACTCFG.STAHMI1.0:= ACTCFG.STA.IMSTPD;
+ACTCFG.STAHMI1.1:= ACTCFG.STA.MANRUNING;
+ACTCFG.STAHMI1.2:= ACTCFG.STA.STOPING;
+ACTCFG.STAHMI1.3:= ACTCFG.STA.OPNING;
+ACTCFG.STAHMI1.4:= ACTCFG.STA.CLSING;
+ACTCFG.STAHMI1.5:= ACTCFG.STA.OPND;
+ACTCFG.STAHMI1.6:= ACTCFG.STA.CLSD;
+ACTCFG.STAHMI1.7:= ACTCFG.STA.MANBXOUT;
+ACTCFG.STAHMI1.8:= ACTCFG.STA.WRKED;
+ACTCFG.STAHMI1.9:= ACTCFG.STA.DISP;
+ACTCFG.STAHMI1.10:= ACTCFG.STA.MANBX;
+ACTCFG.STAHMI1.11:= ACTCFG.STA.INBUF;
+ACTCFG.STAHMI1.12:= ACTCFG.STA.FRC;
+ACTCFG.STAHMI1.13:= ACTCFG.STA.SML;
+ACTCFG.STAHMI1.14:= ACTCFG.STA.BLCK;
+ACTCFG.STAHMI1.15:= ACTCFG.STA.STRTING;
+ACTCFG.STAHMI2.0:= ACTCFG.STA.STOPED;
+ACTCFG.STAHMI2.1:= ACTCFG.STA.SLNDBRK;
+ACTCFG.STAHMI2.2:= ACTCFG.STA.CMDACK;
+ACTCFG.STAHMI2.3:= ACTCFG.STA.SPD1;
+ACTCFG.STAHMI2.4:= ACTCFG.STA.SPD2;
+ACTCFG.STAHMI2.5:= ACTCFG.STA.WRNSPD2;
+ACTCFG.STAHMI2.6:= ACTCFG.STA.STRT_DELAY;
+ACTCFG.STAHMI2.7:= ACTCFG.STA.STOP_DELAY;
+ACTCFG.STAHMI2.8:= ACTCFG.STA.DBLCKACT;
+ACTCFG.STAHMI2.9:= ACTCFG.STA.ISREVERS;
+ACTCFG.STAHMI2.10:= ACTCFG.STA.ISANALOG;
+ACTCFG.STAHMI2.11:= ACTCFG.STA.INIOTBUF;
+ACTCFG.STAHMI2.12:= ACTCFG.STA.SPDMONON;
+ACTCFG.STAHMI2.13:= ACTCFG.STA.SPDCALIBRON;
+ACTCFG.STAHMI2.14:= ACTCFG.STA.rezb30;
+ACTCFG.STAHMI2.15:= ACTCFG.STA.rezb31;
+
+(*alm bits pack*)
+ACTCFG.ALMHMI1.0:= ACTCFG.ALM.ALMSTRT;
+ACTCFG.ALMHMI1.1:= ACTCFG.ALM.ALMSTP;
+ACTCFG.ALMHMI1.2:= ACTCFG.ALM.ALMOPN;
+ACTCFG.ALMHMI1.3:= ACTCFG.ALM.ALMCLS;
+ACTCFG.ALMHMI1.4:= ACTCFG.ALM.ALMOPN2;
+ACTCFG.ALMHMI1.5:= ACTCFG.ALM.ALMCLS2;
+ACTCFG.ALMHMI1.6:= ACTCFG.ALM.ALMSHFT;
+ACTCFG.ALMHMI1.7:= ACTCFG.ALM.ALM;
+ACTCFG.ALMHMI1.8:= ACTCFG.ALM.ALMBELL;
+ACTCFG.ALMHMI1.9:= ACTCFG.ALM.WRN;
+ACTCFG.ALMHMI1.10:= ACTCFG.ALM.WRNSPD;
+ACTCFG.ALMHMI1.11:= ACTCFG.ALM.ALMSPD;
+ACTCFG.ALMHMI1.12:= ACTCFG.ALM.WRNSPD2;
+ACTCFG.ALMHMI1.13:= ACTCFG.ALM.ALMSPD2;
+ACTCFG.ALMHMI1.14:= ACTCFG.ALM.ALMPWR1;
+ACTCFG.ALMHMI1.15:= ACTCFG.ALM.ALMSTPBTN;
+ACTCFG.ALMHMI2.0:=ACTCFG.ALM.almrez16;
+ACTCFG.ALMHMI2.1:=ACTCFG.ALM.almrez17;
+ACTCFG.ALMHMI2.2:=ACTCFG.ALM.almrez18;
+ACTCFG.ALMHMI2.3:=ACTCFG.ALM.almrez19;
+ACTCFG.ALMHMI2.4:=ACTCFG.ALM.almrez20;
+ACTCFG.ALMHMI2.5:=ACTCFG.ALM.almrez21;
+ACTCFG.ALMHMI2.6:=ACTCFG.ALM.almrez22;
+ACTCFG.ALMHMI2.7:=ACTCFG.ALM.almrez23;
+ACTCFG.ALMHMI2.8:=ACTCFG.ALM.almrez24;
+ACTCFG.ALMHMI2.9:=ACTCFG.ALM.almrez25;
+ACTCFG.ALMHMI2.10:=ACTCFG.ALM.almrez26;
+ACTCFG.ALMHMI2.11:=ACTCFG.ALM.almrez27;
+ACTCFG.ALMHMI2.12:=ACTCFG.ALM.almrez28;
+ACTCFG.ALMHMI2.13:=ACTCFG.ALM.almrez29;
+ACTCFG.ALMHMI2.14:=ACTCFG.ALM.almrez30;
+ACTCFG.ALMHMI2.15:=ACTCFG.ALM.almrez31;
+
+
+(*оновлення в буфері HMI
+//передаємо постійно в буфер тільки ті значення які змінюються постійно*) 
+IF STA.INBUF THEN
+    ACTBUF.ID := ACTCFG.ID ;
+    ACTBUF.CLSID := ACTCFG.CLSID ;
+    ACTBUF.CMDHMI := ACTCFG.CMDHMI ;
+    ACTBUF.STAHMI1:= ACTCFG.STAHMI1;
+    ACTBUF.ALMHMI1:= ACTCFG.ALMHMI1 ;
+    ACTBUF.STAHMI2:= ACTCFG.STAHMI2;
+    ACTBUF.ALMHMI2:= ACTCFG.ALMHMI2 ;
+    ACTBUF.STEP1:= ACTCFG.STEP1 ;
+    ACTBUF.T_STEP1:= ACTCFG.T_STEP1;
+    ACTBUF.POS := ACTCFG.POS;
+    (*"BUF".ACTBUF.POS_PV :=   #ACTCFG.POS_PV ;*)
+    (*"BUF".ACTBUF.POS_SP :=   #ACTCFG.POS_SP ;*)
+    ACTBUF.STA:=ACTCFG.STA;
+    ACTBUF.ALM:=ACTCFG.ALM;
+    ACTBUF.CNTPER:=ACTCFG.CNTPER;
+    ACTBUF.CNTALM:=ACTCFG.CNTALM;
+END_IF;
+
+(*онвлення в буфері IoT CFG - пишемо весь конфіг
+IF #ACTCFG.ID = "IOTDB".IOTBUF.ACT.ID THEN
+    "IOTDB".IOTBUF.ACT := #ACTCFG;
+END_IF; 
+//онвлення в буфері IoT HMI з CFG - пишемо весь конфіг
+IF #ACTCFG.ID = "IOTDB".IOTBUF.ACTH_ID THEN
+    "IOTDB".IOTBUF.ACTH := #ACTCFG;
+END_IF;  
+
+//запис інформації в контурі, якщо він привязаний
+"RW_LOOP_SEL"(direct:='w', ACT:=#ACTCFG);
+*)
+ACTCFG.T_PREV := PLCCFG.TQMS;
+ACTCFG.T_STEP1 := ACTCFG.T_STEP1 + dt1;
+IF ACTCFG.T_STEP1 &gt; 16#7FFF_FFFF THEN
+    ACTCFG.T_STEP1 := 16#7FFF_FFFF;
+END_IF;
+
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="ACT_to_VLVD" version="0.03" dateTime="dt#2022-01-12-16:53:14">
+		<attribute name="TypeCodeCheckSumString" value="6E38"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="6000"></attribute>
+		<inOutParameters>
+			<variables name="VLVDCFG" typeName="VLVD_CFG">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="VLVDHMI" typeName="VLVD_HMI">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="ACTCFG" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+		</inOutParameters>
+		<FBProgram name="ACT_to_VLVD">
+			<STSource>VLVDCFG.ID:= ACTCFG.ID;
+VLVDCFG.CLSID:= ACTCFG.CLSID;
+VLVDCFG.CMD:= ACTCFG.CMD;
+VLVDCFG.PRM:= ACTCFG.PRM;
+VLVDCFG.T_DEASP:= ACTCFG.T_DEASP;
+VLVDCFG.T_OPNSP:= ACTCFG.T_OPNSP;
+VLVDCFG.POS:= ACTCFG.POS;
+VLVDCFG.STEP1:= ACTCFG.STEP1;
+VLVDCFG.CNTPER:= ACTCFG.CNTPER;
+VLVDCFG.CNTALM:= ACTCFG.CNTALM;
+VLVDCFG.T_STEP1:= ACTCFG.T_STEP1;
+VLVDCFG.T_PREV:= ACTCFG.T_PREV;
+
+VLVDCFG.STA.IMSTPD:= ACTCFG.STA.IMSTPD;
+VLVDCFG.STA.MANRUNING:= ACTCFG.STA.MANRUNING;
+VLVDCFG.STA.DBLCKACT:= ACTCFG.STA.DBLCKACT;
+VLVDCFG.STA.OPNING:= ACTCFG.STA.OPNING;
+VLVDCFG.STA.CLSING:= ACTCFG.STA.CLSING;
+VLVDCFG.STA.OPND:= ACTCFG.STA.OPND;
+VLVDCFG.STA.CLSD:= ACTCFG.STA.CLSD;
+VLVDCFG.STA.MANBXOUT:= ACTCFG.STA.MANBXOUT;
+VLVDCFG.STA.WRKED:= ACTCFG.STA.WRKED;
+VLVDCFG.STA.DISP:= ACTCFG.STA.DISP;
+VLVDCFG.STA.MANBX:= ACTCFG.STA.MANBX;
+VLVDCFG.STA.INBUF:= ACTCFG.STA.INBUF;
+VLVDCFG.STA.INIOTBUF :=ACTCFG.STA.INIOTBUF;
+VLVDCFG.STA.FRC:= ACTCFG.STA.FRC;
+VLVDCFG.STA.SML:= ACTCFG.STA.SML;
+VLVDCFG.STA.BLCK:= ACTCFG.STA.BLCK;
+
+VLVDCFG.ALM.ALMOPN:= ACTCFG.ALM.ALMOPN;
+VLVDCFG.ALM.ALMCLS:= ACTCFG.ALM.ALMCLS;
+VLVDCFG.ALM.ALMSHFT:= ACTCFG.ALM.ALMSHFT;
+VLVDCFG.ALM.ALMOPN2:= ACTCFG.ALM.ALMOPN2;
+VLVDCFG.ALM.ALMCLS2:= ACTCFG.ALM.ALMCLS2;
+VLVDCFG.ALM.ALM:= ACTCFG.ALM.ALM;
+VLVDCFG.ALM.WRN:= ACTCFG.ALM.WRN;
+VLVDCFG.ALM.ALMSTP:= ACTCFG.ALM.ALMSTP;
+VLVDCFG.ALM.ALMBELL:= ACTCFG.ALM.ALMBELL;
+VLVDCFG.ALM.ALMPWR1:= ACTCFG.ALM.ALMPWR1;
+VLVDCFG.ALM.ALMSTPBTN:=ACTCFG.ALM.ALMSTPBTN;
+VLVDCFG.ALM.STOPING:=ACTCFG.STA.STOPING;(*бітів STA не вистачило*)
+VLVDCFG.ALM.almb12:=false;
+VLVDCFG.ALM.almb13:=false;
+VLVDCFG.ALM.almb14:=false;
+VLVDCFG.ALM.almb15:=false;
+
+VLVDHMI.CMD:=ACTCFG.CMDHMI;
+
+VLVDHMI.STA.0 := VLVDCFG.STA.IMSTPD;
+VLVDHMI.STA.1 :=VLVDCFG.STA.MANRUNING;
+VLVDHMI.STA.2 :=VLVDCFG.STA.DBLCKACT;
+VLVDHMI.STA.3 :=VLVDCFG.STA.OPNING;
+VLVDHMI.STA.4 :=VLVDCFG.STA.CLSING;
+VLVDHMI.STA.5 :=VLVDCFG.STA.OPND;
+VLVDHMI.STA.6 :=VLVDCFG.STA.CLSD;
+VLVDHMI.STA.7 :=VLVDCFG.STA.MANBXOUT;
+VLVDHMI.STA.8 :=VLVDCFG.STA.WRKED;
+VLVDHMI.STA.9 :=VLVDCFG.STA.DISP;
+VLVDHMI.STA.10 :=VLVDCFG.STA.MANBX;
+VLVDHMI.STA.11 :=VLVDCFG.STA.INIOTBUF;
+VLVDHMI.STA.12 :=VLVDCFG.STA.INBUF;
+VLVDHMI.STA.13 :=VLVDCFG.STA.FRC;
+VLVDHMI.STA.14 :=VLVDCFG.STA.SML;
+VLVDHMI.STA.15 :=VLVDCFG.STA.BLCK;
+
+VLVDHMI.ALM.0 :=VLVDCFG.ALM.ALMOPN;
+VLVDHMI.ALM.1 :=VLVDCFG.ALM.ALMCLS;
+VLVDHMI.ALM.2 :=VLVDCFG.ALM.ALMSHFT;
+VLVDHMI.ALM.3 :=VLVDCFG.ALM.ALMOPN2;
+VLVDHMI.ALM.4 :=VLVDCFG.ALM.ALMCLS2;
+VLVDHMI.ALM.5 :=VLVDCFG.ALM.ALM;
+VLVDHMI.ALM.6 :=VLVDCFG.ALM.WRN;
+VLVDHMI.ALM.7 :=VLVDCFG.ALM.ALMSTP;
+VLVDHMI.ALM.8 :=VLVDCFG.ALM.ALMBELL;
+VLVDHMI.ALM.9 :=VLVDCFG.ALM.ALMPWR1;
+VLVDHMI.ALM.10 :=VLVDCFG.ALM.ALMSTPBTN;
+VLVDHMI.ALM.11 :=VLVDCFG.ALM.STOPING;
+VLVDHMI.ALM.12 :=VLVDCFG.ALM.almb12;
+VLVDHMI.ALM.13 :=VLVDCFG.ALM.almb13;
+VLVDHMI.ALM.14 :=VLVDCFG.ALM.almb14;
+VLVDHMI.ALM.15 :=VLVDCFG.ALM.almb15;
+
+VLVDHMI.POS := REAL_TO_INT(VLVDCFG.POS);
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+</FBExchangeFile>

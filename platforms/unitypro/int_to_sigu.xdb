@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FBExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-12-17:1:7" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<FBSource nameOfFBType="INT_TO_SIGU" version="0.02" dateTime="dt#2022-01-12-16:53:04">
+		<attribute name="TypeCodeCheckSumString" value="57B7"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="9477"></attribute>
+		<inputParameters>
+			<variables name="CLSID" typeName="UINT">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="VALINT" typeName="INT">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+		</inputParameters>
+		<outputParameters>
+			<variables name="INT_TO_SIGU" typeName="REAL">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</outputParameters>
+		<privateLocalVariables>
+			<variables name="RAWMIN" typeName="REAL"></variables>
+			<variables name="RAWMAX" typeName="REAL"></variables>
+			<variables name="SIGMIN" typeName="REAL"></variables>
+			<variables name="SIGMAX" typeName="REAL"></variables>
+			<variables name="VALREAL" typeName="REAL"></variables>
+		</privateLocalVariables>
+		<FBProgram name="INT_TO_SIGU">
+			<STSource>(*перетворення одиниць ПЛК в вимірювальні одиниці
+ CHAI
+- 16#0030 - загальний клас без означення типу сигналу
+- 16#0031 - 4..20 mA
+- 16#0032 - 0..20 mA
+- 16#0033 - 0..10 V
+- 16#0034 - термометр опору (без означення типу)
+- 16#0035 - термопара (без означення типу)
+ CHAO
+- 16#0040 - загальний клас без означення типу сигналу
+- 16#0041 - 4..20 mA
+- 16#0042 - 0..20 mA
+- 16#0043 - 0..10 V
+
+Інші класи задаються при необхідності.
+*)
+(*10000*)
+RAWMIN := 0.0;
+RAWMAX := 10000.0;
+VALREAL := INT_TO_REAL (VALINT);
+CASE CLSID OF
+  16#0031,16#0041 :  (*// 4..20 mA*)
+    SIGMIN := 4.0; SIGMAX := 20.0;
+  16#0032,16#0042 :  (*// 0..20 mA*)
+    SIGMIN := 0.0; SIGMAX := 20.0;
+  16#0033, 16#0043:  (*// 0..10 V*)
+    SIGMIN := 0.0; SIGMAX := 10.0;
+
+ELSE  (*%*)
+    SIGMIN := 0.0; SIGMAX := 100.0;
+END_CASE;
+
+INT_TO_SIGU := SIGMIN + (INT_TO_REAL(VALINT) - RAWMIN)*(SIGMAX-SIGMIN)/(RAWMAX - RAWMIN);
+</STSource>
+		</FBProgram>
+	</FBSource>
+</FBExchangeFile>
