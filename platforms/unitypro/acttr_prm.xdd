@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DDTExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:2:7" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<DDTSource DDTName="ACTTR_PRM" version="0.01" dateTime="dt#2022-01-09-11:14:37">
+		<attribute name="TypeSignatureCheckSumString" value="D8EB"></attribute>
+		<structure>
+			<variables name="PRM_b0" typeName="BOOL">
+				<comment>=1 </comment>
+			</variables>
+			<variables name="PRM_ZWRKENBL" typeName="BOOL">
+				<comment>=1 є звонішній вхід - зворотній звязок про роботу</comment>
+			</variables>
+			<variables name="PRM_ZPOSENBL" typeName="BOOL">
+				<comment>=1 є аналоговий зворотній звязок частоти/позиції</comment>
+			</variables>
+			<variables name="PRM_PWRENBL" typeName="BOOL">
+				<comment>=1 є звонішній вхід по стану живлення</comment>
+			</variables>
+			<variables name="PRM_MANCFG" typeName="BOOL">
+				<comment>=1 ручне керування налаштуванням</comment>
+			</variables>
+			<variables name="PRM_ZOPNENBL" typeName="BOOL">
+				<comment>=1 є датчик відкритості</comment>
+			</variables>
+			<variables name="PRM_ZCLSENBL" typeName="BOOL">
+				<comment>=1 є датчик закритості</comment>
+			</variables>
+			<variables name="PRM_AUTOACK" typeName="BOOL">
+				<comment>=1, автоматичне підтвердження тривог</comment>
+			</variables>
+			<variables name="PRM_BTNSTPENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - включена кнопка STOP</comment>
+			</variables>
+			<variables name="PRM_ALMENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - сигнал аварії від приводу</comment>
+			</variables>
+			<variables name="PRM_SELLCLENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - сигнал включення місцевого керування</comment>
+			</variables>
+			<variables name="PRM_PULSCTRLENBL" typeName="BOOL">
+				<comment>=1 схема керування імпулсами (команди на 2с)</comment>
+			</variables>
+			<variables name="PRM_ZRUNENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід про рух приводу</comment>
+			</variables>
+			<variables name="PRM_ZSPDENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід про датчику швидкості приводу</comment>
+			</variables>
+			<variables name="PRM_CRVRSENBL" typeName="BOOL">
+				<comment>=1 ВМ з виходом керування реверсом</comment>
+			</variables>
+			<variables name="PRM_BLCKOFSPD" typeName="BOOL">
+				<comment>=1 зупиняти по зниженні швидкості</comment>
+			</variables>
+			<variables name="PRM_NOPRES" typeName="BOOL">
+				<comment>=1 довзолити рух без включеного маслонасоса</comment>
+			</variables>
+			<variables name="PRM_b17" typeName="BOOL"></variables>
+			<variables name="PRM_b18" typeName="BOOL"></variables>
+			<variables name="PRM_b19" typeName="BOOL"></variables>
+			<variables name="PRM_b20" typeName="BOOL"></variables>
+			<variables name="PRM_b21" typeName="BOOL"></variables>
+			<variables name="PRM_b22" typeName="BOOL"></variables>
+			<variables name="PRM_b23" typeName="BOOL"></variables>
+			<variables name="PRM_b24" typeName="BOOL"></variables>
+			<variables name="PRM_b25" typeName="BOOL"></variables>
+			<variables name="PRM_b26" typeName="BOOL"></variables>
+			<variables name="PRM_b27" typeName="BOOL"></variables>
+			<variables name="PRM_b28" typeName="BOOL"></variables>
+			<variables name="PRM_b29" typeName="BOOL"></variables>
+			<variables name="PRM_b30" typeName="BOOL"></variables>
+			<variables name="PRM_b31" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+</DDTExchangeFile>

@@ -1,16 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DDTExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2020-12-25-14:52:14" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:4:3" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
 	<contentHeader name="Project" version="0.0.000"></contentHeader>
-	<DDTSource DDTName="CH_HMI" version="0.02" dateTime="dt#2020-12-25-14:52:04">
-		<comment>дискретні канали кнтролера - структура НМІ</comment>
+	<DDTSource DDTName="CH_HMI" version="0.01" dateTime="dt#2022-01-04-12:31:07">
 		<attribute name="TypeSignatureCheckSumString" value="0154"></attribute>
 		<structure>
 			<variables name="STA" typeName="INT">
-				<comment>STA+CMD (X15 – CMDLOAD)</comment>
+				<comment>біти статусу STA+CMD (X15 - CMDLOAD)</comment>
 			</variables>
 			<variables name="VAL" typeName="INT">
-				<comment>значення</comment>
+				<comment>значення змінної</comment>
 			</variables>
 		</structure>
 	</DDTSource>

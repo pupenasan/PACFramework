@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DDTExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:1:29" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<DDTSource DDTName="ACTTR_CMD" version="0.01" dateTime="dt#2022-01-09-11:05:46">
+		<attribute name="TypeSignatureCheckSumString" value="7F2B"></attribute>
+		<structure>
+			<variables name="OPN" typeName="BOOL">
+				<comment>Відкрити 16#0001</comment>
+			</variables>
+			<variables name="CLS" typeName="BOOL">
+				<comment>Закрити  16#0002</comment>
+			</variables>
+			<variables name="TOGGLE" typeName="BOOL">
+				<comment>Переключити (відкрити&lt;-&gt;закрити, включити &lt;-&gt; відключити) 16#0003</comment>
+			</variables>
+			<variables name="ALMACK" typeName="BOOL">
+				<comment>Підтвердити тривогу 16#0004</comment>
+			</variables>
+			<variables name="ALMRESET" typeName="BOOL">
+				<comment>Скинути тривоги 16#0005</comment>
+			</variables>
+			<variables name="BLCK" typeName="BOOL">
+				<comment>Заблокувати 16#0006</comment>
+			</variables>
+			<variables name="DBLCK" typeName="BOOL">
+				<comment>Розблокувати 16#0007</comment>
+			</variables>
+			<variables name="STOPTUN" typeName="BOOL">
+				<comment>Зупинити автоналаштування 16#0008</comment>
+			</variables>
+			<variables name="TUNING" typeName="BOOL">
+				<comment>Запустити автоналаштування 16#0009</comment>
+			</variables>
+			<variables name="MAN" typeName="BOOL">
+				<comment>Перевести в ручний з SCADA/HMI 16#0301</comment>
+			</variables>
+			<variables name="AUTO" typeName="BOOL">
+				<comment>Перевести в автоматичний з SCADA/HMI 16#0302</comment>
+			</variables>
+			<variables name="PROTECT" typeName="BOOL">
+				<comment>Включити алгоритм захисту 16#000A</comment>
+			</variables>
+			<variables name="START" typeName="BOOL">
+				<comment>Запустити 16#0011</comment>
+			</variables>
+			<variables name="STOP" typeName="BOOL">
+				<comment>Зупинити 16#0012</comment>
+			</variables>
+			<variables name="UP" typeName="BOOL">
+				<comment>Більше 16#0021</comment>
+			</variables>
+			<variables name="DWN" typeName="BOOL">
+				<comment>Менше 16#0022</comment>
+			</variables>
+			<variables name="CRMT" typeName="BOOL">
+				<comment>Відключити локальне керування (по місцю) 16#0314</comment>
+			</variables>
+			<variables name="RESOLUTION" typeName="BOOL">
+				<comment>=1 дозвіл на керування 16#000B</comment>
+			</variables>
+			<variables name="REVERS" typeName="BOOL">
+				<comment>Включити реверс 16#0013</comment>
+			</variables>
+			<variables name="CLCL" typeName="BOOL">
+				<comment>Включити локальне керування (по місцю) 16#0313</comment>
+			</variables>
+			<variables name="DBLCKACTTOGGLE" typeName="BOOL">
+				<comment>Переключення дозволу на ігнорування CMRESOLUTION 16#000C</comment>
+			</variables>
+			<variables name="STARTDELAY" typeName="BOOL">
+				<comment>запуск з затримкою (тільки автомат)</comment>
+			</variables>
+			<variables name="STOPDELAY" typeName="BOOL">
+				<comment>зупин з затримкою (тільки автомат)</comment>
+			</variables>
+			<variables name="P_RESOLUTION" typeName="BOOL">
+				<comment>дозвіл по наявності тиску в системі</comment>
+			</variables>
+			<variables name="BUFLOAD" typeName="BOOL">
+				<comment>завантажити в буфер</comment>
+			</variables>
+			<variables name="cmdrezb25" typeName="BOOL"></variables>
+			<variables name="cmdrezb26" typeName="BOOL"></variables>
+			<variables name="cmdrezb27" typeName="BOOL"></variables>
+			<variables name="cmdrezb28" typeName="BOOL"></variables>
+			<variables name="cmdrezb29" typeName="BOOL"></variables>
+			<variables name="cmdrezb30" typeName="BOOL"></variables>
+			<variables name="cmdrezb31" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+</DDTExchangeFile>

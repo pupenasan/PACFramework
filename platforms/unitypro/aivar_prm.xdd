@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DDTExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:2:43" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<DDTSource DDTName="AIVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:56:39">
+		<attribute name="TypeSignatureCheckSumString" value="033C"></attribute>
+		<structure>
+			<variables name="PRM_LOENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога LO /MASK 16#1</comment>
+			</variables>
+			<variables name="PRM_HIENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога HI /MASK 16#2</comment>
+			</variables>
+			<variables name="PRM_LOLOENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога LOLO /MASK 16#4</comment>
+			</variables>
+			<variables name="PRM_HIHIENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога HIHI/MASK 16#8</comment>
+			</variables>
+			<variables name="PRM_BRKENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога обриву</comment>
+			</variables>
+			<variables name="PRM_OVRLENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога перевантаження</comment>
+			</variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога перевірки якості даних</comment>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+			</variables>
+			<variables name="PRM_PWLENBL" typeName="BOOL">
+				<comment>=1 – задіяна кусочно-лінійна інтерполяція (не використовувати разом з TOTALON)</comment>
+			</variables>
+			<variables name="PRM_TOTALON" typeName="BOOL">
+				<comment>=1 – задіяне інтегрування (не використовувати разом з PWLENBL)</comment>
+			</variables>
+			<variables name="PRM_SQRT" typeName="BOOL">
+				<comment>=1 - задіяне квадратичне (квадратний корінь) масштабування</comment>
+			</variables>
+			<variables name="PRM_PARAISPROC" typeName="BOOL">
+				<comment>=1 - параметри налаштування (гістерезис, нечутл) задається в процентах</comment>
+			</variables>
+			<variables name="PRM_AFRZENBL" typeName="BOOL">
+				<comment>=1 - активна тривога нечутливості контролю зависання</comment>
+			</variables>
+			<variables name="PRM_ASPDENBL" typeName="BOOL">
+				<comment>=1 - активна тривога допуску контролю швидкості</comment>
+			</variables>
+			<variables name="PRMb14" typeName="BOOL"></variables>
+			<variables name="PRMb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+</DDTExchangeFile>

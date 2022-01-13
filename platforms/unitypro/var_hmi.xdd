@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DDTExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:6:30" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<DDTSource DDTName="VAR_HMI" version="0.02" dateTime="dt#2022-01-08-19:20:34">
+		<attribute name="TypeSignatureCheckSumString" value="3CB6"></attribute>
+		<structure>
+			<variables name="VNabor_T1_OPN" typeName="DIVAR_HMI"></variables>
+			<variables name="VNabor_T2_OPN" typeName="DIVAR_HMI"></variables>
+			<variables name="DI3" typeName="DIVAR_HMI"></variables>
+			<variables name="DI4" typeName="DIVAR_HMI"></variables>
+			<variables name="VNabor_T1_CLS" typeName="DIVAR_HMI"></variables>
+			<variables name="VNabor_T2_CLS" typeName="DIVAR_HMI"></variables>
+			<variables name="VSliv_T1_CLS" typeName="DIVAR_HMI"></variables>
+			<variables name="VSliv_T2_CLS" typeName="DIVAR_HMI"></variables>
+			<variables name="VNabor_D1_CLS" typeName="DIVAR_HMI"></variables>
+			<variables name="VNabor_D2_CLS" typeName="DIVAR_HMI"></variables>
+			<variables name="VSliv_D1_CLS" typeName="DIVAR_HMI"></variables>
+			<variables name="VSliv_D2_CLS" typeName="DIVAR_HMI"></variables>
+			<variables name="LSH_D1" typeName="DIVAR_HMI"></variables>
+			<variables name="LSL_D1" typeName="DIVAR_HMI"></variables>
+			<variables name="LSH_D2" typeName="DIVAR_HMI"></variables>
+			<variables name="LSL_D2" typeName="DIVAR_HMI"></variables>
+			<variables name="VDoz_T1_OPN" typeName="DIVAR_HMI"></variables>
+			<variables name="VDoz_T2_OPN" typeName="DIVAR_HMI"></variables>
+			<variables name="GSM1" typeName="DIVAR_HMI"></variables>
+			<variables name="GSM2" typeName="DIVAR_HMI"></variables>
+			<variables name="DI21" typeName="DIVAR_HMI"></variables>
+			<variables name="DI22" typeName="DIVAR_HMI"></variables>
+			<variables name="DI23" typeName="DIVAR_HMI"></variables>
+			<variables name="DI24" typeName="DIVAR_HMI"></variables>
+			<variables name="DI25" typeName="DIVAR_HMI"></variables>
+			<variables name="DI26" typeName="DIVAR_HMI"></variables>
+			<variables name="DI27" typeName="DIVAR_HMI"></variables>
+			<variables name="DI28" typeName="DIVAR_HMI"></variables>
+			<variables name="DI29" typeName="DIVAR_HMI"></variables>
+			<variables name="DI30" typeName="DIVAR_HMI"></variables>
+			<variables name="DI31" typeName="DIVAR_HMI"></variables>
+			<variables name="DI32" typeName="DIVAR_HMI"></variables>
+			<variables name="DO1" typeName="DOVAR_HMI"></variables>
+			<variables name="VNabor_T1" typeName="DOVAR_HMI"></variables>
+			<variables name="VSliv_T1" typeName="DOVAR_HMI"></variables>
+			<variables name="VNabor_T2" typeName="DOVAR_HMI"></variables>
+			<variables name="VSliv_T2" typeName="DOVAR_HMI"></variables>
+			<variables name="VNabor_D1" typeName="DOVAR_HMI"></variables>
+			<variables name="VNabor_D2" typeName="DOVAR_HMI"></variables>
+			<variables name="VSliv_D1" typeName="DOVAR_HMI"></variables>
+			<variables name="VSliv_D2" typeName="DOVAR_HMI"></variables>
+			<variables name="VDoz_T1toT2" typeName="DOVAR_HMI"></variables>
+			<variables name="KM1" typeName="DOVAR_HMI"></variables>
+			<variables name="KM2" typeName="DOVAR_HMI"></variables>
+			<variables name="DO13" typeName="DOVAR_HMI"></variables>
+			<variables name="DO14" typeName="DOVAR_HMI"></variables>
+			<variables name="DO15" typeName="DOVAR_HMI"></variables>
+			<variables name="DO16" typeName="DOVAR_HMI"></variables>
+			<variables name="DO17" typeName="DOVAR_HMI"></variables>
+			<variables name="DO18" typeName="DOVAR_HMI"></variables>
+			<variables name="DO19" typeName="DOVAR_HMI"></variables>
+			<variables name="DO20" typeName="DOVAR_HMI"></variables>
+			<variables name="DO21" typeName="DOVAR_HMI"></variables>
+			<variables name="DO22" typeName="DOVAR_HMI"></variables>
+			<variables name="DO23" typeName="DOVAR_HMI"></variables>
+			<variables name="DO24" typeName="DOVAR_HMI"></variables>
+			<variables name="DO25" typeName="DOVAR_HMI"></variables>
+			<variables name="DO26" typeName="DOVAR_HMI"></variables>
+			<variables name="DO27" typeName="DOVAR_HMI"></variables>
+			<variables name="DO28" typeName="DOVAR_HMI"></variables>
+			<variables name="DO29" typeName="DOVAR_HMI"></variables>
+			<variables name="DO30" typeName="DOVAR_HMI"></variables>
+			<variables name="DO31" typeName="DOVAR_HMI"></variables>
+			<variables name="DO32" typeName="DOVAR_HMI"></variables>
+			<variables name="LE_T1" typeName="AIVAR_HMI"></variables>
+			<variables name="LE_T2" typeName="AIVAR_HMI"></variables>
+			<variables name="TE_T1" typeName="AIVAR_HMI"></variables>
+			<variables name="TE_T2" typeName="AIVAR_HMI"></variables>
+			<variables name="AI5" typeName="AIVAR_HMI"></variables>
+			<variables name="AI6" typeName="AIVAR_HMI"></variables>
+			<variables name="AI7" typeName="AIVAR_HMI"></variables>
+			<variables name="AI8" typeName="AIVAR_HMI"></variables>
+			<variables name="VNagrev_T1" typeName="AOVAR_HMI"></variables>
+			<variables name="VNagrev_T2" typeName="AOVAR_HMI"></variables>
+			<variables name="SC1" typeName="AOVAR_HMI"></variables>
+			<variables name="SC2" typeName="AOVAR_HMI"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DIVAR_HMI" version="0.01" dateTime="dt#2022-01-06-17:23:59">
+		<attribute name="TypeSignatureCheckSumString" value="7BFE"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT">
+				<comment>статус</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DOVAR_HMI" version="0.01" dateTime="dt#2022-01-06-17:24:59">
+		<attribute name="TypeSignatureCheckSumString" value="7BFE"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT">
+				<comment>статус</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AIVAR_HMI" version="0.01" dateTime="dt#2022-01-06-17:21:54">
+		<attribute name="TypeSignatureCheckSumString" value="3237"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT">
+				<comment>біти стану</comment>
+			</variables>
+			<variables name="VALPRCSTA2" typeName="INT">
+				<comment>значення у % від шкали вимірювання (0-10000) + додаткові біти статусу</comment>
+			</variables>
+			<variables name="VAL" typeName="REAL">
+				<comment>масштабоване значення</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AOVAR_HMI" version="0.01" dateTime="dt#2022-01-06-17:23:18">
+		<attribute name="TypeSignatureCheckSumString" value="92BD"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT">
+				<comment>біти стану</comment>
+			</variables>
+			<variables name="VALPROC" typeName="INT">
+				<comment>значення у % від шкали вимірювання (0-10000)</comment>
+			</variables>
+			<variables name="VAL" typeName="REAL">
+				<comment>масштабоване значення</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+</DDTExchangeFile>

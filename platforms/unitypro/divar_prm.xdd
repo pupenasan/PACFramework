@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DDTExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:4:42" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<DDTSource DDTName="DIVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:28:44">
+		<attribute name="TypeSignatureCheckSumString" value="3F6A"></attribute>
+		<structure>
+			<variables name="PRM_ISALM" typeName="BOOL">
+				<comment>=1 – задіяти як технологічну тривогу</comment>
+			</variables>
+			<variables name="PRM_ISWRN" typeName="BOOL">
+				<comment>=1 – задіяти як технологічне попередження</comment>
+			</variables>
+			<variables name="PRM_INVERSE" typeName="BOOL">
+				<comment>=1 – інвертувати сире значення</comment>
+			</variables>
+			<variables name="PRMb3" typeName="BOOL"></variables>
+			<variables name="PRMb4" typeName="BOOL"></variables>
+			<variables name="PRM_NRMVAL" typeName="BOOL">
+				<comment>значення норми</comment>
+			</variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяти тривогу недостовірності каналу</comment>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+			</variables>
+			<variables name="PRM_SPEEDENBL" typeName="BOOL">
+				<comment>=1 – активація блоку розрахунку швидкості</comment>
+			</variables>
+			<variables name="PRMb9" typeName="BOOL"></variables>
+			<variables name="PRMb10" typeName="BOOL"></variables>
+			<variables name="PRMb11" typeName="BOOL"></variables>
+			<variables name="PRMb12" typeName="BOOL"></variables>
+			<variables name="PRMb13" typeName="BOOL"></variables>
+			<variables name="PRMb14" typeName="BOOL"></variables>
+			<variables name="PRMb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+</DDTExchangeFile>

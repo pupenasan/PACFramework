@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DDTExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:7:36" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<DDTSource DDTName="VLVDS" version="0.01" dateTime="dt#2022-01-09-14:14:55">
+		<attribute name="TypeSignatureCheckSumString" value="D182"></attribute>
+		<structure>
+			<variables name="VNabor_T1" typeName="VLVD_CFG"></variables>
+			<variables name="VNabor_T2" typeName="VLVD_CFG"></variables>
+			<variables name="VSliv_T1" typeName="VLVD_CFG"></variables>
+			<variables name="VSliv_T2" typeName="VLVD_CFG"></variables>
+			<variables name="VNabor_D1" typeName="VLVD_CFG"></variables>
+			<variables name="VNabor_D2" typeName="VLVD_CFG"></variables>
+			<variables name="VSliv_D1" typeName="VLVD_CFG"></variables>
+			<variables name="VSliv_D2" typeName="VLVD_CFG"></variables>
+			<variables name="VDoz_T1toT2" typeName="VLVD_CFG"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VLVD_CFG" version="0.01" dateTime="dt#2022-01-09-12:00:21">
+		<attribute name="TypeSignatureCheckSumString" value="507A"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>ідентифікатор класу</comment>
+			</variables>
+			<variables name="STA" typeName="VLVD_STA">
+				<comment>біти статусу</comment>
+			</variables>
+			<variables name="ALM" typeName="VLVD_ALM">
+				<comment>біти тривог</comment>
+			</variables>
+			<variables name="CMD" typeName="ACTTR_CMD">
+				<comment>біти команд</comment>
+			</variables>
+			<variables name="PRM" typeName="ACTTR_PRM">
+				<comment>біти параметрів</comment>
+			</variables>
+			<variables name="T_DEASP" typeName="UINT">
+				<comment>Час затримки тривоги в 0.1 секунди</comment>
+			</variables>
+			<variables name="T_OPNSP" typeName="UINT">
+				<comment>Час повного переміщення в 0.1 секундах</comment>
+			</variables>
+			<variables name="POS" typeName="REAL">
+				<comment>позиціяВМ (0-100%)</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>крок</comment>
+			</variables>
+			<variables name="CNTPER" typeName="UINT">
+				<comment>Кількість змін положення</comment>
+			</variables>
+			<variables name="CNTALM" typeName="UINT">
+				<comment>Кількість аварій</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VLVD_STA" version="0.01" dateTime="dt#2022-01-09-11:51:32">
+		<attribute name="TypeSignatureCheckSumString" value="C23C"></attribute>
+		<structure>
+			<variables name="IMSTPD" typeName="BOOL">
+				<comment>=1 зупинився в проміжному стані</comment>
+			</variables>
+			<variables name="MANRUNING" typeName="BOOL">
+				<comment>=1 рухається в невизначеному напрямку (ручний зі щита)</comment>
+			</variables>
+			<variables name="DBLCKACT" typeName="BOOL">
+				<comment>=1 Включено режим ігнорування блокування керування {A.MSG.2} </comment>
+			</variables>
+			<variables name="OPNING" typeName="BOOL">
+				<comment>=1 Відкривається</comment>
+			</variables>
+			<variables name="CLSING" typeName="BOOL">
+				<comment>=1 Закривається</comment>
+			</variables>
+			<variables name="OPND" typeName="BOOL">
+				<comment>=1 Відкритий (16#0080)</comment>
+			</variables>
+			<variables name="CLSD" typeName="BOOL">
+				<comment>=1 Закритий (16#0100)</comment>
+			</variables>
+			<variables name="MANBXOUT" typeName="BOOL">
+				<comment>=1 Включення ручного зі щита</comment>
+			</variables>
+			<variables name="WRKED" typeName="BOOL">
+				<comment>=1 В роботі</comment>
+			</variables>
+			<variables name="DISP" typeName="BOOL">
+				<comment>=1 Включено ручний режим з ПК/ОП {A.MSG.9}</comment>
+			</variables>
+			<variables name="MANBX" typeName="BOOL">
+				<comment>=1 Включений ручний зі щита {A.MSG.10}</comment>
+			</variables>
+			<variables name="INIOTBUF" typeName="BOOL">
+				<comment>=1 У бефері IoT</comment>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 - змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 хоча би одна зі змінних в об’єкті форсована (для зручності відображення при наладці)</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 режим симуляції</comment>
+			</variables>
+			<variables name="BLCK" typeName="BOOL">
+				<comment>=1 Привід заблоковано {A.MSG.15}</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="VLVD_ALM" version="0.01" dateTime="dt#2022-01-09-11:55:57">
+		<attribute name="TypeSignatureCheckSumString" value="8FC8"></attribute>
+		<structure>
+			<variables name="ALMOPN" typeName="BOOL">
+				<comment>=1 Не відкрився (Несправність схеми управління) {A.ALM.0}</comment>
+			</variables>
+			<variables name="ALMCLS" typeName="BOOL">
+				<comment>=1 Не закрився (Несправність схеми управління) {A.ALM.1}</comment>
+			</variables>
+			<variables name="ALMSHFT" typeName="BOOL">
+				<comment>=1 Порушення стану приводу {A.ALM.2}</comment>
+			</variables>
+			<variables name="ALMOPN2" typeName="BOOL">
+				<comment>=1 Не відкрився (Несправність обладнання по місцю) {A.ALM.3}</comment>
+			</variables>
+			<variables name="ALMCLS2" typeName="BOOL">
+				<comment>=1 Не закрився (Несправність обладнання по місцю) {A.ALM.4}</comment>
+			</variables>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 Помилка приводу (по OR)</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 Попередження приводу (по OR)</comment>
+			</variables>
+			<variables name="ALMSTP" typeName="BOOL">
+				<comment>=1 Не зупинився {A.ALM.7}</comment>
+			</variables>
+			<variables name="ALMBELL" typeName="BOOL">
+				<comment>=1 Команда включення дзвоника (на один цикл ПЛК)</comment>
+			</variables>
+			<variables name="ALMPWR1" typeName="BOOL">
+				<comment>=1 Немає живлення у привода {A.ALM.9}</comment>
+			</variables>
+			<variables name="ALMSTPBTN" typeName="BOOL">
+				<comment>=1 Натиснута кнопка СТОП по місцю {A.ALM.10}</comment>
+			</variables>
+			<variables name="STOPING" typeName="BOOL">
+				<comment>=1 Зупиняється</comment>
+			</variables>
+			<variables name="almb12" typeName="BOOL"></variables>
+			<variables name="almb13" typeName="BOOL"></variables>
+			<variables name="almb14" typeName="BOOL"></variables>
+			<variables name="almb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="ACTTR_CMD" version="0.01" dateTime="dt#2022-01-09-11:05:46">
+		<attribute name="TypeSignatureCheckSumString" value="7F2B"></attribute>
+		<structure>
+			<variables name="OPN" typeName="BOOL">
+				<comment>Відкрити 16#0001</comment>
+			</variables>
+			<variables name="CLS" typeName="BOOL">
+				<comment>Закрити  16#0002</comment>
+			</variables>
+			<variables name="TOGGLE" typeName="BOOL">
+				<comment>Переключити (відкрити&lt;-&gt;закрити, включити &lt;-&gt; відключити) 16#0003</comment>
+			</variables>
+			<variables name="ALMACK" typeName="BOOL">
+				<comment>Підтвердити тривогу 16#0004</comment>
+			</variables>
+			<variables name="ALMRESET" typeName="BOOL">
+				<comment>Скинути тривоги 16#0005</comment>
+			</variables>
+			<variables name="BLCK" typeName="BOOL">
+				<comment>Заблокувати 16#0006</comment>
+			</variables>
+			<variables name="DBLCK" typeName="BOOL">
+				<comment>Розблокувати 16#0007</comment>
+			</variables>
+			<variables name="STOPTUN" typeName="BOOL">
+				<comment>Зупинити автоналаштування 16#0008</comment>
+			</variables>
+			<variables name="TUNING" typeName="BOOL">
+				<comment>Запустити автоналаштування 16#0009</comment>
+			</variables>
+			<variables name="MAN" typeName="BOOL">
+				<comment>Перевести в ручний з SCADA/HMI 16#0301</comment>
+			</variables>
+			<variables name="AUTO" typeName="BOOL">
+				<comment>Перевести в автоматичний з SCADA/HMI 16#0302</comment>
+			</variables>
+			<variables name="PROTECT" typeName="BOOL">
+				<comment>Включити алгоритм захисту 16#000A</comment>
+			</variables>
+			<variables name="START" typeName="BOOL">
+				<comment>Запустити 16#0011</comment>
+			</variables>
+			<variables name="STOP" typeName="BOOL">
+				<comment>Зупинити 16#0012</comment>
+			</variables>
+			<variables name="UP" typeName="BOOL">
+				<comment>Більше 16#0021</comment>
+			</variables>
+			<variables name="DWN" typeName="BOOL">
+				<comment>Менше 16#0022</comment>
+			</variables>
+			<variables name="CRMT" typeName="BOOL">
+				<comment>Відключити локальне керування (по місцю) 16#0314</comment>
+			</variables>
+			<variables name="RESOLUTION" typeName="BOOL">
+				<comment>=1 дозвіл на керування 16#000B</comment>
+			</variables>
+			<variables name="REVERS" typeName="BOOL">
+				<comment>Включити реверс 16#0013</comment>
+			</variables>
+			<variables name="CLCL" typeName="BOOL">
+				<comment>Включити локальне керування (по місцю) 16#0313</comment>
+			</variables>
+			<variables name="DBLCKACTTOGGLE" typeName="BOOL">
+				<comment>Переключення дозволу на ігнорування CMRESOLUTION 16#000C</comment>
+			</variables>
+			<variables name="STARTDELAY" typeName="BOOL">
+				<comment>запуск з затримкою (тільки автомат)</comment>
+			</variables>
+			<variables name="STOPDELAY" typeName="BOOL">
+				<comment>зупин з затримкою (тільки автомат)</comment>
+			</variables>
+			<variables name="P_RESOLUTION" typeName="BOOL">
+				<comment>дозвіл по наявності тиску в системі</comment>
+			</variables>
+			<variables name="BUFLOAD" typeName="BOOL">
+				<comment>завантажити в буфер</comment>
+			</variables>
+			<variables name="cmdrezb25" typeName="BOOL"></variables>
+			<variables name="cmdrezb26" typeName="BOOL"></variables>
+			<variables name="cmdrezb27" typeName="BOOL"></variables>
+			<variables name="cmdrezb28" typeName="BOOL"></variables>
+			<variables name="cmdrezb29" typeName="BOOL"></variables>
+			<variables name="cmdrezb30" typeName="BOOL"></variables>
+			<variables name="cmdrezb31" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="ACTTR_PRM" version="0.01" dateTime="dt#2022-01-09-11:14:37">
+		<attribute name="TypeSignatureCheckSumString" value="D8EB"></attribute>
+		<structure>
+			<variables name="PRM_b0" typeName="BOOL">
+				<comment>=1 </comment>
+			</variables>
+			<variables name="PRM_ZWRKENBL" typeName="BOOL">
+				<comment>=1 є звонішній вхід - зворотній звязок про роботу</comment>
+			</variables>
+			<variables name="PRM_ZPOSENBL" typeName="BOOL">
+				<comment>=1 є аналоговий зворотній звязок частоти/позиції</comment>
+			</variables>
+			<variables name="PRM_PWRENBL" typeName="BOOL">
+				<comment>=1 є звонішній вхід по стану живлення</comment>
+			</variables>
+			<variables name="PRM_MANCFG" typeName="BOOL">
+				<comment>=1 ручне керування налаштуванням</comment>
+			</variables>
+			<variables name="PRM_ZOPNENBL" typeName="BOOL">
+				<comment>=1 є датчик відкритості</comment>
+			</variables>
+			<variables name="PRM_ZCLSENBL" typeName="BOOL">
+				<comment>=1 є датчик закритості</comment>
+			</variables>
+			<variables name="PRM_AUTOACK" typeName="BOOL">
+				<comment>=1, автоматичне підтвердження тривог</comment>
+			</variables>
+			<variables name="PRM_BTNSTPENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - включена кнопка STOP</comment>
+			</variables>
+			<variables name="PRM_ALMENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - сигнал аварії від приводу</comment>
+			</variables>
+			<variables name="PRM_SELLCLENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід - сигнал включення місцевого керування</comment>
+			</variables>
+			<variables name="PRM_PULSCTRLENBL" typeName="BOOL">
+				<comment>=1 схема керування імпулсами (команди на 2с)</comment>
+			</variables>
+			<variables name="PRM_ZRUNENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід про рух приводу</comment>
+			</variables>
+			<variables name="PRM_ZSPDENBL" typeName="BOOL">
+				<comment>=1 є зовнішній вхід про датчику швидкості приводу</comment>
+			</variables>
+			<variables name="PRM_CRVRSENBL" typeName="BOOL">
+				<comment>=1 ВМ з виходом керування реверсом</comment>
+			</variables>
+			<variables name="PRM_BLCKOFSPD" typeName="BOOL">
+				<comment>=1 зупиняти по зниженні швидкості</comment>
+			</variables>
+			<variables name="PRM_NOPRES" typeName="BOOL">
+				<comment>=1 довзолити рух без включеного маслонасоса</comment>
+			</variables>
+			<variables name="PRM_b17" typeName="BOOL"></variables>
+			<variables name="PRM_b18" typeName="BOOL"></variables>
+			<variables name="PRM_b19" typeName="BOOL"></variables>
+			<variables name="PRM_b20" typeName="BOOL"></variables>
+			<variables name="PRM_b21" typeName="BOOL"></variables>
+			<variables name="PRM_b22" typeName="BOOL"></variables>
+			<variables name="PRM_b23" typeName="BOOL"></variables>
+			<variables name="PRM_b24" typeName="BOOL"></variables>
+			<variables name="PRM_b25" typeName="BOOL"></variables>
+			<variables name="PRM_b26" typeName="BOOL"></variables>
+			<variables name="PRM_b27" typeName="BOOL"></variables>
+			<variables name="PRM_b28" typeName="BOOL"></variables>
+			<variables name="PRM_b29" typeName="BOOL"></variables>
+			<variables name="PRM_b30" typeName="BOOL"></variables>
+			<variables name="PRM_b31" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+</DDTExchangeFile>

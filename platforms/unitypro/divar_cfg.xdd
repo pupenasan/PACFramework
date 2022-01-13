@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DDTExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:4:28" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<DDTSource DDTName="DIVAR_CFG" version="0.02" dateTime="dt#2022-01-04-20:09:05">
+		<attribute name="TypeSignatureCheckSumString" value="BF12"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#1010</comment>
+			</variables>
+			<variables name="STA" typeName="DIVAR_STA">
+				<comment>статус (див STC)</comment>
+			</variables>
+			<variables name="VALI" typeName="INT">
+				<comment>для відображення значення при не форсуванні, використовується для введення значення з буфера при форсуванні</comment>
+			</variables>
+			<variables name="PRM" typeName="DIVAR_PRM">
+				<comment>параметри</comment>
+			</variables>
+			<variables name="CHID" typeName="UINT">
+				<comment>Логічний номер дискретного каналу</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>номер кроку</comment>
+			</variables>
+			<variables name="T_DEASP" typeName="UINT">
+				<comment>Час затримки тривоги в 0.1 секундах</comment>
+			</variables>
+			<variables name="T_FLTSP" typeName="UINT">
+				<comment>Заданий час фільтрації в мілісекундах</comment>
+			</variables>
+			<variables name="CHIDDF" typeName="UINT">
+				<comment>Логічний номер дискретного каналу за замовченням</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>Плинний час кроку в мс</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DIVAR_STA" version="0.01" dateTime="dt#2022-01-04-18:26:09">
+		<attribute name="TypeSignatureCheckSumString" value="EBC8"></attribute>
+		<structure>
+			<variables name="VRAW" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу з DICH</comment>
+			</variables>
+			<variables name="VALB" typeName="BOOL">
+				<comment>=1 – значення дискретної вхідної змінної після всіх перетворень, в режимі FRC=1 може змінюватися із-зовні</comment>
+			</variables>
+			<variables name="BAD" typeName="BOOL">
+				<comment>=1 - Дані недостовірні {A.BAD.2}</comment>
+			</variables>
+			<variables name="ALDIS" typeName="BOOL">
+				<comment>=1 - Тривога виведена з експлуатації {A.MSG.3}</comment>
+			</variables>
+			<variables name="DLNK" typeName="BOOL">
+				<comment>=1 – якщо прив’язаний до каналу</comment>
+			</variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>=1 – змінна задіяна  = (NOT PRM.7 AND  DLNK)</comment>
+			</variables>
+			<variables name="ALM" typeName="BOOL">
+				<comment>=1 - Тривога {A.ALM.6}</comment>
+			</variables>
+			<variables name="VALPRV" typeName="BOOL">
+				<comment>значення на попередньому циклі</comment>
+			</variables>
+			<variables name="ISALM" typeName="BOOL">
+				<comment>=1 - задіяна тривога </comment>
+			</variables>
+			<variables name="SPDMONON" typeName="BOOL">
+				<comment>=1 - включений контроль швидкості (SPDMON) </comment>
+			</variables>
+			<variables name="ISWRN" typeName="BOOL">
+				<comment>=1 - задіяне попередження</comment>
+			</variables>
+			<variables name="WRN" typeName="BOOL">
+				<comment>=1 - Попередження {A.ALM.11}</comment>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>=1 – змінна в буфері</comment>
+			</variables>
+			<variables name="FRC" typeName="BOOL">
+				<comment>=1 - Режим форсування{A.MSG.13}</comment>
+			</variables>
+			<variables name="SML" typeName="BOOL">
+				<comment>=1 – змінна в режимі симуляції</comment>
+			</variables>
+			<variables name="CMDLOAD" typeName="BOOL">
+				<comment>=1 – команда завантаження в буфер</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DIVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:28:44">
+		<attribute name="TypeSignatureCheckSumString" value="3F6A"></attribute>
+		<structure>
+			<variables name="PRM_ISALM" typeName="BOOL">
+				<comment>=1 – задіяти як технологічну тривогу</comment>
+			</variables>
+			<variables name="PRM_ISWRN" typeName="BOOL">
+				<comment>=1 – задіяти як технологічне попередження</comment>
+			</variables>
+			<variables name="PRM_INVERSE" typeName="BOOL">
+				<comment>=1 – інвертувати сире значення</comment>
+			</variables>
+			<variables name="PRMb3" typeName="BOOL"></variables>
+			<variables name="PRMb4" typeName="BOOL"></variables>
+			<variables name="PRM_NRMVAL" typeName="BOOL">
+				<comment>значення норми</comment>
+			</variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяти тривогу недостовірності каналу</comment>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+			</variables>
+			<variables name="PRM_SPEEDENBL" typeName="BOOL">
+				<comment>=1 – активація блоку розрахунку швидкості</comment>
+			</variables>
+			<variables name="PRMb9" typeName="BOOL"></variables>
+			<variables name="PRMb10" typeName="BOOL"></variables>
+			<variables name="PRMb11" typeName="BOOL"></variables>
+			<variables name="PRMb12" typeName="BOOL"></variables>
+			<variables name="PRMb13" typeName="BOOL"></variables>
+			<variables name="PRMb14" typeName="BOOL"></variables>
+			<variables name="PRMb15" typeName="BOOL"></variables>
+		</structure>
+	</DDTSource>
+</DDTExchangeFile>
