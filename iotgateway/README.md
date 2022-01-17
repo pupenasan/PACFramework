@@ -27,5 +27,27 @@ PAC Framework IoT Gateway може функціонувати на будь як
 
 ## Послідовність розгортання системи на виконавчій системі
 
-- to-do
+- поставити CouchDB:
+  - 
+
+- налаштувати для Node-RED `settings.js`змінні середовища, розмістивши цей код перед `module.exports` :
+
+```js
+process.env.TWINNAME = 'twinname';
+process.env.INFLUX_PASS = 'pass';
+process.env.INFLUX_USER = 'user';
+process.env.COUCH_PASS = 'pass';
+process.env.COUCH_USER = 'user';
+```
+
+- налаштувати для Node-RED `settings.js`
+
+```js
+httpAdminRoot: '/admin', //розкоментувати
+httpStatic: __dirname + '/ui2/', //розкоментувати і змінити значення
+functionGlobalContext: {
+env: process.env,
+// os:require('os'),
+}
+```
 

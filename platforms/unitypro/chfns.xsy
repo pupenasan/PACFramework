@@ -1,0 +1,1200 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<VariablesExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-17-14:17:5" content="Variable source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<dataBlock>
+		<variables name="CHAIFN" typeName="CHAIFN"></variables>
+		<variables name="CHAOFN" typeName="CHAOFN"></variables>
+		<variables name="CHDIFN" typeName="CHDIFN"></variables>
+		<variables name="CHDOFN" typeName="CHDOFN"></variables>
+	</dataBlock>
+	<FBSource nameOfFBType="CHAIFN" version="0.11" dateTime="dt#2022-01-14-11:25:06">
+		<attribute name="TypeCodeCheckSumString" value="8E69"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="B99E"></attribute>
+		<inputParameters>
+			<variables name="RAWINT" typeName="INT">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="CHCFG" typeName="CH_CFG">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="CHHMI" typeName="CH_HMI">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="CHBUF" typeName="CH_BUF">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+		</inOutParameters>
+		<privateLocalVariables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="INBUF" typeName="BOOL"></variables>
+			<variables name="ULNK" typeName="BOOL"></variables>
+			<variables name="MERR" typeName="BOOL"></variables>
+			<variables name="BRK" typeName="BOOL"></variables>
+			<variables name="SHRT" typeName="BOOL"></variables>
+			<variables name="SML" typeName="BOOL"></variables>
+			<variables name="FRC" typeName="BOOL"></variables>
+			<variables name="BAD" typeName="BOOL"></variables>
+			<variables name="VRAW" typeName="BOOL"></variables>
+			<variables name="VAL" typeName="BOOL"></variables>
+			<variables name="PNG" typeName="BOOL"></variables>
+			<variables name="NBD" typeName="BOOL"></variables>
+			<variables name="CMDLOAD" typeName="BOOL"></variables>
+			<variables name="MIN" typeName="INT"></variables>
+			<variables name="MAX" typeName="INT"></variables>
+			<variables name="MIDLE" typeName="INT"></variables>
+		</privateLocalVariables>
+		<FBProgram name="CHAIFN">
+			<STSource>MIN:=0;
+MAX:=10000;
+MIDLE:=5000;
+
+
+
+CMD := CHCFG.CMD;
+(*розпаковка з STA*)
+VRAW := CHCFG.STA_VRAW;
+VAL := CHCFG.STA_VALB;
+BAD := CHCFG.STA_BAD;(*керується ззовні*)
+PNG := CHCFG.STA_PNG;
+ULNK := CHCFG.STA_ULNK;
+MERR := CHCFG.STA_MERR;(*керується ззовні*)
+BRK := CHCFG.STA_BRK;(*керується ззовні*)
+SHRT := CHCFG.STA_SHRT;(*керується ззовні*)
+NBD := CHCFG.STA_NBD;(*керується ззовні*)
+INBUF := CHCFG.STA_INBUF;
+FRC := CHCFG.STA_FRC;
+SML := CHCFG.STA_SML;
+CMDLOAD := CHCFG.STA_CMDLOAD; (*керується бітом*)
+
+INBUF := (CHCFG.ID = CHBUF.ID) AND (CHCFG.CLSID = CHBUF.CLSID);
+CMDLOAD := CHHMI.STA.15;
+CMD := 0;
+
+(* обробник команд*)
+(* широкомовне форсування/дефорсування*) 
+IF PLCCFG.CMD=16#4301 THEN
+    FRC := true; (*форсувати один/усі об'єкти типу*)
+END_IF;
+IF PLCCFG.CMD=16#4302 THEN
+    FRC := false; (*дефорсувати об'єкт типу*)
+END_IF;
+(*вибір джерела команди згідно пріоритету*)
+IF CMDLOAD THEN (*з HMI CMDLOAD*)
+    CMD := 16#0100;  (*// записати в буфер*)
+ELSIF INBUF AND CHBUF.CMD &lt;&gt; 0 THEN (*з буферу*)
+    CMD := CHBUF.CMD;
+ELSIF CHCFG.CMD&lt;&gt;0 THEN
+    CMD := CHCFG.CMD;
+END_IF;
+
+(*commands*)
+CASE CMD OF
+    16#1: (*записати MAX*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL := MAX;
+        END_IF;
+    16#2: (*записати MIN*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL:=MIN;
+        END_IF;
+    16#3: (*TOGGLE*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL := MIDLE;
+        END_IF;
+    16#0100: (*прочитати конфігурацію в буфер*)
+        CHBUF.ID:= CHCFG.ID;
+        CHBUF.CLSID:=CHCFG.CLSID;
+        
+        CHBUF.STA.0 := CHCFG.STA_VRAW;
+        CHBUF.STA.1 := CHCFG.STA_VALB;
+        CHBUF.STA.2 := CHCFG.STA_BAD;
+        CHBUF.STA.3 := CHCFG.STA_b3;
+        CHBUF.STA.4 := CHCFG.STA_PNG;
+        CHBUF.STA.5 := CHCFG.STA_ULNK;
+        CHBUF.STA.6 := CHCFG.STA_MERR;
+        CHBUF.STA.7 := CHCFG.STA_BRK;
+        CHBUF.STA.8 := CHCFG.STA_SHRT;
+        CHBUF.STA.9 := CHCFG.STA_NBD;
+        CHBUF.STA.10 := CHCFG.STA_b10;
+        CHBUF.STA.11 := CHCFG.STA_INIOTBUF;
+        CHBUF.STA.12 := CHCFG.STA_INBUF;
+        CHBUF.STA.13 := CHCFG.STA_FRC;
+        CHBUF.STA.14 := CHCFG.STA_SML;
+        CHBUF.STA.15 := CHCFG.STA_CMDLOAD;
+        
+        CHBUF.VAL:=CHCFG.VAL;
+        CHBUF.VARID:=CHCFG.VARID;
+    16#0300: (*перемкнути форсування*)
+        FRC := NOT FRC;
+    16#301: (*форсувати один/усі об'єкти типу*)
+        FRC := true;
+    16#302: (*дефорсувати один/усі об'єкти типу*)
+        FRC := false;
+END_CASE;
+
+(*запис значення змінної*)
+IF FRC AND INBUF THEN (*режим форсування з занятим буфером*)
+    CHCFG.VAL := CHBUF.VAL;
+ELSIF FRC AND NOT INBUF THEN (*режим форсування без занятого буферу*)
+    ;(*без змін*)
+ELSIF NOT FRC THEN (*не режим форсування*)
+    CHCFG.VAL  := RAWINT;
+END_IF;
+
+(*ping-pong*)
+ULNK := PNG; (*прийшов ping - є звязок з верхнім рівнем*)
+PNG := false; (*скидання біту PNG звязку з врехнім рівнем PONG*)
+IF NOT ULNK THEN
+    CHCFG.VARID := 0;
+END_IF;
+
+(*скидання оброблених команд*)
+CMDLOAD := 0;
+CMD := 0;
+
+(*загальносистемні біти та лічильники*)
+IF FRC THEN
+    PLCCFG.STA_FRC0 := true;
+    PLCCFG.CNTFRC := PLCCFG.CNTFRC + 1;
+END_IF;
+
+BAD:= BRK OR SHRT;
+
+(*упковка в STA*)
+CHCFG.STA_VRAW := RAWINT&gt;0;
+CHCFG.STA_VALB:=CHCFG.VAL&gt;0;
+CHCFG.STA_BAD:=BAD;(*керується ззовні*)
+CHCFG.STA_PNG:=PNG;
+CHCFG.STA_ULNK:=ULNK;
+CHCFG.STA_MERR:=MERR;(*керується ззовні*)
+CHCFG.STA_BRK:=BRK;(*керується ззовні*)
+CHCFG.STA_SHRT:=SHRT;(*керується ззовні*)
+CHCFG.STA_NBD:=NBD;(*керується ззовні*)
+CHCFG.STA_INBUF := INBUF;
+CHCFG.STA_FRC := FRC;
+CHCFG.STA_SML := SML;
+CHCFG.STA_CMDLOAD := CMDLOAD; (*керується бітом*)
+
+
+CHCFG.CMD := CMD;
+
+CHHMI.STA := CHCFG.STA;
+CHHMI.VAL := CHCFG.VAL;
+
+(*оновлення буферу*)
+IF INBUF THEN
+    CHBUF.STA:= CHCFG.STA;
+    CHBUF.VARID := CHCFG.VARID;
+    CHBUF.CMD := 0;
+    IF NOT FRC THEN
+        CHBUF.VAL := CHCFG.VAL;
+    END_IF;
+END_IF;
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<DDTSource DDTName="CH_CFG" version="0.03" dateTime="dt#2022-01-14-11:13:50">
+		<attribute name="TypeSignatureCheckSumString" value="7228"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>ідентифікатор класу</comment>
+			</variables>
+			<variables name="STA" typeName="INT"></variables>
+			<variables name="STA_VRAW" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу з дискретного входу</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="STA_VALB" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу для CM верхнього рівня, в режимі FRC=1 може змінюватися із-зовні</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="STA_BAD" typeName="BOOL">
+				<comment>=1 – є помилка каналу</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="STA_b3" typeName="BOOL">
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="STA_PNG" typeName="BOOL">
+				<comment>=1 прийшла відповідь від володаря, обнуляється каналом</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="STA_ULNK" typeName="BOOL">
+				<comment>=1 – якщо використовується в змінній DIVAR/AIVAR/DOVAR/AOVAR</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STA_MERR" typeName="BOOL">
+				<comment>=1 – є помилка модулю (діагностична інформація)</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="STA_BRK" typeName="BOOL">
+				<comment>=1 – помилка обриву каналу</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STA_SHRT" typeName="BOOL">
+				<comment>=1 – помилка КЗ</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="STA_NBD" typeName="BOOL">
+				<comment>=1 – фізично канал не існує; наприклад, для відображення в буфері модуля MODULS, для використання резерву каналів не прив’язаних до фізичних</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_b10" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="STA_INIOTBUF" typeName="BOOL">
+				<comment>=1 - в буфері IoT </comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="STA_INBUF" typeName="BOOL">
+				<comment>=1 – в буфері</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="STA_FRC" typeName="BOOL">
+				<comment>=1 – значення форсоване</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="STA_SML" typeName="BOOL">
+				<comment>=1 – значення імітується</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="STA_CMDLOAD" typeName="BOOL">
+				<comment>=1 - запит на зчитування в буфер (тільки з HMI)</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>командне слово</comment>
+			</variables>
+			<variables name="VAL" typeName="INT">
+				<comment>значення змінної</comment>
+			</variables>
+			<variables name="VARID" typeName="UINT">
+				<comment>ID привязаної змінної</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="CH_HMI" version="0.03" dateTime="dt#2022-01-14-11:13:56">
+		<attribute name="TypeSignatureCheckSumString" value="0154"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT">
+				<comment>біти статусу STA+CMD (X15 - CMDLOAD)</comment>
+			</variables>
+			<variables name="VAL" typeName="INT">
+				<comment>значення змінної</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLC_CFG" version="0.11" dateTime="dt#2022-01-13-12:47:32">
+		<attribute name="TypeSignatureCheckSumString" value="1691"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#21xx</comment>
+			</variables>
+			<variables name="STA" typeName="UINT"></variables>
+			<variables name="STA_CON2ERR" typeName="BOOL">
+				<comment>є помилка звязку з сусідні ПЛК в парі (для теплого резерування)</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="STA_PLC2STOP" typeName="BOOL">
+				<comment>спарений ПЛК в стопі (для теплого резерування)</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="STA_BLK" typeName="BOOL">
+				<comment>є хоча б один заблокований ВМ</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="STA_ALDIS" typeName="BOOL">
+				<comment>є хоча б одна відключена тривога</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="STA_DIOON" typeName="BOOL">
+				<comment>йде опитування по мережі (MODBUS або аналогічній) засобів віддаленого вводу/виводу</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="STA_DIOERR" typeName="BOOL">
+				<comment>є помилка на DIO</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STA_DBLCKALL" typeName="BOOL">
+				<comment>усі приводи розблоковані</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="STA_FRC" typeName="BOOL">
+				<comment>хоча б одна змінна форсована на будь якому рівні</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STA_SMLALL" typeName="BOOL">
+				<comment>все в режимі в імітації, примушує усі CM перейти в режим імітації</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="STA_DISP" typeName="BOOL">
+				<comment>хоча б один елемент в режимі ручного управління</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_FRC2" typeName="BOOL">
+				<comment>є хоча б один форсований керівний елемент (рівня 2), клапан, двигун</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="STA_FRC1" typeName="BOOL">
+				<comment>хоча б одна змінна форсована (рівня 1)</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="STA_SCN1" typeName="BOOL">
+				<comment>перший скан</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="STA_FRC0" typeName="BOOL">
+				<comment>хоча б одна змінна форсована (рівня 0)</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="STA_SML" typeName="BOOL">
+				<comment> хоча б один об’єкт в режимі імітації</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="STA_CMDACK" typeName="BOOL">
+				<comment>підтвердження команди, команда пройшла через весь цикл задачі і отримана усіма</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="CMD" typeName="UINT">
+				<comment>Команди з HMI</comment>
+			</variables>
+			<variables name="CMDPRG" typeName="UINT">
+				<comment>Команди з програмного керування (побітові)</comment>
+			</variables>
+			<variables name="PRM1" typeName="UINT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PRM2" typeName="UINT">
+				<comment>дискретні параметри</comment>
+			</variables>
+			<variables name="PLS" typeName="UINT">
+				<comment>бітові міандри та імпульси по часу</comment>
+			</variables>
+			<variables name="PLS_P100MS" typeName="BOOL">
+				<comment>100 мс</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="PLS_P200MS" typeName="BOOL">
+				<comment>200 мс</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="PLS_P500MS" typeName="BOOL">
+				<comment>500 мс</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="PLS_P1S" typeName="BOOL">
+				<comment>1 с</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="PLS_P2S" typeName="BOOL">
+				<comment>2 с</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="PLS_P5S" typeName="BOOL">
+				<comment>5 с</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="PLS_P10S" typeName="BOOL">
+				<comment>10 с</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="PLS_P60S" typeName="BOOL">
+				<comment>1 хв</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="PLS_M1S" typeName="BOOL">
+				<comment>меандр з періодом 1 с (0.5 с + 0.5 с)</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="PLS_M2S" typeName="BOOL">
+				<comment>меандр з періодом 2 с (1 с + 1 с)</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="PLS_b10" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="PLS_b11" typeName="BOOL">
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="PLS_NEWMIN" typeName="BOOL">
+				<comment>=1 на один цикл основної задачі – початок хвилини</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="PLS_NEWHR" typeName="BOOL">
+				<comment>=1 на один цикл основної задачі – початок години</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="PLS_NEWDAY" typeName="BOOL">
+				<comment>=1 на один цикл основної задачі – початок доби</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="PLS_NEWSHIFT" typeName="BOOL">
+				<comment>=1 на один цикл основної задачі – початок зміни</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="ALM1" typeName="UINT"></variables>
+			<variables name="ALM_ALM" typeName="BOOL">
+				<comment>активна технологічна тривога</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="ALM_NWALM" typeName="BOOL">
+				<comment>зявилась нова технологічна тривога</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="ALM_ALMNACK" typeName="BOOL">
+				<comment>квітування технологічної тривоги</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="ALM_WRN" typeName="BOOL">
+				<comment>активне технологічне попередження</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="ALM_NWWRN" typeName="BOOL">
+				<comment>зявилось нове технологічне попередження</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="ALM_WRNNACK" typeName="BOOL">
+				<comment>квітування технологічного попередження</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="ALM_BAD" typeName="BOOL">
+				<comment>активна тривога недостовірності даних</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="ALM_NWBAD" typeName="BOOL">
+				<comment>нова тривога недостовірності даних</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="ALM_BADNACK" typeName="BOOL">
+				<comment>квітування тривоги недостовірності даних</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="ALM_EMCYSTP" typeName="BOOL">
+				<comment>швидкий зупин</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="ALM_STP2RUN" typeName="BOOL">
+				<comment>є перехід з стану стоп в стан ран</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="ALM_CON2ERR" typeName="BOOL">
+				<comment>є помилка звязку з сусідні ПЛК в парі (для теплого резерування)</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="ALM_PLC2STOP" typeName="BOOL">
+				<comment>спарений ПЛК в стопі (для теплого резерування)</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="ALM_DIOERR" typeName="BOOL">
+				<comment>є помилка на DIO </comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="ALM_PLCERR" typeName="BOOL">
+				<comment>є апаратна помилка (ПЛК)</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="ALM_CONHIERR" typeName="BOOL">
+				<comment>є помилка звязку з верхнім рівнем</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="ALM2" typeName="INT">
+				<comment>біти алармів</comment>
+			</variables>
+			<variables name="STEP1" typeName="INT">
+				<comment>крок основної програми</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="INT">
+				<comment>час кроку основної програми обробки, в (с)</comment>
+			</variables>
+			<variables name="MSG" typeName="UDINT">
+				<comment>час кроку основної програми обробки, в (с)</comment>
+			</variables>
+			<variables name="TQ" typeName="UDINT">
+				<comment>загальний час з початку 1-го циклу контролера (в секундах)</comment>
+			</variables>
+			<variables name="TQM" typeName="UDINT">
+				<comment>загальний час роботи ПЛК з моменту пуску (в хвилинах)</comment>
+			</variables>
+			<variables name="DICNT" typeName="INT">
+				<comment>кількість наявних каналів DI</comment>
+			</variables>
+			<variables name="DOCNT" typeName="INT">
+				<comment>кількість наявних каналів DO</comment>
+			</variables>
+			<variables name="AICNT" typeName="INT">
+				<comment>кількість наявних каналів AI</comment>
+			</variables>
+			<variables name="AOCNT" typeName="INT">
+				<comment>кількість наявних каналів AO</comment>
+			</variables>
+			<variables name="NOW" typeName="ARRAY[0..3] OF INT">
+				<comment>плинний час астрономічний час в BCD форматі: NOW[0] seconds,-- (16#ss,--)  NOW[1] hour, minute (16#hhmm)  NOW[2] month, day (16#mmdd)  NOW[3] year (16#yyyy)</comment>
+			</variables>
+			<variables name="SHIFTPARA" typeName="ARRAY[0..3] OF INT">
+				<comment>Години передачі змін (максимум 3 зміни): SHIFT[0] – кількість змін SHIFT[1] – передача 1-ї зміни (BCD 16#hhmm) SHIFT[2] – передача 2-ї зміни (BCD 16#hhmm)  SHIFT[3] – передача 3-ї зміни (BCD 16#hhmm)</comment>
+			</variables>
+			<variables name="SHIFTNMB" typeName="UINT">
+				<comment>номер активної зміни</comment>
+			</variables>
+			<variables name="CNTALM" typeName="UINT">
+				<comment>лічильник кількості активних тривог "аварія"</comment>
+			</variables>
+			<variables name="CNTWRN" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "попередження"</comment>
+			</variables>
+			<variables name="CNTBAD" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "недостовірність"</comment>
+			</variables>
+			<variables name="CNTFRC" typeName="UINT">
+				<comment>лічильник кількостіфорсованих об'єктів</comment>
+			</variables>
+			<variables name="CNTMAN" typeName="UINT">
+				<comment>лічильник кількості ВМ в ручному режимі</comment>
+			</variables>
+			<variables name="TSK_LTIME" typeName="UINT">
+				<comment>плинний (останній) час задачі в мілісекундах</comment>
+			</variables>
+			<variables name="TSK_MAXTIME" typeName="UINT">
+				<comment>максимальний час задачі в мілісекундах</comment>
+			</variables>
+			<variables name="STA_PERM" typeName="INT">
+				<comment>повторює STA, який був на початку виклику функції</comment>
+			</variables>
+			<variables name="ALM1_PERM" typeName="INT">
+				<comment>повторює ALM1, який був на початку виклику функції</comment>
+			</variables>
+			<variables name="CNTALM_PERM" typeName="UINT">
+				<comment>лічильник кількості активних тривог "аварія"</comment>
+			</variables>
+			<variables name="CNTWRN_PERM" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "попередження"</comment>
+			</variables>
+			<variables name="CNTBAD_PERM" typeName="UINT">
+				<comment>лічильник кількостіактивних тривог "недостовірність"</comment>
+			</variables>
+			<variables name="CNTFRC_PERM" typeName="UINT">
+				<comment>лічильник кількостіфорсованих об'єктів</comment>
+			</variables>
+			<variables name="CNTMAN_PERM" typeName="UINT">
+				<comment>лічильник кількості ВМ в ручному режимі</comment>
+			</variables>
+			<variables name="MODULSCNT" typeName="INT">
+				<comment>кількість модулів</comment>
+			</variables>
+			<variables name="NOWns" typeName="UDINT">
+				<comment>нс (наносекунди) для плинного астрономічного часу</comment>
+			</variables>
+			<variables name="TQMS" typeName="UDINT">
+				<comment>мілісекундний лічильник, скидається при старті або після переповнення</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="CH_BUF" version="0.01" dateTime="dt#2022-01-04-12:22:37">
+		<attribute name="TypeSignatureCheckSumString" value="FD87"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>ідентифікатор класу</comment>
+			</variables>
+			<variables name="STA" typeName="INT">
+				<comment>біти статусу</comment>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>командне слово</comment>
+			</variables>
+			<variables name="VAL" typeName="INT">
+				<comment>значення змінної</comment>
+			</variables>
+			<variables name="VARID" typeName="UINT">
+				<comment>ID привязаної змінної</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<FBSource nameOfFBType="CHAOFN" version="0.07" dateTime="dt#2022-01-14-11:25:07">
+		<attribute name="TypeCodeCheckSumString" value="D7B2"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="CE5F"></attribute>
+		<inOutParameters>
+			<variables name="CHCFG" typeName="CH_CFG">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="CHHMI" typeName="CH_HMI">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="CHBUF" typeName="CH_BUF">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+		</inOutParameters>
+		<outputParameters>
+			<variables name="RAWINT" typeName="INT">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</outputParameters>
+		<privateLocalVariables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="INBUF" typeName="BOOL"></variables>
+			<variables name="ULNK" typeName="BOOL"></variables>
+			<variables name="MERR" typeName="BOOL"></variables>
+			<variables name="BRK" typeName="BOOL"></variables>
+			<variables name="SHRT" typeName="BOOL"></variables>
+			<variables name="SML" typeName="BOOL"></variables>
+			<variables name="FRC" typeName="BOOL"></variables>
+			<variables name="BAD" typeName="BOOL"></variables>
+			<variables name="VRAW" typeName="BOOL"></variables>
+			<variables name="VAL" typeName="BOOL"></variables>
+			<variables name="PNG" typeName="BOOL"></variables>
+			<variables name="NBD" typeName="BOOL"></variables>
+			<variables name="CMDLOAD" typeName="BOOL"></variables>
+			<variables name="MIN" typeName="INT"></variables>
+			<variables name="MAX" typeName="INT"></variables>
+			<variables name="MIDLE" typeName="INT"></variables>
+		</privateLocalVariables>
+		<FBProgram name="CHAOFN">
+			<STSource>MIN:=0;
+MAX:=10000;
+MIDLE:=5000;
+
+
+CMD := CHCFG.CMD;
+(*розпаковка з STA*)
+VRAW := CHCFG.STA_VRAW;
+VAL := CHCFG.STA_VALB;
+BAD := CHCFG.STA_BAD;(*керується ззовні*)
+PNG := CHCFG.STA_PNG;
+ULNK := CHCFG.STA_ULNK;
+MERR := CHCFG.STA_MERR;(*керується ззовні*)
+BRK := CHCFG.STA_BRK;(*керується ззовні*)
+SHRT := CHCFG.STA_SHRT;(*керується ззовні*)
+NBD := CHCFG.STA_NBD;(*керується ззовні*)
+INBUF := CHCFG.STA_INBUF;
+FRC := CHCFG.STA_FRC;
+SML := CHCFG.STA_SML;
+CMDLOAD := CHCFG.STA_CMDLOAD; (*керується бітом*)
+
+INBUF := (CHCFG.ID = CHBUF.ID) AND (CHCFG.CLSID = CHBUF.CLSID);
+CMDLOAD := CHHMI.STA.15;
+CMD := 0;
+
+(* обробник команд*)
+(* широкомовне форсування/дефорсування*) 
+IF PLCCFG.CMD=16#4301 THEN
+    FRC := true; (*форсувати один/усі об'єкти типу*)
+END_IF;
+IF PLCCFG.CMD=16#4302 THEN
+    FRC := false; (*дефорсувати об'єкт типу*)
+END_IF;
+(*вибір джерела команди згідно пріоритету*)
+IF CMDLOAD THEN (*з HMI CMDLOAD*)
+    CMD := 16#0100;  (*// записати в буфер*)
+ELSIF INBUF AND CHBUF.CMD &lt;&gt; 0 THEN (*з буферу*)
+    CMD := CHBUF.CMD;
+ELSIF CHCFG.CMD&lt;&gt;0 THEN
+    CMD := CHCFG.CMD;
+END_IF;
+(*commands*)
+CASE CMD OF
+    16#1: (*записати MAX*)
+        IF FRC AND INBUF THEN
+            RAWINT := MAX;
+        END_IF;
+    16#2: (*записати MIN*)
+        IF FRC AND INBUF THEN
+            RAWINT:=MIN;
+        END_IF;
+    16#3: (*TOGGLE*)
+        IF FRC AND INBUF THEN
+            RAWINT := MIDLE;
+        END_IF;
+    16#0100: (*прочитати конфігурацію в буфер*)
+        CHBUF.ID:= CHCFG.ID;
+        CHBUF.CLSID:=CHCFG.CLSID;
+        
+        CHBUF.STA.0 := CHCFG.STA_VRAW;
+        CHBUF.STA.1 := CHCFG.STA_VALB;
+        CHBUF.STA.2 := CHCFG.STA_BAD;
+        CHBUF.STA.3 := CHCFG.STA_b3;
+        CHBUF.STA.4 := CHCFG.STA_PNG;
+        CHBUF.STA.5 := CHCFG.STA_ULNK;
+        CHBUF.STA.6 := CHCFG.STA_MERR;
+        CHBUF.STA.7 := CHCFG.STA_BRK;
+        CHBUF.STA.8 := CHCFG.STA_SHRT;
+        CHBUF.STA.9 := CHCFG.STA_NBD;
+        CHBUF.STA.10 := CHCFG.STA_b10;
+        CHBUF.STA.11 := CHCFG.STA_INIOTBUF;
+        CHBUF.STA.12 := CHCFG.STA_INBUF;
+        CHBUF.STA.13 := CHCFG.STA_FRC;
+        CHBUF.STA.14 := CHCFG.STA_SML;
+        CHBUF.STA.15 := CHCFG.STA_CMDLOAD;
+        
+        CHBUF.VAL:=CHCFG.VAL;
+        CHBUF.VARID:=CHCFG.VARID;
+    16#0300: (*перемкнути форсування*)
+        FRC := NOT FRC;
+    16#301: (*форсувати один/усі об'єкти типу*)
+        FRC := true;
+    16#302: (*дефорсувати один/усі об'єкти типу*)
+        FRC := false;
+END_CASE;
+
+(*запис значення змінної*)
+IF FRC AND INBUF THEN (*режим форсування з занятим буфером*)
+    RAWINT := CHBUF.VAL;
+ELSIF FRC AND NOT INBUF THEN (*режим форсування без занятого буферу*)
+    ;(*без змін*)
+ELSIF NOT FRC THEN (*не режим форсування*)
+    RAWINT := CHCFG.VAL;
+END_IF;
+
+(*ping-pong*)
+ULNK := PNG; (*прийшов ping - є звязок з верхнім рівнем*)
+PNG := false; (*скидання біту PNG звязку з врехнім рівнем PONG*)
+IF NOT ULNK THEN
+    CHCFG.VARID := 0;
+END_IF;
+
+(*скидання оброблених команд*)
+CMDLOAD := 0;
+CMD := 0;
+
+(*загальносистемні біти та лічильники*)
+IF FRC THEN
+    PLCCFG.STA_FRC0 := true;
+    PLCCFG.CNTFRC := PLCCFG.CNTFRC + 1;
+END_IF;
+
+
+(*упковка в STA*)
+CHCFG.STA_VRAW := RAWINT&gt;0;
+CHCFG.STA_VALB:=CHCFG.VAL&gt;0;
+CHCFG.STA_BAD:=BAD;(*керується ззовні*)
+CHCFG.STA_PNG:=PNG;
+CHCFG.STA_ULNK:=ULNK;
+CHCFG.STA_MERR:=MERR;(*керується ззовні*)
+CHCFG.STA_BRK:=BRK;(*керується ззовні*)
+CHCFG.STA_SHRT:=SHRT;(*керується ззовні*)
+CHCFG.STA_NBD:=NBD;(*керується ззовні*)
+CHCFG.STA_INBUF := INBUF;
+CHCFG.STA_FRC := FRC;
+CHCFG.STA_SML := SML;
+CHCFG.STA_CMDLOAD := CMDLOAD; (*керується бітом*)
+
+
+CHCFG.CMD := CMD;
+
+CHHMI.STA := CHCFG.STA;
+CHHMI.VAL := RAWINT;
+
+(*оновлення буферу*)
+IF INBUF THEN
+    CHBUF.STA:= CHCFG.STA;
+    CHBUF.VARID := CHCFG.VARID;
+    CHBUF.CMD := 0;
+    IF NOT FRC THEN
+        CHBUF.VAL := CHCFG.VAL;
+    END_IF;
+END_IF;
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="CHDIFN" version="0.07" dateTime="dt#2022-01-14-11:29:09">
+		<attribute name="TypeCodeCheckSumString" value="C9FC"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="0BB1"></attribute>
+		<inputParameters>
+			<variables name="RAW" typeName="BOOL">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="CHCFG" typeName="CH_CFG">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="CHHMI" typeName="CH_HMI">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="CHBUF" typeName="CH_BUF">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+		</inOutParameters>
+		<privateLocalVariables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="INBUF" typeName="BOOL"></variables>
+			<variables name="ULNK" typeName="BOOL"></variables>
+			<variables name="MERR" typeName="BOOL"></variables>
+			<variables name="BRK" typeName="BOOL"></variables>
+			<variables name="SHRT" typeName="BOOL"></variables>
+			<variables name="SML" typeName="BOOL"></variables>
+			<variables name="FRC" typeName="BOOL"></variables>
+			<variables name="BAD" typeName="BOOL"></variables>
+			<variables name="VRAW" typeName="BOOL"></variables>
+			<variables name="VAL" typeName="BOOL"></variables>
+			<variables name="PNG" typeName="BOOL"></variables>
+			<variables name="NBD" typeName="BOOL"></variables>
+			<variables name="CMDLOAD" typeName="BOOL"></variables>
+		</privateLocalVariables>
+		<FBProgram name="CHDIFN">
+			<STSource>CMD := CHCFG.CMD;
+(*розпаковка з STA*)
+VRAW := CHCFG.STA_VRAW;
+VAL := CHCFG.STA_VALB;
+BAD := CHCFG.STA_BAD;(*керується ззовні*)
+PNG := CHCFG.STA_PNG;
+ULNK := CHCFG.STA_ULNK;
+MERR := CHCFG.STA_MERR;(*керується ззовні*)
+BRK := CHCFG.STA_BRK;(*керується ззовні*)
+SHRT := CHCFG.STA_SHRT;(*керується ззовні*)
+NBD := CHCFG.STA_NBD;(*керується ззовні*)
+INBUF := CHCFG.STA_INBUF;
+FRC := CHCFG.STA_FRC;
+SML := CHCFG.STA_SML;
+CMDLOAD := CHCFG.STA_CMDLOAD; (*керується бітом*)
+
+INBUF := (CHCFG.ID = CHBUF.ID) AND (CHCFG.CLSID = CHBUF.CLSID);
+CMDLOAD := CHHMI.STA.15;
+CMD := 0;
+
+(* обробник команд*)
+(* широкомовне форсування/дефорсування*) 
+IF PLCCFG.CMD=16#4301 THEN
+    FRC := true; (*форсувати один/усі об'єкти типу*)
+END_IF;
+IF PLCCFG.CMD=16#4302 THEN
+    FRC := false; (*дефорсувати об'єкт типу*)
+END_IF;
+(*вибір джерела команди згідно пріоритету*)
+IF CMDLOAD THEN (*з HMI CMDLOAD*)
+    CMD := 16#0100;  (*// записати в буфер*)
+ELSIF INBUF AND CHBUF.CMD &lt;&gt; 0 THEN (*з буферу*)
+    CMD := CHBUF.CMD;
+ELSIF CHCFG.CMD&lt;&gt;0 THEN
+    CMD := CHCFG.CMD;
+END_IF;
+(*commands*)
+CASE CMD OF
+    16#1: (*записати 1*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL := 1;
+        END_IF;
+    16#2: (*записати 0*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL:=0;
+        END_IF;
+    16#3: (*TOGGLE*)
+        IF FRC AND INBUF THEN
+            IF VAL THEN
+                CHBUF.VAL:=0;
+            ELSE
+                CHBUF.VAL:=1;
+            END_IF;
+        END_IF;
+    16#0100: (*прочитати конфігурацію в буфер*)
+        CHBUF.ID:= CHCFG.ID;
+        CHBUF.CLSID:=CHCFG.CLSID;
+        
+        CHBUF.STA.0 := CHCFG.STA_VRAW;
+        CHBUF.STA.1 := CHCFG.STA_VALB;
+        CHBUF.STA.2 := CHCFG.STA_BAD;
+        CHBUF.STA.3 := CHCFG.STA_b3;
+        CHBUF.STA.4 := CHCFG.STA_PNG;
+        CHBUF.STA.5 := CHCFG.STA_ULNK;
+        CHBUF.STA.6 := CHCFG.STA_MERR;
+        CHBUF.STA.7 := CHCFG.STA_BRK;
+        CHBUF.STA.8 := CHCFG.STA_SHRT;
+        CHBUF.STA.9 := CHCFG.STA_NBD;
+        CHBUF.STA.10 := CHCFG.STA_b10;
+        CHBUF.STA.11 := CHCFG.STA_INIOTBUF;
+        CHBUF.STA.12 := CHCFG.STA_INBUF;
+        CHBUF.STA.13 := CHCFG.STA_FRC;
+        CHBUF.STA.14 := CHCFG.STA_SML;
+        CHBUF.STA.15 := CHCFG.STA_CMDLOAD;
+        
+        CHBUF.VAL:=CHCFG.VAL;
+        CHBUF.VARID:=CHCFG.VARID;
+    16#0300: (*перемкнути форсування*)
+        FRC := NOT FRC;
+    16#0301: (*форсувати один/усі об'єкти типу*)
+        FRC := true;
+    16#0302: (*дефорсувати один/усі об'єкти типу*)
+        FRC := false;
+END_CASE;
+
+(*запис значення змінної*)
+IF FRC AND INBUF THEN (*режим форсування з занятим буфером*)
+    CHCFG.VAL := BOOL_TO_INT (CHBUF.VAL&gt;0);
+    VAL := INT_TO_REAL(CHCFG.VAL) &gt; 0.5;
+ELSIF FRC AND NOT INBUF THEN (*режим форсування без занятого буферу*)
+    ;(*без змін*)
+ELSIF SML THEN (*режим імітації*)
+    ;(*//нічого не робимо, значення змінюється ззовні алгоритму 28.10.2021 Пупена*)
+ELSIF NOT FRC THEN (*не режим форсування*)
+    VAL := RAW;
+    IF RAW THEN
+        CHCFG.VAL := 1;
+    ELSE
+        CHCFG.VAL := 0;
+    END_IF;
+END_IF;
+
+(*ping-pong*)
+ULNK := PNG; (*прийшов ping - є звязок з верхнім рівнем*)
+PNG := false; (*скидання біту PNG звязку з врехнім рівнем PONG*)
+IF NOT ULNK THEN
+    CHCFG.VARID := 0;
+END_IF;
+
+(*скидання оброблених команд*)
+CMDLOAD := 0;
+CMD := 0;
+
+
+(*загальносистемні біти та лічильники*)
+IF FRC THEN
+    PLCCFG.STA_FRC0 := true;
+    PLCCFG.CNTFRC := PLCCFG.CNTFRC + 1;
+END_IF;
+
+(*упковка в STA*)
+CHCFG.STA_VRAW := RAW;
+CHCFG.STA_VALB:=VAL;
+CHCFG.STA_BAD:=BAD;(*керується ззовні*)
+CHCFG.STA_PNG:=PNG;
+CHCFG.STA_ULNK:=ULNK;
+CHCFG.STA_MERR:=MERR;(*керується ззовні*)
+CHCFG.STA_BRK:=BRK;(*керується ззовні*)
+CHCFG.STA_SHRT:=SHRT;(*керується ззовні*)
+CHCFG.STA_NBD:=NBD;(*керується ззовні*)
+CHCFG.STA_INBUF := INBUF;
+CHCFG.STA_FRC := FRC;
+CHCFG.STA_SML := SML;
+CHCFG.STA_CMDLOAD := CMDLOAD; (*керується бітом*)
+
+
+CHCFG.CMD := CMD;
+
+CHHMI.STA := CHCFG.STA;
+CHHMI.VAL := CHCFG.VAL;
+
+(*оновлення буферу*)
+IF INBUF THEN
+    CHBUF.STA:= CHCFG.STA;
+    CHBUF.VARID := CHCFG.VARID;
+    CHBUF.CMD := 0;
+    IF NOT FRC THEN
+        CHBUF.VAL := CHCFG.VAL;
+    END_IF;
+END_IF;
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="CHDOFN" version="0.06" dateTime="dt#2022-01-14-11:34:08">
+		<attribute name="TypeCodeCheckSumString" value="3E55"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="B92F"></attribute>
+		<inOutParameters>
+			<variables name="CHCFG" typeName="CH_CFG">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="CHHMI" typeName="CH_HMI">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="CHBUF" typeName="CH_BUF">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+		</inOutParameters>
+		<outputParameters>
+			<variables name="RAW" typeName="BOOL">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</outputParameters>
+		<privateLocalVariables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="INBUF" typeName="BOOL"></variables>
+			<variables name="ULNK" typeName="BOOL"></variables>
+			<variables name="MERR" typeName="BOOL"></variables>
+			<variables name="BRK" typeName="BOOL"></variables>
+			<variables name="SHRT" typeName="BOOL"></variables>
+			<variables name="SML" typeName="BOOL"></variables>
+			<variables name="FRC" typeName="BOOL"></variables>
+			<variables name="BAD" typeName="BOOL"></variables>
+			<variables name="VRAW" typeName="BOOL"></variables>
+			<variables name="VAL" typeName="BOOL"></variables>
+			<variables name="PNG" typeName="BOOL"></variables>
+			<variables name="NBD" typeName="BOOL"></variables>
+			<variables name="CMDLOAD" typeName="BOOL"></variables>
+		</privateLocalVariables>
+		<FBProgram name="CHDOFN">
+			<STSource>
+CMD := CHCFG.CMD;
+(*розпаковка з STA*)
+VRAW := CHCFG.STA_VRAW;
+VAL := CHCFG.STA_VALB;
+BAD := CHCFG.STA_BAD;(*керується ззовні*)
+PNG := CHCFG.STA_PNG;
+ULNK := CHCFG.STA_ULNK;
+MERR := CHCFG.STA_MERR;(*керується ззовні*)
+BRK := CHCFG.STA_BRK;(*керується ззовні*)
+SHRT := CHCFG.STA_SHRT;(*керується ззовні*)
+NBD := CHCFG.STA_NBD;(*керується ззовні*)
+INBUF := CHCFG.STA_INBUF;
+FRC := CHCFG.STA_FRC;
+SML := CHCFG.STA_SML;
+CMDLOAD := CHCFG.STA_CMDLOAD; (*керується бітом*)
+
+INBUF := (CHCFG.ID = CHBUF.ID) AND (CHCFG.CLSID = CHBUF.CLSID);
+CMDLOAD := CHHMI.STA.15;
+CMD := 0;
+
+
+(* обробник команд*)
+(* широкомовне форсування/дефорсування*) 
+IF PLCCFG.CMD=16#4301 THEN
+    FRC := true; (*форсувати один/усі об'єкти типу*)
+END_IF;
+IF PLCCFG.CMD=16#4302 THEN
+    FRC := false; (*дефорсувати об'єкт типу*)
+END_IF;
+(*вибір джерела команди згідно пріоритету*)
+IF CMDLOAD THEN (*з HMI CMDLOAD*)
+    CMD := 16#0100;  (*// записати в буфер*)
+ELSIF INBUF AND CHBUF.CMD &lt;&gt; 0 THEN (*з буферу*)
+    CMD := CHBUF.CMD;
+ELSIF CHCFG.CMD&lt;&gt;0 THEN
+    CMD := CHCFG.CMD;
+END_IF;
+(*commands*)
+CASE CMD OF
+    16#1: (*записати 1*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL := 1;
+        END_IF;
+    16#2: (*записати 0*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL:=0;
+        END_IF;
+    16#3: (*TOGGLE*)
+        IF FRC AND INBUF THEN
+            IF VRAW THEN
+                CHBUF.VAL:=0;
+            ELSE
+                CHBUF.VAL:=1;
+            END_IF;
+        END_IF;
+    16#0100: (*прочитати конфігурацію в буфер*)
+        CHBUF.ID:= CHCFG.ID;
+        CHBUF.CLSID:=CHCFG.CLSID;
+        
+        CHBUF.STA.0 := CHCFG.STA_VRAW;
+        CHBUF.STA.1 := CHCFG.STA_VALB;
+        CHBUF.STA.2 := CHCFG.STA_BAD;
+        CHBUF.STA.3 := CHCFG.STA_b3;
+        CHBUF.STA.4 := CHCFG.STA_PNG;
+        CHBUF.STA.5 := CHCFG.STA_ULNK;
+        CHBUF.STA.6 := CHCFG.STA_MERR;
+        CHBUF.STA.7 := CHCFG.STA_BRK;
+        CHBUF.STA.8 := CHCFG.STA_SHRT;
+        CHBUF.STA.9 := CHCFG.STA_NBD;
+        CHBUF.STA.10 := CHCFG.STA_b10;
+        CHBUF.STA.11 := CHCFG.STA_INIOTBUF;
+        CHBUF.STA.12 := CHCFG.STA_INBUF;
+        CHBUF.STA.13 := CHCFG.STA_FRC;
+        CHBUF.STA.14 := CHCFG.STA_SML;
+        CHBUF.STA.15 := CHCFG.STA_CMDLOAD;
+        
+        CHBUF.VAL:=CHCFG.VAL;
+        CHBUF.VARID:=CHCFG.VARID;
+    16#0300: (*перемкнути форсування*)
+        FRC := NOT FRC;
+    16#0301: (*форсувати один/усі об'єкти типу*)
+        FRC := true;
+    16#0302: (*дефорсувати один/усі об'єкти типу*)
+        FRC := false;
+END_CASE;
+
+(*запис значення змінної*)
+IF FRC AND INBUF THEN (*режим форсування з занятим буфером*)
+    CHCFG.VAL := BOOL_TO_INT (CHBUF.VAL&gt;0);
+    VRAW := INT_TO_REAL(CHCFG.VAL) &gt; 0.5;
+ELSIF FRC AND NOT INBUF THEN (*режим форсування без занятого буферу*)
+    ;(*без змін*)
+ELSIF NOT FRC THEN (*не режим форсування*)
+    VRAW := VAL;
+    IF VAL THEN
+        CHCFG.VAL := 1;
+    ELSE
+        CHCFG.VAL := 0;
+    END_IF;
+END_IF;
+RAW := VRAW; (*відправляємо на вихід*)
+
+(*ping-pong*)
+ULNK := PNG; (*прийшов ping - є звязок з верхнім рівнем*)
+PNG := false; (*скидання біту PNG звязку з врехнім рівнем PONG*)
+IF NOT ULNK THEN
+    CHCFG.VARID := 0;
+END_IF;
+
+(*скидання оброблених команд*)
+CMDLOAD := 0;
+CMD := 0;
+
+
+(*загальносистемні біти та лічильники*)
+IF FRC THEN
+    PLCCFG.STA_FRC0 := true;
+    PLCCFG.CNTFRC := PLCCFG.CNTFRC + 1;
+END_IF;
+
+(*упковка в STA*)
+CHCFG.STA_VRAW := VRAW;
+CHCFG.STA_VALB := VAL;
+CHCFG.STA_BAD:=BAD;(*керується ззовні*)
+CHCFG.STA_PNG:=PNG;
+CHCFG.STA_ULNK:=ULNK;
+CHCFG.STA_MERR:=MERR;(*керується ззовні*)
+CHCFG.STA_BRK:=BRK;(*керується ззовні*)
+CHCFG.STA_SHRT:=SHRT;(*керується ззовні*)
+CHCFG.STA_NBD:=NBD;(*керується ззовні*)
+CHCFG.STA_INBUF := INBUF;
+CHCFG.STA_FRC := FRC;
+CHCFG.STA_SML := SML;
+CHCFG.STA_CMDLOAD := CMDLOAD; (*керується бітом*)
+
+
+CHCFG.CMD := CMD;
+
+CHHMI.STA := CHCFG.STA;
+CHHMI.VAL := CHCFG.VAL;
+
+(*оновлення буферу*)
+IF INBUF THEN
+    CHBUF.STA:= CHCFG.STA;
+    CHBUF.VARID := CHCFG.VARID;
+    CHBUF.CMD := 0;
+    IF NOT FRC THEN
+        CHBUF.VAL := CHCFG.VAL;
+    END_IF;
+END_IF;
+</STSource>
+		</FBProgram>
+	</FBSource>
+</VariablesExchangeFile>
