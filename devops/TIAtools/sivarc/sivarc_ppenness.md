@@ -1,2 +1,0 @@
-# SiVArc Openness
-
