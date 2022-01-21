@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SCRExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-21-9:34:19" content="Operator Screen source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.4" dateTime="date_and_time#2022-1-21-9:32:21"></contentHeader>
+	<IOScreen version="V1.0">
+		<screen name="PACFramework_PLC" screenX="1280" screenY="1024" BKColor="-1" valScreen="2" location="" creationDate="20/01/2022 - 09:10:17" modificationDate="21/01/2022 - 09:34:19" customInfos="" isPattern="0" valPattern="0">
+			<object objectID="15" description="(21,47,37,62),(0,1,0),(11,0,12632256),|W|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.3" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,47,37,62),(0,1,0),(11,0,65535),|W|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.3" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,17,37,32),(0,1,0),(11,0,12632256),|S|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.14" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,17,37,32),(0,1,0),(11,0,16776960),|S|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.14" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,178,37,193),(0,1,0),(11,0,12632256),|F|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.7" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,178,37,193),(0,1,0),(11,0,16711680),|F|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.7" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,62,37,77),(0,1,0),(11,0,12632256),|A|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.0" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,62,37,77),(0,1,0),(11,0,255),|A|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.0" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,77,37,92),(0,1,0),(11,0,12632256),|E|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.6" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,77,37,92),(0,1,0),(11,0,16711935),|E|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.6" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,92,37,119),(0,1,0),(11,0,12632256),|STP|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.13" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,92,37,119),(0,1,0),(11,0,16711935),|STP|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.13" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,119,37,146),(0,1,0),(11,0,12632256),|MB|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.4" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,119,37,146),(0,1,0),(11,0,16777215),|MB|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.4" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16777215)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,146,37,173),(0,1,0),(11,0,12632256),|BLK|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.2" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,146,37,173),(0,1,0),(11,0,128),|BLK|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.2" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16777215)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,193,37,208),(0,1,0),(11,0,12632256),|F0|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.13" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,193,37,208),(0,1,0),(11,0,16711680),|F0|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.13" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,208,37,223),(0,1,0),(11,0,12632256),|F1|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.11" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,208,37,223),(0,1,0),(11,0,16711680),|F1|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.11" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,223,37,238),(0,1,0),(11,0,12632256),|F2|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.10" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,223,37,238),(0,1,0),(11,0,16711680),|F2|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.10" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,32,37,47),(0,1,0),(11,0,12632256),|M|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.9" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,32,37,47),(0,1,0),(11,0,8454143),|M|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.STA_PERM.9" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,244,37,271),(0,1,0),(11,0,12632256),|BAD|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.6" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,244,37,271),(0,1,0),(11,0,255),|BAD|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.6" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16777215)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,271,37,298),(0,1,0),(11,0,12632256),|EMS|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.9" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,271,37,298),(0,1,0),(11,0,255),|EMS|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.9" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16777215)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,298,37,325),(0,1,0),(11,0,12632256),|CON|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.11" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,298,37,325),(0,1,0),(11,0,255),|CON|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.11" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16777215)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,325,37,352),(0,1,0),(11,0,12632256),|D_E|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.13" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,325,37,352),(0,1,0),(11,0,255),|D_E|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.13" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16777215)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,352,37,379),(0,1,0),(11,0,12632256),|P_E|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.14" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(21,352,37,379),(0,1,0),(11,0,255),|P_E|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="PLC.ALM1_PERM.14" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16777215)"></varAnim>
+			</object>
+			<object objectID="15" description="(3,244,20,379),(0,1,0),(10,0,0),|АВАРІЇ|Courier New|,(9,1,0,0,0,0,0)"></object>
+			<object objectID="15" description="(3,178,20,240),(0,1,0),(10,0,0),|ФОРС|Courier New|,(9,1,0,0,0,0,0)"></object>
+			<object objectID="15" description="(3,17,20,174),(0,1,0),(10,0,0),|СТАТУСИ|Courier New|,(9,1,0,0,0,0,0)"></object>
+		</screen>
+	</IOScreen>
+</SCRExchangeFile>
