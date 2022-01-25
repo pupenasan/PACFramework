@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DDTExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:2:25" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-25-16:49:30" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
 	<contentHeader name="Project" version="0.0.000"></contentHeader>
-	<DDTSource DDTName="AIVAR_CFG" version="0.01" dateTime="dt#2022-01-04-19:55:55">
-		<attribute name="TypeSignatureCheckSumString" value="0BBF"></attribute>
+	<DDTSource DDTName="AIVAR_CFG" version="0.02" dateTime="dt#2022-01-16-20:47:28">
+		<attribute name="TypeSignatureCheckSumString" value="DF13"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>Унікальний ідентифікатор</comment>
@@ -11,14 +11,140 @@
 			<variables name="CLSID" typeName="UINT">
 				<comment>16#1030</comment>
 			</variables>
-			<variables name="STA" typeName="AIVAR_STA">
+			<variables name="STA" typeName="INT">
 				<comment>статус (див STC)</comment>
+			</variables>
+			<variables name="STA_BRK" typeName="BOOL">
+				<comment>=1 – Обрив каналу {A.BAD.0}</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="STA_OVRLD" typeName="BOOL">
+				<comment>=1 – КЗ або перевантаження каналу {A.BAD.1}</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="STA_BAD" typeName="BOOL">
+				<comment>=1 – Дані недостовірні {A.BAD.2}</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="STA_ALDIS" typeName="BOOL">
+				<comment>=1 – Тривога виведена з експлуатації {A.MSG.3}</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="STA_DLNK" typeName="BOOL">
+				<comment>=1 – якщо прив’язаний до каналу</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="STA_ENBL" typeName="BOOL">
+				<comment>=1 – змінна задіяна = (NOT PRM.7 AND DLNK)</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STA_ALM" typeName="BOOL">
+				<comment>=1 – активна технологічна тривога і не активна BAD</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="STA_LOLO" typeName="BOOL">
+				<comment>=1 – Критично низьке значення {A.ALM.7}</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STA_LO" typeName="BOOL">
+				<comment>=1 – Низьке значення {A.WRN.8}</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="STA_HI" typeName="BOOL">
+				<comment>=1 – Високе значення {A.WRN.9}</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_HIHI" typeName="BOOL">
+				<comment>=1 – Критично високе значення {A.ALM.10}</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="STA_WRN" typeName="BOOL">
+				<comment>=1 – активне технологічне попередження і не активні BAD та ALM</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="STA_INBUF" typeName="BOOL">
+				<comment>=1 – змінна в буфері</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="STA_FRC" typeName="BOOL">
+				<comment>=1 – Режим форсування{A.MSG.13}</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="STA_SML" typeName="BOOL">
+				<comment>=1 – змінна в режимі симуляції</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="STA_CMDLOAD" typeName="BOOL">
+				<comment>=1 – команда завантаження в буфер</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
 			<variables name="VALPRCSTA2" typeName="INT">
 				<comment>значення у % від шкали вимірювання (0-10000)</comment>
 			</variables>
-			<variables name="PRM" typeName="AIVAR_PRM">
+			<variables name="PRM" typeName="INT">
 				<comment>параметри</comment>
+			</variables>
+			<variables name="PRM_LOENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога LO /MASK 16#1</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="PRM_HIENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога HI /MASK 16#2</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="PRM_LOLOENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога LOLO /MASK 16#4</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="PRM_HIHIENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога HIHI/MASK 16#8</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="PRM_BRKENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога обриву</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="PRM_OVRLENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога перевантаження</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяна тривога перевірки якості даних</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="PRM_PWLENBL" typeName="BOOL">
+				<comment>=1 – задіяна кусочно-лінійна інтерполяція (не використовувати разом з TOTALON)</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="PRM_TOTALON" typeName="BOOL">
+				<comment>=1 – задіяне інтегрування (не використовувати разом з PWLENBL)</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="PRM_SQRT" typeName="BOOL">
+				<comment>=1 - задіяне квадратичне (квадратний корінь) масштабування</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="PRM_PARAISPROC" typeName="BOOL">
+				<comment>=1 - параметри налаштування (гістерезис, нечутл) задається в процентах</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="PRM_AFRZENBL" typeName="BOOL">
+				<comment>=1 - активна тривога нечутливості контролю зависання</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="PRM_ASPDENBL" typeName="BOOL">
+				<comment>=1 - активна тривога допуску контролю швидкості</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="PRM_b14" typeName="BOOL">
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="PRM_b15" typeName="BOOL">
+				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
 			<variables name="CHID" typeName="UINT">
 				<comment>Логічний номер дискретного каналу</comment>
@@ -65,8 +191,60 @@
 			<variables name="VRAW" typeName="INT">
 				<comment>сире значення</comment>
 			</variables>
-			<variables name="STA2" typeName="AIVAR_VALPRCSTA2">
+			<variables name="STA2" typeName="INT">
 				<comment>додаткові біти статусу та тривоги</comment>
+			</variables>
+			<variables name="STA2_ASPD" typeName="BOOL">
+				<comment>Шивдка зміна сигналу {A.BAD.0}</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="STA2_AFRZ" typeName="BOOL">
+				<comment>Сигнал не змінюється {A.BAD.1}</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="STA2_AOVRFL" typeName="BOOL">
+				<comment>Перехід через верхнє значення {A.BAD.2}</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="STA2_AUNDRFL" typeName="BOOL">
+				<comment>Перехід через нижнє значення  {A.BAD.3}</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="STA2_b4" typeName="BOOL">
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="STA2_b5" typeName="BOOL">
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STA2_b6" typeName="BOOL">
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="STA2_b7" typeName="BOOL">
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STA2_b8" typeName="BOOL">
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="STA2_b9" typeName="BOOL">
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA2_b10" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="STA2_b11" typeName="BOOL">
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="STA2_b12" typeName="BOOL">
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="STA2_b13" typeName="BOOL">
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="STA2_b14" typeName="BOOL">
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="STA2_b15" typeName="BOOL">
+				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
 			<variables name="tmp" typeName="INT"></variables>
 			<variables name="HYST" typeName="REAL">
@@ -114,137 +292,6 @@
 			<variables name="ZERO_CUT_VAL" typeName="REAL">
 				<comment>відсічка нуля </comment>
 			</variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="AIVAR_STA" version="0.01" dateTime="dt#2022-01-04-18:53:22">
-		<attribute name="TypeSignatureCheckSumString" value="E9FE"></attribute>
-		<structure>
-			<variables name="BRK" typeName="BOOL">
-				<comment>=1 – Обрив каналу {A.BAD.0}</comment>
-			</variables>
-			<variables name="OVRLD" typeName="BOOL">
-				<comment>=1 – КЗ або перевантаження каналу {A.BAD.1}</comment>
-			</variables>
-			<variables name="BAD" typeName="BOOL">
-				<comment>=1 – Дані недостовірні {A.BAD.2}</comment>
-			</variables>
-			<variables name="ALDIS" typeName="BOOL">
-				<comment>=1 – Тривога виведена з експлуатації {A.MSG.3}</comment>
-			</variables>
-			<variables name="DLNK" typeName="BOOL">
-				<comment>=1 – якщо прив’язаний до каналу</comment>
-			</variables>
-			<variables name="ENBL" typeName="BOOL">
-				<comment>=1 – змінна задіяна = (NOT PRM.7 AND DLNK)</comment>
-			</variables>
-			<variables name="ALM" typeName="BOOL">
-				<comment>=1 – активна технологічна тривога і не активна BAD</comment>
-			</variables>
-			<variables name="LOLO" typeName="BOOL">
-				<comment>=1 – Критично низьке значення {A.ALM.7}</comment>
-			</variables>
-			<variables name="LO" typeName="BOOL">
-				<comment>=1 – Низьке значення {A.WRN.8}</comment>
-			</variables>
-			<variables name="HI" typeName="BOOL">
-				<comment>=1 – Високе значення {A.WRN.9}</comment>
-			</variables>
-			<variables name="HIHI" typeName="BOOL">
-				<comment>=1 – Критично високе значення {A.ALM.10}</comment>
-			</variables>
-			<variables name="WRN" typeName="BOOL">
-				<comment>=1 – активне технологічне попередження і не активні BAD та ALM</comment>
-			</variables>
-			<variables name="INBUF" typeName="BOOL">
-				<comment>=1 – змінна в буфері</comment>
-			</variables>
-			<variables name="FRC" typeName="BOOL">
-				<comment>=1 – Режим форсування{A.MSG.13}</comment>
-			</variables>
-			<variables name="SML" typeName="BOOL">
-				<comment>=1 – змінна в режимі симуляції</comment>
-			</variables>
-			<variables name="CMDLOAD" typeName="BOOL">
-				<comment>=1 – команда завантаження в буфер</comment>
-			</variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="AIVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:56:39">
-		<attribute name="TypeSignatureCheckSumString" value="033C"></attribute>
-		<structure>
-			<variables name="PRM_LOENBL" typeName="BOOL">
-				<comment>=1 – задіяна тривога LO /MASK 16#1</comment>
-			</variables>
-			<variables name="PRM_HIENBL" typeName="BOOL">
-				<comment>=1 – задіяна тривога HI /MASK 16#2</comment>
-			</variables>
-			<variables name="PRM_LOLOENBL" typeName="BOOL">
-				<comment>=1 – задіяна тривога LOLO /MASK 16#4</comment>
-			</variables>
-			<variables name="PRM_HIHIENBL" typeName="BOOL">
-				<comment>=1 – задіяна тривога HIHI/MASK 16#8</comment>
-			</variables>
-			<variables name="PRM_BRKENBL" typeName="BOOL">
-				<comment>=1 – задіяна тривога обриву</comment>
-			</variables>
-			<variables name="PRM_OVRLENBL" typeName="BOOL">
-				<comment>=1 – задіяна тривога перевантаження</comment>
-			</variables>
-			<variables name="PRM_QALENBL" typeName="BOOL">
-				<comment>=1 – задіяна тривога перевірки якості даних</comment>
-			</variables>
-			<variables name="PRM_DSBL" typeName="BOOL">
-				<comment>=1 – змінна не задіяна</comment>
-			</variables>
-			<variables name="PRM_PWLENBL" typeName="BOOL">
-				<comment>=1 – задіяна кусочно-лінійна інтерполяція (не використовувати разом з TOTALON)</comment>
-			</variables>
-			<variables name="PRM_TOTALON" typeName="BOOL">
-				<comment>=1 – задіяне інтегрування (не використовувати разом з PWLENBL)</comment>
-			</variables>
-			<variables name="PRM_SQRT" typeName="BOOL">
-				<comment>=1 - задіяне квадратичне (квадратний корінь) масштабування</comment>
-			</variables>
-			<variables name="PRM_PARAISPROC" typeName="BOOL">
-				<comment>=1 - параметри налаштування (гістерезис, нечутл) задається в процентах</comment>
-			</variables>
-			<variables name="PRM_AFRZENBL" typeName="BOOL">
-				<comment>=1 - активна тривога нечутливості контролю зависання</comment>
-			</variables>
-			<variables name="PRM_ASPDENBL" typeName="BOOL">
-				<comment>=1 - активна тривога допуску контролю швидкості</comment>
-			</variables>
-			<variables name="PRMb14" typeName="BOOL"></variables>
-			<variables name="PRMb15" typeName="BOOL"></variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="AIVAR_VALPRCSTA2" version="0.01" dateTime="dt#2022-01-04-18:58:45">
-		<attribute name="TypeSignatureCheckSumString" value="9AF1"></attribute>
-		<structure>
-			<variables name="ASPD" typeName="BOOL">
-				<comment>Шивдка зміна сигналу {A.BAD.0}</comment>
-			</variables>
-			<variables name="AFRZ" typeName="BOOL">
-				<comment>Сигнал не змінюється {A.BAD.1}</comment>
-			</variables>
-			<variables name="AOVRFL" typeName="BOOL">
-				<comment>Перехід через верхнє значення {A.BAD.2}</comment>
-			</variables>
-			<variables name="AUNDRFL" typeName="BOOL">
-				<comment>Перехід через нижнє значення  {A.BAD.3}</comment>
-			</variables>
-			<variables name="STA2b4" typeName="BOOL"></variables>
-			<variables name="STA2b5" typeName="BOOL"></variables>
-			<variables name="STA2b6" typeName="BOOL"></variables>
-			<variables name="STA2b7" typeName="BOOL"></variables>
-			<variables name="STA2b8" typeName="BOOL"></variables>
-			<variables name="STA2b9" typeName="BOOL"></variables>
-			<variables name="STA2b10" typeName="BOOL"></variables>
-			<variables name="STA2b11" typeName="BOOL"></variables>
-			<variables name="STA2b12" typeName="BOOL"></variables>
-			<variables name="STA2b13" typeName="BOOL"></variables>
-			<variables name="STA2b14" typeName="BOOL"></variables>
-			<variables name="STA2b15" typeName="BOOL"></variables>
 		</structure>
 	</DDTSource>
 </DDTExchangeFile>
