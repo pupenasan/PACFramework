@@ -1,0 +1,262 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SCRExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-25-18:27:37" content="Operator Screen source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<IOScreen version="V1.0">
+		<screen name="PACFramework_AIVAR" screenX="1280" screenY="1024" BKColor="-1" valScreen="9" location="" creationDate="25/01/2022 - 18:21:05" modificationDate="25/01/2022 - 18:27:23" customInfos="" isPattern="0" valPattern="0">
+			<object objectID="15" description="(88,639,104,669),(0,1,0),(11,0,12632256),|SRC|Courier New|,(9,1,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,609,104,639),(0,1,0),(11,0,12632256),|HiHi|Courier New|,(9,1,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,579,104,609),(0,1,0),(11,0,12632256),|Hi|Courier New|,(9,1,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,549,104,579),(0,1,0),(11,0,12632256),|Lo|Courier New|,(9,1,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,519,104,549),(0,1,0),(11,0,12632256),|LoLo|Courier New|,(9,1,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,489,104,519),(0,1,0),(11,0,12632256),|BRK|Courier New|,(9,1,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,811,104,838),(0,1,0),(11,0,12632256),|BAD|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,784,104,811),(0,1,0),(11,0,12632256),|SML|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,757,104,784),(0,1,0),(11,0,12632256),|FRC¤¤|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(58,544,76,589),(5,1,0),(11,0,16777215),|val|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="VARBUF.ID" typeName="UINT" description="Anim:0,|-|-|,(1,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(58,499,74,543),(5,1,0),(10,0,0),|VARID:|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(58,646,74,788),(5,1,0),(10,0,0),|Channel number PLC:|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(113,502,129,574),(5,1,0),(10,0,0),|Not Used|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="18" description="(109,573,129,593),(-1,0,0,0),||">
+				<varAnim name="VARBUF.PRM.7" typeName="BOOL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.PRM.7" typeName="BOOL" description="Pilot:|0|1|"></varPilot>
+			</object>
+			<object objectID="15" description="(88,671,104,762),(5,1,0),(10,0,0),|Status Value¤¤|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,757,104,784),(0,1,0),(11,0,16711680),|FRC¤¤|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="VARBUF.STA.13" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(88,811,104,838),(0,1,0),(11,0,16711935),|BAD|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="VARBUF.STA.2" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(88,784,104,811),(0,1,0),(11,0,16776960),|SML|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="VARBUF.STA.14" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(295,491,311,622),(5,1,0),(10,0,0),|Filtering Time,ms|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(110,745,128,834),(5,1,0),(11,0,16777215),|val|Courier New|,(9,2,0,0,0,0,0)">
+				<varAnim name="VARBUF.T_STEP1" typeName="UDINT" description="Anim:0,|-|-|,(1,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(111,651,127,763),(5,1,0),(10,0,0),|State Time,ms|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="19" description="(294,614,310,662),(-1,1,0,0)">
+				<varAnim name="VARBUF.T_FLTSP" typeName="UINT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.T_FLTSP" typeName="UINT" description="Pilot:|0|65000|"></varPilot>
+			</object>
+			<object objectID="19" description="(57,783,73,831),(-1,1,0,0)">
+				<varAnim name="VARBUF.CHID" typeName="UINT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.CHID" typeName="UINT" description="Pilot:|0|32000|"></varPilot>
+			</object>
+			<object objectID="18" description="(362,651,381,700),(-1,0,0,2),|UNFRC|">
+				<varPilot name="VARBUF.CMD" typeName="UINT" description="Pilot:|770|770|"></varPilot>
+			</object>
+			<object objectID="18" description="(342,651,361,700),(-1,0,0,2),|FRC|">
+				<varPilot name="VARBUF.CMD" typeName="UINT" description="Pilot:|769|769|"></varPilot>
+			</object>
+			<object objectID="18" description="(342,702,361,751),(-1,0,0,2),|FMIN|">
+				<varPilot name="VARBUF.CMD" typeName="UINT" description="Pilot:|2|2|"></varPilot>
+			</object>
+			<object objectID="18" description="(362,702,381,751),(-1,0,0,2),|FMAX|">
+				<varPilot name="VARBUF.CMD" typeName="UINT" description="Pilot:|1|1|"></varPilot>
+			</object>
+			<object objectID="18" description="(341,760,381,834),(-1,0,0,2),|SAVE|">
+				<varPilot name="VARBUF.CMD" typeName="UINT" description="Pilot:|257|257|"></varPilot>
+			</object>
+			<object objectID="11" description="(43,485,390,845),(0,1,0),(10,0,0)"></object>
+			<object objectID="10" description="(78,485,78,844),(0,1,0),3"></object>
+			<object objectID="15" description="(140,562,156,632),(5,1,0),(10,0,0),|Raw Value¤¤|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(220,503,236,536),(5,1,0),(10,0,0),|Hyst|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="19" description="(150,647,166,695),(-1,1,0,0)">
+				<varAnim name="VARBUF.HIRAW" typeName="INT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.HIRAW" typeName="INT" description="Pilot:|0|32000|"></varPilot>
+			</object>
+			<object objectID="19" description="(171,647,187,695),(-1,1,0,0)">
+				<varAnim name="VARBUF.LORAW" typeName="INT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.LORAW" typeName="INT" description="Pilot:|0|32000|"></varPilot>
+			</object>
+			<object objectID="15" description="(150,625,166,652),(5,1,0),(10,0,0),|Max|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(171,625,187,652),(5,1,0),(10,0,0),|Min|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="19" description="(150,726,166,774),(-1,1,0,0)">
+				<varAnim name="VARBUF.HIENG" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.HIENG" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="19" description="(171,726,187,774),(-1,1,0,0)">
+				<varAnim name="VARBUF.LOENG" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.LOENG" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="15" description="(150,703,166,730),(5,1,0),(10,0,0),|Max|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(171,703,187,730),(5,1,0),(10,0,0),|Min|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="19" description="(161,568,177,616),(-1,1,0,0)">
+				<varAnim name="VARBUF.VRAWR" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.VRAWR" typeName="REAL" description="Pilot:|0.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="19" description="(161,790,177,838),(-1,1,0,0)">
+				<varAnim name="VARBUF.VALR" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.VALR" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="15" description="(130,631,146,701),(5,1,0),(10,0,0),|Raw Limits|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(130,712,146,782),(5,1,0),(10,0,0),|Eng Limits|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(140,780,156,850),(5,1,0),(10,0,0),|Eng Value¤¤|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="19" description="(240,645,256,693),(-1,1,0,0)">
+				<varAnim name="VARBUF.LOSP" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.LOSP" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="18" description="(238,625,258,645),(-1,0,0,0),||">
+				<varAnim name="VARBUF.PRM.0" typeName="BOOL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.PRM.0" typeName="BOOL" description="Pilot:|0|1|"></varPilot>
+			</object>
+			<object objectID="19" description="(240,719,256,767),(-1,1,0,0)">
+				<varAnim name="VARBUF.HISP" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.HISP" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="18" description="(238,699,258,719),(-1,0,0,0),||">
+				<varAnim name="VARBUF.PRM.1" typeName="BOOL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.PRM.1" typeName="BOOL" description="Pilot:|0|1|"></varPilot>
+			</object>
+			<object objectID="19" description="(240,791,256,839),(-1,1,0,0)">
+				<varAnim name="VARBUF.HIHISP" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.HIHISP" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="18" description="(238,771,258,791),(-1,0,0,0),||">
+				<varAnim name="VARBUF.PRM.3" typeName="BOOL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.PRM.3" typeName="BOOL" description="Pilot:|0|1|"></varPilot>
+			</object>
+			<object objectID="19" description="(240,572,256,620),(-1,1,0,0)">
+				<varAnim name="VARBUF.LOLOSP" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.LOLOSP" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="18" description="(238,552,258,572),(-1,0,0,0),||">
+				<varAnim name="VARBUF.PRM.2" typeName="BOOL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.PRM.2" typeName="BOOL" description="Pilot:|0|1|"></varPilot>
+			</object>
+			<object objectID="19" description="(240,493,256,541),(-1,1,0,0)">
+				<varAnim name="VARBUF.HYST" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.HYST" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="15" description="(220,562,236,616),(5,1,0),(10,0,0),|LoLo SP|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(220,640,236,681),(5,1,0),(10,0,0),|Lo SP|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(220,716,236,766),(5,1,0),(10,0,0),|Hi SP|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(220,781,236,837),(5,1,0),(10,0,0),|HiHi SP|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,519,104,549),(0,1,0),(11,0,255),|LoLo|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="VARBUF.STA.7" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(88,549,104,579),(0,1,0),(11,0,65535),|Lo|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="VARBUF.STA.8" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(88,579,104,609),(0,1,0),(11,0,65535),|Hi|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="VARBUF.STA.9" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(88,609,104,639),(0,1,0),(11,0,255),|HiHi|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="VARBUF.STA.10" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="19" description="(258,563,274,611),(-1,1,0,0)">
+				<varAnim name="VARBUF.T_DEALL" typeName="UINT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.T_DEALL" typeName="UINT" description="Pilot:|0|65000|"></varPilot>
+			</object>
+			<object objectID="19" description="(258,636,274,684),(-1,1,0,0)">
+				<varAnim name="VARBUF.T_DEAL" typeName="UINT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.T_DEAL" typeName="UINT" description="Pilot:|0|65000|"></varPilot>
+			</object>
+			<object objectID="19" description="(258,710,274,758),(-1,1,0,0)">
+				<varAnim name="VARBUF.T_DEAH" typeName="UINT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.T_DEAH" typeName="UINT" description="Pilot:|0|65000|"></varPilot>
+			</object>
+			<object objectID="19" description="(258,782,274,830),(-1,1,0,0)">
+				<varAnim name="VARBUF.T_DEAHH" typeName="UINT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.T_DEAHH" typeName="UINT" description="Pilot:|0|65000|"></varPilot>
+			</object>
+			<object objectID="11" description="(198,489,213,838),(0,1,0),(11,0,12632256)"></object>
+			<object objectID="15" description="(259,489,275,562),(5,1,0),(10,0,0),|Delay,0.1s|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(88,489,104,519),(0,1,0),(11,0,16711935),|BRK|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="VARBUF.STA.0" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(88,639,104,669),(0,1,0),(11,0,16711935),|OVR|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="VARBUF.STA.1" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(293,677,309,779),(5,1,0),(10,0,0),|Signal freeze|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="19" description="(293,791,309,839),(-1,1,0,0)">
+				<varAnim name="VARBUF.DEASP_AFRZ" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.DEASP_AFRZ" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="15" description="(314,678,330,809),(5,1,0),(10,0,0),|Sudden signal|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="19" description="(313,791,329,839),(-1,1,0,0)">
+				<varAnim name="VARBUF.DOPSP_ASPD" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.DOPSP_ASPD" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="18" description="(291,769,311,789),(-1,0,0,0),||">
+				<varAnim name="VARBUF.PRM.12" typeName="BOOL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.PRM.12" typeName="BOOL" description="Pilot:|0|1|"></varPilot>
+			</object>
+			<object objectID="18" description="(311,769,331,789),(-1,0,0,0),||">
+				<varAnim name="VARBUF.PRM.13" typeName="BOOL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.PRM.13" typeName="BOOL" description="Pilot:|0|1|"></varPilot>
+			</object>
+			<object objectID="15" description="(315,491,331,622),(5,1,0),(10,0,0),|Zero cut off|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="19" description="(314,614,330,662),(-1,1,0,0)">
+				<varAnim name="VARBUF.ZERO_CUT_VAL" typeName="REAL" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="VARBUF.ZERO_CUT_VAL" typeName="REAL" description="Pilot:|-65000.0|65000.0|"></varPilot>
+			</object>
+			<object objectID="15" description="(140,489,156,536),(5,1,0),(10,0,0),|Signal¤¤|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(162,534,178,560),(5,1,0),(10,0,0),|mA|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="VARBUF.CH_CLSID" typeName="UINT" description="Anim:6,|49|50|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(162,534,178,560),(5,1,0),(10,0,0),|V|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="VARBUF.CH_CLSID" typeName="UINT" description="Anim:5,|51|51|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(162,534,178,560),(5,1,0),(10,0,0),|%|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="VARBUF.CH_CLSID" typeName="UINT" description="Anim:5,|48|48|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(161,487,179,532),(0,1,0),(10,0,16777215),|val|Courier New|,(9,2,0,0,0,0,0)">
+				<varAnim name="VARBUF.CH_VALSIG" typeName="REAL" description="Anim:0,|-|-|,(1,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="2" description="(46,56,77,433),17"></object>
+			<object objectID="11" description="(47,73,76,433),(5,1,0),(11,0,16776960)">
+				<varAnim name="AIH.LE_T1.STA.12" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(47,320,63,347),(0,1,0),(11,0,16711680),|FRC¤¤|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.STA.13" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(47,374,63,401),(0,1,0),(11,0,16711935),|BAD|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.STA.2" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(47,347,63,374),(0,1,0),(11,0,16776960),|SML|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.STA.14" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(61,141,77,239),(5,1,0),(10,0,0),|LE_T1|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="11" description="(46,56,76,433),(0,1,0),(10,0,0)"></object>
+			<object objectID="18" description="(46,56,76,74),(-1,0,0,2),|&gt;|">
+				<varPilot name="AIH.LE_T1.STA.15" typeName="BOOL" description="Pilot:|1|1|"></varPilot>
+			</object>
+			<object objectID="15" description="(47,401,63,432),(0,1,0),(11,0,8388736),|NUSD|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.STA.5" typeName="BOOL" description="Anim:1,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(47,170,63,200),(0,1,0),(11,0,255),|LoLo|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.STA.7" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(47,200,63,230),(0,1,0),(11,0,65535),|Lo|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.STA.8" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(47,230,63,260),(0,1,0),(11,0,65535),|Hi|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.STA.9" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(47,260,63,290),(0,1,0),(11,0,255),|HiHi|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.STA.10" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(47,140,63,170),(0,1,0),(11,0,16711935),|BRK|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.STA.0" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(47,290,63,320),(0,1,0),(11,0,16711935),|OVR|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.STA.1" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(63,74,75,139),(0,1,0),(11,0,12632256)"></object>
+			<object objectID="15" description="(47,74,64,139),(0,1,0),(10,0,16777215),|val|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="AIH.LE_T1.VAL" typeName="REAL" description="Anim:0,|-|-|,(1,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(63,74,75,139),(0,1,0),(11,0,16777215)">
+				<varAnim name="AIH.LE_T1.VALPRCSTA2" typeName="INT" description="Anim:0,|-|-|,(4,0),(0,0),ba:3,|256|25600|,|256|25600|,16777215"></varAnim>
+			</object>
+			<object objectID="11" description="(198,489,213,838),(0,1,0),(11,0,16777215)">
+				<varAnim name="VARBUF.VALPROC" typeName="INT" description="Anim:0,|-|-|,(4,0),(0,0),ba:3,|256|25600|,|256|25600|,12632256"></varAnim>
+			</object>
+		</screen>
+	</IOScreen>
+</SCRExchangeFile>

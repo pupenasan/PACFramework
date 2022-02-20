@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <FBExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-12-17:0:43" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-25-17:4:42" content="Function Block source file" DTDVersion="41"></fileHeader>
 	<contentHeader name="Project" version="0.0.000"></contentHeader>
-	<FBSource nameOfFBType="DOVARFN" version="0.04" dateTime="dt#2022-01-12-16:53:35">
-		<attribute name="TypeCodeCheckSumString" value="EE56"></attribute>
+	<FBSource nameOfFBType="DOVARFN" version="0.09" dateTime="dt#2022-01-16-20:07:15">
+		<attribute name="TypeCodeCheckSumString" value="C73A"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="6B8A"></attribute>
 		<inOutParameters>
 			<variables name="CHCFG" typeName="CH_CFG">
@@ -26,8 +26,6 @@
 			</variables>
 		</inOutParameters>
 		<privateLocalVariables>
-			<variables name="STA" typeName="DOVAR_STA"></variables>
-			<variables name="PRM" typeName="DOVAR_PRM"></variables>
 			<variables name="VRAW" typeName="BOOL"></variables>
 			<variables name="VAL" typeName="BOOL"></variables>
 			<variables name="BAD" typeName="BOOL"></variables>
@@ -46,56 +44,54 @@
 			<variables name="VARENBL" typeName="BOOL"></variables>
 			<variables name="T_STEPMS" typeName="UDINT"></variables>
 			<variables name="dT1" typeName="UDINT"></variables>
-			<variables name="STAINT" typeName="INT"></variables>
 		</privateLocalVariables>
 		<FBProgram name="DOVARFN">
-			<STSource>IF PLCCFG.STA.SCN1 THEN
+			<STSource>IF PLCCFG.STA_SCN1 THEN
     DOVARCFG.CLSID := 16#1020;
-    DOVARCFG.PRM.PRM_DSBL := FALSE;
+    DOVARCFG.PRM_DSBL := FALSE;
     DOVARCFG.T_PREV := PLCCFG.TQMS;
     IF DOVARCFG.CHID = 0 THEN
         DOVARCFG.CHID := DOVARCFG.CHIDDF;
     END_IF;
     IF CHCFG.ID &gt; 0 THEN
-        CHCFG.STA.VALB := DOVARCFG.STA.VALB;
+        CHCFG.STA_VALB := DOVARCFG.STA_VALB;
     ELSE
-        CHCFG.STA.VALB := 0;
+        CHCFG.STA_VALB := 0;
     END_IF;
     DOVARCFG.T_STEP1 := 0;
     DOVARCFG.STEP1 := 400;
     RETURN;
 END_IF;
 
-STA := DOVARCFG.STA;
-PRM := DOVARCFG.PRM;
 
-VRAW := DOVARCFG.STA.VRAW;
-VAL := DOVARCFG.STA.VALB;
-BAD := DOVARCFG.STA.BAD;
-DLNK := DOVARCFG.STA.DLNK;
-ENBL := DOVARCFG.STA.ENBL;
-VALPRV := DOVARCFG.STA.VALPRV;
-MVAL := DOVARCFG.STA.MVAL;
-INBUF := DOVARCFG.STA.INBUF;
-FRC := DOVARCFG.STA.FRC;
-SML := DOVARCFG.STA.SML;
-CMDLOAD := DOVARCFG.STA.CMDLOAD;
 
-PRM_INVERSE := DOVARCFG.PRM.PRM_INVERSE;
-PRM_QALENBL := DOVARCFG.PRM.PRM_QALENBL;
-PRM_DSBL := DOVARCFG.PRM.PRM_DSBL;
+VRAW := DOVARCFG.STA_VRAW;
+VAL := DOVARCFG.STA_VALB;
+BAD := DOVARCFG.STA_BAD;
+DLNK := DOVARCFG.STA_DLNK;
+ENBL := DOVARCFG.STA_ENBL;
+VALPRV := DOVARCFG.STA_VALPRV;
+MVAL := DOVARCFG.STA_MVAL;
+INBUF := DOVARCFG.STA_INBUF;
+FRC := DOVARCFG.STA_FRC;
+SML := DOVARCFG.STA_SML;
+CMDLOAD := DOVARCFG.STA_CMDLOAD;
+
+PRM_INVERSE := DOVARCFG.PRM_INVERSE;
+PRM_QALENBL := DOVARCFG.PRM_QALENBL;
+PRM_DSBL := DOVARCFG.PRM_DSBL;
 
 INBUF := (DOVARCFG.ID = VARBUF.ID) AND (DOVARCFG.CLSID = VARBUF.CLSID);
 CMDLOAD := DOVARHMI.STA.15;
 CMD := 0;
 DLNK := (CHCFG.ID &gt; 0);
 VARENBL := NOT PRM_DSBL AND DLNK;
-VRAW := CHCFG.STA.VALB;
+VRAW := CHCFG.STA_VALB;
 T_STEPMS := DOVARCFG.T_STEP1;
 
 (*ping-pong*)
 IF DLNK THEN
-    CHCFG.STA.PNG := true;
+    CHCFG.STA_PNG := true;
     CHCFG.VARID := DOVARCFG.ID;
 END_IF;
 
@@ -240,59 +236,45 @@ IF VARENBL THEN
         VRAW := VAL;
     END_IF;
     IF NOT SML THEN
-        CHCFG.STA.VALB := VRAW;
+        CHCFG.STA_VALB := VRAW;
     END_IF;(* режим симуляції - вихідне значення не змінюється *)
 END_IF;
 
 (*недостовірність каналу*)
-BAD := CHCFG.STA.BAD AND PRM_QALENBL AND VARENBL AND NOT SML;
+BAD := CHCFG.STA_BAD AND PRM_QALENBL AND VARENBL AND NOT SML;
 
 IF BAD THEN
-    PLCCFG.ALM1.BAD := true;
+    PLCCFG.ALM_BAD := true;
     PLCCFG.CNTBAD := PLCCFG.CNTBAD + 1;
-    IF NOT DOVARCFG.STA.BAD THEN
-        PLCCFG.ALM1.NWBAD := true;
+    IF NOT DOVARCFG.STA_BAD THEN
+        PLCCFG.ALM_NWBAD := true;
     END_IF;
 END_IF;
 IF FRC THEN
-    PLCCFG.STA.FRC1 := true;
+    PLCCFG.STA_FRC1 := true;
     PLCCFG.CNTFRC := PLCCFG.CNTFRC + 1;
 END_IF;
 IF SML THEN
-    PLCCFG.STA.SML := true;
+    PLCCFG.STA_SML := true;
 END_IF;
 
-STA.VRAW := VRAW;
-STA.VALB := VAL;
-STA.BAD := BAD;
-STA.DLNK := DLNK;
-STA.ENBL :=  VARENBL;
-VALPRV:=VAL;
-STA.MVAL := DOVARCFG.VALI &gt; 0;
-STA.INBUF := INBUF;
-STA.FRC := FRC;
-STA.SML := SML;
-STA.CMDLOAD := FALSE;
+DOVARCFG.STA_VRAW := VRAW;
+DOVARCFG.STA_VALB := VAL;
+DOVARCFG.STA_BAD := BAD;
+DOVARCFG.STA_DLNK := DLNK;
+DOVARCFG.STA_ENBL :=  VARENBL;
+DOVARCFG.STA_VALPRV:=VAL;
+DOVARCFG.STA_MVAL := DOVARCFG.VALI &gt; 0;
+DOVARCFG.STA_INBUF := INBUF;
+DOVARCFG.STA_FRC := FRC;
+DOVARCFG.STA_SML := SML;
+DOVARCFG.STA_CMDLOAD := FALSE;
 
-STAINT.0 := STA.VRAW ;
-STAINT.1 := STA.VALB ;
-STAINT.2 := STA.BAD ;
-STAINT.4 := STA.DLNK ;
-STAINT.5 := STA.ENBL ;
-STA.VALPRV := VALPRV;
-STAINT.9 := STA.MVAL ;
-STAINT.12 := STA.INBUF ;
-STAINT.13 := STA.FRC ;
-STAINT.14 := STA.SML ;
-STAINT.15 := FALSE;
+DOVARCFG.PRM_INVERSE := PRM_INVERSE;
+DOVARCFG.PRM_QALENBL := PRM_QALENBL;
+DOVARCFG.PRM_DSBL := PRM_DSBL;
 
-PRM.PRM_INVERSE := PRM_INVERSE;
-PRM.PRM_QALENBL := PRM_QALENBL;
-PRM.PRM_DSBL := PRM_DSBL;
-
-DOVARCFG.PRM := PRM;
-DOVARCFG.STA := STA;
-DOVARHMI.STA := STAINT;
+DOVARHMI.STA := DOVARCFG.STA;
 
 DOVARCFG.T_PREV := PLCCFG.TQMS;
 
@@ -304,34 +286,34 @@ END_IF;
 IF INBUF THEN
     VARBUF.CMD := 0;
     VARBUF.VALR := INT_TO_REAL(DOVARCFG.VALI);
-    VARBUF.STA := STAINT;
+    VARBUF.STA := DOVARCFG.STA;
     VARBUF.STEP1 := DOVARCFG.STEP1;
     VARBUF.T_STEP1 := DOVARCFG.T_STEP1;
 
     VARBUF.CH_CLSID := CHCFG.CLSID;
-    VARBUF.CH_STA.0 := CHCFG.STA.VRAW;
-    VARBUF.CH_STA.1 := CHCFG.STA.VALB;
-    VARBUF.CH_STA.2 := CHCFG.STA.BAD;
-    VARBUF.CH_STA.3 := CHCFG.STA.b3;
-    VARBUF.CH_STA.4 := CHCFG.STA.PNG;
-    VARBUF.CH_STA.5 := CHCFG.STA.ULNK;
-    VARBUF.CH_STA.6 := CHCFG.STA.MERR;
-    VARBUF.CH_STA.7 := CHCFG.STA.BRK;
-    VARBUF.CH_STA.8 := CHCFG.STA.SHRT;
-    VARBUF.CH_STA.9 := CHCFG.STA.NBD;
-    VARBUF.CH_STA.10 := CHCFG.STA.b10;
-    VARBUF.CH_STA.11 := CHCFG.STA.INIOTBUF;
-    VARBUF.CH_STA.12 := CHCFG.STA.INBUF;
-    VARBUF.CH_STA.13 := CHCFG.STA.FRC;
-    VARBUF.CH_STA.14 := CHCFG.STA.SML;
-    VARBUF.CH_STA.15 := CHCFG.STA.CMDLOAD;
+    VARBUF.CH_STA.0 := CHCFG.STA_VRAW;
+    VARBUF.CH_STA.1 := CHCFG.STA_VALB;
+    VARBUF.CH_STA.2 := CHCFG.STA_BAD;
+    VARBUF.CH_STA.3 := CHCFG.STA_b3;
+    VARBUF.CH_STA.4 := CHCFG.STA_PNG;
+    VARBUF.CH_STA.5 := CHCFG.STA_ULNK;
+    VARBUF.CH_STA.6 := CHCFG.STA_MERR;
+    VARBUF.CH_STA.7 := CHCFG.STA_BRK;
+    VARBUF.CH_STA.8 := CHCFG.STA_SHRT;
+    VARBUF.CH_STA.9 := CHCFG.STA_NBD;
+    VARBUF.CH_STA.10 := CHCFG.STA_b10;
+    VARBUF.CH_STA.11 := CHCFG.STA_INIOTBUF;
+    VARBUF.CH_STA.12 := CHCFG.STA_INBUF;
+    VARBUF.CH_STA.13 := CHCFG.STA_FRC;
+    VARBUF.CH_STA.14 := CHCFG.STA_SML;
+    VARBUF.CH_STA.15 := CHCFG.STA_CMDLOAD;
 END_IF;
 
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<DDTSource DDTName="CH_CFG" version="0.01" dateTime="dt#2022-01-04-12:29:57">
-		<attribute name="TypeSignatureCheckSumString" value="C66E"></attribute>
+	<DDTSource DDTName="CH_CFG" version="0.03" dateTime="dt#2022-01-14-11:13:50">
+		<attribute name="TypeSignatureCheckSumString" value="7228"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>Унікальний ідентифікатор</comment>
@@ -339,8 +321,68 @@ END_IF;
 			<variables name="CLSID" typeName="UINT">
 				<comment>ідентифікатор класу</comment>
 			</variables>
-			<variables name="STA" typeName="CH_STA">
-				<comment>біти статусу</comment>
+			<variables name="STA" typeName="INT"></variables>
+			<variables name="STA_VRAW" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу з дискретного входу</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="STA_VALB" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу для CM верхнього рівня, в режимі FRC=1 може змінюватися із-зовні</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="STA_BAD" typeName="BOOL">
+				<comment>=1 – є помилка каналу</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="STA_b3" typeName="BOOL">
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="STA_PNG" typeName="BOOL">
+				<comment>=1 прийшла відповідь від володаря, обнуляється каналом</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="STA_ULNK" typeName="BOOL">
+				<comment>=1 – якщо використовується в змінній DIVAR/AIVAR/DOVAR/AOVAR</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STA_MERR" typeName="BOOL">
+				<comment>=1 – є помилка модулю (діагностична інформація)</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="STA_BRK" typeName="BOOL">
+				<comment>=1 – помилка обриву каналу</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STA_SHRT" typeName="BOOL">
+				<comment>=1 – помилка КЗ</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="STA_NBD" typeName="BOOL">
+				<comment>=1 – фізично канал не існує; наприклад, для відображення в буфері модуля MODULS, для використання резерву каналів не прив’язаних до фізичних</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_b10" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="STA_INIOTBUF" typeName="BOOL">
+				<comment>=1 - в буфері IoT </comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="STA_INBUF" typeName="BOOL">
+				<comment>=1 – в буфері</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="STA_FRC" typeName="BOOL">
+				<comment>=1 – значення форсоване</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="STA_SML" typeName="BOOL">
+				<comment>=1 – значення імітується</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="STA_CMDLOAD" typeName="BOOL">
+				<comment>=1 - запит на зчитування в буфер (тільки з HMI)</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
 			<variables name="CMD" typeName="INT">
 				<comment>командне слово</comment>
@@ -353,57 +395,8 @@ END_IF;
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="CH_STA" version="0.01" dateTime="dt#2022-01-04-12:25:41">
-		<attribute name="TypeSignatureCheckSumString" value="0E47"></attribute>
-		<structure>
-			<variables name="VRAW" typeName="BOOL">
-				<comment>=1 – значення дискретного сигналу з дискретного входу</comment>
-			</variables>
-			<variables name="VALB" typeName="BOOL">
-				<comment>=1 – значення дискретного сигналу для CM верхнього рівня, в режимі FRC=1 може змінюватися із-зовні</comment>
-			</variables>
-			<variables name="BAD" typeName="BOOL">
-				<comment>=1 – є помилка каналу</comment>
-			</variables>
-			<variables name="b3" typeName="BOOL"></variables>
-			<variables name="PNG" typeName="BOOL">
-				<comment>=1 прийшла відповідь від володаря, обнуляється каналом</comment>
-			</variables>
-			<variables name="ULNK" typeName="BOOL">
-				<comment>=1 – якщо використовується в змінній DIVAR/AIVAR/DOVAR/AOVAR</comment>
-			</variables>
-			<variables name="MERR" typeName="BOOL">
-				<comment>=1 – є помилка модулю (діагностична інформація)</comment>
-			</variables>
-			<variables name="BRK" typeName="BOOL">
-				<comment>=1 – помилка обриву каналу</comment>
-			</variables>
-			<variables name="SHRT" typeName="BOOL">
-				<comment>=1 – помилка КЗ</comment>
-			</variables>
-			<variables name="NBD" typeName="BOOL">
-				<comment>=1 – фізично канал не існує; наприклад, для відображення в буфері модуля MODULS, для використання резерву каналів не прив’язаних до фізичних</comment>
-			</variables>
-			<variables name="b10" typeName="BOOL"></variables>
-			<variables name="INIOTBUF" typeName="BOOL">
-				<comment>=1 - в буфері IoT </comment>
-			</variables>
-			<variables name="INBUF" typeName="BOOL">
-				<comment>=1 – в буфері</comment>
-			</variables>
-			<variables name="FRC" typeName="BOOL">
-				<comment>=1 – значення форсоване</comment>
-			</variables>
-			<variables name="SML" typeName="BOOL">
-				<comment>=1 – значення імітується</comment>
-			</variables>
-			<variables name="CMDLOAD" typeName="BOOL">
-				<comment>=1 - запит на зчитування в буфер (тільки з HMI)</comment>
-			</variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="DOVAR_CFG" version="0.01" dateTime="dt#2022-01-04-18:47:03">
-		<attribute name="TypeSignatureCheckSumString" value="45AC"></attribute>
+	<DDTSource DDTName="DOVAR_CFG" version="0.02" dateTime="dt#2022-01-16-19:58:50">
+		<attribute name="TypeSignatureCheckSumString" value="757F"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>Унікальний ідентифікатор</comment>
@@ -411,14 +404,125 @@ END_IF;
 			<variables name="CLSID" typeName="UINT">
 				<comment>16#1010</comment>
 			</variables>
-			<variables name="STA" typeName="DOVAR_STA">
+			<variables name="STA" typeName="INT">
 				<comment>статус (див STC)</comment>
+			</variables>
+			<variables name="STA_VRAW" typeName="BOOL">
+				<comment>=1 – значення дискретного сигналу з DOCH</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="STA_VALB" typeName="BOOL">
+				<comment>=1 – значення дискретної вихідної змінної після всіх перетворень, в режимі FRC=1 може змінюватися із-зовні</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="STA_BAD" typeName="BOOL">
+				<comment>=1 – Дані недостовірні {A.BAD.2}</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="STA_ALDIS" typeName="BOOL">
+				<comment>=1 - Тривога виведена з експлуатації {A.MSG.3}</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="STA_DLNK" typeName="BOOL">
+				<comment>=1 – якщо прив’язаний до каналу</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="STA_ENBL" typeName="BOOL">
+				<comment>=1 – змінна задіяна = (NOT PRM.7 AND DLNK)</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STA_b6" typeName="BOOL">
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="STA_VALPRV" typeName="BOOL">
+				<comment>значення на попередньому циклі</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STA_b8" typeName="BOOL">
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="STA_MVAL" typeName="BOOL">
+				<comment>=1 – ручне (форсоване) значення</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_b10" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="STA_b11" typeName="BOOL">
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="STA_INBUF" typeName="BOOL">
+				<comment>=1 – змінна в буфері</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="STA_FRC" typeName="BOOL">
+				<comment>=1 - Режим форсування{A.MSG.13}</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="STA_SML" typeName="BOOL">
+				<comment>=1 – змінна в режимі симуляції</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="STA_CMDLOAD" typeName="BOOL">
+				<comment>=1 – команда завантаження в буфер</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
 			<variables name="VALI" typeName="INT">
 				<comment>для відображення значення при не форсуванні, використовується для введення значення з буфера при форсуванні</comment>
 			</variables>
-			<variables name="PRM" typeName="DOVAR_PRM">
+			<variables name="PRM" typeName="INT">
 				<comment>параметри</comment>
+			</variables>
+			<variables name="PRM_b0" typeName="BOOL">
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="PRM_b1" typeName="BOOL">
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="PRM_INVERSE" typeName="BOOL">
+				<comment>=1 – інвертувати сире значення</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="PRM_b3" typeName="BOOL">
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="PRM_b4" typeName="BOOL">
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="PRM_b5" typeName="BOOL">
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="PRM_QALENBL" typeName="BOOL">
+				<comment>=1 – задіяти тривогу недостовірності каналу</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="PRM_DSBL" typeName="BOOL">
+				<comment>=1 – змінна не задіяна</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="PRM_b8" typeName="BOOL">
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="PRM_b9" typeName="BOOL">
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="PRM_b10" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="PRM_b11" typeName="BOOL">
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="PRM_b12" typeName="BOOL">
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="PRM_b13" typeName="BOOL">
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="PRM_b14" typeName="BOOL">
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="PRM_b15" typeName="BOOL">
+				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
 			<variables name="CHID" typeName="UINT">
 				<comment>Логічний номер дискретного каналу</comment>
@@ -435,78 +539,6 @@ END_IF;
 			<variables name="T_PREV" typeName="UDINT">
 				<comment>час в мс з попереднього виклику, береться зі структури PLC_CFG.TQMS</comment>
 			</variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="DOVAR_STA" version="0.01" dateTime="dt#2022-01-04-18:37:17">
-		<attribute name="TypeSignatureCheckSumString" value="A198"></attribute>
-		<structure>
-			<variables name="VRAW" typeName="BOOL">
-				<comment>=1 – значення дискретного сигналу з DOCH</comment>
-			</variables>
-			<variables name="VALB" typeName="BOOL">
-				<comment>=1 – значення дискретної вихідної змінної після всіх перетворень, в режимі FRC=1 може змінюватися із-зовні</comment>
-			</variables>
-			<variables name="BAD" typeName="BOOL">
-				<comment>=1 – Дані недостовірні {A.BAD.2}</comment>
-			</variables>
-			<variables name="ALDIS" typeName="BOOL">
-				<comment>=1 - Тривога виведена з експлуатації {A.MSG.3}</comment>
-			</variables>
-			<variables name="DLNK" typeName="BOOL">
-				<comment>=1 – якщо прив’язаний до каналу</comment>
-			</variables>
-			<variables name="ENBL" typeName="BOOL">
-				<comment>=1 – змінна задіяна = (NOT PRM.7 AND DLNK)</comment>
-			</variables>
-			<variables name="STAb6" typeName="BOOL"></variables>
-			<variables name="VALPRV" typeName="BOOL">
-				<comment>значення на попередньому циклі</comment>
-			</variables>
-			<variables name="STAb8" typeName="BOOL"></variables>
-			<variables name="MVAL" typeName="BOOL">
-				<comment>=1 – ручне (форсоване) значення</comment>
-			</variables>
-			<variables name="STAb10" typeName="BOOL"></variables>
-			<variables name="STAb11" typeName="BOOL"></variables>
-			<variables name="INBUF" typeName="BOOL">
-				<comment>=1 – змінна в буфері</comment>
-			</variables>
-			<variables name="FRC" typeName="BOOL">
-				<comment>=1 - Режим форсування{A.MSG.13}</comment>
-			</variables>
-			<variables name="SML" typeName="BOOL">
-				<comment>=1 – змінна в режимі симуляції</comment>
-			</variables>
-			<variables name="CMDLOAD" typeName="BOOL">
-				<comment>=1 – команда завантаження в буфер</comment>
-			</variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="DOVAR_PRM" version="0.01" dateTime="dt#2022-01-04-18:39:46">
-		<attribute name="TypeSignatureCheckSumString" value="BDE9"></attribute>
-		<structure>
-			<variables name="PRMb0" typeName="BOOL"></variables>
-			<variables name="PRMb1" typeName="BOOL"></variables>
-			<variables name="PRM_INVERSE" typeName="BOOL">
-				<comment>=1 – інвертувати сире значення</comment>
-			</variables>
-			<variables name="PRMb3" typeName="BOOL"></variables>
-			<variables name="PRMb4" typeName="BOOL"></variables>
-			<variables name="PRMb5" typeName="BOOL"></variables>
-			<variables name="PRM_QALENBL" typeName="BOOL">
-				<comment>=1 – задіяти тривогу недостовірності каналу</comment>
-			</variables>
-			<variables name="PRM_DSBL" typeName="BOOL">
-				<comment>=1 – змінна не задіяна</comment>
-			</variables>
-			<variables name="PRMb8" typeName="BOOL"></variables>
-			<variables name="PRMb9" typeName="BOOL"></variables>
-			<variables name="PRMb10" typeName="BOOL"></variables>
-			<variables name="PRMb11" typeName="BOOL"></variables>
-			<variables name="PRMb12" typeName="BOOL"></variables>
-			<variables name="PRMb13" typeName="BOOL"></variables>
-			<variables name="PRMb14" typeName="BOOL"></variables>
-			<variables name="PRMb15" typeName="BOOL"></variables>
 		</structure>
 	</DDTSource>
 	<DDTSource DDTName="DOVAR_HMI" version="0.01" dateTime="dt#2022-01-06-17:24:59">
@@ -648,8 +680,8 @@ END_IF;
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="PLC_CFG" version="0.06" dateTime="dt#2022-01-04-10:29:24">
-		<attribute name="TypeSignatureCheckSumString" value="BF83"></attribute>
+	<DDTSource DDTName="PLC_CFG" version="0.11" dateTime="dt#2022-01-13-12:47:32">
+		<attribute name="TypeSignatureCheckSumString" value="1691"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>Унікальний ідентифікатор</comment>
@@ -657,8 +689,70 @@ END_IF;
 			<variables name="CLSID" typeName="UINT">
 				<comment>16#21xx</comment>
 			</variables>
-			<variables name="STA" typeName="PLC_STA">
-				<comment>біти статусу</comment>
+			<variables name="STA" typeName="UINT"></variables>
+			<variables name="STA_CON2ERR" typeName="BOOL">
+				<comment>є помилка звязку з сусідні ПЛК в парі (для теплого резерування)</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="STA_PLC2STOP" typeName="BOOL">
+				<comment>спарений ПЛК в стопі (для теплого резерування)</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="STA_BLK" typeName="BOOL">
+				<comment>є хоча б один заблокований ВМ</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="STA_ALDIS" typeName="BOOL">
+				<comment>є хоча б одна відключена тривога</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="STA_DIOON" typeName="BOOL">
+				<comment>йде опитування по мережі (MODBUS або аналогічній) засобів віддаленого вводу/виводу</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="STA_DIOERR" typeName="BOOL">
+				<comment>є помилка на DIO</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STA_DBLCKALL" typeName="BOOL">
+				<comment>усі приводи розблоковані</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="STA_FRC" typeName="BOOL">
+				<comment>хоча б одна змінна форсована на будь якому рівні</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STA_SMLALL" typeName="BOOL">
+				<comment>все в режимі в імітації, примушує усі CM перейти в режим імітації</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="STA_DISP" typeName="BOOL">
+				<comment>хоча б один елемент в режимі ручного управління</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_FRC2" typeName="BOOL">
+				<comment>є хоча б один форсований керівний елемент (рівня 2), клапан, двигун</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="STA_FRC1" typeName="BOOL">
+				<comment>хоча б одна змінна форсована (рівня 1)</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="STA_SCN1" typeName="BOOL">
+				<comment>перший скан</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="STA_FRC0" typeName="BOOL">
+				<comment>хоча б одна змінна форсована (рівня 0)</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="STA_SML" typeName="BOOL">
+				<comment> хоча б один об’єкт в режимі імітації</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="STA_CMDACK" typeName="BOOL">
+				<comment>підтвердження команди, команда пройшла через весь цикл задачі і отримана усіма</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
 			<variables name="CMD" typeName="UINT">
 				<comment>Команди з HMI</comment>
@@ -672,11 +766,135 @@ END_IF;
 			<variables name="PRM2" typeName="UINT">
 				<comment>дискретні параметри</comment>
 			</variables>
-			<variables name="PLS" typeName="PLS">
-				<comment>бітові міандри</comment>
+			<variables name="PLS" typeName="UINT">
+				<comment>бітові міандри та імпульси по часу</comment>
 			</variables>
-			<variables name="ALM1" typeName="PLC_ALM1">
-				<comment>біти алармів</comment>
+			<variables name="PLS_P100MS" typeName="BOOL">
+				<comment>100 мс</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="PLS_P200MS" typeName="BOOL">
+				<comment>200 мс</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="PLS_P500MS" typeName="BOOL">
+				<comment>500 мс</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="PLS_P1S" typeName="BOOL">
+				<comment>1 с</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="PLS_P2S" typeName="BOOL">
+				<comment>2 с</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="PLS_P5S" typeName="BOOL">
+				<comment>5 с</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="PLS_P10S" typeName="BOOL">
+				<comment>10 с</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="PLS_P60S" typeName="BOOL">
+				<comment>1 хв</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="PLS_M1S" typeName="BOOL">
+				<comment>меандр з періодом 1 с (0.5 с + 0.5 с)</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="PLS_M2S" typeName="BOOL">
+				<comment>меандр з періодом 2 с (1 с + 1 с)</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="PLS_b10" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="PLS_b11" typeName="BOOL">
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="PLS_NEWMIN" typeName="BOOL">
+				<comment>=1 на один цикл основної задачі – початок хвилини</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="PLS_NEWHR" typeName="BOOL">
+				<comment>=1 на один цикл основної задачі – початок години</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="PLS_NEWDAY" typeName="BOOL">
+				<comment>=1 на один цикл основної задачі – початок доби</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="PLS_NEWSHIFT" typeName="BOOL">
+				<comment>=1 на один цикл основної задачі – початок зміни</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="ALM1" typeName="UINT"></variables>
+			<variables name="ALM_ALM" typeName="BOOL">
+				<comment>активна технологічна тривога</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="ALM_NWALM" typeName="BOOL">
+				<comment>зявилась нова технологічна тривога</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="ALM_ALMNACK" typeName="BOOL">
+				<comment>квітування технологічної тривоги</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="ALM_WRN" typeName="BOOL">
+				<comment>активне технологічне попередження</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="ALM_NWWRN" typeName="BOOL">
+				<comment>зявилось нове технологічне попередження</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="ALM_WRNNACK" typeName="BOOL">
+				<comment>квітування технологічного попередження</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="ALM_BAD" typeName="BOOL">
+				<comment>активна тривога недостовірності даних</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="ALM_NWBAD" typeName="BOOL">
+				<comment>нова тривога недостовірності даних</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="ALM_BADNACK" typeName="BOOL">
+				<comment>квітування тривоги недостовірності даних</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="ALM_EMCYSTP" typeName="BOOL">
+				<comment>швидкий зупин</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="ALM_STP2RUN" typeName="BOOL">
+				<comment>є перехід з стану стоп в стан ран</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="ALM_CON2ERR" typeName="BOOL">
+				<comment>є помилка звязку з сусідні ПЛК в парі (для теплого резерування)</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="ALM_PLC2STOP" typeName="BOOL">
+				<comment>спарений ПЛК в стопі (для теплого резерування)</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="ALM_DIOERR" typeName="BOOL">
+				<comment>є помилка на DIO </comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="ALM_PLCERR" typeName="BOOL">
+				<comment>є апаратна помилка (ПЛК)</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="ALM_CONHIERR" typeName="BOOL">
+				<comment>є помилка звязку з верхнім рівнем</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
 			<variables name="ALM2" typeName="INT">
 				<comment>біти алармів</comment>
@@ -767,161 +985,6 @@ END_IF;
 			</variables>
 			<variables name="TQMS" typeName="UDINT">
 				<comment>мілісекундний лічильник, скидається при старті або після переповнення</comment>
-			</variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="PLC_STA" version="0.01" dateTime="dt#2022-01-04-09:59:51">
-		<attribute name="TypeSignatureCheckSumString" value="DBBA"></attribute>
-		<structure>
-			<variables name="CON2ERR" typeName="BOOL">
-				<comment>=1 - є помилка звязку з сусідні ПЛК в парі (для теплого резерування)</comment>
-			</variables>
-			<variables name="PLC2STOP" typeName="BOOL">
-				<comment>=1 - спарений ПЛК в стопі (для теплого резерування)</comment>
-			</variables>
-			<variables name="BLK" typeName="BOOL">
-				<comment>=1 – є хоча б один заблокований ВМ</comment>
-			</variables>
-			<variables name="ALDIS" typeName="BOOL">
-				<comment>=1 – є хоча б одна відключена тривога</comment>
-			</variables>
-			<variables name="DIOON" typeName="BOOL">
-				<comment>=1 - йде опитування по мережі (MODBUS або аналогічній) засобів віддаленого вводу/виводу</comment>
-			</variables>
-			<variables name="DIOERR" typeName="BOOL">
-				<comment>=1 - є помилка на DIO</comment>
-			</variables>
-			<variables name="DBLCKALL" typeName="BOOL">
-				<comment>=1 - усі приводи розблоковані</comment>
-			</variables>
-			<variables name="FRC" typeName="BOOL">
-				<comment>=1 – хоча б одна змінна форсована на будь якому рівні</comment>
-			</variables>
-			<variables name="SMLALL" typeName="BOOL">
-				<comment>=1 – все в режимі в імітації, примушує усі CM перейти в режим імітації</comment>
-			</variables>
-			<variables name="DISP" typeName="BOOL">
-				<comment>=1 – хоча б один елемент в режимі ручного управління</comment>
-			</variables>
-			<variables name="FRC2" typeName="BOOL">
-				<comment>=1 – є хоча б один форсований керівний елемент (рівня 2), клапан, двигун</comment>
-			</variables>
-			<variables name="FRC1" typeName="BOOL">
-				<comment>=1 – хоча б одна змінна форсована (рівня 1)</comment>
-			</variables>
-			<variables name="SCN1" typeName="BOOL">
-				<comment>=1 – перший скан</comment>
-			</variables>
-			<variables name="FRC0" typeName="BOOL">
-				<comment>=1 – хоча б одна змінна форсована (рівня 0)</comment>
-			</variables>
-			<variables name="SML" typeName="BOOL">
-				<comment>=1 – хоча б один об’єкт в режимі імітації</comment>
-			</variables>
-			<variables name="CMDACK" typeName="BOOL">
-				<comment>=1 - підтвердження команди, команда пройшла через весь цикл задачі і отримана усіма</comment>
-			</variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="PLS" version="0.01" dateTime="dt#2022-01-04-10:03:28">
-		<attribute name="TypeSignatureCheckSumString" value="3421"></attribute>
-		<structure>
-			<variables name="P100MS" typeName="BOOL">
-				<comment>100 мс</comment>
-			</variables>
-			<variables name="P200MS" typeName="BOOL">
-				<comment>200 мс</comment>
-			</variables>
-			<variables name="P500MS" typeName="BOOL">
-				<comment>500 мс</comment>
-			</variables>
-			<variables name="P1S" typeName="BOOL">
-				<comment>1 с</comment>
-			</variables>
-			<variables name="P2S" typeName="BOOL">
-				<comment>2 с</comment>
-			</variables>
-			<variables name="P5S" typeName="BOOL">
-				<comment>5 с</comment>
-			</variables>
-			<variables name="P10S" typeName="BOOL">
-				<comment>10 с</comment>
-			</variables>
-			<variables name="P60S" typeName="BOOL">
-				<comment>1 хв</comment>
-			</variables>
-			<variables name="M1S" typeName="BOOL">
-				<comment>меандр з періодом 1 с (0.5 с + 0.5 с)</comment>
-			</variables>
-			<variables name="M2S" typeName="BOOL">
-				<comment>меандр з періодом 2 с (1 с + 1 с)</comment>
-			</variables>
-			<variables name="b10" typeName="BOOL"></variables>
-			<variables name="b11" typeName="BOOL"></variables>
-			<variables name="NEWMIN" typeName="BOOL">
-				<comment>=1 (на один цикл основної задачі) – початок хвилини</comment>
-			</variables>
-			<variables name="NEWHR" typeName="BOOL">
-				<comment>=1 (на один цикл основної задачі) – початок години</comment>
-			</variables>
-			<variables name="NEWDAY" typeName="BOOL">
-				<comment>=1 (на один цикл основної задачі) – початок доби</comment>
-			</variables>
-			<variables name="NEWSHIFT" typeName="BOOL">
-				<comment>=1 (на один цикл основної задачі) – початок зміни</comment>
-			</variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="PLC_ALM1" version="0.01" dateTime="dt#2022-01-04-10:12:23">
-		<attribute name="TypeSignatureCheckSumString" value="6ADE"></attribute>
-		<structure>
-			<variables name="ALM" typeName="BOOL">
-				<comment>=1 - активна технологічна тривога</comment>
-			</variables>
-			<variables name="NWALM" typeName="BOOL">
-				<comment>=1 - зявилась нова технологічна тривога</comment>
-			</variables>
-			<variables name="ALMNACK" typeName="BOOL">
-				<comment>=1 - квітування технологічної тривоги</comment>
-			</variables>
-			<variables name="WRN" typeName="BOOL">
-				<comment>=1 - активне технологічне попередження</comment>
-			</variables>
-			<variables name="NWWRN" typeName="BOOL">
-				<comment>=1 - зявилось нове технологічне попередження</comment>
-			</variables>
-			<variables name="WRNNACK" typeName="BOOL">
-				<comment>=1 - квітування технологічного попередження</comment>
-			</variables>
-			<variables name="BAD" typeName="BOOL">
-				<comment>=1 - активна тривога недостовірності даних</comment>
-			</variables>
-			<variables name="NWBAD" typeName="BOOL">
-				<comment>=1 - нова тривога недостовірності даних</comment>
-			</variables>
-			<variables name="BADNACK" typeName="BOOL">
-				<comment>=1 - квітування тривоги недостовірності даних</comment>
-			</variables>
-			<variables name="EMCYSTP" typeName="BOOL">
-				<comment>=1 - швидкий зупин</comment>
-			</variables>
-			<variables name="STP2RUN" typeName="BOOL">
-				<comment>=1 - зперехід з стану стоп в стан ран</comment>
-			</variables>
-			<variables name="CON2ERR" typeName="BOOL">
-				<comment>=1 - є помилка звязку з сусідні ПЛК в парі (для теплого резерування)</comment>
-			</variables>
-			<variables name="PLC2STOP" typeName="BOOL">
-				<comment>=1 - спарений ПЛК в стопі (для теплого резерування)</comment>
-			</variables>
-			<variables name="DIOERR" typeName="BOOL">
-				<comment>=1 - є помилка DIO</comment>
-			</variables>
-			<variables name="PLCERR" typeName="BOOL">
-				<comment>=1 – є апаратна помилка (ПЛК)</comment>
-			</variables>
-			<variables name="CONHIERR" typeName="BOOL">
-				<comment>=1 - помилка звязку з верхнім рівнем</comment>
 			</variables>
 		</structure>
 	</DDTSource>
