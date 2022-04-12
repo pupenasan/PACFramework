@@ -1,3 +1,5 @@
+This text was translated using Google Translate. You can comment on the translation in [this topic](https://github.com/pupenasan/PACFramework/issues/52)
+
 ## 1.1 Prerequisites and main ideas
 
 Requirements for the functionality of the framework are formed as a result of the analysis of the requirements for the functioning of ICS for various purposes, the problems of their development, commissioning and operation. Among them are the following:

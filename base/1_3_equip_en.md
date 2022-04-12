@@ -1,231 +1,224 @@
-## 1.3 Ієрархія устатковання в PACFramework
+This text was translated using Google Translate. You can comment on the translation in [this topic](https://github.com/pupenasan/PACFramework/issues/52)
 
-Рівень модулів керування є характерним для всіх типів виробництв, тому він пророблений в каркасі найкраще. Устатковання для інших рівнів використовується за необхідності. 
+## 1.3 Equipment Hierarchy in the PACFramework
 
-### Ієрархія устатковання рівня CM
+The level of control modules is typical for all types of production, so it is best designed in the Framework. Equipment for other levels is used as needed.
 
-#### Ієрархія CM
+### CM level Equipment hierarchy
 
-ISA-88 та ISA-95 дозволяє включати модулі керування (CM) в інші модулі керування. У каркасі, незалежно від типу технологічного процесу, яким керує АСКТП, на рівні **модулів керування** (**Control Module**) виділяються типові апаратурні об'єкти принаймні 3-х рівнів (див. рис.1.3.1):
+#### CM Hierarchy
 
-- LVL0 (**channels**) - **канали контролеру**: для діагностики каналу, прив'язки логічних каналів до фізичних, форсування входів/виходів:
+ISA-88 and ISA-95 allow you to include control modules (CM) in other control modules. In the framework, regardless of the type of technological process controlled by ICS, at the level of **control modules** (CM) there are typical hardware objects of at least 3 levels (see Fig.1.3.1):
 
-  - CHDI - дискретні входи,
+- LVL0 (**channels**) - **controller channels**: for channel diagnostics, binding of logical channels to physical ones, forcing of inputs/outputs:
 
-  - CHDO - дискретні виходи,
+  - CHDI - digital inputs,
 
-  - CHAI - аналогові входи,
+  - CHDO - digital outputs,
 
-  - CHAO - аналогові виходи,
+  - CHAI - analog inputs,
 
-  - CHCOM -- комунікаційні канали
+  - CHAO - analog outputs,
 
-    Крім цього до даного рівня відносяться інші об'єкти що забезпечують роботу з каналами, зокрема `MODULS` - відображення стану модулів та інтерактивна взаємодія з ними для діагностики каналу (див. карта ПЛК).   
+  - CHCOM - communication channels
 
--   LVL1 (**process variables**) - технологічні змінні для повної обробки інформації з процесу, включаючи прив'язку до каналу, фільтрацію, масштабування, інверсію і т.п.; для зручності відлагодження процесу; для функцій імітаційного моделювання; для функцій технологічної сигналізації;
-    
-    -   AIVAR - аналогові вхідні,
-    
-    -   AOVAR - аналогові вихідні,
-    
-    -   DIVAR - дискретні вхідні,
-    
-    -   DOVAR - дискретні вихідні:
-    
--   LVL2 (**devices**) - рівень пристроїв та виконавчих механізмів: для зручності налагоджування процесу; для функцій імітаційного моделювання; для функцій технологічної сигналізації; для ведення статистики:
-    
-    -   виконавчі механізми (запірні клапани, регулюючі клапани, двигуни, насоси);
-    -   контури регулювання та управління: для функцій керування зі зворотним зв'язком;
-    -   інші пристрої, що включають кілька технологічних змінних та мають окремо виділені стани 
+
+  In addition, this level includes other objects that provide work with channels, in particular `MODULS` - display the status of modules and interactive interaction with them for channel diagnostics (see PLC map).
+
+- LVL1 (**process variables**) - variables for complete processing of information from the process, including channel binding, filtering, scaling, inversion, etc .; for the convenience of debugging the process; for simulation functions; for process alarm functions;
+
+  - AIVAR - analog input,
+
+  - AOVAR - analog output,
+
+  - DIVAR - digital input,
+
+  - DOVAR - digital output: 
+
+- LVL2 (**devices**) - level of devices and actuators: for the convenience of debugging the process; for simulation functions; for process alarm functions; for statistics:
+
+  - actuators (shut-off valves, control valves, motors, pumps);
+  - control loops: for feedback control functions;
+  - other devices that include several process variables and have separate states
 
 
 ![image-20220218134725035](media/1_4.png)
 
-Рис.1.3.1. Ієрархія CM.
+Рис.1.3.1. CM Hierarchy.
 
-Усі наведені вище елементи з точки зору ISA-88 є Модулями керування (CM, Control Module), а з точки зору ISA-106 -- Пристроями (Device). Для уніфікації назв ми користуємося термінологією ISA-88, як діючою на сьогоднішній день. Усі CM-ми формують трирівневу ієрархію, що дозволяється стандартом ISA-88.
+All of the above elements in terms of ISA-88 are Control Modules (CM), and in terms of ISA-106 - Devices. To unify the names, we use ISA-88 terminology as it is valid today. All CMs form a three-tier hierarchy, as permitted by the ISA-88 standard.
 
-Трирівнева архітектура передбачає модель взаємодії між рівнями:
+The three-level architecture provides a model of interaction between levels:
 
--   обробка усіх елементів незалежно від рівня проводиться паралельно, тобто вкладеності виклику POU немає, модель підлеглості реалізовується через механізм заволодівання (Allocation), або звичайними програмними зв'язками;
+- processing of all elements regardless of the level is carried out in parallel, ie there is no nesting of the POU call, the model of subordination is implemented through the mechanism of Allocation, or the usual software links;
 
--   2-й рівень (виконавчий механізм, регулятор) не може взаємодіяти безпосередньо з 0-м (каналом);
+- 2nd level (actuator, controller) can not interact directly with the 0th (channel);
 
--   усі елементи вищого рівня можуть взаємодіяти з будь-якими елементами нижчих, за винятком 0-го рівня (див. попередній пункт)
+- all higher level elements can interact with any lower level elements except level 0 (see previous paragraph)
 
--   вищий рівень може змінювати стан нижчого: змінювати його значення, переключати в різні режими (форсування, імітація), змінювати налаштування тривог і т.д.
+- the higher level can change the state of the lower: change its value, switch to different modes (forcing, simulation), change the alarm settings, etc.
 
--   елемент 1-го рівня (змінні) може заволодіти (allocation) елементом 0-го (канали)
+- element of the 1st level (variables) can allocation element of the 0th (channels)
 
--   0-й рівень (канал) знає хто ним володіє
+- Level 0 (channel) knows who owns it
 
--   1-й рівень (змінна) знає ким він володіє
+- Level 1 (variable) knows who he owns
 
--   при реалізації об'єктів на різних пристроях (в розподілених системах) механізм взаємодії між ними відбувається через пару СТАН-КОМАНДА (механізм описаний нижче) а при реалізації в тому ж пристрої дозволяється використовувати як безпосередню зміну значення у підлеглого об'єкту (прямий доступ), так і через взаємодію СТАН-КОМАНДА.
+- when implementing objects on different devices (in distributed systems) the mechanism of interaction between them is through a pair STATE-COMMAND (the mechanism is described below) and when implementing in the same device can be used as a direct change of value of the slave object (direct access ) and through the interaction of the STATE-COMMAND .
 
-#### Канали (LVL0) та карта ПЛК
+#### Channels (LVL0) and PLC map
 
-Найнижчий рівень модулів керування (**канали**) забезпечує абстрагування від конкретики пристроїв (ПЛК, розподілена периферія, тощо). Тобто реалізація цього рівня залежить як від вибраної платформи так і способу реалізації. Елементи CM типу «канали» представляють масиви усіх існуючих каналів контролеру, незалежно від їх розташування (локальне шасі, віддалений ввод/вивід) і задіяння (використання) в процесі. Кожен елемент масиву ідентифікується за унікальним номером, а прив'язка до фізичного каналу відбувається жорстко на програмному рівні. CM-ми типу «канал» прив'язують свої значення до фізичного значення конкретного каналу, а також виконують наступні функції:
+The lowest level of control modules (**channels**) provides abstraction from the specifics of devices (PLC, distributed peripherals, etc.). That is, the implementation of this level depends on both the chosen platform and the method of implementation. CM elements "channels" represent the arrays of all existing channels of the controller, regardless of their location (local chassis, remote I/O) and involvement (use) in the process. Each element of the array is identified by a unique number, and binding to the physical channel is rigid at the software level. CMs of the "channel" type bind their values to the physical value of a particular channel, and also perform the following functions:
 
--   надають діагностичну інформацію вищим рівням CM -- як мінімум ознаку достовірності, а за можливості і причину відмови/несправності каналу;
+- provide diagnostic information to higher levels of CM - at least a sign of reliability, and if possible, the cause of failure of the channel;
 
--   передбачають режим форсування значення:
+- provide a mode of forcing the value:
 
-    -   примусова зміна значення вхідного каналу, незалежно від значення входу;
+     - forced change of the value of the input channel, regardless of the value of the input;
 
-    -   примусова зміна значення вихідного каналу, незалежно від значення, що передається на нього змінною;
+     - forced change of the value of the output channel, regardless of the value transmitted to it by the variable;
 
--   показують факт прив'язки до каналу технологічної змінної та номер змінної;
+- show the fact of binding to the channel of the process variable and the number of the variable;
 
-На рис.1.3.2-1.3.4 показані приклади дисплейних кадрів з реалізацією вказаних функцій на різних платформах з різними ресурсними обмеженнями. Такі мнемосхеми надалі в каркасі звуться **картою ПЛК**. Символом «+» відмічені задіяні в ПЛК канали. Інформація по кожному каналу доступна по натисканню на ньому. На карті ПЛК доступні функції відображення прив'язаного каналу, ознака достовірності, команди форсування. У випадку апаратної помилки канал підсвічується червоним. У реалізаціях з дуже обмеженими можливостями можливо відмовитися від певних функцій, якщо це значно ускладнює систему або вимагає задіювання надмірно великої частини ресурсів (див. приклад рис.1.3.4).
+Figure 1.3.2-1.3.4 shows examples of display frames with the implementation of these functions on different platforms with different resource constraints. Such mnemonics in the framework of the framework are called **PLC map**. The "+" symbol indicates the channels involved in the PLC. Information on each channel is available by clicking on it. On the PLC map, the functions of displaying the linked channel, the indication of authenticity, and the boost command are available. In the event of a hardware error, the channel is highlighted in red. In implementations with very limited capabilities, it is possible to abandon certain functions if it significantly complicates the system or requires the use of too many resources (see example in Fig.1.3.4).
 
 ![](media/1_5.png)
 
-Рис.1.3.2 Приклад використання функцій каналів на HMI (варіант з достатніми ресурсами Simatic Comfort Panel: TIA).
+Рис.1.3.2 Example of using channel functions on HMI (option with sufficient resources Simatic Comfort Panel: TIA).
 
 ![](media/1_6.png)
 
-Рис.1.3.3 Приклад використання функцій каналів на HMI (варіант з середніми ресурсами Magelis: VijeoDesigner).
+Рис.1.3.3 Example of using channel functions on HMI (option with medium resources Magelis: VijeoDesigner).
 
 ![](media/1_7.png)
 
-Рис.1.3.4 Приклад використання функцій каналів на HMI (варіант з обмеженими ресурсами Simatic Basic Panel TIA).
+Рис.1.3.4 Example of using HMI channel functions (limited resource option Simatic Basic Panel TIA).
 
-#### Технологічні змінні (LVL1) та карта змінних
+#### Process Variables (LVL1) and Variable Map
 
-СМ-ми першого рівня, типу **технологічні змінні** можуть бути прив'язані до каналу того ж типу (наприклад дискретний вхід до дискретної вхідної технологічної змінної) по їх номеру. Таким чином прив'язка технологічної змінної до каналу є динамічною, що дозволяє змінювати розташування фізичного підключення конкретного датчика/ВМ у випадку виходу з ладу частини системи. Крім того, таке переключення може бути програмним.
+SMs of the first level, type **process variables** can be tied to a channel of the same type (for example, a digital input to a digital input process variable) by their number. Thus, the binding of the process variable to the channel is dynamic, which allows you to change the location of the physical connection of a particular sensor/actuator in the event of failure of part of the system. In addition, such switching can be software.
 
-Технологічні змінні знаходяться вище за канали по ієрархії керування. Уся діагностична інформація передається від каналів до змінних. Реалізація цього рівня не залежить від апаратних особливостей контролера, так як усі платформо-залежні тонкощі реалізується на рівні каналів, інтерфейс яких є стандартизованим в каркасі. Технологічні змінні забезпечують наступну функціональність:
+Process variables are higher than the channels in the control hierarchy. All diagnostic information is transmitted from channels to variables. The implementation of this level does not depend on the hardware features of the controller, as all platform-dependent subtleties are implemented at the level of channels, the interface of which is standardized in the framework. Process variables provide the following functionality:
 
--   прив'язка до каналу за його номером та типом
+-   link to the channel by its number and type
 
--   відключення з обслуговування (деактивація тривог змінної, врахування верхніми рівнями)
 
--   відслідковування достовірності значення за помилкою прив'язаного каналу, виходу за діапазон вимірювальної величини, тощо;
+-   out from service (deactivation of alarms of a variable, the account of the top levels)
+-   tracking the reliability of the value of the error of the tied channel, out of range of the measured value, etc .;
+-   diagnostics of the channel (transmission of diagnostic information from the linked channel to the higher level)
+-   processing of input/output value: scaling (including, if necessary, piecewise linear interpolation), filtering, inversion (for digital variables);
+-   the presence of the mode of manual change (forcing); according to ISA-88 - "manual mode"
+-   the presence of simulation mode, in which for input variables, the value is changed by CM-mothers of the upper level (or an independent program), and for output variables, the values of output channels are frozen
+-   alarm handling (ISA 18.2): response to threshold values, taking into account delay (if necessary, the limits are set by individual settings), hysteresis, formation of the general system bit of the accident/warning, new alarm (one cycle);
+- Alarm handling configuration (ISA 18.2): alarm settings, alarm types (alarm/warning/channel failure), temporary maintenance alarm removal;
 
--   діагностика роботи каналу (передача діагностичної інформації з прив'язаного
-
-каналу на верхній рівень)
-
--   обробка вхідного/вихідного значення: масштабування (в т.ч. за необхідністю кусочно-лінійна інтерполяція), фільтрування, інвертування (для дискретних змінних);
-
--   наявність режиму ручної зміни (форсування); відповідно до ISA-88 - «ручний режим»
-
--   наявність режиму імітації, в якому для вхідних змінних, значення змінюється CM-мами верхнього рівня (або незалежною програмою), а для вихідних змінних, відбувається замороження значень вихідних каналів
-
--   обробка тривог (ISA 18.2): реагування на порогові значення, врахування затримки на спрацювання (за необхідності межі задаються окремими уставками), гістерезис, формування загального системного біту аварії/попередження, нова тривога (на один цикл);
-
--   конфігурування обробки тривог (ISA 18.2): налаштування значень тривог, типів тривог (аварія/попередження/відмова каналу), тимчасове зняття тривоги з обслуговування;
-
-Приклад діагностики та конфігурування аналогових змінних на HMI показаний на рис.1.3.5 та рис.1.3.6 Вікна де наводяться перелік всіх технологічних змінних в каркасі називається **картою технологічних змінних**.
+An example of diagnostics and configuration of analog variables on HMI is shown in Fig.1.3.5 and Fig.1.3.6 Windows where the list of all process variables in the framework is called **map of process variables**.
 
 ![](media/1_7_1.png)
 
-Рис.1.3.5 Приклад використання функцій аналогових вхідних змінних на HMI.
+Рис.1.3.5 Example of using the functions of analog input variables on the HMI.
 
 ![](media/1_8.png)
 
-Рис.1.3.6 Приклад використання функцій аналогових вихідних змінних на HMI.
+Рис.1.3.6 An example of using the functions of analog output variables on the HMI.
 
-Статуси змінних (тривоги, відмови, форсування) супроводжують відображення змінної на всіх мнемосхемах HMI. На рис.1.3.7 показаний приклад відображення попередження для змінної PT102 для панелі з обмеженою функціональністю (Simatic Basic Panel).
+Variable statuses (alarms, failures, forcing) accompany the display of a variable on all HMI mnemonics. Figure 1.3.7 shows an example of warning display for variable PT102 for a panel with limited functionality (Simatic Basic Panel).
 
 ![](media/1_9.png) ![](media/image_2022-02-22_22-30-37.png)
 
-Рис.1.3.7 Приклади відображення статусу змінної HMI.
+Рис.1.3.7 Examples of displaying the status of the HMI variable.
 
-Окремо можуть бути виділені такі технологічні змінні:
+The following process variables can be singled out:
 
--   мережні - мають джерело даних на інших вузлах (мережні), адреса якого не може змінюватися в процесі експлуатації
+- network - have a data source on other nodes (network), the address of which can not be changed during operation
 
--   розрахункові (внутрішні) - розраховуються на базі кількох інших змінних або каналів
+- estimated (internal) - calculated on the basis of several other variables or channels
 
-Передбачається, що ці змінні будуть входити як підкласи в AIVAR, AOVAR, DIVAR, DOVAR. У функціях обробки необхідно передбачити особливість обробки цих змінних відповідно до номеру класу (CLSID) або за ID. Для зручності область ідентифікаторів (ID) для змінних також варто виділити окремо.
+It is assumed that these variables will be included as subclasses in AIVAR, AOVAR, DIVAR, DOVAR. The processing functions must be specific to the processing of these variables according to the class number (CLSID) or ID. For convenience, the area of identifiers (ID) for variables should also be allocated separately.
 
-#### Модулі керування, контури, ВМ (LVL2)
+#### Control modules, loops, actuators (LVL2)
 
-CM-ми 2-го рівня представляють собою виконавчі механізми, регулятори, тощо та включають в себе функції базового керування (згідно термінології ISA-88). Кожний такий CM передбачає двохсторонню взаємодію з «технологічними змінними» як для запису так і для читання. Це дозволяє на даному рівні окрім реалізації специфічного функціоналу для конкретного CM, забезпечувати наступні можливості:
+Level2 CMs are actuators, controllers, etc., and include basic control functions (according to ISA-88 terminology). Each such CM involves two-way interaction with "process variables" for both writing and reading. This allows at this level, in addition to the implementation of specific functionality for a particular CM, to provide the following features:
 
--   враховувати стан технологічної змінної (норма/тривога/достовірність) та діагностичну інформацію при керуванні логікою виконання CM;
+- take into account the state of the process variable (norm/alarm/reliability) and diagnostic information when managing the logic of CM execution;
 
--   імітацію роботи CM за допомогою включеного в нього моделюючого алгоритму (за необхідністю) для:
+- simulation of CM operation using the included modeling algorithm (if necessary) for:
 
-    -   розширеної моделеорієнтованої діагностики процесу;
+    - advanced model-oriented diagnostics of the process;
 
-    -   моделеорієнтованого керування;
+    - model-oriented control;
 
-    -   роботи в імітаційному режимі для демонстрації/навчання персоналу або налагодження системи;
+    - work in simulation mode for demonstration/training of personnel or debugging of the system;
 
--   включення в режим імітації CM та всіх пов'язаних з ним CM нижчого рівня;
+- switch to simulation mode of CM and all related lower level CM;
 
--   статистичну інформацію (в залежності від типу СМ)
+- statistical information (depending on the type of CM)
 
-Для кожного апаратурного об'єкту (Equipment Entity) визначається алгоритм роботи функціонального блоку/функції, структури даних (інтерфейс) для обміну з іншими підсистемами/об\'єктами.
+For each Equipment Entity the algorithm of work of the functional block/function, data structure (interface) for exchange with other subsystems/objects is defined.
 
-Структура даних та поведінка функції/ФБ сумісна з означеною в ISA-88, тобто базується на автоматах станів, режимах та інтерфейсі, означеному в стандарті.
+The data structure and behavior of the function/FB is compatible with that specified in ISA-88, ie based on state machines, modes and interface specified in the standard.
 
-На рис.1.3.8 показаний приклад конфігурування та діагностики роботи кранів.
+Figure 1.3.8 shows an example of configuration and diagnostics of cranes.
 
 ![](media/Pic1_3_8.png)
 
-Рис.1.3.8 Приклад конфігурування кранів на HMI.
+Рис.1.3.8 Example of configuring cranes on HMI.
 
-### Рівень SCADA/HMI 
+### SCADA/HMI level
 
-#### Загальні принципи розробки SCADA/HMI
+#### General principles of SCADA/HMI development
 
-Каркас передбачає використання певних правил і на рівні SCADA/HMI. Імплементація каркасу для платформ з різними функціональними можливостями показала здатність масштабування та адаптації каркасу для обладнання та ПЗ з різними можливостями. У будь якому випадку концепція вимагає передачі великої кількості даних, що значно здорожує систему у випадку ліцензування SCADA/HMI по кількості тегів вводу/виводу. Для зменшення навантаження на мережу та економії тегів вводу/виводу прийняті наступні принципи:
+The framework provides for the use of certain rules at the level of SCADA/HMI. The implementation of the framework for platforms with different functionalities has shown the ability to scale and adapt the framework for hardware and software with different capabilities. In any case, the concept requires the transfer of large amounts of data, which significantly increases the cost of the system in the case of SCADA/HMI licensing by the number of I/O tags. The following principles have been adopted to reduce network load and save I / O tags:
 
--   розділення розміщення даних реального часу від конфігураційних даних;
+- separation of real-time data placement from configuration data;
 
--   пакування бітів в слова, відмова від бітових (булевих) структур для обміну з HMI;
+- packing bits into words, abandonment of bit (Boolean) structures for exchange with HMI;
 
--   використання буферу для конфігурування однотипних об'єктів
+- use the buffer to configure the same type of objects
 
-Більш детально наведені принципи описані нижче. Хоч каркас не обмежує використання HMI у цих та всіх інших аспектах, ми рекомендуємо використовувати методики описані в стандартах ISA18.2 та ISA101.
+The principles are described in more detail below. Although the framework does not limit the use of HMI in these and all other aspects, we recommend using the techniques described in ISA18.2 and ISA101.
 
-#### Принципи використання буферного обміну
+#### Principles of using buffer-based exchange
 
-Окрім даних реального часу (RT DATA - значення змінних, статуси) з кожним CM пов'язана велика кількість конфігураційних даних (CFG DATA), які потрібно передавати в/зі SCADA/HMI тільки за необхідністю. Більшість SCADA/HMI ліцензуються за кількістю точок вводу/виводу. Тому для зменшення великої кількості конфігураційних даних що циркулюють між SCADA/HMI та контролером пропонується використовувати **буфер**. Для кожного масиву (набору) однотипних CM або інших об'єктів рекомендується використовувати свій буфер. Окремі буфери можна застосовувати для всіх об'єктів рівня. Тобто, наприклад, для усіх каналів (LVL0), змінних (LVL1) пристроїв (LVL2) можна виділити окремі буфери. Кожен CM має унікальний в межах набору ідентифікатор (може використовуватися унікальне поєднання ID та ідентифікатору класу CLSID), за яким можна його зв'язати з буфером (див. рис.1.3.9). Отримуючи команду на читання (READ\_CFG), CM завантажує свої дані в буфер та пов\'язується з ним (займає/оволодіває ним). Дані реального часу (RT DATA) постійно оновлюються в буфері, за цим слідкує реалізація CM в контролері. Це можуть бути не тільки видимі RT DATA, а додаткові відлагоджувальні дані (номер кроку, час кроку, значення інтеграла і т.п.). Конфігураційні дані оновлюються в буфері тільки по команді на читання. Це зроблено для того, щоб оператор міг змінити ці значення в буфері і записати їх в CM за командою (WRITE\_CFG).
+In addition to real-time data (RT DATA - variable values, statuses), each CM is associated with a large amount of configuration data (CFG DATA), which must be transmitted to/from SCADA/HMI only when necessary. Most SCADA/HMIs are licensed by the number of I/O points. Therefore, to reduce the large amount of configuration data circulating between SCADA/HMI and the controller, it is recommended to use **buffer**. It is recommended to use your own buffer for each array (set) of the same type of CM or other objects. Separate buffers can be applied to all level objects. That is, for example, separate buffers can be allocated for all channels (LVL0), variables (LVL1) devices (LVL2). Each CM has a unique identifier within the set (a unique combination of ID and CLSID) can be used, which can be associated with the buffer (see Figure 1.3.9). Receiving a read command (READ\_CFG), CM loads its data into the buffer and communicates with it (allocate it). Real-time data (RT DATA) is constantly updated in the buffer, followed by the implementation of CM in the controller. This can be not only visible RT DATA, but additional debugging data (step number, step time, integral value, etc.). Configuration data is updated in the buffer only on the read command. This is done so that the operator can change these values in the buffer and write them to the CM on command (WRITE\_CFG).
 
 ![](media/1_11.png)
 
-Рис.1.3.9 Приклад конфігурування кранів на HMI.
+Рис.1.3.9. Principles of using the buffer when exchanging configuration data
 
-Не дивлячись на значну економію ресурсів, використання буферу супроводжується рядом обмежень. Найбільш суттєвим обмеженням є неможливість використання буферу з 2-х та більше засобів ЛМІ. При одночасному використанні, буфер \"відбирається\" останнім користувачем. Також в каркасі наразі не пророблений механізм блокування буферу, для унеможливлювання його одночасного використання. Вирішенням може бути використання кількох буферів - для кожного клієнта окрема змінна.
+Despite the significant savings in resources, the use of the buffer is accompanied by a number of restrictions. The most significant limitation is the inability to use a buffer of 2 or more HMI tools. When used simultaneously, the buffer is "selected \" by the last user. Also, the buffer locking mechanism has not been developed in the framework so far, in order to prevent its simultaneous use. The solution may be to use multiple buffers - a separate variable for each client.
 
-Інший можливий спосіб конфігурування через буфер -- використання принципів REST(*Representational State Transfer*). Буфер не займається об'єктом, а передається окремою змінною. При запиті на читання від клієнта (SCADA/HMI або іншої підсистеми), заповнення відбувається аналогічно до попереднього способу. В змінній буфера передається уся заповнена структура, по ID і CLSID визначається об'єкт, дані про який передаються. Значення з буферу після читання записується у внутрішню змінну клієнта, після чого сеанс завершується. Навіть при одночасному зверненні, клієнт зможе проконтролювати результат запиту на читання. Аналогічно проводиться запис: спочатку проводяться зміни в локальній змінній-буфері клієнта, після чого вміст змінної копіюється в буфер ПЛК. На відміну від механізму займання буферу, оновлення змінних в буфері клієнта може відбуватися тільки постійним формування запиту на читання. Крім того, деякі засоби SCADA/HMI мають обмеження на пере-присвоєння та збереження цілісності структури буферу, що унеможливлює використання такого підходу. Однак такий підхід є кращим при реалізації рішень IIoT з використанням каркасу, так як не передбачає постійний обмін між хмарою (Cloud) та пристроєм за місцем (ПЛК, Edge).
+Another possible way to configure via the buffer is to use the principles of REST (*Representational State Transfer*). The buffer does not deal with the object, but is passed to a separate variable. When you request a read from the client (SCADA/HMI or other subsystem), the filling is similar to the previous method. In the buffer variable all filled structure is transferred, on ID and CLSID the object about which data are transferred is defined. The value from the buffer after reading is written to the internal variable of the client, after which the session ends. Even with a simultaneous request, the client will be able to control the result of the read request. The record is similarly made: first changes are made in the local variable-buffer of the client, after which the contents of the variable are copied to the PLC buffer. Unlike the buffer ignition mechanism, updating variables in the client buffer can only occur by constantly forming a read request. In addition, some SCADA/HMI instrument/software have limitations on reassigning and maintaining the integrity of the buffer structure, making this approach impossible. However, this approach is better when implementing IIoT solutions using a framework, as it does not involve a constant exchange between the cloud (Cloud) and the device in place (PLC, Edge).
 
-Іншим недоліком обміну конфігураційними даними через буфер є відмова від табличних виглядів карт ПЛК та технологічних змінних. На практиці є рішення, які дозволяють обійти це обмеження, але цей варіант вимагає значних затрат на написання скриптів з боку SCADA/HMI, що не завжди можливо.
+Another disadvantage of the exchange of configuration data through the buffer is the rejection of the tabular views of PLC maps and process variables. In practice, there are solutions that can bypass this limitation, but this option requires significant costs for writing scripts by SCADA/HMI, which is not always possible.
 
-Досить зручним на практиці виявився механізм так званого \"**контекстного налаштування**\". У цьому випадку, виклик вікна налаштування (налагодження) відбувається в місці відображення CM на основних мнемосхемах. Це значно пришвидшує налагодження, так як не потребує перехід на карти технологічних змінних задля форсування, зміни налаштувань, тощо. Наразі цей механізм був випробуваний на кількох проектах як зі SCADA так і з HMI. З боку контролеру ніяких додаткових функцій не прописується, так як використовується той самий механізм буферів. З боку SCADA/HMI необхідно передбачити подію для графічних елементів, яка б ініціювала читання в буфер (вибір). Для SCADA це може бути пункт контекстного меню, для HMI -- натискання на частині елементу відображення, тощо.
+The mechanism of so-called  "**contextual configuration**" turned out to be quite convenient in practice. In this case, the call of the setting (debugging) window takes place in the place of display of CM on the main mnemonics. This significantly speeds up debugging, as it does not require switching to maps of technological variables to force, change settings, etc. So far, this mechanism has been tested on several projects with both SCADA and HMI. On the part of the controller, no additional functions are prescribed, as the same buffer mechanism is used. On the part of SCADA/HMI it is necessary to provide an event for graphic elements that would initiate read to the buffer (selection). For SCADA it can be a context menu item, for HMI - clicking on part of the display element, and so on.
 
 ![](media/Pic1_3_10.png)
 
-Рис.1.3.10 Приклад контекстного налаштування: права кнопка миші -- виклик спливаючого екрану з функціями налаштування (реалізація в SCADA Citect).
+Рис.1.3.10 Example of contextual configuration: right mouse button - call a pop-up screen with configuration functions (implementation in SCADA Citect).
 
-#### Панель статусу
+#### Status bar
 
-На засобах ЛМІ рекомендується використовувати панель статусу для відображення загального стану процесу (наприклад, як на рис.1.3.11). Це може бути:
+It is recommended to use the status panel on HMI means to display the general state of the process (for example, as in Fig. 1.3.11). It may be:
 
--   наявність ручного режиму хоча б на одному з виконавчих механізмів
-
--   наявність форсування хоча б на одному з CM
-
--   наявність режиму імітації хоча б на одному з CM
-
--   наявність хоча б одної тривоги рівня \"попередження\"
-
--   наявність хоча б одної тривоги рівня \"аварія\"
-
--   наявність хоча б одної тривоги рівня \"недостовірність\"
-
--   тощо
+- the presence of manual mode on at least one of the actuators
+- the presence of forcing at least one of the CM
+- the presence of the simulation mode on at least one of the CM
+- the presence of at least one alarm level "warning \"
+- the presence of at least one alarm level "alert\"
+- the presence of at least one alarm level "unreliability\"
+- etc.
 
 ![](media/1_13.png)
 
-Рис.1.3.11. Можливий вигляд панелі статусу.
+Рис.1.3.11. Status bar view example
 
-Панель статусу миттєво дає представлення про стан системи і нагадує про необхідність зміни режиму. Подібні механізми використовуються в ПЛК, в якому індикаторні лампи показують про стан модуля або усього пристрою. Так, наприклад, в режимі форсування, на ПЛК S7 300 горить відповідний індикатор. Аналогічно для технологічного процесу або установки можуть використовуватися світлосигнальні лампи.
+The status bar instantly gives an idea of the state of the system and reminds you of the need to change the mode. Similar mechanisms are used in the PLC, in which the indicator lamps show the status of the module or the whole device. For example, in the boost mode, the corresponding indicator on the PLC S7 300 is lit. Similarly, light signals may be used for the process or plant.
 
-[До розділу](README.md)
+
+
+<-- [1.2 Basic technologies based on the framework](1_2_tech_en.md)
+
+--> [1.4 General requirements for the implementation of the PACFramework interface](1_4_if_en.md)
 

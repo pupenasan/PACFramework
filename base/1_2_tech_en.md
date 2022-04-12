@@ -314,4 +314,4 @@ From the ISA-88's point of view, the control modules perform basic control funct
 
 <-- [1.1 Prerequisites and main ideas](1_1_requir_en.md)
 
---> [1.3 Hardware Hierarchy in the PACFramework](1_3_equip_en.md)
+--> [1.3 Equipment Hierarchy in the PACFramework](1_3_equip_en.md)
