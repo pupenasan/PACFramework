@@ -1,89 +1,95 @@
-## 1.4 Загальні вимоги до реалізації інтерфейсу програмних блоків PACFramework
+[PACFramework](../README_EN.md) > [1. Main ideas](README_EN.md)
 
-### Структура інтерфейсу функцій/процедур та функціональних блоків
+This text was translated using Google Translate. You can comment on the translation in [this topic](https://github.com/pupenasan/PACFramework/issues/52)
 
-Кожна функція/процедура/ФБ що реалізовує CM або інший об'єкт, включає внутрішні дані про стан та інтерфейсні дані для інших підсистем (наприклад SCADA/HMI).
+## 1.4 General requirements for the implementation of the PACFramework software interface
 
-Інтерфейсні дані діляться на 2 типи:
+### Structure interface of functions/procedures and function blocks
 
--   дані реального часу (RT HMI)
+Each function/procedure/FB that implements a CM or other object includes internal status data and interface data for other subsystems (eg SCADA/HMI).
 
--   конфігураційні дані (CFG)
+Interface data is divided into 2 types:
 
-Дані реального часу вміщують усю необхідну інформацію для постійного контролю стану CM та керування, в тому числі:
+- real-time data (RT HMI)
 
--   для відображення на HMI
+- configuration data (CFG)
 
--   для підсистем Alarm
+Real-time data contains all the necessary information for continuous monitoring of CM status and control, including:
 
--   для Trend та Log
+- to display on the HMI
 
--   для керування станом CM (у тому числі керування конфігурацією)
+- for Alarm subsystems
 
-Конфігураційні дані вміщують (CFG) всю інформацію, необхідну для налаштування роботи CM або іншого об'єкту. Обмін конфігураційними даними з SCADA/HMI відбувається при:
+- for Trend and Log
 
--   налаштуванні/перевірки параметрів CM
+- for CM state management (including configuration management)
 
--   поглибленої діагностики роботи CM
+The configuration data contains (CFG) all the information needed to configure the CM or other object. Exchange of configuration data with SCADA/HMI occurs at:
 
--   використання сервісних режимів роботи CM (форсування, імітація, виведення з обслуговування)
+- setting/checking CM parameters
 
-### Змінні HMI (HMI), конфігураційні (CFG) змінні та робота з буфером
+- in-depth diagnostics of CM
 
-За причини великої кількості конфігураційних даних їх трафік з іншими підсистемами бажано звести до мінімуму. Це зменшує завантаження на комунікації і зменшує вартість систем SCADA, що використовують ліцензування на базі кількості тегів. Для цього, обмін даними між SCADA/HMI та PLC конфігураційними даними можна реалізувати через проміжний буфер, спільний для всіх типів CM одного типу (див. 1.2.5).
+- use of CM service modes (forcing, simulation, out of service)
 
-Розділення даних на реального часу (надалі просто **HMI**) та конфігураційних (**CFG**) є необов'язковим і потребує дублювання певних даних на контролері. Розділення може також супроводжуватися необхідністю жорсткого розподілу доступу з боку SCADA/HMI.
+### HMI Variables (HMI), Configuration (CFG) Variables, and Buffer Management
 
-Тип конфігураційних змінних, які необхідно зберігати в ПЛК може відрізнятися від типу буферної змінної, що використовується для транспорту. Буферна змінна, як правило містить заздалегідь більше полів, щоб використовуватися для транспортування даних різного типу того ж рівня.
+Due to the large amount of configuration data, it is desirable to minimize their traffic with other subsystems. This reduces the load on communications and reduces the cost of SCADA systems that use tag-based licensing. To do this, data exchange between SCADA/HMI and PLC configuration data can be implemented via an intermediate buffer common to all CM types of the same type (see 1.2.5).
 
-### Змінні стану (STA) та команд (CMD) 
+Division of data into real-time data (**HMI**) and configuration data (**CFG**) is optional and requires duplication of certain data on the controller. Division may also be accompanied by the need for a rigid distribution of access by SCADA/HMI.
 
-Дані HMI CM можуть включати слова:
+The type of configuration variables to be stored in the PLC may differ from the type of buffer variable used for transport. The buffer variable usually contains more fields in advance to be used to transport different types of data at the same level.
 
--   **STA** - слово статусу (16-біт), що включає бітові набори для всіх автоматів станів (STATUS) та режимів (MODES) CM
+### Status Variables (STA) and Commands (CMD)
 
--   **CMD** - слово керування (16-біт), що призначене для керування станом та режимами CM, а також його конфігуруванням; кожна команда кодується окремим числовим значенням унікальним в межах всіх типів CM
+HMI CM data may include the words:
 
-16-бітний формат слова вибраний з урахуванням сумісності з більшістю сучасних платформ IEC 61131-3. **Слово команди (CMD) повинно обнулятися безпосередньо в місці призначення. Таким чином команду обнулює той CM, якому вона призначена. Винятком може бути ситуація, коли команди є широкомовними, тоді необхідно передбачити механізм обнуління команди після отримання їх усіма отримувачами.**
+- **STA** - status word (16-bit), which includes bit sets for all state machines (STATUS) and modes (MODES) CM
 
-Для забезпечення ієрархічності керування усі внутрішні змінні, що відповідають за CM, які використовуються в інших CM/EM/UNIT передаються туди як INOUT, або за посиланням. Це значно економить пам\'ять контролеру.
+- **CMD** - control word (16-bit), which is intended to control the state and modes of CM, as well as its configuration; each command is encoded by a separate numeric value unique within all CM types
 
-Для зручності, конфігураційні дані можуть також включати в себе STA та CMD (надалі STA_CFG та CMD_CFG), які використовуються тільки в програмі ПЛК. Таким чином STA, що передається в HMI (надалі STA_HMI) копіює конфігураційний STA і не може бути змінений (read only), а CMD що передається з HMI (надалі CMD_HMI) є саме командою оператору, і відповідно до цього обробляється. Змінні CMD_CFG та STA_CFG можуть бути бітовими структурами.  
+The 16-bit word format is chosen to be compatible with most modern IEC 61131-3 platforms. The command word (CMD) must be reset directly at the destination. In this way, the command resets the CM to which it is assigned. An exception may be when the command is broadcast, then it is necessary to provide a mechanism for resetting the command after receiving them by all recipients.
 
-Враховуючи, що для CM каналів (LVL0) та технологічних змінних (LVL1) може використовуватися тільки одна команда \"прочитати конфігурацію\" (READ\_CFG, вона ж пов\'язує CM з буфером) для економії тегів SCADA/HMI можна об\'єднати біти STA та CMD в одну змінну STA (STA_HMI), один з бітів якої буде змінюватися в HMI для команди зчитування. Така конфігурація була неодноразово перевірена і показала свою працездатність та доцільність.
+To ensure hierarchical control, all internal CM-responsible variables used in other CM/EM/UNIT are passed there as INOUT, or by reference. This saves a lot of memory for the controller.
 
-Конфігураційні дані CM, що входять до певної групи повинні мати **ID** (ідентифікатор об'єкту в групі) та **CLSID** (ідентифікатор класу об\'єкту), за якими до них можна звертатися через загальний буфер. **Буфер** передбачає доступ до конфігураційних даних елемента (CM) за його номером. Буфер є змінною загального користування, яка загальнодоступна для всіх функцій або екземплярів функціональних блоків. Обробкою буферу займається той екземпляр CM, номер якого співпадає з номером в буфері. Таким чином при команді читання (READ_CFG) буфер оновлюється даними CM_CFG в тому числі ID та CLSID. Таким чином читання приводить до зв'язування CM з буфером.
+For convenience, configuration data may also include STA and CMD (hereinafter STA_CFG and CMD_CFG), which are used only in the PLC program. Thus, the STA transmitted to the HMI (hereinafter STA_HMI) copies the configuration STA and cannot be changed (read only), and the CMD transmitted from the HMI (hereinafter CMD_HMI) is the operator's command and is processed accordingly. The variables CMD_CFG and STA_CFG can be bit structures.
 
-Каркас передбачає використання широкомовних команд. Усі широкомовні команди передаються через CMD класу PLC (див. клас PLC). Ці команди приймаються всіма об'єктами типу, а не тільки тим, який володіє буфером. Це може знадобитися, наприклад для функцій:
+Given that for CM channels (LVL0) and process variables (LVL1) can be used only one command "read configuration" (READ\_CFG, it also connects CM to the buffer) to save SCADA/HMI tags can be combine the STA and CMD bits into one STA variable (STA\_HMI), one of the bits of which will change in the HMI for the read command. This configuration has been repeatedly tested and has shown its efficiency and feasibility.
 
--   встановлення конфігурації за замовченням;
+CM configuration data belonging to a specific group must have **ID** (object ID in the group) and **CLSID** (object class identifier), which can be accessed via a shared buffer. **Buffer** provides access to the configuration data of the element (CM) by its number. A buffer is a public variable that is publicly available for all functions or instances of function blocks. The buffer is processed by the CM instance whose number matches the number in the buffer. Thus, at the read command (READ\_CFG) the buffer is updated with CM\_CFG data including ID and CLSID. Thus reading leads to binding of CM to the buffer.
 
--   встановлення/виключення режим імітації;
+The framework involves the use of broadcast commands. All broadcast commands are transmitted via the PLC of class CMD (see PLC class). These commands are accepted by all objects of the type, not just those that have a buffer. This may be required, for example, for functions:
 
--   встановлення всіх об'єктів класу в ручний/автомат
+- setting the default configuration;
 
--   ...
+- set/disable simulation mode;
 
-Широкомовні команди можуть мати формат 4XXX(HEX), тобто з одиничним 14-м бітом. Враховуючи що команду повинен прийняти кожен елемент типу CM, вона повинна обнулятися тільки після повного проходження циклу ПЛК (передбачається що всі CM обробляються в межах одного циклу). Деталі реалізації див. клас PLC.
+- installation of all objects of a class in manual / automatic
 
-Команди (CMD) для CM рівнів LVL0 та LVL1 слугують тільки для обміну між SCADA/HMI та контролерами, або обміну між пристроями. Команди рівня LVL2 і вище, використовуються і в програмі користувача. У цьому випадку повинні враховуватися команди з різних джерел CMD\_HMI (SCADA/HMI), CMD\_BUF (буферний) та CMD_CFG (програмний). Пріоритетність тієї чи іншої команди може залежати від режиму роботи CM, типу команди (наприклад читання в буфер пріоритет ніше за команду керування або навпаки).
+- ...
 
-### Вимоги до типів даних
+Broadcast commands can be in 4XXX (HEX) format, ie with a single 14th bit. Given that the command must accept each element of type CM, it should be reset only after the complete completion of the PLC cycle (it is assumed that all CMs are processed within one cycle). Details of implementation see PLC class.
 
-Для обміну з HMI рекомендується використовувати наступні типи даних:
+Commands (CMD) for CM levels LVL0 and LVL1 are used only for exchange between SCADA/HMI and controllers, or exchange between devices. LVL2 and higher level commands are also used in the user program. In this case, commands from different sources CMD\_HMI (SCADA/HMI), CMD\_BUF (buffer) and CMD\_CFG (software) must be considered. The priority of a command may depend on the mode of operation of the CM, the type of command (for example, reading to the buffer has priority over the control command or vice versa).
 
--   INT/UINT (16)
+### Requirements for data types
 
--   DINT/UDINT (32)
+It is recommended that you use the following data types to share with the HMI:
 
--   REAL (32)
+- INT/UINT (16)
 
--   ARRAY of INT/DINT/REAL
+- DINT/UDINT (32)
 
-Для обміну з HMI не рекомендується використовувати BOOL-еву область пам\'яті, та окремі змінні типу BOOL. Рекомендується використовувати бітові набори (але не структури), наприклад біти STA. Замість типу TIME можна використати UDINT (мс) або перетворити його в REAL. Інші типи рекомендується використовувати тільки як виняток, якщо перетворення в наведені типи не може бути виконано.
+- REAL (32)
 
-Бажано забезпечувати вирівнювання на рівні 4 байтів.
+- ARRAY of INT/DINT/REAL
 
-Забезпечення вказаних вимог зробить можливість легкого перенесення елементів каркасу між різними платформами.
+It is not recommended to use BOOL memory area and individual BOOL variables to exchange with HMI. It is recommended to use bit sets (but not structures), such as STA bits. Instead of the TIME type, you can use UDINT (ms) or convert it to REAL. It is recommended to use other types only as an exception, if conversion to the given types cannot be performed.
 
-[До розділу](README.md)
+It is desirable to provide alignment at the level of 4 bytes.
+
+Ensuring these requirements will make it possible to easily transfer the frame elements between different platforms.
+
+<-- [1.3 Equipment Hierarchy in the PACFramework](1_3_equip_en.md)
+
+--> [1.5.Recommendations for naming components and frame elements](1_5_naming_en.md)

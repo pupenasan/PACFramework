@@ -1,114 +1,116 @@
-# 1.5. Рекомендації щодо найменування компонентів та елементів каркасу
+[PACFramework](../README_EN.md) > [1. Main ideas](README_EN.md)
 
-## Найменування елементів структур
+This text was translated using Google Translate. You can comment on the translation in [this topic](https://github.com/pupenasan/PACFramework/issues/52)
 
-- найменування бітів в структурах повинні бути унікальні в межах одного рівня вкладеності. Наприклад, якщо в структурі є поле VAL то набір бітових полів не може включати назву VAL. Зроблено для можливості наскрізного найменування
-- префікси:
-  - часові атрибути змінних повинні починатися з префіксу `T_` , наприклад `T_STEP1`, `T_PREV`
+# 1.5. Recommendations for naming the components and elements of the frame
 
-## Найменування технологічних змінних (LVL1) 
+## Names of structure elements
 
-- назву технологічних змінних рекомендується давати в трирівневому варіанті:
+- the names of bits in the structures must be unique within one level of nesting. For example, if the structure has a VAL field, then the set of bit fields cannot include the VAL name. Made for end-to-end naming
+- prefixes:
+   - temporal attributes of variables must start with the prefix `T_`, for example ` T_STEP1`, `T_PREV`
 
-```
+## Name of process variables (LVL1)
+
+- the name of process variables is recommended to give in a three-level version:
+
+````
 UNIT_INSTRUMENT_SIGNAL
-```
+````
 
-`UNIT` - назва установки, місця, одиниці устатковання, тощо, потрібна для ідентифікації засобів автоматизації в різних групах устатковання
+`UNIT` - the name of the plant, location, unit of equipment, etc., required to identify automation instrument in different groups of equipment
 
-`INSTRUMENT` - ідентифікація засобів автоматизації відповідно до схеми автоматизації або P&ID (надалі P&ID). Якщо P&ID передбачає ієрархічне найменування, перша частина (префікс) може стати в позицію `UNIT`, друга (починаючи з функціональної літери) стає на позицію `INSTRUMENT`. Замість числових позначень контуру P&ID можна використовувати альтернативні символи контуру. Каркас не регламентує  правила ідентифікації засобів на діаграмах, але рекомендується використовувати саме ті ідентифікатори, які використані в схемах P&ID.  
+`INSTRUMENT` - identification of automation instrument according to the P&ID. If the P&ID provides a hierarchical name, the first part (prefix) can be placed in the position `UNIT`, the second (starting with the function letter) becomes the position ` INSTRUMENT`. You can use alternate outline characters instead of P&ID outlines. The framework does not regulate the rules of identification of instruments on diagrams, but it is recommended to use exactly those identifiers which are used in P&ID digrams.
 
-`SIGNAL` - уточнююча інформація про сигнал, так як один і той самий засіб автоматизації на схемі P&ID, може мати кілька входів/виходів. Може бути опущений, якщо засіб має тільки один сигнал зв'язку з ПЛК.       
+`SIGNAL` - clarifying signal information, as the same instrument in the P&ID loop may have multiple inputs/outputs. Can be omitted if the tool has only one communication signal with the PLC.     
 
-Приклади:
-
-```
-T101_TT1 - температура TT1 в танку T101
-T101_TT1_PV - температура TT1 в танку T101 (альтернативний варіант)
-T101_LS1 - сигналізатор рівня
-T101_LSH - сигналізатор рівня (альтернативний варіант)
-T101_TV1_CPOS - вихід на керування клапаном TV1
-T101_TV1_POS - плинна позиція клапану TV1
-```
-
-Якщо технологічна змінна зарезервована для майбутнього використання, рекомендується її називати за шаблонами: 
+Examples:
 
 ```
-REZDI1 - резервна типу DIVAR 
-REZDI22 - резервна типу DIVAR 
-REZAI1 - резервна типу AIVAR 
-REZDO1 - резервна типу DOVAR 
-REZAO1 - резервна типу AOVAR 
+T101_TT1 - temperature TT1 in the tank T101
+T101_TT1_PV - temperature TT1 in the tank T101 (alternative)
+T101_LS1 - level indicator
+T101_LSH - level indicator (alternative)
+T101_TV1_CPOS - output to control the TV1 valve
+T101_TV1_POS - current position of the TV1 valve
 ```
 
-### Рекомендація щодо суфіксів
+If a process variable is reserved for future use, it is recommended that it be named after the following templates:
 
-Усі суфікси для вихідних сигналів повинні починатися з літери `C`, вхідні сигнали не повинні починатися з літери  `C`
+```
+REZDI1 - reserved type DIVAR
+REZDI22 - reserved type DIVAR
+REZAI1 - reserved type AIVAR
+REZDO1 - reserved type DOVAR
+REZAO1 - reserved type AOVAR
+```
+
+### Suffix Recommendation
+
+All suffixes for output signals must begin with the letter `C`, input signals must not begin with the letter ` C`
 
 **DI**
 
-ALM стан Аварія, наприклад `T101_TY1_ALM` - сигнал аварії перетворювача частоти
+ALM state Alarm, eg `T101_TY1_ALM` - frequency converter alarm
 
-LSTP Натиснута кнопка "Місцевий стоп"
+LSTP Local Stop Button Pressed
 
-PWR Наявність живлення схеми управління
+PWR Presence of power control circuit
 
-RDY готовність пристрою до роботи
+RDY readiness of the device to work
 
-RMT стан перемикача місцевий/дистанційний
+RMT switch status local/remote
 
-RUN Пристрій в роботі
+RUN The device is in operation
 
-SCLS положення закрито
+SCLS position is closed
 
-SOPN положення відкрито
+SOPN position is open
 
-SPDC контакт дискретного датчику контролю обертів (наприклад індуктивний контакт)
+SPDC contact of the discrete speed control sensor (eg inductive sensor)
 
-WRN стан попоредження
-
-
+WRN warning status
 
 **AI**
 
-ECUR Струм двигуна
+ECUR Motor current
 
-POS положення РО
+POS position of the valve body 
 
-PV плинне значення
+PV current value
 
-SPD Дійсна швидкість/частота
-
-
+SPD Actual speed/frequency
 
 **DO**
 
-CBWR - рух назад (керування переміщенням) 
+CBWR - Reverse (Motion Control)
 
-CCLS - керування закрити
+CCLS - close control
 
-CFRW - рух вперед (керування переміщенням)
+CFRW - forward movement (movement control)
 
-COPN - керування відкрити або відкрити/закрити
+COPN - open or open/close control
 
-CRMT - включення/відключення дистанційного керування
+CRMT - enable/disable remote control
 
-CRVRS - Керування Реверс, або Реверс/Стоп
+CRVRS - Reverse Control, or Reverse/Stop
 
-CSTRT - Керування Пуск, або Пуск/Стоп
+CSTRT - Control Start, or Start/Stop
 
-CSTP - Керування Стоп
+CSTP - Stop control
 
-CUP - команда Більше
+CUP - Up command control
 
-CDN - команда Менше
-
-
+CDN - Down command control
 
 **AO**
 
-CSPD - задана швидкість/частота
+CSPD - setpoint speed/frequency
 
-CPOS - задана позиція ВМ
+CPOS - setpoint position of the actuator
 
-[До розділу](README.md)
+
+
+<-- [1.4 General requirements for the implementation of the PACFramework interface](1_4_if_en.md)
+
+--> [1.6. The concept of classification and customization of objects](classes_en.md)

@@ -1,61 +1,66 @@
-# 1.6. Концепція класифікації та кастомізація об'єктів
+[PACFramework](../README_EN.md) > [1. Main ideas](README_EN.md)
 
-## Класи
+This text was translated using Google Translate. You can comment on the translation in [this topic](https://github.com/pupenasan/PACFramework/issues/52)
 
-Розподіл на функції та пов'язані з ними дані а також особливості їх функціонування базується на понятті класів. Класи дають можливість реалізувати загальні функції в межах одного програмного елементу. 
+# 1.6. The concept of classification and customization of objects
 
-Якщо функції пов'язані з об'єктами обладнання, то класи розподіляються по рівням відповідно до описаного [Ієрархії устатковання в PAC Framework](1_3_equip.md). Кожен клас має унікальний CLSID в межах всієї системи, тому виникає необхідність в їх розподілі.
+## Classes
 
-У якості варіанту розподілу пропонується використати наступну модель номеру класу в 16-ковому форматі:
+The division into functions and related data as well as the features of their operation is based on the concept of classes. Classes make it possible to implement common functions within a single software element.
+
+If the functions are related to hardware objects, the classes are divided into levels according to the described [Equipment Hierarchy in PAC Framework](1_3_equip_en.md). Each class has a unique CLSID throughout the system, so there is a need for their distribution.
+
+As a distribution option, it is proposed to use the following class number model in hexadecimal format:
 
 ```
 16#ABCD  
 ```
 
-де A - номер рівня в моделі ієрархії керування (Equipment), наприклад 0xxx - рівень каналів, 1xxx - рівень змінних, 2xxx - рівень ВМ, регуляторів та інших, 3xxx - рівень Equipment Module, 4xxx - рівень Units, 5xxx - рівень Work Center.    
+where 
 
-B - довільна величина
+- A is the level number in the Equipment Hierarchy model, for example 0xxx is the channel level, 1xxx is the variable level, 2xxx is the actuators/device level, 3xxx is the Equipment Module level, 4xxx is the Units level, 5xxx is the Work Center level.
+- B is an arbitrary value
 
-C - номер типу в межах рівня класу, наприклад  CHDI(CLSID=16#001x) – дискретні вхідні канали,CHDO (CLSID=16#002x) – дискретні вихідні канали,
+- C is the type number within the class level, for example CHDI (CLSID = 16 # 001x) - digital input channels, CHDO (CLSID = 16 # 002x) - discrete output channels,
 
-D - підклас, який дає можливість виділити об'єкти, які мають якусь унікальну особливість, яка принципово не змінює алгоритм на набір даних для об'єктів, але має додаткову функцію або навпаки, функція відсутня.    
+- D - subclass, which allows you to select objects that have a unique feature that does not fundamentally change the algorithm to a set of data for objects, but has an additional function or, conversely, no function.     
 
-## Параметри 
+## Parameters
 
-Параметри є тими змінними налаштування, які задають характеристики об'єкта, які мало змінюються з часом. Вони задаються при налаштуванні системи і змінюються за зміни умов експлуатації (поломки, зміни властивостей об'єкту, тощо). 
+Parameters are those setting variables that set the characteristics of an object that change little over time. They are set during system setup and change with changes in operating conditions (breakdowns, changes in the properties of the object, etc.).
 
-У каркасі передбачені механізми автоматичного налаштування параметрів. Зокрема бітові параметри можуть змінюватися при зв'язці кількох об'єктів. Так, наприклад, виконавчі механізми, які пов'язані з датчиками кінцевого положення, можуть змінювати параметри останніх. Зокрема, для датчиків примусово знімаються опції `PRM_ISWRN` та `PRM_ISALM`, так як в них немає сенсу. З іншого боку, якщо датчик вийшов з ладу, для тимчасового переведення ВМ в можливість роботи без датчика, для нього оператором виставляється параметр відключення DSBL. При цьому ВМ автоматично переводиться в режим роботи "без датчика".      
+The framework provides mechanisms for automatic adjustment of parameters. In particular, bit parameters (options) can change when linking multiple objects. For example, actuators that are associated with end position sensors can change the parameters of it. In particular, the `PRM_ISWRN` and ` PRM_ISALM` options are forcibly removed for sensors, as they do not make sense. On the other hand, if the sensor has failed, to temporarily convert the actuator to the ability to work without a sensor, the operator sets the option to disable the DSBL. In this case, the actuator is automatically switched to "sensorless" mode.  
 
-## Змінні стану
+## Status variables
 
-Змінні стану не використовуються для налаштування поведінки об'єкту.               
+Status variables are not used to adjust the behavior of an object.   
 
-## Способи підстроювання алгоритму під виконання особливих дій для окремих об'єктів (кастомізація) 
+## Ways to adjust the algorithm to perform special actions for individual objects (customization)
 
-Щоб не множити функції/функціональні блоки, які практично однаково працюють за винятком певних особливих дій, варто їх реалізовувати в одному і тому самому програмному елементі. При цьому є кілька способів підстроювання алгоритму під виконання особливих дій:
+In order not to multiply functions/function blocks that work almost the same except for certain special actions, they should be implemented in the same software element. There are several ways to adjust the algorithm to perform special actions:
 
-1) **Через CLSID.** Надати особливими об'єктам інший підклас CLSID, наприклад змінивши останню 16-кову цифру. У цьому випадку функція перевіряє CLSID і в залежності від нього виконує певні особливі (кастомні) дії. Особливий підклас надається тим об'єктам, алгоритм яких завжди передбачає виконання цих особливих дій. Таким чином один і той самий програмний елемент буде виконуватися для різних підкласів для виконання спільних алгоритмів, а умовне розгалуження за підкласом буде виконувати особливий алгоритм. Наприклад наступна частина коду виконується для всіх об'єктів класу за винятком 16#1011:
+1) **Via CLSID.** Assign another CLSID subclass to special objects, for example by changing the last hexadecimal digit. In this case, the function checks the CLSID and, depending on it, performs certain special (custom) actions. A special subclass is given to those objects, the algorithm of which always involves the implementation of these special actions. Thus, the same program element will be executed for different subclasses to execute common algorithms, and conditional branching by subclass will execute a special algorithm. For example, the following code is executed for all objects in the class except 16#1011:
 
 ```pascal
-//якщо це не DI з лічильником
+//if it is not a DI with a counter
 IF #DIVARCFG.CLSID <> 16#1011 THEN
 	#VAL := INT_TO_BOOL (#DIVARCFG.VALI);
 END_IF;
 ```
 
-2) **Через ID.** Якщо особливих об'єктів в класі мало (одиниці), для яких не варто виділяти окремі підкласи, у програмному елементі можна реалізовувати особливі алгоритми за перевіркою ідентифікатору ID. Наприклад:
+2) Наприклад: **Through ID.** If there are few special objects in the class (units) for which it is not necessary to allocate separate subclasses, in the program element you can implement special algorithms to verify the ID. Example:
 
 ```pascal
-//для обєкту з конкретним ID
+//for an object with a specific ID
 IF #DIVARCFG.ID = 10001 THEN
 	#VAL := INT_TO_BOOL (#DIVARCFG.VALI);
 END_IF;
 ```
 
-3) **Через PRM_BIT**. Якщо особливі дії необхідно активувати або деактивувати при конфігуруванні, варто використати бітові параметри (опції) в налаштуваннях об'єкту. У наступному прикладі дія інверсії проводиться тільки за наявності відповідної активованої опції 
+3) **Via PRM_BIT**. If special actions need to be activated or deactivated during configuration, you should use bit parameters (options) in the object settings. In the following example, the inversion action is performed only if the corresponding activated option is available
 
 ```pascal
-//якщо параметр інвертувати стоїть
+//if the invert option is enabled
 IF #PRM_INVERSE THEN
 	#DI := NOT #VRAW;
 ELSE
@@ -63,10 +68,14 @@ ELSE
 END_IF;
 ```
 
-4) **Автоналаштування**. Якщо особливі дії залежать від параметрів інших об'єктів (і тільки так), параметри з варіанту 3 можна змінювати автоматично (так зване "автоналаштування"). Наприклад у наступному прикладі параметр активності відслідковування сигналізатора закритого положення для виконавчого механізму `PRM_ZCLSENBL` автоматично визначається за наявності відповідної технологічної змінної та її активності. 
+4)  **Auto-tuning**. If special actions depend on the parameters of other objects (and only so), the parameters of 3th variant can be changed automatically (so-called "auto-tuning"). For example, in the following example, the parameter of the tracking activity of the closed position indicator for the actuator `PRM_ZCLSENBL` is automatically determined in the presence of the corresponding technological variable and its activity.
 
 ```pascal
 #ACTCFGu.PRM.PRM_ZCLSENBL := NOT #SCLS.PRM.PRM_DSBL AND #SCLS.ID <> 0;
 ```
 
-[До розділу](README.md)
+
+
+<-- [1.5.Recommendations for naming components and frame elements](1_5_naming_en.md)
+
+<-- [Section 1: Main ideas](README_EN.md)
