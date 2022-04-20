@@ -10,7 +10,7 @@
 
 Згідно довідки Meters пов’язані з обладнанням і вимагають означення таких елементів: 
 
-| Елемент     | Опис                                                         | Тип     | Джерело  |
+| Елемент     | Опис                                                         | Тип     | IODevice |
 | ----------- | ------------------------------------------------------------ | ------- | -------- |
 | FB          | індикатор зворотного зв'язку (Feedback Indicator)            | REAL    | PLC      |
 | OP          | вихідне значення (Output)                                    | REAL    | PLC      |
@@ -26,7 +26,7 @@
 | PVTrack     | значення PV для стеження (Tracker)                           | REAL    | Internal |
 | OPTrack     | значення OP для стеження                                     | REAL    | Internal |
 | TrackDsp    | відображати трекер                                           | DIGITAL | Internal |
-| FullScale   | відображення індикації повного діапазону ("вусики")          | DIGITAL | Internal |
+| FullScale   | команда на відображення індикації повного діапазону ("вусики"), кнопка `FS` на лицьовій панелі | DIGITAL | Internal |
 | EqStatus    | значення для [індикатору статусу](cm_common.md) визначається функцією | INT     | Cicode   |
 | RunStatus   | значення для [Індикатор стану роботи обладнання](cm_common.md) | INT     | Internal |
 | CtrlMode    | код що показує режим регулятору: 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | Internal |
@@ -36,8 +36,8 @@
 | Offscale    | значення за межами масштабу (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      |
 | Offspec     | невідповідність лаб. даним Off-spec lab data  (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      |
 | Tracking    | режим стеження регулятору (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      |
-| OOS         | Out of service якось??? впливає на [Індикатор стану роботи обладнання](cm_common.md) | DIGITAL | PLC      |
-| OOSDisable  | Out of service disable якось??? впливає на [Індикатор стану роботи обладнання](cm_common.md)) | DIGITAL | PLC      |
+| OOS         | Out of service якось впливає на [Індикатор стану роботи обладнання](cm_common.md) | DIGITAL | PLC      |
+| OOSDisable  | заборона зміни OOS впливає на [Індикатор стану роботи обладнання](cm_common.md)) | DIGITAL | PLC      |
 | Sim         | режим імітації (для [індикатору статусу](cm_common.md))      | DIGITAL | PLC      |
 | Calib       | режим калібрування (для [індикатору статусу](cm_common.md))  | DIGITAL | PLC      |
 | Init        | режим ініціалізування регулятору (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      |
@@ -46,7 +46,6 @@
 | ManCMD      | Команда переключення в ручний                                | DIGITAL | PLC      |
 | AutoCMD     | Команда переключення в автомат                               | DIGITAL | PLC      |
 | CasCMD      | Команда переключення в каскад                                | DIGITAL | PLC      |
-|             |                                                              |         |          |
 
 ![](media/meters_eqtype.png)
 
@@ -218,4 +217,60 @@ Connects to: `EquipmentName.PVTrack`, `EquipmentName.OPTrack`, `EquipmentName.Tr
 
 ​                ![img](media/Trend_SinglePV_431x249.png)            
 
+### Асоційовані лицьові панелі
+
+**Analog Indicator**
+
+![img](media/SA_FP_AnalogIndicator.png)
+
+**Analog Controller**
+
+![img](media/SA_FP_AnalogController_842x358.png)
+
    
+
+## Адаптація PACFramework 
+
+Існуючий тип `Meter` адаптується до `MeterPFW`
+
+### Перелік елементів типу обладнання MeterPFW (адаптація AIVAR_HMI)
+
+| Елемент     | Опис                                                         | Тип     | IODevice | Примітка                                                     |
+| ----------- | ------------------------------------------------------------ | ------- | -------- | ------------------------------------------------------------ |
+| STA         | біти стану                                                   | INT     | PLC      | AIVAR_HMI.STA                                                |
+| VALPRCSTA2  | значення у % від шкали вимірювання (0-10000) + додаткові біти статусу | INT     | PLC      | AIVAR_HMI.VALPRCSTA2                                         |
+| FB          | індикатор зворотного зв'язку (Feedback Indicator)            | REAL    | PLC      | ?                                                            |
+| OP          | вихідне значення (Output)                                    | REAL    | PLC      | ?                                                            |
+| PV          | плинне значення (Process Variable)                           | REAL    | PLC      | AIVAR_HMI.VAL                                                |
+| PVTarget    | плинне значення для Target meters                            | REAL    | PLC      | ?                                                            |
+| SP          | уставка                                                      | REAL    | PLC      | ?                                                            |
+| ORDsp       | відображати діапазон оптимального значення (Optimal Range Display) | DIGITAL | Internal | без змін                                                     |
+| ORLow       | нижнє значення оптимального діапазону                        | REAL    | Internal | без змін                                                     |
+| ORHigh      | верхнє значення оптимального діапазону                       | REAL    | Internal | без змін                                                     |
+| PR          | практичний діапазон для вимірювачів відхилень Deviation Meter | REAL    | Internal | без змін                                                     |
+| PRLow       | нижнє значення практичного діапазону (Practical Range)       | REAL    | Internal | без змін                                                     |
+| PRHigh      | верхнє значення практичного діапазону                        | REAL    | Internal | без змін                                                     |
+| PVTrack     | значення PV для стеження (Tracker)                           | REAL    | Internal | без змін                                                     |
+| OPTrack     | значення OP для стеження                                     | REAL    | Internal | без змін                                                     |
+| TrackDsp    | відображати трекер                                           | DIGITAL | Internal | без змін                                                     |
+| FullScale   | відображення індикації повного діапазону ("вусики")          | DIGITAL | Internal | без змін                                                     |
+| EqStatus    | значення для [індикатору статусу](cm_common.md) визначається функцією | INT     | Cicode   | без змін                                                     |
+| RunStatus   | значення для [Індикатор стану роботи обладнання](cm_common.md) | INT     | Internal | без змін                                                     |
+| CtrlMode    | код що показує режим регулятору: 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | Cicode   | IODevice змінено на Cicode,                                  |
+| CtrlModeDef | режим регулятору за замовченням (без відображення): 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | Cicode   | ?                                                            |
+| Timer       | заданий час таймеру, що показує як давно було виміряне значення | INT     | Internal | IODevice змінено на Internal, не використовується в базовій версії PACFramework |
+| TimerExp    | скоро прийде час відбору проби (для [індикатору статусу](cm_common.md)) | DIGITAL | Internal | IODevice змінено на Internal, не використовується в базовій версії PACFramework |
+| Offscale    | значення за межами масштабу (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      |                                                              |
+| Offspec     | невідповідність лаб. даним Off-spec lab data  (для [індикатору статусу](cm_common.md)) | DIGITAL | Internal | IODevice змінено на Internal, не використовується в базовій версії PACFramework |
+| Tracking    | режим стеження регулятору (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      | ?                                                            |
+| OOS         | Out of service якось??? впливає на [Індикатор стану роботи обладнання](cm_common.md) | DIGITAL | PLC      |                                                              |
+| OOSDisable  | Out of service disable якось??? впливає на [Індикатор стану роботи обладнання](cm_common.md)) | DIGITAL | PLC      |                                                              |
+| Sim         | режим імітації (для [індикатору статусу](cm_common.md))      | DIGITAL | PLC      |                                                              |
+| Calib       | режим калібрування (для [індикатору статусу](cm_common.md))  | DIGITAL | PLC      |                                                              |
+| Init        | режим ініціалізування регулятору (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      |                                                              |
+| Dev         | deviation??? (для [індикатору статусу](cm_common.md))        | DIGITAL | PLC      |                                                              |
+| Clamped     | Clamped??? (для [індикатору статусу](cm_common.md))          | DIGITAL | PLC      |                                                              |
+| ManCMD      | Команда переключення в ручний                                | DIGITAL | Internal | IODevice змінено на Internal,                                |
+| AutoCMD     | Команда переключення в автомат                               | DIGITAL | Internal |                                                              |
+| CasCMD      | Команда переключення в каскад                                | DIGITAL | Internal |                                                              |
+|             |                                                              |         |          |                                                              |

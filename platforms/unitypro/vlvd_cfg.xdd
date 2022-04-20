@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DDTExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:7:10" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.000"></contentHeader>
-	<DDTSource DDTName="VLVD_CFG" version="0.01" dateTime="dt#2022-01-09-12:00:21">
-		<attribute name="TypeSignatureCheckSumString" value="507A"></attribute>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-4-18-10:19:10" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.88" dateTime="date_and_time#2022-4-2-18:55:54"></contentHeader>
+	<DDTSource DDTName="VLVD_CFG" version="0.05" dateTime="dt#2022-03-22-18:34:49">
+		<attribute name="TypeSignatureCheckSumString" value="3F77"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>унікальний ідентифікатор</comment>
@@ -11,14 +11,139 @@
 			<variables name="CLSID" typeName="UINT">
 				<comment>ідентифікатор класу</comment>
 			</variables>
-			<variables name="STA" typeName="VLVD_STA">
+			<variables name="STA" typeName="INT">
 				<comment>біти статусу</comment>
 			</variables>
-			<variables name="ALM" typeName="VLVD_ALM">
+			<variables name="STA_IMSTPD" typeName="BOOL">
+				<comment>=1 зупинився в проміжному стані</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="STA_MANRUNING" typeName="BOOL">
+				<comment>=1 рухається в невизначеному напрямку (ручний зі щита)</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="STA_DBLCKACT" typeName="BOOL">
+				<comment>=1 Включено режим ігнорування блокування керування {A.MSG.2} </comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="STA_OPNING" typeName="BOOL">
+				<comment>=1 Відкривається</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="STA_CLSING" typeName="BOOL">
+				<comment>=1 Закривається</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="STA_OPND" typeName="BOOL">
+				<comment>=1 Відкритий (16#0080)</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STA_CLSD" typeName="BOOL">
+				<comment>=1 Закритий (16#0100)</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="STA_MANBXOUT" typeName="BOOL">
+				<comment>=1 Включення ручного зі щита</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STA_WRKED" typeName="BOOL">
+				<comment>=1 В роботі</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="STA_DISP" typeName="BOOL">
+				<comment>=1 Включено ручний режим з ПК/ОП {A.MSG.9}</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_MANBX" typeName="BOOL">
+				<comment>=1 Включений ручний зі щита {A.MSG.10}</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="STA_INIOTBUF" typeName="BOOL">
+				<comment>=1 У бефері IoT</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="STA_INBUF" typeName="BOOL">
+				<comment>=1 - змінна в буфері</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="STA_FRC" typeName="BOOL">
+				<comment>=1 хоча би одна зі змінних в об’єкті форсована (для зручності відображення при наладці)</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="STA_SML" typeName="BOOL">
+				<comment>=1 режим симуляції</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="STA_BLCK" typeName="BOOL">
+				<comment>=1 Привід заблоковано {A.MSG.15}</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="ALM" typeName="INT">
 				<comment>біти тривог</comment>
 			</variables>
+			<variables name="ALM_ALMOPN" typeName="BOOL">
+				<comment>=1 Не відкрився (Несправність схеми управління) {A.ALM.0}</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="ALM_ALMCLS" typeName="BOOL">
+				<comment>=1 Не закрився (Несправність схеми управління) {A.ALM.1}</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="ALM_ALMSHFT" typeName="BOOL">
+				<comment>=1 Порушення стану приводу {A.ALM.2}</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="ALM_ALMOPN2" typeName="BOOL">
+				<comment>=1 Не відкрився (Несправність обладнання по місцю) {A.ALM.3}</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="ALM_ALMCLS2" typeName="BOOL">
+				<comment>=1 Не закрився (Несправність обладнання по місцю) {A.ALM.4}</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="ALM_ALM" typeName="BOOL">
+				<comment>=1 Помилка приводу (по OR)</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="ALM_WRN" typeName="BOOL">
+				<comment>=1 Попередження приводу (по OR)</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="ALM_ALMSTP" typeName="BOOL">
+				<comment>=1 Не зупинився {A.ALM.7}</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="ALM_ALMBELL" typeName="BOOL">
+				<comment>=1 Команда включення дзвоника (на один цикл ПЛК)</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="ALM_ALMPWR1" typeName="BOOL">
+				<comment>=1 Немає живлення у привода {A.ALM.9}</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="ALM_ALMSTPBTN" typeName="BOOL">
+				<comment>=1 Натиснута кнопка СТОП по місцю {A.ALM.10}</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="ALM_STOPING" typeName="BOOL">
+				<comment>=1 Зупиняється</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="ALM_SEN" typeName="BOOL">
+				<comment>=1 Помилка датчика</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="ALM_b13" typeName="BOOL">
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="ALM_b14" typeName="BOOL">
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="ALM_b15" typeName="BOOL">
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
 			<variables name="CMD" typeName="ACTTR_CMD">
-				<comment>біти команд</comment>
+				<comment>біти команди</comment>
 			</variables>
 			<variables name="PRM" typeName="ACTTR_PRM">
 				<comment>біти параметрів</comment>
@@ -41,6 +166,9 @@
 			<variables name="CNTALM" typeName="UINT">
 				<comment>Кількість аварій</comment>
 			</variables>
+			<variables name="tmp" typeName="UINT">
+				<comment>вирівнювання</comment>
+			</variables>
 			<variables name="T_STEP1" typeName="UDINT">
 				<comment>Плинний час кроку в мс</comment>
 			</variables>
@@ -49,260 +177,251 @@
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="VLVD_STA" version="0.01" dateTime="dt#2022-01-09-11:51:32">
-		<attribute name="TypeSignatureCheckSumString" value="C23C"></attribute>
+	<DDTSource DDTName="ACTTR_CMD" version="0.02" dateTime="dt#2022-01-17-10:51:27">
+		<attribute name="TypeSignatureCheckSumString" value="1436"></attribute>
 		<structure>
-			<variables name="IMSTPD" typeName="BOOL">
-				<comment>=1 зупинився в проміжному стані</comment>
-			</variables>
-			<variables name="MANRUNING" typeName="BOOL">
-				<comment>=1 рухається в невизначеному напрямку (ручний зі щита)</comment>
-			</variables>
-			<variables name="DBLCKACT" typeName="BOOL">
-				<comment>=1 Включено режим ігнорування блокування керування {A.MSG.2} </comment>
-			</variables>
-			<variables name="OPNING" typeName="BOOL">
-				<comment>=1 Відкривається</comment>
-			</variables>
-			<variables name="CLSING" typeName="BOOL">
-				<comment>=1 Закривається</comment>
-			</variables>
-			<variables name="OPND" typeName="BOOL">
-				<comment>=1 Відкритий (16#0080)</comment>
-			</variables>
-			<variables name="CLSD" typeName="BOOL">
-				<comment>=1 Закритий (16#0100)</comment>
-			</variables>
-			<variables name="MANBXOUT" typeName="BOOL">
-				<comment>=1 Включення ручного зі щита</comment>
-			</variables>
-			<variables name="WRKED" typeName="BOOL">
-				<comment>=1 В роботі</comment>
-			</variables>
-			<variables name="DISP" typeName="BOOL">
-				<comment>=1 Включено ручний режим з ПК/ОП {A.MSG.9}</comment>
-			</variables>
-			<variables name="MANBX" typeName="BOOL">
-				<comment>=1 Включений ручний зі щита {A.MSG.10}</comment>
-			</variables>
-			<variables name="INIOTBUF" typeName="BOOL">
-				<comment>=1 У бефері IoT</comment>
-			</variables>
-			<variables name="INBUF" typeName="BOOL">
-				<comment>=1 - змінна в буфері</comment>
-			</variables>
-			<variables name="FRC" typeName="BOOL">
-				<comment>=1 хоча би одна зі змінних в об’єкті форсована (для зручності відображення при наладці)</comment>
-			</variables>
-			<variables name="SML" typeName="BOOL">
-				<comment>=1 режим симуляції</comment>
-			</variables>
-			<variables name="BLCK" typeName="BOOL">
-				<comment>=1 Привід заблоковано {A.MSG.15}</comment>
-			</variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="VLVD_ALM" version="0.01" dateTime="dt#2022-01-09-11:55:57">
-		<attribute name="TypeSignatureCheckSumString" value="8FC8"></attribute>
-		<structure>
-			<variables name="ALMOPN" typeName="BOOL">
-				<comment>=1 Не відкрився (Несправність схеми управління) {A.ALM.0}</comment>
-			</variables>
-			<variables name="ALMCLS" typeName="BOOL">
-				<comment>=1 Не закрився (Несправність схеми управління) {A.ALM.1}</comment>
-			</variables>
-			<variables name="ALMSHFT" typeName="BOOL">
-				<comment>=1 Порушення стану приводу {A.ALM.2}</comment>
-			</variables>
-			<variables name="ALMOPN2" typeName="BOOL">
-				<comment>=1 Не відкрився (Несправність обладнання по місцю) {A.ALM.3}</comment>
-			</variables>
-			<variables name="ALMCLS2" typeName="BOOL">
-				<comment>=1 Не закрився (Несправність обладнання по місцю) {A.ALM.4}</comment>
-			</variables>
-			<variables name="ALM" typeName="BOOL">
-				<comment>=1 Помилка приводу (по OR)</comment>
-			</variables>
-			<variables name="WRN" typeName="BOOL">
-				<comment>=1 Попередження приводу (по OR)</comment>
-			</variables>
-			<variables name="ALMSTP" typeName="BOOL">
-				<comment>=1 Не зупинився {A.ALM.7}</comment>
-			</variables>
-			<variables name="ALMBELL" typeName="BOOL">
-				<comment>=1 Команда включення дзвоника (на один цикл ПЛК)</comment>
-			</variables>
-			<variables name="ALMPWR1" typeName="BOOL">
-				<comment>=1 Немає живлення у привода {A.ALM.9}</comment>
-			</variables>
-			<variables name="ALMSTPBTN" typeName="BOOL">
-				<comment>=1 Натиснута кнопка СТОП по місцю {A.ALM.10}</comment>
-			</variables>
-			<variables name="STOPING" typeName="BOOL">
-				<comment>=1 Зупиняється</comment>
-			</variables>
-			<variables name="almb12" typeName="BOOL"></variables>
-			<variables name="almb13" typeName="BOOL"></variables>
-			<variables name="almb14" typeName="BOOL"></variables>
-			<variables name="almb15" typeName="BOOL"></variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="ACTTR_CMD" version="0.01" dateTime="dt#2022-01-09-11:05:46">
-		<attribute name="TypeSignatureCheckSumString" value="7F2B"></attribute>
-		<structure>
-			<variables name="OPN" typeName="BOOL">
+			<variables name="CMD1" typeName="INT"></variables>
+			<variables name="CMD_OPN" typeName="BOOL">
 				<comment>Відкрити 16#0001</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
 			</variables>
-			<variables name="CLS" typeName="BOOL">
+			<variables name="CMD_CLS" typeName="BOOL">
 				<comment>Закрити  16#0002</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
 			</variables>
-			<variables name="TOGGLE" typeName="BOOL">
+			<variables name="CMD_TOGGLE" typeName="BOOL">
 				<comment>Переключити (відкрити&lt;-&gt;закрити, включити &lt;-&gt; відключити) 16#0003</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
 			</variables>
-			<variables name="ALMACK" typeName="BOOL">
+			<variables name="CMD_ALMACK" typeName="BOOL">
 				<comment>Підтвердити тривогу 16#0004</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
 			</variables>
-			<variables name="ALMRESET" typeName="BOOL">
+			<variables name="CMD_ALMRESET" typeName="BOOL">
 				<comment>Скинути тривоги 16#0005</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
 			</variables>
-			<variables name="BLCK" typeName="BOOL">
+			<variables name="CMD_BLCK" typeName="BOOL">
 				<comment>Заблокувати 16#0006</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
 			</variables>
-			<variables name="DBLCK" typeName="BOOL">
+			<variables name="CMD_DBLCK" typeName="BOOL">
 				<comment>Розблокувати 16#0007</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
 			</variables>
-			<variables name="STOPTUN" typeName="BOOL">
+			<variables name="CMD_STOPTUN" typeName="BOOL">
 				<comment>Зупинити автоналаштування 16#0008</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
 			</variables>
-			<variables name="TUNING" typeName="BOOL">
+			<variables name="CMD_TUNING" typeName="BOOL">
 				<comment>Запустити автоналаштування 16#0009</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
 			</variables>
-			<variables name="MAN" typeName="BOOL">
+			<variables name="CMD_MAN" typeName="BOOL">
 				<comment>Перевести в ручний з SCADA/HMI 16#0301</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
 			</variables>
-			<variables name="AUTO" typeName="BOOL">
+			<variables name="CMD_AUTO" typeName="BOOL">
 				<comment>Перевести в автоматичний з SCADA/HMI 16#0302</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
 			</variables>
-			<variables name="PROTECT" typeName="BOOL">
+			<variables name="CMD_PROTECT" typeName="BOOL">
 				<comment>Включити алгоритм захисту 16#000A</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
 			</variables>
-			<variables name="START" typeName="BOOL">
+			<variables name="CMD_START" typeName="BOOL">
 				<comment>Запустити 16#0011</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
 			</variables>
-			<variables name="STOP" typeName="BOOL">
+			<variables name="CMD_STOP" typeName="BOOL">
 				<comment>Зупинити 16#0012</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
 			</variables>
-			<variables name="UP" typeName="BOOL">
+			<variables name="CMD_UP" typeName="BOOL">
 				<comment>Більше 16#0021</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
 			</variables>
-			<variables name="DWN" typeName="BOOL">
+			<variables name="CMD_DWN" typeName="BOOL">
 				<comment>Менше 16#0022</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
-			<variables name="CRMT" typeName="BOOL">
+			<variables name="CMD2" typeName="INT"></variables>
+			<variables name="CMD_CRMT" typeName="BOOL">
 				<comment>Відключити локальне керування (по місцю) 16#0314</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
 			</variables>
-			<variables name="RESOLUTION" typeName="BOOL">
+			<variables name="CMD_RESOLUTION" typeName="BOOL">
 				<comment>=1 дозвіл на керування 16#000B</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
 			</variables>
-			<variables name="REVERS" typeName="BOOL">
+			<variables name="CMD_REVERS" typeName="BOOL">
 				<comment>Включити реверс 16#0013</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
 			</variables>
-			<variables name="CLCL" typeName="BOOL">
+			<variables name="CMD_CLCL" typeName="BOOL">
 				<comment>Включити локальне керування (по місцю) 16#0313</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
 			</variables>
-			<variables name="DBLCKACTTOGGLE" typeName="BOOL">
+			<variables name="CMD_DBLCKACTTOGGLE" typeName="BOOL">
 				<comment>Переключення дозволу на ігнорування CMRESOLUTION 16#000C</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
 			</variables>
-			<variables name="STARTDELAY" typeName="BOOL">
+			<variables name="CMD_STARTDELAY" typeName="BOOL">
 				<comment>запуск з затримкою (тільки автомат)</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
 			</variables>
-			<variables name="STOPDELAY" typeName="BOOL">
+			<variables name="CMD_STOPDELAY" typeName="BOOL">
 				<comment>зупин з затримкою (тільки автомат)</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
 			</variables>
-			<variables name="P_RESOLUTION" typeName="BOOL">
+			<variables name="CMD_P_RESOLUTION" typeName="BOOL">
 				<comment>дозвіл по наявності тиску в системі</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
 			</variables>
-			<variables name="BUFLOAD" typeName="BOOL">
+			<variables name="CMD_BUFLOAD" typeName="BOOL">
 				<comment>завантажити в буфер</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
 			</variables>
-			<variables name="cmdrezb25" typeName="BOOL"></variables>
-			<variables name="cmdrezb26" typeName="BOOL"></variables>
-			<variables name="cmdrezb27" typeName="BOOL"></variables>
-			<variables name="cmdrezb28" typeName="BOOL"></variables>
-			<variables name="cmdrezb29" typeName="BOOL"></variables>
-			<variables name="cmdrezb30" typeName="BOOL"></variables>
-			<variables name="cmdrezb31" typeName="BOOL"></variables>
+			<variables name="CMD_b25" typeName="BOOL">
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="CMD_b26" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="CMD_b27" typeName="BOOL">
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="CMD_b28" typeName="BOOL">
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="CMD_b29" typeName="BOOL">
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="CMD_b30" typeName="BOOL">
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="CMD_b31" typeName="BOOL">
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="ACTTR_PRM" version="0.01" dateTime="dt#2022-01-09-11:14:37">
-		<attribute name="TypeSignatureCheckSumString" value="D8EB"></attribute>
+	<DDTSource DDTName="ACTTR_PRM" version="0.03" dateTime="dt#2022-01-17-11:17:16">
+		<attribute name="TypeSignatureCheckSumString" value="0FE1"></attribute>
 		<structure>
+			<variables name="PRM1" typeName="INT"></variables>
 			<variables name="PRM_b0" typeName="BOOL">
-				<comment>=1 </comment>
+				<attribute name="ExtractBit" value="0"></attribute>
 			</variables>
 			<variables name="PRM_ZWRKENBL" typeName="BOOL">
 				<comment>=1 є звонішній вхід - зворотній звязок про роботу</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
 			</variables>
 			<variables name="PRM_ZPOSENBL" typeName="BOOL">
 				<comment>=1 є аналоговий зворотній звязок частоти/позиції</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
 			</variables>
 			<variables name="PRM_PWRENBL" typeName="BOOL">
 				<comment>=1 є звонішній вхід по стану живлення</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
 			</variables>
 			<variables name="PRM_MANCFG" typeName="BOOL">
 				<comment>=1 ручне керування налаштуванням</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
 			</variables>
 			<variables name="PRM_ZOPNENBL" typeName="BOOL">
 				<comment>=1 є датчик відкритості</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
 			</variables>
 			<variables name="PRM_ZCLSENBL" typeName="BOOL">
 				<comment>=1 є датчик закритості</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
 			</variables>
 			<variables name="PRM_AUTOACK" typeName="BOOL">
 				<comment>=1, автоматичне підтвердження тривог</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
 			</variables>
 			<variables name="PRM_BTNSTPENBL" typeName="BOOL">
 				<comment>=1 є зовнішній вхід - включена кнопка STOP</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
 			</variables>
 			<variables name="PRM_ALMENBL" typeName="BOOL">
 				<comment>=1 є зовнішній вхід - сигнал аварії від приводу</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
 			</variables>
 			<variables name="PRM_SELLCLENBL" typeName="BOOL">
 				<comment>=1 є зовнішній вхід - сигнал включення місцевого керування</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
 			</variables>
 			<variables name="PRM_PULSCTRLENBL" typeName="BOOL">
 				<comment>=1 схема керування імпулсами (команди на 2с)</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
 			</variables>
 			<variables name="PRM_ZRUNENBL" typeName="BOOL">
 				<comment>=1 є зовнішній вхід про рух приводу</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
 			</variables>
 			<variables name="PRM_ZSPDENBL" typeName="BOOL">
 				<comment>=1 є зовнішній вхід про датчику швидкості приводу</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
 			</variables>
 			<variables name="PRM_CRVRSENBL" typeName="BOOL">
 				<comment>=1 ВМ з виходом керування реверсом</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
 			</variables>
 			<variables name="PRM_BLCKOFSPD" typeName="BOOL">
 				<comment>=1 зупиняти по зниженні швидкості</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
+			<variables name="PRM2" typeName="INT"></variables>
 			<variables name="PRM_NOPRES" typeName="BOOL">
 				<comment>=1 довзолити рух без включеного маслонасоса</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
 			</variables>
-			<variables name="PRM_b17" typeName="BOOL"></variables>
-			<variables name="PRM_b18" typeName="BOOL"></variables>
-			<variables name="PRM_b19" typeName="BOOL"></variables>
-			<variables name="PRM_b20" typeName="BOOL"></variables>
-			<variables name="PRM_b21" typeName="BOOL"></variables>
-			<variables name="PRM_b22" typeName="BOOL"></variables>
-			<variables name="PRM_b23" typeName="BOOL"></variables>
-			<variables name="PRM_b24" typeName="BOOL"></variables>
-			<variables name="PRM_b25" typeName="BOOL"></variables>
-			<variables name="PRM_b26" typeName="BOOL"></variables>
-			<variables name="PRM_b27" typeName="BOOL"></variables>
-			<variables name="PRM_b28" typeName="BOOL"></variables>
-			<variables name="PRM_b29" typeName="BOOL"></variables>
-			<variables name="PRM_b30" typeName="BOOL"></variables>
-			<variables name="PRM_b31" typeName="BOOL"></variables>
+			<variables name="PRM_b17" typeName="BOOL">
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="PRM_b18" typeName="BOOL">
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="PRM_b19" typeName="BOOL">
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="PRM_b20" typeName="BOOL">
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="PRM_b21" typeName="BOOL">
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="PRM_b22" typeName="BOOL">
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="PRM_b23" typeName="BOOL">
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="PRM_b24" typeName="BOOL">
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="PRM_b25" typeName="BOOL">
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="PRM_b26" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="PRM_b27" typeName="BOOL">
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="PRM_b28" typeName="BOOL">
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="PRM_b29" typeName="BOOL">
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="PRM_b30" typeName="BOOL">
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="PRM_b31" typeName="BOOL">
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
 		</structure>
 	</DDTSource>
 </DDTExchangeFile>

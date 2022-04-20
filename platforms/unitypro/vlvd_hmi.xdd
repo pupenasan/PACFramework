@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DDTExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-11:7:20" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.000"></contentHeader>
-	<DDTSource DDTName="VLVD_HMI" version="0.01" dateTime="dt#2022-01-09-12:03:49">
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-4-18-10:19:22" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.88" dateTime="date_and_time#2022-4-2-18:55:54"></contentHeader>
+	<DDTSource DDTName="VLVD_HMI" version="0.02" dateTime="dt#2022-01-17-17:09:55">
 		<attribute name="TypeSignatureCheckSumString" value="6639"></attribute>
 		<structure>
-			<variables name="STA" typeName="INT"></variables>
-			<variables name="CMD" typeName="INT"></variables>
-			<variables name="ALM" typeName="INT"></variables>
-			<variables name="POS" typeName="INT"></variables>
+			<variables name="STA" typeName="INT">
+				<comment>біти стану</comment>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>команда керування</comment>
+			</variables>
+			<variables name="ALM" typeName="INT">
+				<comment>біти тривог</comment>
+			</variables>
+			<variables name="POS" typeName="INT">
+				<comment>позиція ВМ (0-10000)</comment>
+			</variables>
 		</structure>
 	</DDTSource>
 </DDTExchangeFile>

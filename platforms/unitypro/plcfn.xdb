@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <FBExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-13-12:57:49" content="Function Block source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.000" dateTime="date_and_time#2022-1-13-12:57:16"></contentHeader>
-	<FBSource nameOfFBType="PLCFN" version="0.14" dateTime="dt#2022-01-13-12:55:27">
-		<attribute name="TypeCodeCheckSumString" value="EF90"></attribute>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-4-20-17:7:58" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.88" dateTime="date_and_time#2022-4-2-18:55:54"></contentHeader>
+	<FBSource nameOfFBType="PLCFN" version="0.16" dateTime="dt#2022-04-05-17:04:51">
+		<attribute name="TypeCodeCheckSumString" value="DE97"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="FA47"></attribute>
 		<inOutParameters>
 			<variables name="PLC" typeName="PLC_CFG">
@@ -17,6 +17,11 @@
 			<variables name="NOW" typeName="DT"></variables>
 			<variables name="TM200ms" typeName="TON"></variables>
 			<variables name="TM500ms" typeName="TON"></variables>
+			<variables name="Display_NTPC" typeName="Display_NTPC"></variables>
+			<variables name="Calc_NTPC" typeName="Calc_NTPC"></variables>
+			<variables name="STATUS" typeName="INT"></variables>
+			<variables name="ms_cur" typeName="UDINT"></variables>
+			<variables name="ms_prev" typeName="UDINT"></variables>
 		</privateLocalVariables>
 		<FBProgram name="PLC_FN">
 			<STSource>IF PLC.STA_CMDACK THEN
@@ -158,10 +163,16 @@ ELSE (*2-га або 3-тя*)
 END_IF;
 (*----------- *)
 
+RRTC_DT_MS (OUT1 =&gt; Display_NTPC,
+            OUT2 =&gt; Calc_NTPC,
+            STATUS =&gt; STATUS);
+ms_cur:=Calc_NTPC.Seconds*1000+int_to_udint(Calc_NTPC.fraction_Second);
 (*цикли*)
-PLC.TSK_LTIME :=int_to_uint(%sw30);
+(*PLC.TSK_LTIME :=int_to_uint(%sw30);*)
+PLC.TSK_LTIME :=udint_to_uint(ms_cur - ms_prev);
 PLC.TSK_MAXTIME :=int_to_uint(%sw31);
 PLC.TQMS := PLC.TQMS + UINT_TO_UDINT(PLC.TSK_LTIME);(*//лічильник в мс*)
+ms_prev:=ms_cur;
 
 (*скидання статусів і тривог*)
 PLC.STA_BLK := false;
