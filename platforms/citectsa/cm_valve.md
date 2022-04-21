@@ -2,7 +2,7 @@
 
 ## Оригінальна версія Valve 
 
-У Citect SA для клапанів та заслінок існує спеціальний тип Equpmnet Valve/   
+У Citect SA для клапанів та заслінок існує спеціальний тип Equpmnet Valve 
 
 ![img](media/Valve_CommonElements.png)
 

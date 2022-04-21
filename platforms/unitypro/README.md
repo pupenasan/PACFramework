@@ -199,6 +199,8 @@
 - [ ] Створіть підпрограми (SR Section) на мові ST з іменами `dichs` , `aichs`,  `dochs`, `aochs`
 - [ ] У секції `main` викличте ці секції. Тепер Ваша програма має наступний вигляд:
 
+
+
 ```pascal
 PLCFN (PLC := PLC);
 
@@ -245,15 +247,15 @@ CHAIFN (RAWINT := %IW0.2.0, CHCFG := CHAI[1], CHHMI := CHAI_HMI[1], PLCCFG := PL
 
 - [ ] - [ ] скопіювати в блокнот код, який необхідно "розмножати":
 
-  - [ ] ```pascal
-    CHDIFN (RAW := %i0.1.0,  CHCFG := CHDI[1],  CHHMI := CHDI_HMI[1],  PLCCFG := PLC, CHBUF := CH_BUF);
-    ```
+```pascal
+CHDIFN (RAW := %i0.1.0,  CHCFG := CHDI[1],  CHHMI := CHDI_HMI[1],  PLCCFG := PLC, CHBUF := CH_BUF);
+```
 
   - [ ] поставити знаки табуляції між частинами, які будуть змінними:
 
-  - [ ] ```
-    CHDIFN (RAW := %i	0.1.0	,  CHCFG := CHDI[	1	],  CHHMI := CHDI_HMI[	1	],  PLCCFG := PLC, CHBUF := CH_BUF);
-    ```
+```
+CHDIFN (RAW := %i	0.1.0	,  CHCFG := CHDI[1],  CHHMI := CHDI_HMI[1],  PLCCFG := PLC, CHBUF := CH_BUF);
+```
 
   - [ ] скопіювати даний код в електронну таблицю;
 
@@ -409,7 +411,9 @@ moduls();
 
 ```ini
 [exceltools]
-pathsource = C:\Users\san\pacframeworktools\source
+pathsource = C:\Users\user\pacframeworktools\source
+pathresult = C:\Users\user\pacframeworktools\result
+pathlog = C:\Users\user\pacframeworktools\log
 pathxlsfile = masterdata.xlsx
 ```
 
@@ -418,7 +422,7 @@ pathxlsfile = masterdata.xlsx
 Для конфігурування даних для розгортання можна скористатися електронною таблицею з майстерданими. Для `pacframework-tools`  для цього використовується `masterdata.xlsx`, який означується за певним  форматом.  
 
 - [ ] Завантажте файл [masterdata.xlsx](https://docs.google.com/spreadsheets/d/1GvttNOH74X2o9y0fh_qxQCHhfdFszx7m/edit?usp=sharing&ouid=111751208742846482260&rtpof=true&sd=true) в папку `source` яку ви створили в попередньому пункті
-- [ ] Відкрийте його для перегляду
+- [ ] Відкрийте його для перегляду (якщо немає Excel на комп'ютері - подивіться в онлайні через браузер на гугл-диску)
 - [ ] Ознайомтеся зі змістом, скориставшись допомогою за [цим посиланням](https://github.com/pupenasan/pacframework-tools/blob/main/masredataxls.md)
 
 ## 5. Розгортання рівня змінних
@@ -429,7 +433,7 @@ pathxlsfile = masterdata.xlsx
 - [ ] Імпортуйте його в проект Unity PRO. Зверніть увагу що при імпорті в повідомленні про заміну тегів в проекті треба буде залишити усе без змін `Keep All` (як на Рис.7).
 - [ ] Подивіться які функціональні блоки, типи функціональних блоків, типи змінних які при цьому добавилися. Нові або змінені об'єкти в  Unity PRO виділяються синіми помітками.  
 - [ ] Імпортуйте їх в проект Unity PRO
-- [ ] Завантажте експортні варіанти операторських екранів `aivar.xcr`, `divar.xcr`, `aovar.xcr`, `dovar.xcr`  за [цим посиланням](https://github.com/pupenasan/PACFramework/blob/master/platforms/unitypro)  і перемістіть їх у робочу папку,  `%Userprofile%\pacframeworktools\source`. Ці експорті варіанти є шаблонами для генерування операторських екранів для проекту з майстерданих. 
+- [ ] Завантажте експортні варіанти операторських екранів `aivar.xcr`, `divar.xcr`, `aovar.xcr`, `dovar.xcr`  за [цим посиланням](https://github.com/pupenasan/PACFramework/blob/master/platforms/unitypro)  і перемістіть їх у робочу папку,  `%Userprofile%\pacframeworktools\source`. Ці експорті варіанти є шаблонами для генерування операторських екранів для проекту з майстерданих. Зверніть увагу на правильність завнтаження, як це вказано на рис.1.
 
 ### 5.2. Генерування файлів імпорту 
 
@@ -451,6 +455,8 @@ node C:\pacfwtools\node_modules\pacframework-tools\index seuncreateall
 ![image-20220125163457260](media9/image-20220125163457260.png)
 
 Рис.13. Повідомлення про створення змінних та секцій обробки
+
+- [ ] У папці проекту `/reports` також будуть сформовані деякі звіти.
 
 Окрім наведених секцій створюються також інші файли для каркасу, які автоматизують наступні частини створення проекту та вже створені в роботі для цього (канали). 
 
@@ -542,21 +548,21 @@ moduls();
 
 Подайте команди `VLVDS_HMI.VNabor_T1.CMD`
 
-| №    | Команда з Animation Table | Команда з Oparator Screen                                    | Реакція в ПЛК                                                | Реакція в Oparator Screen                                    |
-| ---- | ------------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| 1    | 256                       | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image001.png) | VLVDS.Vnabor_T1.STA_INBUF = 1  ACTBUF.ID= VLVDS.Vnabor_T1.ID | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image002.png) |
-| 2    | 769                       | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image004.jpg) | VLVDS.Vnabor_T1.STA_DISP = 1                                 | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image005.png) |
-| 3    | 1                         | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image007.jpg) | VLVDS.Vnabor_T1.STA_OPNING= 1                                | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image008.png) |
-| 4    |                           |                                                              | VLVDS.Vnabor_T1.STA_OPNING = 0  VLVDS.Vnabor_T1.STA_OPND = 1 | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image009.png) |
-| 5    | 2                         | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image011.jpg) | VLVDS.Vnabor_T1.STA_CLSING= 1                                | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image012.png) |
-| 6    |                           |                                                              | VLVDS.Vnabor_T1.STA_CLSING = 0  VLVDS.Vnabor_T1.STA_CLSD = 1 | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image013.png) |
-| 7    |                           |                                                              | VLVDS.Vnabor_T1.STA_FRC = 1                                  | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image014.png) |
-| 8    | 1                         | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image0071.jpg) | VLVDS.Vnabor_T1.ALM_ALMOPN=1  VLVDS.Vnabor_T1.ALM_ALM=1      | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image015.png) |
-| 9    | 2                         |                                                              | VLVDS.Vnabor_T1.ALM_ALMOPN=0  VLVDS.Vnabor_T1.ALM_ALM=0      | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image0132.png) |
-| 10   | 2                         | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image0111.jpg) | VLVDS.Vnabor_T1.ALM_ALMCLS=1  VLVDS.Vnabor_T1.ALM_ALM=1      | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image017.jpg) |
-| 11   | 1                         |                                                              | VLVDS.Vnabor_T1.ALM_ALMCLS=0  VLVDS.Vnabor_T1.ALM_ALM=0      | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image0091.png) |
-| 12   |                           |                                                              | VLVDS.Vnabor_T1.ALM_ALMSHIFT=1  VLVDS.Vnabor_T1.ALM_ALM=1    | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image018.png) |
-| 13   |                           |                                                              | VLVDS.Vnabor_T1.ALM_ALMSHIFT=0  VLVDS.Vnabor_T1.ALM_ALM=0    |                                                              |
-| 14   |                           |                                                              | VLVDS.Vnabor_T1.ALM_ALMSLNBRK=1  VLVDS.Vnabor_T1.ALM_ALM=1   | ![img](G:\san\PLCFramework\GitVer\platforms\unitypro\media\clip_image019.png) |
-| 15   |                           |                                                              | VLVDS.Vnabor_T1.ALM_ALMSLNBRK=0  VLVDS.Vnabor_T1.ALM_ALM=0   |                                                              |
+| №    | Команда з Animation Table | Команда з Oparator Screen        | Реакція в ПЛК                                                | Реакція в Oparator Screen        |
+| ---- | ------------------------- | -------------------------------- | ------------------------------------------------------------ | -------------------------------- |
+| 1    | 256                       | ![img](media/clip_image001.png)  | VLVDS.Vnabor_T1.STA_INBUF = 1  ACTBUF.ID= VLVDS.Vnabor_T1.ID | ![img](media/clip_image002.png)  |
+| 2    | 769                       | ![img](media/clip_image004.jpg)  | VLVDS.Vnabor_T1.STA_DISP = 1                                 | ![img](media/clip_image005.png)  |
+| 3    | 1                         | ![img](media/clip_image007.jpg)  | VLVDS.Vnabor_T1.STA_OPNING= 1                                | ![img](media/clip_image008.png)  |
+| 4    |                           |                                  | VLVDS.Vnabor_T1.STA_OPNING = 0  VLVDS.Vnabor_T1.STA_OPND = 1 | ![img](media/clip_image009.png)  |
+| 5    | 2                         | ![img](media/clip_image011.jpg)  | VLVDS.Vnabor_T1.STA_CLSING= 1                                | ![img](media/clip_image012.png)  |
+| 6    |                           |                                  | VLVDS.Vnabor_T1.STA_CLSING = 0  VLVDS.Vnabor_T1.STA_CLSD = 1 | ![img](media/clip_image013.png)  |
+| 7    |                           |                                  | VLVDS.Vnabor_T1.STA_FRC = 1                                  | ![img](media/clip_image014.png)  |
+| 8    | 1                         | ![img](media/clip_image0071.jpg) | VLVDS.Vnabor_T1.ALM_ALMOPN=1  VLVDS.Vnabor_T1.ALM_ALM=1      | ![img](media/clip_image015.png)  |
+| 9    | 2                         |                                  | VLVDS.Vnabor_T1.ALM_ALMOPN=0  VLVDS.Vnabor_T1.ALM_ALM=0      | ![img](media/clip_image0132.png) |
+| 10   | 2                         | ![img](media/clip_image0111.jpg) | VLVDS.Vnabor_T1.ALM_ALMCLS=1  VLVDS.Vnabor_T1.ALM_ALM=1      | ![img](media/clip_image017.jpg)  |
+| 11   | 1                         |                                  | VLVDS.Vnabor_T1.ALM_ALMCLS=0  VLVDS.Vnabor_T1.ALM_ALM=0      | ![img](media/clip_image0091.png) |
+| 12   |                           |                                  | VLVDS.Vnabor_T1.ALM_ALMSHIFT=1  VLVDS.Vnabor_T1.ALM_ALM=1    | ![img](media/clip_image018.png)  |
+| 13   |                           |                                  | VLVDS.Vnabor_T1.ALM_ALMSHIFT=0  VLVDS.Vnabor_T1.ALM_ALM=0    |                                  |
+| 14   |                           |                                  | VLVDS.Vnabor_T1.ALM_ALMSLNBRK=1  VLVDS.Vnabor_T1.ALM_ALM=1   | ![img](media/clip_image019.png)  |
+| 15   |                           |                                  | VLVDS.Vnabor_T1.ALM_ALMSLNBRK=0  VLVDS.Vnabor_T1.ALM_ALM=0   |                                  |
 
