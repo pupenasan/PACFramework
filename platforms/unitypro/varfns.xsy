@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <VariablesExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-25-17:8:28" content="Variable source file" DTDVersion="41"></fileHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-4-26-16:45:59" content="Variable source file" DTDVersion="41"></fileHeader>
 	<contentHeader name="Project" version="0.0.000"></contentHeader>
 	<dataBlock>
 		<variables name="AIVARFN" typeName="AIVARFN"></variables>
@@ -8,8 +8,8 @@
 		<variables name="DIVARFN" typeName="DIVARFN"></variables>
 		<variables name="DOVARFN" typeName="DOVARFN"></variables>
 	</dataBlock>
-	<FBSource nameOfFBType="AIVARFN" version="0.14" dateTime="dt#2022-01-16-21:06:08">
-		<attribute name="TypeCodeCheckSumString" value="7F46"></attribute>
+	<FBSource nameOfFBType="AIVARFN" version="0.16" dateTime="dt#2022-04-26-16:39:25">
+		<attribute name="TypeCodeCheckSumString" value="F912"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="EDAC"></attribute>
 		<inOutParameters>
 			<variables name="CHCFG" typeName="CH_CFG">
@@ -278,8 +278,8 @@ END_IF;
             VARBUF.PRM.11 := AIVARCFG.PRM_PARAISPROC;
             VARBUF.PRM.12 := AIVARCFG.PRM_AFRZENBL;        
             VARBUF.PRM.13 := AIVARCFG.PRM_ASPDENBL;
-            VARBUF.PRM.14 := AIVARCFG.PRM_b14;
-            VARBUF.PRM.15 := AIVARCFG.PRM_b15;
+            VARBUF.PRM.14 := AIVARCFG.PRM_STATICMAP;
+            VARBUF.PRM.15 := AIVARCFG.PRM_NORAW;
     
             VARBUF.ID := AIVARCFG.ID;
             VARBUF.CLSID := AIVARCFG.CLSID;
@@ -328,8 +328,8 @@ END_IF;
             AIVARCFG.PRM_PARAISPROC := VARBUF.PRM.11;
             AIVARCFG.PRM_AFRZENBL := VARBUF.PRM.12;
             AIVARCFG.PRM_ASPDENBL := VARBUF.PRM.13;
-            AIVARCFG.PRM_b14 := VARBUF.PRM.14;
-            AIVARCFG.PRM_b15 := VARBUF.PRM.15;
+            AIVARCFG.PRM_STATICMAP := VARBUF.PRM.14;
+            AIVARCFG.PRM_NORAW := VARBUF.PRM.15;
     
             AIVARCFG.LORAW := VARBUF.LORAW;
             AIVARCFG.HIRAW := VARBUF.HIRAW;
@@ -829,8 +829,8 @@ END_IF;
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="AIVAR_CFG" version="0.02" dateTime="dt#2022-01-16-20:47:28">
-		<attribute name="TypeSignatureCheckSumString" value="DF13"></attribute>
+	<DDTSource DDTName="AIVAR_CFG" version="0.03" dateTime="dt#2022-03-21-18:21:26">
+		<attribute name="TypeSignatureCheckSumString" value="320D"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>Унікальний ідентифікатор</comment>
@@ -967,10 +967,12 @@ END_IF;
 				<comment>=1 - активна тривога допуску контролю швидкості</comment>
 				<attribute name="ExtractBit" value="13"></attribute>
 			</variables>
-			<variables name="PRM_b14" typeName="BOOL">
+			<variables name="PRM_STATICMAP" typeName="BOOL">
+				<comment>=1 - статична привязка каналів</comment>
 				<attribute name="ExtractBit" value="14"></attribute>
 			</variables>
-			<variables name="PRM_b15" typeName="BOOL">
+			<variables name="PRM_NORAW" typeName="BOOL">
+				<comment>=1 - джерело даних змінюється ззовні, відсутність масштабування (для мережних і внутрішніх змінних)</comment>
 				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
 			<variables name="CHID" typeName="UINT">
@@ -1773,7 +1775,7 @@ INT_TO_SIGU := SIGMIN + (INT_TO_REAL(VALINT) - RAWMIN)*(SIGMAX-SIGMIN)/(RAWMAX -
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="AOVARFN" version="0.17" dateTime="dt#2022-01-16-20:21:05">
+	<FBSource nameOfFBType="AOVARFN" version="0.17" dateTime="dt#2022-04-26-16:32:54">
 		<attribute name="TypeCodeCheckSumString" value="E065"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="30DD"></attribute>
 		<inOutParameters>
@@ -2187,8 +2189,8 @@ END_IF;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<DDTSource DDTName="AOVAR_CFG" version="0.02" dateTime="dt#2022-01-16-20:15:52">
-		<attribute name="TypeSignatureCheckSumString" value="5CDB"></attribute>
+	<DDTSource DDTName="AOVAR_CFG" version="0.03" dateTime="dt#2022-03-21-19:38:02">
+		<attribute name="TypeSignatureCheckSumString" value="482E"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>Унікальний ідентифікатор</comment>
@@ -2315,10 +2317,12 @@ END_IF;
 			<variables name="PRM_b13" typeName="BOOL">
 				<attribute name="ExtractBit" value="13"></attribute>
 			</variables>
-			<variables name="PRM_b14" typeName="BOOL">
+			<variables name="PRM_STATICMAP" typeName="BOOL">
+				<comment>=1 -  статична привязка каналів</comment>
 				<attribute name="ExtractBit" value="14"></attribute>
 			</variables>
-			<variables name="PRM_b15" typeName="BOOL">
+			<variables name="PRM_NORAW" typeName="BOOL">
+				<comment>=1 - джерело даних змінюється ззовні</comment>
 				<attribute name="ExtractBit" value="15"></attribute>
 			</variables>
 			<variables name="CHID" typeName="UINT">
@@ -2373,7 +2377,7 @@ END_IF;
 			</variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="DIVARFN" version="0.16" dateTime="dt#2022-01-19-19:52:10">
+	<FBSource nameOfFBType="DIVARFN" version="0.16" dateTime="dt#2022-04-26-16:32:54">
 		<attribute name="TypeCodeCheckSumString" value="6478"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="4AE9"></attribute>
 		<inOutParameters>
@@ -2781,8 +2785,8 @@ END_IF;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<DDTSource DDTName="DIVAR_CFG" version="0.03" dateTime="dt#2022-01-16-19:31:46">
-		<attribute name="TypeSignatureCheckSumString" value="B758"></attribute>
+	<DDTSource DDTName="DIVAR_CFG" version="0.05" dateTime="dt#2022-03-21-18:21:11">
+		<attribute name="TypeSignatureCheckSumString" value="B476"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>Унікальний ідентифікатор</comment>
@@ -2912,7 +2916,7 @@ END_IF;
 			<variables name="PRM_b13" typeName="BOOL">
 				<attribute name="ExtractBit" value="13"></attribute>
 			</variables>
-			<variables name="PRM_b14" typeName="BOOL">
+			<variables name="PRM_STATICMAP" typeName="BOOL">
 				<attribute name="ExtractBit" value="14"></attribute>
 			</variables>
 			<variables name="PRM_b15" typeName="BOOL">
@@ -2949,7 +2953,7 @@ END_IF;
 			</variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="DOVARFN" version="0.09" dateTime="dt#2022-01-16-20:07:15">
+	<FBSource nameOfFBType="DOVARFN" version="0.09" dateTime="dt#2022-04-26-16:32:57">
 		<attribute name="TypeCodeCheckSumString" value="C73A"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="6B8A"></attribute>
 		<inOutParameters>
@@ -3259,8 +3263,8 @@ END_IF;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<DDTSource DDTName="DOVAR_CFG" version="0.02" dateTime="dt#2022-01-16-19:58:50">
-		<attribute name="TypeSignatureCheckSumString" value="757F"></attribute>
+	<DDTSource DDTName="DOVAR_CFG" version="0.04" dateTime="dt#2022-03-21-18:21:18">
+		<attribute name="TypeSignatureCheckSumString" value="8EAF"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>Унікальний ідентифікатор</comment>
@@ -3382,7 +3386,7 @@ END_IF;
 			<variables name="PRM_b13" typeName="BOOL">
 				<attribute name="ExtractBit" value="13"></attribute>
 			</variables>
-			<variables name="PRM_b14" typeName="BOOL">
+			<variables name="PRM_STATICMAP" typeName="BOOL">
 				<attribute name="ExtractBit" value="14"></attribute>
 			</variables>
 			<variables name="PRM_b15" typeName="BOOL">

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <STExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-1-17-22:27:52" content="Structured source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.1" dateTime="date_and_time#2022-1-12-18:0:45"></contentHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-4-27-18:44:40" content="Structured source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.5" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
 	<program>
 		<identProgram name="moduls" type="SR" task="MAST"></identProgram>
 		<STSource>(*перебір усіх модулів*)
@@ -107,22 +107,41 @@ FOR i := 0 TO PLC.MODULSCNT - 1 DO
     MODULES[i].STA2:= modSTA2;
     
 END_FOR;
+
+FOR i := 0 TO 15 DO
+  SUBMODULE.CH[i].STA.9:=SUBMODULE.CNT-1&lt;i;
+END_FOR;
 </STSource>
 	</program>
 	<dataBlock>
-		<variables name="CHAO_HMI" typeName="ARRAY[0..4] OF CH_HMI"></variables>
-		<variables name="hasfrc" typeName="BOOL"></variables>
-		<variables name="modtype" typeName="UINT"></variables>
-		<variables name="CHAO" typeName="ARRAY[0..4] OF CH_CFG"></variables>
-		<variables name="sbmtype" typeName="INT"></variables>
-		<variables name="modSTA" typeName="INT"></variables>
-		<variables name="CHDI_HMI" typeName="ARRAY[0..32] OF CH_HMI"></variables>
-		<variables name="sbmCMD" typeName="INT"></variables>
-		<variables name="sbmchcnts" typeName="INT"></variables>
-		<variables name="MODULES" typeName="ARRAY[0..3] OF MODULE"></variables>
-		<variables name="modSTA2" typeName="INT"></variables>
 		<variables name="CHDO_HMI" typeName="ARRAY[0..32] OF CH_HMI"></variables>
+		<variables name="CHAO" typeName="ARRAY[0..4] OF CH_CFG"></variables>
+		<variables name="sbmstrtnmb" typeName="UINT"></variables>
+		<variables name="CHDI_HMI" typeName="ARRAY[0..32] OF CH_HMI"></variables>
+		<variables name="modSTA2" typeName="INT"></variables>
+		<variables name="j" typeName="INT"></variables>
+		<variables name="sbmchcnts" typeName="INT"></variables>
+		<variables name="sbmtype" typeName="INT"></variables>
+		<variables name="sbmCMD" typeName="INT"></variables>
+		<variables name="mask" typeName="INT"></variables>
+		<variables name="modSTA" typeName="INT"></variables>
+		<variables name="cmdLoadch" typeName="BOOL"></variables>
+		<variables name="k" typeName="INT"></variables>
+		<variables name="CHDI" typeName="ARRAY[0..32] OF CH_CFG"></variables>
+		<variables name="hasfrc" typeName="BOOL"></variables>
+		<variables name="zm" typeName="UINT"></variables>
 		<variables name="inbuf" typeName="BOOL"></variables>
+		<variables name="i" typeName="INT"></variables>
+		<variables name="modchcnts" typeName="UINT"></variables>
+		<variables name="hasfree" typeName="BOOL"></variables>
+		<variables name="SUBMODULE" typeName="SUBMODULE"></variables>
+		<variables name="MODULES" typeName="ARRAY[0..3] OF MODULE"></variables>
+		<variables name="CHAO_HMI" typeName="ARRAY[0..4] OF CH_HMI"></variables>
+		<variables name="modtype" typeName="UINT"></variables>
+		<variables name="cmdLoadsbm" typeName="BOOL"></variables>
+		<variables name="CHAI_HMI" typeName="ARRAY[0..8] OF CH_HMI"></variables>
+		<variables name="sbmbad" typeName="BOOL"></variables>
+		<variables name="CHAI" typeName="ARRAY[0..8] OF CH_CFG"></variables>
 		<variables name="CHDO" typeName="ARRAY[0..32] OF CH_CFG"></variables>
 		<variables name="PLC" typeName="PLC_CFG">
 			<instanceElementDesc name="DICNT">
@@ -138,21 +157,6 @@ END_FOR;
 				<value>4</value>
 			</instanceElementDesc>
 		</variables>
-		<variables name="zm" typeName="UINT"></variables>
-		<variables name="hasfree" typeName="BOOL"></variables>
-		<variables name="mask" typeName="INT"></variables>
-		<variables name="k" typeName="INT"></variables>
-		<variables name="sbmstrtnmb" typeName="UINT"></variables>
-		<variables name="CHAI_HMI" typeName="ARRAY[0..8] OF CH_HMI"></variables>
-		<variables name="j" typeName="INT"></variables>
-		<variables name="cmdLoadch" typeName="BOOL"></variables>
-		<variables name="CHDI" typeName="ARRAY[0..32] OF CH_CFG"></variables>
-		<variables name="CHAI" typeName="ARRAY[0..8] OF CH_CFG"></variables>
-		<variables name="modchcnts" typeName="UINT"></variables>
-		<variables name="cmdLoadsbm" typeName="BOOL"></variables>
-		<variables name="i" typeName="INT"></variables>
-		<variables name="SUBMODULE" typeName="SUBMODULE"></variables>
-		<variables name="sbmbad" typeName="BOOL"></variables>
 	</dataBlock>
 	<DDTSource DDTName="CH_HMI" version="0.03" dateTime="dt#2022-01-14-11:13:56">
 		<attribute name="TypeSignatureCheckSumString" value="0154"></attribute>
@@ -245,6 +249,26 @@ END_FOR;
 			</variables>
 			<variables name="VARID" typeName="UINT">
 				<comment>ID привязаної змінної</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="SUBMODULE" version="0.01" dateTime="dt#2022-01-04-12:39:59">
+		<attribute name="TypeSignatureCheckSumString" value="A13C"></attribute>
+		<structure>
+			<variables name="STRTNMB" typeName="INT">
+				<comment>номер початкового каналу для відображення конкретного підмодуля</comment>
+			</variables>
+			<variables name="CNT" typeName="INT">
+				<comment>кількість каналів</comment>
+			</variables>
+			<variables name="TYPE1" typeName="INT">
+				<comment>тип каналів</comment>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>команда: 1..16 - завантажити канал в буфер</comment>
+			</variables>
+			<variables name="CH" typeName="ARRAY[0..15] OF CH_HMI">
+				<comment>канали вибраного модуля</comment>
 			</variables>
 		</structure>
 	</DDTSource>
@@ -573,26 +597,6 @@ END_FOR;
 			</variables>
 			<variables name="TQMS" typeName="UDINT">
 				<comment>мілісекундний лічильник, скидається при старті або після переповнення</comment>
-			</variables>
-		</structure>
-	</DDTSource>
-	<DDTSource DDTName="SUBMODULE" version="0.01" dateTime="dt#2022-01-04-12:39:59">
-		<attribute name="TypeSignatureCheckSumString" value="A13C"></attribute>
-		<structure>
-			<variables name="STRTNMB" typeName="INT">
-				<comment>номер початкового каналу для відображення конкретного підмодуля</comment>
-			</variables>
-			<variables name="CNT" typeName="INT">
-				<comment>кількість каналів</comment>
-			</variables>
-			<variables name="TYPE1" typeName="INT">
-				<comment>тип каналів</comment>
-			</variables>
-			<variables name="CMD" typeName="INT">
-				<comment>команда: 1..16 - завантажити канал в буфер</comment>
-			</variables>
-			<variables name="CH" typeName="ARRAY[0..15] OF CH_HMI">
-				<comment>канали вибраного модуля</comment>
 			</variables>
 		</structure>
 	</DDTSource>

@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<SCRExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-4-22-19:14:28" content="Operator Screen source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.39" dateTime="date_and_time#2022-2-20-21:10:44"></contentHeader>
+	<IOScreen version="V1.0">
+		<screen name="PACFramework_VLVD" screenX="1280" screenY="1024" BKColor="-1" valScreen="5" location="" creationDate="18/02/2022 - 13:48:43" modificationDate="21/02/2022 - 00:16:45" customInfos="" isPattern="0" valPattern="0">
+			<object objectID="2" description="(50,35,116,669),29"></object>
+			<object objectID="11" description="(68,169,103,669),(5,1,0),(11,0,16776960)">
+				<varAnim name="ACTH.VNabor_T1.STA.12" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(72,610,88,637),(0,1,0),(11,0,16711680),|FRC¤¤|Courier New|,(9,0,0,0,0,0,16777215)">
+				<varAnim name="ACTH.VNabor_T1.STA.13" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(72,637,88,664),(0,1,0),(11,0,16776960),|SML|Courier New|,(9,0,0,0,0,0,0)">
+				<varAnim name="ACTH.VNabor_T1.STA.14" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(90,173,106,271),(5,1,0),(10,0,0),|VNabor_T1|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="18" description="(66,152,103,170),(-1,0,0,2),|&gt;|">
+				<varPilot name="ACTH.VNabor_T1.CMD" typeName="INT" description="Pilot:|256|256|"></varPilot>
+			</object>
+			<object objectID="15" description="(72,200,88,284),(0,1,0),(11,0,255),|Open alarm¤¤|Courier New|,(9,0,0,0,0,0,16777215)">
+				<varAnim name="ACTH.VNabor_T1.alm.0" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(72,284,88,369),(0,1,0),(11,0,255),|Close alarm¤¤|Courier New|,(9,0,0,0,0,0,16777215)">
+				<varAnim name="ACTH.VNabor_T1.alm.1" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(72,369,88,454),(0,1,0),(11,0,255),|Shift alarm¤¤|Courier New|,(9,0,0,0,0,0,16777215)">
+				<varAnim name="ACTH.VNabor_T1.alm.2" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(72,554,88,610),(0,1,0),(11,0,33023),|Blocked¤¤|Courier New|,(9,0,0,0,0,0,16777215)">
+				<varAnim name="ACTH.VNabor_T1.sta.15" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(72,173,88,200),(0,1,0),(11,0,16711680),|MAN|Courier New|,(9,0,0,0,0,0,16777215)">
+				<varAnim name="ACTH.VNabor_T1.STA.9" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(50,117,66,132),(0,1,0),(11,0,16711680),|M|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="ACTH.VNabor_T1.STA.9" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16711680)"></varAnim>
+			</object>
+			<object objectID="15" description="(50,35,70,59),(0,1,0),(11,0,255),|A|Courier New|,(14,1,0,0,0,0,0)">
+				<varAnim name="ACTH.VNabor_T1.alm.5" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(61,92,82,114),(0,1,0),(11,0,12632256)">
+				<varAnim name="ACTH.VNabor_T1.STA.4" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(50,35,70,59),(0,1,0),(11,0,65535),|W|Courier New|,(14,1,0,0,0,0,0)">
+				<varAnim name="ACTH.VNabor_T1.alm.6" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(51,72,67,87),(0,1,0),(11,0,16711680),|F|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="ACTH.VNabor_T1.STA.13" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16711680)"></varAnim>
+			</object>
+			<object objectID="11" description="(62,92,83,114),(0,1,0),(10,0,0)">
+				<varAnim name="ACTH.VNabor_T1.STA.5" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(62,92,83,114),(0,1,0),(10,0,0)">
+				<varAnim name="ACTH.VNabor_T1.STA.3" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(61,92,82,114),(0,1,0),(11,0,12632256)">
+				<varAnim name="ACTH.VNabor_T1.STA.6" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="10" description="(83,102,96,102),(0,1,0),4"></object>
+			<object objectID="14" description="(63,94,80,107),(0,1,0),(11,0,0),14:(94,63;94,65;94,66;94,68;94,69;94,71;94,72;94,74;94,75;94,77;94,78;94,80;107,72;94,63;),0">
+				<varAnim name="ACTH.VNabor_T1.STA.3" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="14" description="(63,97,80,111),(0,1,0),(11,0,0),14:(111,63;111,65;111,66;111,68;111,69;111,71;111,72;111,74;111,75;111,77;111,78;111,80;97,72;111,63;),0">
+				<varAnim name="ACTH.VNabor_T1.STA.4" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="10" description="(83,94,97,111),(0,3,0),1">
+				<varAnim name="ACTH.VNabor_T1.sta.15" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,12632256)"></varAnim>
+			</object>
+			<object objectID="10" description="(83,94,96,109),(0,3,0),4">
+				<varAnim name="ACTH.VNabor_T1.sta.15" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,12632256)"></varAnim>
+			</object>
+			<object objectID="11" description="(98,79,115,126),(0,1,0),(11,0,12632256)">
+				<varAnim name="ACTH.VNabor_T1.STA.6" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,12632256)"></varAnim>
+			</object>
+			<object objectID="11" description="(98,78,115,126),(0,1,0),(10,0,0)">
+				<varAnim name="ACTH.VNabor_T1.STA.5" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(98,78,115,126),(0,1,0),(10,0,0)">
+				<varAnim name="ACTH.VNabor_T1.STA.4" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(98,78,115,125),(0,1,0),(11,0,12632256)">
+				<varAnim name="ACTH.VNabor_T1.STA.3" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,12632256)"></varAnim>
+			</object>
+			<object objectID="15" description="(72,454,88,556),(0,1,0),(11,0,255),|SLNDBRK alarm¤¤|Courier New|,(9,0,0,0,0,0,16777215)">
+				<varAnim name="ACTH.VNabor_T1.alm.12" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(99,79,116,126),(0,1,0),(11,0,255)">
+				<varAnim name="ACTH.VNabor_T1.STA.0" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,12632256)"></varAnim>
+			</object>
+			<object objectID="2" description="(107,781,483,1137),36"></object>
+			<object objectID="15" description="(161,863,177,878),(0,1,0),(11,0,16711680),|M|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="ACTBUF.STAHMI1.9" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16711680)"></varAnim>
+			</object>
+			<object objectID="15" description="(161,781,181,805),(0,1,0),(11,0,255),|A|Courier New|,(14,1,0,0,0,0,0)">
+				<varAnim name="ACTBUF.ALMHMI1.7" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="18" description="(319,904,362,1010),(-1,0,0,2),|MAN|">
+				<varPilot name="ACTBUF.CMDHMI" typeName="INT" description="Pilot:|1|769|"></varPilot>
+			</object>
+			<object objectID="18" description="(382,906,425,1010),(-1,0,0,2),|AUTO|">
+				<varPilot name="ACTBUF.CMDHMI" typeName="INT" description="Pilot:|770|770|"></varPilot>
+			</object>
+			<object objectID="18" description="(319,1031,362,1137),(-1,0,0,2),|OPEN|">
+				<varPilot name="ACTBUF.CMDHMI" typeName="INT" description="Pilot:|1|1|"></varPilot>
+			</object>
+			<object objectID="18" description="(381,1033,424,1137),(-1,0,0,2),|CLOSE|">
+				<varPilot name="ACTBUF.CMDHMI" typeName="INT" description="Pilot:|2|2|"></varPilot>
+			</object>
+			<object objectID="15" description="(273,905,289,1009),(0,1,0),(11,0,255),|OPEN ALARM|Courier New|,(9,1,0,0,0,0,16777215)">
+				<varAnim name="ACTBUF.ALMHMI1.2" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(273,1031,289,1135),(0,1,0),(11,0,255),|CLOSE ALARM|Courier New|,(9,1,0,0,0,0,16777215)">
+				<varAnim name="ACTBUF.ALMHMI1.3" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(208,825,225,872),(0,1,0),(10,0,0)">
+				<varAnim name="ACTBUF.STAHMI1.5" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(208,825,225,872),(0,1,0),(11,0,12632256)">
+				<varAnim name="ACTBUF.STAHMI1.6" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,12632256)"></varAnim>
+			</object>
+			<object objectID="11" description="(174,837,195,859),(0,1,0),(11,0,12632256)">
+				<varAnim name="ACTBUF.STAHMI1.6" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(161,781,181,805),(0,1,0),(11,0,65535),|W|Courier New|,(14,1,0,0,0,0,0)">
+				<varAnim name="ACTBUF.ALMHMI1.9" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(162,818,178,833),(0,1,0),(11,0,16711680),|F|Courier New|,(9,1,0,0,0,0,0)">
+				<varAnim name="ACTBUF.STAHMI1.12" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,16711680)"></varAnim>
+			</object>
+			<object objectID="11" description="(174,837,195,859),(0,1,0),(10,0,0)">
+				<varAnim name="ACTBUF.STAHMI1.5" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(174,837,195,859),(0,1,0),(10,0,0)">
+				<varAnim name="ACTBUF.STAHMI1.3" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="11" description="(174,837,195,859),(0,1,0),(11,0,12632256)">
+				<varAnim name="ACTBUF.STAHMI1.4" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="18" description="(440,980,483,1084),(-1,0,0,2),|SAVE|">
+				<varPilot name="ACTH.VDoz_T1toT2.CMD" typeName="INT" description="Pilot:|257|257|"></varPilot>
+			</object>
+			<object objectID="19" description="(157,1046,177,1131),(-1,1,0,0)">
+				<varAnim name="ACTBUF.T_DEASP" typeName="UINT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="ACTBUF.T_DEASP" typeName="UINT" description="Pilot:|0|1000|"></varPilot>
+			</object>
+			<object objectID="10" description="(194,848,207,848),(0,1,0),4"></object>
+			<object objectID="14" description="(176,840,193,853),(0,1,0),(11,0,0),14:(840,176;840,178;840,179;840,181;840,182;840,184;840,185;840,187;840,188;840,190;840,191;840,193;853,185;840,176;),0">
+				<varAnim name="ACTBUF.STAHMI1.3" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="14" description="(176,841,193,855),(0,1,0),(11,0,0),14:(855,176;855,178;855,179;855,181;855,182;855,184;855,185;855,187;855,188;855,190;855,191;855,193;841,185;855,176;),0">
+				<varAnim name="ACTBUF.STAHMI1.4" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="10" description="(194,840,208,857),(0,3,0),1">
+				<varAnim name="ACTBUF.STAHMI1.14" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,12632256)"></varAnim>
+			</object>
+			<object objectID="10" description="(194,840,207,855),(0,3,0),4">
+				<varAnim name="ACTBUF.STAHMI1.14" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,12632256)"></varAnim>
+			</object>
+			<object objectID="18" description="(319,781,362,885),(-1,0,0,2),|BLK|">
+				<varPilot name="ACTBUF.CMDHMI" typeName="INT" description="Pilot:|770|6|"></varPilot>
+			</object>
+			<object objectID="18" description="(382,781,425,885),(-1,0,0,2),|DBLK|">
+				<varPilot name="ACTBUF.CMDHMI" typeName="INT" description="Pilot:|770|7|"></varPilot>
+			</object>
+			<object objectID="15" description="(246,1031,262,1135),(0,1,0),(11,0,255),|SHIFT ALARM|Courier New|,(9,1,0,0,0,0,16777215)">
+				<varAnim name="ACTBUF.ALMHMI1.6" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="19" description="(198,1047,217,1132),(-1,1,0,0)">
+				<varAnim name="ACTBUF.T_OPNSP" typeName="UINT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="ACTBUF.T_OPNSP" typeName="UINT" description="Pilot:|0|1000|"></varPilot>
+			</object>
+			<object objectID="15" description="(108,910,124,962),(5,1,0),(10,0,0),|ID|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(154,910,186,1004),(5,1,0),(10,0,0),|час затримки¤¤тривоги 0.1 с|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="15" description="(193,909,239,1034),(5,1,0),(10,0,0),|Максимальний час відкриття¤¤ в 0.1 секундах|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="19" description="(107,1046,126,1131),(-1,1,0,0)">
+				<varAnim name="ACTBUF.ID" typeName="UINT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="ACTBUF.ID" typeName="UINT" description="Pilot:|0|1000|"></varPilot>
+			</object>
+			<object objectID="15" description="(133,910,149,962),(5,1,0),(10,0,0),|CLSID|Courier New|,(9,0,0,0,0,0,0)"></object>
+			<object objectID="19" description="(132,1046,151,1131),(-1,1,0,0)">
+				<varAnim name="ACTBUF.CLSID" typeName="UINT" description="Anim:0,|-|-|,(0,0),(0,0)"></varAnim>
+				<varPilot name="ACTBUF.CLSID" typeName="UINT" description="Pilot:|0|1000|"></varPilot>
+			</object>
+			<object objectID="11" description="(208,825,225,872),(0,1,0),(11,0,12632256)">
+				<varAnim name="ACTBUF.STAHMI1.3" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,12632256)"></varAnim>
+			</object>
+			<object objectID="11" description="(208,825,225,872),(0,1,0),(10,0,0)">
+				<varAnim name="ACTBUF.STAHMI1.4" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+			<object objectID="15" description="(247,906,263,1010),(0,1,0),(11,0,255),|SLNDBRK ALARM|Courier New|,(9,1,0,0,0,0,16777215)">
+				<varAnim name="ACTBUF.ALMHMI2.12" typeName="BOOL" description="Anim:2,|-|-|,(0,0),(0,0)"></varAnim>
+			</object>
+		</screen>
+	</IOScreen>
+</SCRExchangeFile>
