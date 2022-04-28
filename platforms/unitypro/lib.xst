@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <STExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-4-27-23:13:56" content="Structured source file" DTDVersion="41"></fileHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-4-28-15:13:21" content="Structured source file" DTDVersion="41"></fileHeader>
 	<contentHeader name="Project" version="0.0.6" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
 	<program>
 		<identProgram name="mainPFW" type="section" task="MAST"></identProgram>
@@ -3654,8 +3654,8 @@ DRVFN(ACTCFG:=ACT.DRV1, ACTHMI:=ACTH.DRV1, RUN:=DIVAR_TMP, CSTRT:=DOVAR_TMP, CSP
 			</variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="VLVDFN" version="0.32" dateTime="dt#2022-03-22-16:02:30">
-		<attribute name="TypeCodeCheckSumString" value="B110"></attribute>
+	<FBSource nameOfFBType="VLVDFN" version="0.33" dateTime="dt#2022-04-28-15:12:02">
+		<attribute name="TypeCodeCheckSumString" value="331A"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="441A"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="VLVD_CFG">
@@ -3777,13 +3777,13 @@ CCLS.STA_SML := STA.STA_SML;
 IF STA.STA_SML THEN
     dpos:= UDINT_TO_REAL(dT1*100)/UDINT_TO_REAL((UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100));(*%*)
     IF ACTCFGu.STEP1=2  THEN
-        ACTCFGu.POS_PV := ACTCFGu.POS_PV + dpos; (*0-10000*)
+        ACTCFGu.POS := ACTCFGu.POS + dpos; (*0-10000*)
     END_IF;
     IF ACTCFGu.STEP1=3 THEN
-        ACTCFGu.POS_PV := ACTCFGu.POS_PV - dpos; (*0-10000*)
+        ACTCFGu.POS := ACTCFGu.POS - dpos; (*0-10000*)
     END_IF;
-    IF ACTCFGu.POS_PV&lt;0.0 THEN ACTCFGu.POS_PV:=0.0; END_IF;
-    IF ACTCFGu.POS_PV&gt;100.0 THEN ACTCFGu.POS_PV:=100.0; END_IF;  
+    IF ACTCFGu.POS&lt;0.0 THEN ACTCFGu.POS:=0.0; END_IF;
+    IF ACTCFGu.POS&gt;100.0 THEN ACTCFGu.POS:=100.0; END_IF;  
     
     (*імітація датчиків *)
     
@@ -3905,7 +3905,7 @@ STA.STA_CLSD:= ACTCFGu.STEP1 = 5;
 IF ACTCFGu.PRM.PRM_ZPOSENBL THEN
     ;(*ACTCFG.POS := REAL_TO_INT(POS.VAL * 0.01);*)
 ELSIF NOT STA.STA_SML THEN
-    ACTCFGu.POS_PV := -32768.0; (*відключено для показу*)
+    ACTCFGu.POS := -32768.0; (*відключено для показу*)
 END_IF;
 
 (*-------- блокуання приводу*)
@@ -4438,8 +4438,8 @@ ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="ACTTR_CFG" version="0.07" dateTime="dt#2022-03-18-16:03:20">
-		<attribute name="TypeSignatureCheckSumString" value="5717"></attribute>
+	<DDTSource DDTName="ACTTR_CFG" version="0.08" dateTime="dt#2022-04-28-15:11:57">
+		<attribute name="TypeSignatureCheckSumString" value="4E21"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>ідентифікатор</comment>
@@ -4483,7 +4483,7 @@ ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
 			<variables name="T_OPNSP" typeName="UINT">
 				<comment>Максимальний час відкриття в 0.1 секундах</comment>
 			</variables>
-			<variables name="POS_PV" typeName="REAL">
+			<variables name="POS" typeName="REAL">
 				<comment>позиціяВМ (0-100%) - ЗВОРОТНІЙ ЗВЯЗОК</comment>
 			</variables>
 			<variables name="STEP1" typeName="UINT">
@@ -4510,7 +4510,7 @@ ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
 			<variables name="POWER_IN" typeName="REAL">
 				<comment>потужність, кВт</comment>
 			</variables>
-			<variables name="POS_SP" typeName="REAL">
+			<variables name="CPOS" typeName="REAL">
 				<comment>позиціяВМ (0-100%) - ЗАДАНЕ ЗНАЧЕННЯ</comment>
 			</variables>
 			<variables name="SPD" typeName="INT">
@@ -4807,8 +4807,8 @@ ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
 			</variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="VLVD_to_ACT" version="0.06" dateTime="dt#2022-03-22-10:31:15">
-		<attribute name="TypeCodeCheckSumString" value="639C"></attribute>
+	<FBSource nameOfFBType="VLVD_to_ACT" version="0.07" dateTime="dt#2022-04-28-15:12:01">
+		<attribute name="TypeCodeCheckSumString" value="410A"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="6000"></attribute>
 		<inOutParameters>
 			<variables name="VLVDCFG" typeName="VLVD_CFG">
@@ -4828,7 +4828,7 @@ ACTCFG.CMD:= VLVDCFG.CMD;
 ACTCFG.PRM:= VLVDCFG.PRM;
 ACTCFG.T_DEASP:= VLVDCFG.T_DEASP;
 ACTCFG.T_OPNSP:= VLVDCFG.T_OPNSP;
-ACTCFG.POS_PV:= VLVDCFG.POS;
+ACTCFG.POS:= VLVDCFG.POS;
 ACTCFG.STEP1:= VLVDCFG.STEP1;
 ACTCFG.CNTPER:= VLVDCFG.CNTPER;
 ACTCFG.CNTALM:= VLVDCFG.CNTALM;
@@ -4876,7 +4876,7 @@ ACTCFG.CMDHMI:=VLVDHMI.CMD;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_PRE" version="0.10" dateTime="dt#2022-03-22-15:43:49">
+	<FBSource nameOfFBType="ACT_PRE" version="0.10" dateTime="dt#2022-04-28-15:11:58">
 		<attribute name="TypeCodeCheckSumString" value="B9C6"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="58F3"></attribute>
 		<inOutParameters>
@@ -4990,8 +4990,8 @@ IF dt1&lt;1 THEN dt1:=1; END_IF;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_CMDCTRL" version="0.08" dateTime="dt#2022-03-22-15:34:27">
-		<attribute name="TypeCodeCheckSumString"></attribute>
+	<FBSource nameOfFBType="ACT_CMDCTRL" version="0.09" dateTime="dt#2022-04-28-15:11:58">
+		<attribute name="TypeCodeCheckSumString" value="62F4"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="B4F1"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="ACTTR_CFG">
@@ -5163,8 +5163,8 @@ END_CASE;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_POST" version="0.09" dateTime="dt#2022-03-22-15:38:50">
-		<attribute name="TypeCodeCheckSumString" value="EF6C"></attribute>
+	<FBSource nameOfFBType="ACT_POST" version="0.10" dateTime="dt#2022-04-28-15:11:59">
+		<attribute name="TypeCodeCheckSumString" value="FA49"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="7336"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="ACTTR_CFG">
@@ -5359,7 +5359,7 @@ IF STA.STA_INBUF THEN
     ACTBUF.ALMHMI2:= ACTCFG.ALMHMI2 ;
     ACTBUF.STEP1:= ACTCFG.STEP1 ;
     ACTBUF.T_STEP1:= ACTCFG.T_STEP1;
-    ACTBUF.POS_PV := ACTCFG.POS_PV;
+    ACTBUF.POS := ACTCFG.POS;
     (*"BUF".ACTBUF.POS_PV :=   #ACTCFG.POS_PV ;*)
     (*"BUF".ACTBUF.POS_SP :=   #ACTCFG.POS_SP ;*)
     ACTBUF.STA:=ACTCFG.STA;
@@ -5390,8 +5390,8 @@ END_IF;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_to_VLVD" version="0.09" dateTime="dt#2022-03-22-10:31:16">
-		<attribute name="TypeCodeCheckSumString" value="6647"></attribute>
+	<FBSource nameOfFBType="ACT_to_VLVD" version="0.10" dateTime="dt#2022-04-28-15:12:01">
+		<attribute name="TypeCodeCheckSumString" value="9EE0"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="6000"></attribute>
 		<inOutParameters>
 			<variables name="VLVDCFG" typeName="VLVD_CFG">
@@ -5411,7 +5411,7 @@ VLVDCFG.CMD:= ACTCFG.CMD;
 VLVDCFG.PRM:= ACTCFG.PRM;
 VLVDCFG.T_DEASP:= ACTCFG.T_DEASP;
 VLVDCFG.T_OPNSP:= ACTCFG.T_OPNSP;
-VLVDCFG.POS:= ACTCFG.POS_PV;
+VLVDCFG.POS:= ACTCFG.POS;
 VLVDCFG.STEP1:= ACTCFG.STEP1;
 VLVDCFG.CNTPER:= ACTCFG.CNTPER;
 VLVDCFG.CNTALM:= ACTCFG.CNTALM;
@@ -5464,8 +5464,8 @@ VLVDHMI.POS := REAL_TO_INT(VLVDCFG.POS);
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="VLVAFN" version="0.04" dateTime="dt#2022-03-22-15:06:36">
-		<attribute name="TypeCodeCheckSumString" value="408E"></attribute>
+	<FBSource nameOfFBType="VLVAFN" version="0.05" dateTime="dt#2022-04-28-15:12:00">
+		<attribute name="TypeCodeCheckSumString" value="676A"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="20C5"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="VLVA_CFG">
@@ -5555,16 +5555,16 @@ SCLS.STA_SML := STA.STA_SML;
 
 (*логіка для режиму імітації  *)
 IF STA.STA_SML THEN
-    ACTCFGu.POS_PV:=ACTCFGu.POS_SP;
-    IF ACTCFGu.POS_PV&lt;0.0 THEN ACTCFGu.POS_PV:=0.0; END_IF;
-    IF ACTCFGu.POS_PV&gt;100.0 THEN ACTCFGu.POS_PV:=100.0; END_IF;
+    ACTCFGu.POS:=ACTCFGu.CPOS;
+    IF ACTCFGu.POS&lt;0.0 THEN ACTCFGu.POS:=0.0; END_IF;
+    IF ACTCFGu.POS&gt;100.0 THEN ACTCFGu.POS:=100.0; END_IF;
     
     (*імітація датчиків *)
     IF NOT SOPN.STA_FRC THEN
-            SOPN.STA_VALB:= ACTCFGu.POS_PV&gt;99.0;
+            SOPN.STA_VALB:= ACTCFGu.POS&gt;99.0;
         END_IF;
     IF NOT SCLS.STA_FRC THEN
-            SCLS.STA_VALB:= ACTCFGu.POS_PV&lt;3.0;
+            SCLS.STA_VALB:= ACTCFGu.POS&lt;3.0;
     END_IF;
    
 END_IF;
@@ -5640,18 +5640,18 @@ ALMs.ALM_ALM := false;
 
 (*------------------- вибір джерела завдання*)
 IF ACTCFGu.STA.STA_INBUF AND ACTCFGu.STA.STA_DISP THEN
-    ACTCFGu.POS_SP := ACTBUF.POS_SP;
+    ACTCFGu.CPOS := ACTBUF.CPOS;
 ELSIF NOT ACTCFGu.STA.STA_INBUF AND ACTCFGu.STA.STA_DISP THEN
-    ACTCFGu.POS_SP := ACTHMI.CPOS;
+    ACTCFGu.CPOS := ACTHMI.CPOS;
 ELSE
-    ACTHMI.CPOS := ACTCFGu.POS_SP;
+    ACTHMI.CPOS := ACTCFGu.CPOS;
 END_IF;
     
-ACTHMI.CPOS := ACTCFGu.POS_SP;
-ACTCFG.CPOS := ACTCFGu.POS_SP;
+ACTHMI.CPOS := ACTCFGu.CPOS;
+ACTCFG.CPOS := ACTCFGu.CPOS;
 
-ACTCFGu.POS_PV := SPOS1;
-CPOS.VAL:=ACTCFGu.POS_SP;
+ACTCFGu.POS := SPOS1;
+CPOS.VAL:=ACTCFGu.CPOS;
 
 (*заключна обробка: зведення в PLC.CFG, STA, ALM, CMD, INBUF, SML, dt *) 
 ACT_POST(ACTCFG:=ACTCFGu, STA:=STA, ALMs:=ALMs, CMD:=CMD, dt1 := dT1, ACTBUF := ACTBUF, PLCCFG := PLCCFG);
@@ -5815,8 +5815,8 @@ ACT_to_VLVA(VLVACFG:=ACTCFG, VLVAHMI:=ACTHMI, ACTCFG:=ACTCFGu);
 			</variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="VLVA_to_ACT" version="0.02" dateTime="dt#2022-03-22-15:06:29">
-		<attribute name="TypeCodeCheckSumString" value="B899"></attribute>
+	<FBSource nameOfFBType="VLVA_to_ACT" version="0.03" dateTime="dt#2022-04-28-15:11:59">
+		<attribute name="TypeCodeCheckSumString" value="5B81"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="629E"></attribute>
 		<inOutParameters>
 			<variables name="VLVACFG" typeName="VLVA_CFG">
@@ -5835,8 +5835,8 @@ ACTCFG.CLSID:= VLVACFG.CLSID;
 ACTCFG.CMD:= VLVACFG.CMD;
 ACTCFG.PRM:= VLVACFG.PRM;
 ACTCFG.T_DEASP:= VLVACFG.T_DEASP;
-ACTCFG.POS_PV:= VLVACFG.POS;
-ACTCFG.POS_SP:= VLVACFG.CPOS;
+ACTCFG.POS:= VLVACFG.POS;
+ACTCFG.CPOS:= VLVACFG.CPOS;
 ACTCFG.STEP1:= VLVACFG.STEP1;
 ACTCFG.CNTPER:= VLVACFG.CNTPER;
 ACTCFG.CNTALM:= VLVACFG.CNTALM;
@@ -5858,8 +5858,8 @@ ACTCFG.CMDHMI:=VLVAHMI.CMD;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_to_VLVA" version="0.02" dateTime="dt#2022-03-22-15:06:26">
-		<attribute name="TypeCodeCheckSumString" value="A3A1"></attribute>
+	<FBSource nameOfFBType="ACT_to_VLVA" version="0.03" dateTime="dt#2022-04-28-15:11:58">
+		<attribute name="TypeCodeCheckSumString" value="83E7"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="629E"></attribute>
 		<inOutParameters>
 			<variables name="VLVACFG" typeName="VLVA_CFG">
@@ -5879,7 +5879,7 @@ VLVACFG.CMD:= ACTCFG.CMD;
 VLVACFG.PRM:= ACTCFG.PRM;
 VLVACFG.T_DEASP:= ACTCFG.T_DEASP;
 
-VLVACFG.POS:= ACTCFG.POS_PV;
+VLVACFG.POS:= ACTCFG.POS;
 VLVACFG.STEP1:= ACTCFG.STEP1;
 VLVACFG.CNTPER:= ACTCFG.CNTPER;
 VLVACFG.CNTALM:= ACTCFG.CNTALM;
@@ -6140,8 +6140,8 @@ VLVAHMI.POS := REAL_TO_INT(VLVACFG.POS)*100;
 			</variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="DRVFN" version="0.14" dateTime="dt#2022-04-26-09:18:57">
-		<attribute name="TypeCodeCheckSumString" value="88DF"></attribute>
+	<FBSource nameOfFBType="DRVFN" version="0.15" dateTime="dt#2022-04-28-15:12:04">
+		<attribute name="TypeCodeCheckSumString" value="5A06"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="4A02"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="DRV_CFG">
@@ -6497,18 +6497,18 @@ IF ACTCFGu.TQ_TOTAL&gt;=16#7FFFFFFF THEN
 END_IF;
 
 IF ACTCFGu.STA.STA_INBUF AND ACTCFGu.STA.STA_DISP THEN
-    ACTCFGu.POS_SP := ACTBUF.POS_SP;
+    ACTCFGu.CPOS := ACTBUF.CPOS;
 ELSIF NOT ACTCFGu.STA.STA_INBUF AND ACTCFGu.STA.STA_DISP THEN
-    ACTCFGu.POS_SP := ACTHMI.CSPD;
+    ACTCFGu.CPOS := ACTHMI.CSPD;
 ELSE
-    ACTHMI.CSPD := ACTCFGu.POS_SP;
+    ACTHMI.CSPD := ACTCFGu.CPOS;
 END_IF;
 
-ACTHMI.CSPD := ACTCFGu.POS_SP;
-ACTCFG.CSPD := ACTCFGu.POS_SP;
+ACTHMI.CSPD := ACTCFGu.CPOS;
+ACTCFG.CSPD := ACTCFGu.CPOS;
 
-ACTCFGu.POS_PV := SPOS1;
-CSPD.VAL:=ACTCFGu.POS_SP;
+ACTCFGu.POS := SPOS1;
+CSPD.VAL:=ACTCFGu.CPOS;
 
 (*заключна обробка: зведення в PLC.CFG, STA, ALM, CMD, INBUF, SML, dt *)
 ACT_POST (ACTCFG := ACTCFGu, STA := STA, ALMs := ALMS, CMD := CMD, dt1 := dt1, ACTBUF := ACTBUF, PLCCFG := PLCCFG);
@@ -6517,8 +6517,8 @@ ACT_to_DRV(DRVCFG:=ACTCFG, DRVHMI:=ACTHMI, ACTCFG:=ACTCFGu);
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="DRV_to_ACT" version="0.02" dateTime="dt#2022-03-18-16:34:43">
-		<attribute name="TypeCodeCheckSumString" value="EDF1"></attribute>
+	<FBSource nameOfFBType="DRV_to_ACT" version="0.03" dateTime="dt#2022-04-28-15:12:02">
+		<attribute name="TypeCodeCheckSumString" value="5B6E"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="0EDF"></attribute>
 		<inOutParameters>
 			<variables name="DRVCFG" typeName="DRV_CFG">
@@ -6537,8 +6537,8 @@ ACTCFG.CLSID:=   DRVCFG.CLSID;
 ACTCFG.CMD:=     DRVCFG.CMD;
 ACTCFG.PRM:=     DRVCFG.PRM;
 ACTCFG.T_DEASP:= DRVCFG.T_DEASP;
-ACTCFG.POS_PV:=  DRVCFG.SPD;
-ACTCFG.POS_SP:=  DRVCFG.CSPD;
+ACTCFG.POS:=  DRVCFG.SPD;
+ACTCFG.CPOS:=  DRVCFG.CSPD;
 ACTCFG.STEP1:=   DRVCFG.STEP1;
 ACTCFG.CNTPER:=  DRVCFG.CNTPER;
 ACTCFG.CNTALM:=  DRVCFG.CNTALM;
@@ -6575,8 +6575,8 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_to_DRV" version="0.03" dateTime="dt#2022-03-18-16:34:47">
-		<attribute name="TypeCodeCheckSumString" value="BBE8"></attribute>
+	<FBSource nameOfFBType="ACT_to_DRV" version="0.04" dateTime="dt#2022-04-28-15:12:02">
+		<attribute name="TypeCodeCheckSumString" value="8E02"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="0EDF"></attribute>
 		<inOutParameters>
 			<variables name="DRVCFG" typeName="DRV_CFG">
@@ -6595,8 +6595,8 @@ DRVCFG.CLSID:= ACTCFG.CLSID;
 DRVCFG.CMD:= ACTCFG.CMD;
 DRVCFG.PRM:= ACTCFG.PRM;
 DRVCFG.T_DEASP:= ACTCFG.T_DEASP;
-DRVCFG.SPD:= ACTCFG.POS_PV;
-DRVCFG.CSPD:= ACTCFG.POS_SP;
+DRVCFG.SPD:= ACTCFG.POS;
+DRVCFG.CSPD:= ACTCFG.CPOS;
 DRVCFG.STEP1:= ACTCFG.STEP1;
 DRVCFG.CNTPER:= ACTCFG.CNTPER;
 DRVCFG.CNTALM:= ACTCFG.CNTALM;
