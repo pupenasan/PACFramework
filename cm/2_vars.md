@@ -12,6 +12,10 @@
 - [DOVAR](2_dovar.md) (CLSID=16#102x) – дискретні вихідні змінні процесу,
 - [AIVAR ](2_aivar.md) (CLSID=16#103x) – аналогові вихідні змінні процесу,
 - [AOVAR](2_aovar.md) (CLSID=16#104x) – аналогові вихідні змінні процесу,
+- NDIVAR (CLSID=16#105x) -
+- NDOVAR (CLSID=16#106x) -
+- NAIVAR (CLSID=16#107x) -
+- NAOVAR (CLSID=16#108x) - 
 
 Використовується єдиний буфер зі структурою [VARBUF](varbuf.md)
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <STExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-4-28-15:13:21" content="Structured source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.6" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-5-2-22:18:36" content="Structured source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.7" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
 	<program>
 		<identProgram name="mainPFW" type="section" task="MAST"></identProgram>
 		<STSource>PLCFN (PLC := PLC);
