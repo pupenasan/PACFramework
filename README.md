@@ -1,4 +1,4 @@
-﻿﻿﻿﻿﻿﻿**PAC Framework V1**  
+﻿﻿﻿﻿﻿﻿﻿**PAC Framework V1**  
 
 ![](media/LOGO14.png)
 
@@ -24,7 +24,7 @@ PACFramework (надалі "**Каркас**") розроблений з ура�
 6. [Рекомендації щодо реалізації PAC Framework на нових платформах PLC/PAC](implem/README.md)  
 7. [Існуючі реалізації](platforms/README.md) 
 
-
+[Група в Facebook](https://www.facebook.com/groups/pacframeworkcomunity)
 
 [Основна сторінка](https://pupenasan.github.io/PACFramework/)
 
