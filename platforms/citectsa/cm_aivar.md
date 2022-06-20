@@ -231,16 +231,16 @@ Connects to: `EquipmentName.PVTrack`, `EquipmentName.OPTrack`, `EquipmentName.Tr
 
 ## Адаптація PACFramework 
 
-Існуючий тип `Meter` адаптується до `MeterPFW`
+Існуючий тип `Meter` адаптується до `AIVAR_HMI`
 
-### Перелік елементів типу обладнання MeterPFW (адаптація AIVAR_HMI)
+### Перелік елементів типу обладнання AIVAR_HMI
 
 | Елемент     | Опис                                                         | Тип     | IODevice | Примітка                                                     |
 | ----------- | ------------------------------------------------------------ | ------- | -------- | ------------------------------------------------------------ |
 | STA         | біти стану                                                   | INT     | PLC      | AIVAR_HMI.STA                                                |
 | VALPRCSTA2  | значення у % від шкали вимірювання (0-10000) + додаткові біти статусу | INT     | PLC      | AIVAR_HMI.VALPRCSTA2                                         |
 | FB          | індикатор зворотного зв'язку (Feedback Indicator)            | REAL    | PLC      | ?                                                            |
-| OP          | вихідне значення (Output)                                    | REAL    | PLC      | ?                                                            |
+| OP          | вихідне значення (Output)                                    | REAL    | PLC      | AIVAR_HMI.VALPRCSTA2                                         |
 | PV          | плинне значення (Process Variable)                           | REAL    | PLC      | AIVAR_HMI.VAL                                                |
 | PVTarget    | плинне значення для Target meters                            | REAL    | PLC      | ?                                                            |
 | SP          | уставка                                                      | REAL    | PLC      | ?                                                            |

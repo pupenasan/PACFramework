@@ -15,7 +15,7 @@
 | FB          | індикатор зворотного зв'язку (Feedback Indicator)            | REAL    | PLC      |
 | OP          | вихідне значення (Output)                                    | REAL    | PLC      |
 | OPTrack     | значення OP для стеження                                     | REAL    | INTERNAL |
-| TrackDsp    | відображати трекер                                           | DIGITAL | PLC      |
+| TrackDsp    | відображати трекер                                           | DIGITAL | INTERNAL |
 | CtrlMode    | код що показує режим ВМ: 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | INTERNAL |
 | CtrlModeDef | режим ВМ за замовченням (без відображення): 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | INTERNAL |
 | Open        | стан відкрито                                                | DIGITAL | PLC      |
@@ -113,3 +113,84 @@
 **Complex Valve**
 
 ![img](media/FP_Complex_Valve.png)
+
+## Адаптація PACFramework 
+
+Існуючий тип `Valve` адаптується до таких типів PACFramework:
+
+- `VLVD_HMI` - відкрити/закрити
+- `VLVA_HMI` - регулючий аналоговий
+- `VLVS_HMI` - регулюючий з керуванням типу більше/менше з позиціонуванням
+
+### Перелік елементів типу обладнання VLVD_HMI
+
+| Елемент     | Опис                                                         | Тип     | IODevice | Примітка                                             |
+| ----------- | ------------------------------------------------------------ | ------- | -------- | ---------------------------------------------------- |
+| STA         | біти стану                                                   | INT     | PLC      | VLVD_HMI.STA                                         |
+| CMD         | команда керування                                            | INT     | PLC      | VLVD_HMI.CMD                                         |
+| ALM         | біти тривог                                                  | INT     | PLC      | VLVD_HMI.ALM                                         |
+| POS         | позиція ВМ (0-10000)                                         | INT     | PLC      | VLVD_HMI.POS                                         |
+| CMDCTRL     | для обробки команд керування                                 |         |          | ADVANCED ALARM з викликом функції PFW_CTRLCMD(...)   |
+| CMDMODE     | для обробки команд переключення режимів (керування та інших сервісних команд) |         |          | ADVANCED ALARM з викликом функції PFW_MODECMD(...)   |
+| FB          | індикатор зворотного зв'язку (Feedback Indicator)            | REAL    | Cicode   | VLVD_HMI.POS                                         |
+| OP          | вихідне значення (Output)                                    | REAL    | Cicode   | VLVD_HMI.POS                                         |
+| OPTrack     | значення OP для стеження                                     | REAL    | INTERNAL | без змін                                             |
+| TrackDsp    | відображати трекер                                           | DIGITAL | INTERNAL | без змін                                             |
+| CtrlMode    | код що показує режим ВМ: 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | Cicode   | PFW_getctrlmode ({equipment.TAGPREFIX}_STA)          |
+| CtrlModeDef | режим ВМ за замовченням (без відображення): 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | INTERNAL | без змін                                             |
+| Open        | стан відкрито                                                | DIGITAL | PLC      | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Open")    |
+| Closed      | стан зкрито                                                  | DIGITAL | Cicode   | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Closed")  |
+| Opening     | стан відкривається                                           | DIGITAL | Cicode   | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Opening") |
+| Closing     | стан закривається                                            | DIGITAL | Cicode   | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Closing") |
+| Stopped     | стан зупинено                                                | DIGITAL | Cicode   | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Stopped") |
+| EqStatus    | значення для [індикатору статусу](cm_common.md) визначається функцією | INT     | Cicode   | без змін                                             |
+| RunStatus   | значення для [Індикатор стану роботи обладнання](cm_common.md) | INT     | INTERNAL | без змін                                             |
+| OOS         | Out of service якось впливає на [Індикатор стану роботи обладнання](cm_common.md) | DIGITAL | INTERNAL | поки INTERNAL (до реалізації)                        |
+| OOSDisable  | заборона зміни OOS впливає на [Індикатор стану роботи обладнання](cm_common.md)) | DIGITAL | PLC      | поки INTERNAL (до реалізації)                        |
+| OpenCmd     |                                                              | DIGITAL | INTERNAL | обробляється в CMDCTRL                               |
+| CloseCmd    |                                                              | DIGITAL | INTERNAL | обробляється в CMDCTRL                               |
+| StopCmd     |                                                              | DIGITAL | INTERNAL | обробляється в CMDCTRL                               |
+| AutoCmd     |                                                              | DIGITAL | INTERNAL | обробляється в CMDMODE                               |
+| ManCmd      |                                                              | DIGITAL | INTERNAL | обробляється в CMDMODE                               |
+| Sim         | режим імітації (для [індикатору статусу](cm_common.md))      | DIGITAL | Cicode   | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Sim")     |
+| Calib       | режим калібрування (для [індикатору статусу](cm_common.md))  | DIGITAL | INTERNAL | поки INTERNAL (до реалізації)                        |
+
+### Перелік елементів типу обладнання VLVA_HMI
+
+| Елемент     | Опис                                                         | Тип     | IODevice | Примітка                                             |
+| ----------- | ------------------------------------------------------------ | ------- | -------- | ---------------------------------------------------- |
+| STA         | біти стану                                                   | INT     | PLC      | VLVA_HMI.STA                                         |
+| CMD         | команда керування                                            | INT     | PLC      | VLVA_HMI.CMD                                         |
+| ALM         | біти тривог                                                  | INT     | PLC      | VLVA_HMI.ALM                                         |
+| POS         | позиція ВМ (0-10000)                                         | INT     | PLC      | VLVA_HMI.POS                                         |
+| OP          | позиція ВМ (0-100%) - ЗАДАНЕ ЗНАЧЕННЯ                        | REAL    | PLC      | назва тега VLVA_HMI_CPOS                             |
+| CMDCTRL     | для обробки команд керування                                 |         |          | ADVANCED ALARM з викликом функції PFW_CTRLCMD(...)   |
+| CMDMODE     | для обробки команд переключення режимів (керування та інших сервісних команд) |         |          | ADVANCED ALARM з викликом функції PFW_MODECMD(...)   |
+| FB          | індикатор зворотного зв'язку (Feedback Indicator)            | REAL    | Cicode   | VLVA_HMI.POS                                         |
+| OPTrack     | значення OP для стеження                                     | REAL    | INTERNAL | без змін                                             |
+| TrackDsp    | відображати трекер                                           | DIGITAL | INTERNAL | без змін                                             |
+| CtrlMode    | код що показує режим ВМ: 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | Cicode   | PFW_getctrlmode ({equipment.TAGPREFIX}_STA)          |
+| CtrlModeDef | режим ВМ за замовченням (без відображення): 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | INTERNAL | без змін                                             |
+| Open        | стан відкрито                                                | DIGITAL | PLC      | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Open")    |
+| Closed      | стан зкрито                                                  | DIGITAL | Cicode   | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Closed")  |
+| Opening     | стан відкривається                                           | DIGITAL | Cicode   | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Opening") |
+| Closing     | стан закривається                                            | DIGITAL | Cicode   | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Closing") |
+| Stopped     | стан зупинено                                                | DIGITAL | Cicode   | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Stopped") |
+| EqStatus    | значення для [індикатору статусу](cm_common.md) визначається функцією | INT     | Cicode   | без змін                                             |
+| RunStatus   | значення для [Індикатор стану роботи обладнання](cm_common.md) | INT     | INTERNAL | без змін                                             |
+| OOS         | Out of service якось впливає на [Індикатор стану роботи обладнання](cm_common.md) | DIGITAL | INTERNAL | поки INTERNAL (до реалізації)                        |
+| OOSDisable  | заборона зміни OOS впливає на [Індикатор стану роботи обладнання](cm_common.md)) | DIGITAL | PLC      | поки INTERNAL (до реалізації)                        |
+| OpenCmd     |                                                              | DIGITAL | INTERNAL | обробляється в CMDCTRL                               |
+| CloseCmd    |                                                              | DIGITAL | INTERNAL | обробляється в CMDCTRL                               |
+| StopCmd     |                                                              | DIGITAL | INTERNAL | обробляється в CMDCTRL                               |
+| AutoCmd     |                                                              | DIGITAL | INTERNAL | обробляється в CMDMODE                               |
+| ManCmd      |                                                              | DIGITAL | INTERNAL | обробляється в CMDMODE                               |
+| Sim         | режим імітації (для [індикатору статусу](cm_common.md))      | DIGITAL | Cicode   | PFW_getstabit ({equipment.TAGPREFIX}_STA, "Sim")     |
+| Calib       | режим калібрування (для [індикатору статусу](cm_common.md))  | DIGITAL | INTERNAL | поки INTERNAL (до реалізації)                        |
+
+## Композитний джин ValvePFW 
+
+Оригінальна палітра кольорів CitectSA передбачає темні відтінки для активного стану  та світі для пасивного. Для протилежної палітри кольорів та для інших модифікацій оригніальний композитний джин Valve змінено в ValvePFW.
+
+Усі використаня джини та символи перенесені у одноіменні бібліотеки з суфіксом PFW включеного проекту SA_LibraryPFW. 
+

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <FBExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-4-23-18:59:27" content="Function Block source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.13" dateTime="date_and_time#2022-3-22-15:17:17"></contentHeader>
-	<FBSource nameOfFBType="VLVDFN" version="0.32" dateTime="dt#2022-03-22-16:02:30">
-		<attribute name="TypeCodeCheckSumString" value="B110"></attribute>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-6-14-21:36:59" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.95" dateTime="date_and_time#2022-5-31-0:30:50"></contentHeader>
+	<FBSource nameOfFBType="VLVDFN" version="0.57" dateTime="dt#2022-06-14-20:47:29">
+		<attribute name="TypeCodeCheckSumString" value="DBD1"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="441A"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="VLVD_CFG">
@@ -125,13 +125,13 @@ CCLS.STA_SML := STA.STA_SML;
 IF STA.STA_SML THEN
     dpos:= UDINT_TO_REAL(dT1*100)/UDINT_TO_REAL((UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100));(*%*)
     IF ACTCFGu.STEP1=2  THEN
-        ACTCFGu.POS_PV := ACTCFGu.POS_PV + dpos; (*0-10000*)
+        ACTCFGu.POS := ACTCFGu.POS + dpos; (*0-10000*)
     END_IF;
     IF ACTCFGu.STEP1=3 THEN
-        ACTCFGu.POS_PV := ACTCFGu.POS_PV - dpos; (*0-10000*)
+        ACTCFGu.POS := ACTCFGu.POS - dpos; (*0-10000*)
     END_IF;
-    IF ACTCFGu.POS_PV&lt;0.0 THEN ACTCFGu.POS_PV:=0.0; END_IF;
-    IF ACTCFGu.POS_PV&gt;100.0 THEN ACTCFGu.POS_PV:=100.0; END_IF;  
+    IF ACTCFGu.POS&lt;0.0 THEN ACTCFGu.POS:=0.0; END_IF;
+    IF ACTCFGu.POS&gt;100.0 THEN ACTCFGu.POS:=100.0; END_IF;  
     
     (*імітація датчиків *)
     
@@ -154,6 +154,7 @@ IF NOT ACTCFGu.PRM.PRM_ZOPNENBL THEN
     OR STA.STA_OPND;*)
     SOPN1:= STA.STA_OPNING AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100
     OR STA.STA_OPND;
+    IF PLCCFG.STA_SCN1 THEN SOPN1:=false; END_IF;
 ELSE
     SOPN1:=SOPN.STA_VALB;
 END_IF;
@@ -162,6 +163,7 @@ IF NOT ACTCFGu.PRM.PRM_ZCLSENBL THEN
     OR STA.STA_CLSD;*)
     SCLS1:=STA.STA_CLSING AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100
     OR STA.STA_CLSD;
+    IF PLCCFG.STA_SCN1 THEN SCLS1:=TRUE; END_IF;
 ELSE
     SCLS1:=SCLS.STA_VALB;
 END_IF;
@@ -182,29 +184,27 @@ CASE ACTCFGu.STEP1 OF
         ACTCFGu.STEP1 := 1;
         ACTCFGu.T_STEP1 := 0;
     1, 4, 5: (*зупинений, 1 - зупинено в проміжному стані 4 - зупинений у відкритому стані, 5 - зупинений в закритому стані*)
-        IF SOPN1 AND NOT SCLS1 THEN
+        IF SOPN1 AND NOT SCLS1 and not ALMS.ALM_ALMSHFT THEN
             IF ACTCFGu.STEP1&lt;&gt;4 THEN ACTCFGu.T_STEP1 := 0;END_IF;
             ACTCFGu.STEP1 := 4;
-	    ALMS.ALM_ALMSHFT:=FALSE;
+	    ALMS.ALM_ALMSHFT:=FALSE; 
             ALMS.ALM_ALMCLS := FALSE;
             ALMS.ALM_ALMOPN := FALSE;
         END_IF;
-        IF SCLS1 AND NOT SOPN1 THEN
+        IF SCLS1 AND NOT SOPN1 and not ALMS.ALM_ALMSHFT THEN
             IF ACTCFGu.STEP1&lt;&gt;5 THEN ACTCFGu.T_STEP1 := 0;END_IF;
             ACTCFGu.STEP1 := 5;
 	    ALMS.ALM_ALMSHFT:=FALSE;
             ALMS.ALM_ALMCLS := FALSE;
             ALMS.ALM_ALMOPN := FALSE;
         END_IF;
-        (*здвиг (показують датчики)*)
-        IF (ACTCFGu.STEP1 = 4 AND NOT SOPN1 OR (ACTCFGu.STEP1 = 5 AND NOT SCLS1)) THEN
-            ACTCFGu.T_STEP1 := 0;
-            ACTCFGu.STEP1 := 7; (*рухається в невизначеному напрямку (ручний зі щита)*)
-       END_IF;
-       IF SOPN1 AND SCLS1 THEN
+
+        IF ((ACTCFGu.STEP1 = 4 AND NOT SOPN1) OR (ACTCFGu.STEP1 = 5 AND SOPN1)) OR (SOPN1 AND SCLS1) THEN
             ALMS.ALM_ALMSHFT:=true;
-            ACTCFGu.STEP1 := 1;
+                ELSE
+            ALMS.ALM_ALMSHFT:=false;
         END_IF;
+
     2:  (*відкривається*)
         ALMS.ALM_ALMSTP:=false;
         IF SOPN1 AND NOT SCLS1 THEN
@@ -253,7 +253,7 @@ STA.STA_CLSD:= ACTCFGu.STEP1 = 5;
 IF ACTCFGu.PRM.PRM_ZPOSENBL THEN
     ;(*ACTCFG.POS := REAL_TO_INT(POS.VAL * 0.01);*)
 ELSIF NOT STA.STA_SML THEN
-    ACTCFGu.POS_PV := -32768.0; (*відключено для показу*)
+    ACTCFGu.POS := -32768.0; (*відключено для показу*)
 END_IF;
 
 (*-------- блокуання приводу*)
@@ -344,16 +344,16 @@ IF ALMS.ALM_ALMCLS2 THEN
         ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
-IF ALMS.ALM_ALMSTP THEN
+IF ALMS.ALM_ALMSHFT THEN
     PLCCFG.ALM_ALM := TRUE;
-    IF NOT ACTCFGu.ALM.ALM_ALMSTP THEN
+    IF NOT ACTCFGu.ALM.ALM_ALMSHFT THEN
         PLCCFG.ALM_NWALM := TRUE;
         ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
 
 
-ALMS.ALM_ALM := ALMS.ALM_ALMOPN OR ALMS.ALM_ALMCLS OR ALMS.ALM_ALMOPN2 OR ALMS.ALM_ALMCLS2 OR ALMS.ALM_ALMSTP 
+ALMS.ALM_ALM := ALMS.ALM_ALMOPN OR ALMS.ALM_ALMCLS OR ALMS.ALM_ALMOPN2 OR ALMS.ALM_ALMCLS2 OR ALMS.ALM_ALMSHFT 
             OR ALMS.ALM_ALMSTPBTN OR ALMS.ALM_ALMPWR OR STA.STA_BLCK;
 
 
@@ -364,7 +364,7 @@ ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<DDTSource DDTName="VLVD_CFG" version="0.05" dateTime="dt#2022-03-22-10:31:15">
+	<DDTSource DDTName="VLVD_CFG" version="0.05" dateTime="dt#2022-03-22-18:34:49">
 		<attribute name="TypeSignatureCheckSumString" value="3F77"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
@@ -1417,8 +1417,8 @@ ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="ACTTR_CFG" version="0.07" dateTime="dt#2022-03-18-16:03:20">
-		<attribute name="TypeSignatureCheckSumString" value="5717"></attribute>
+	<DDTSource DDTName="ACTTR_CFG" version="0.08" dateTime="dt#2022-05-28-11:09:36">
+		<attribute name="TypeSignatureCheckSumString" value="4E21"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>ідентифікатор</comment>
@@ -1462,7 +1462,7 @@ ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
 			<variables name="T_OPNSP" typeName="UINT">
 				<comment>Максимальний час відкриття в 0.1 секундах</comment>
 			</variables>
-			<variables name="POS_PV" typeName="REAL">
+			<variables name="POS" typeName="REAL">
 				<comment>позиціяВМ (0-100%) - ЗВОРОТНІЙ ЗВЯЗОК</comment>
 			</variables>
 			<variables name="STEP1" typeName="UINT">
@@ -1489,7 +1489,7 @@ ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
 			<variables name="POWER_IN" typeName="REAL">
 				<comment>потужність, кВт</comment>
 			</variables>
-			<variables name="POS_SP" typeName="REAL">
+			<variables name="CPOS" typeName="REAL">
 				<comment>позиціяВМ (0-100%) - ЗАДАНЕ ЗНАЧЕННЯ</comment>
 			</variables>
 			<variables name="SPD" typeName="INT">
@@ -1786,8 +1786,8 @@ ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
 			</variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="VLVD_to_ACT" version="0.06" dateTime="dt#2022-03-22-10:31:15">
-		<attribute name="TypeCodeCheckSumString" value="639C"></attribute>
+	<FBSource nameOfFBType="VLVD_to_ACT" version="0.07" dateTime="dt#2022-05-28-14:16:05">
+		<attribute name="TypeCodeCheckSumString" value="410A"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="6000"></attribute>
 		<inOutParameters>
 			<variables name="VLVDCFG" typeName="VLVD_CFG">
@@ -1807,7 +1807,7 @@ ACTCFG.CMD:= VLVDCFG.CMD;
 ACTCFG.PRM:= VLVDCFG.PRM;
 ACTCFG.T_DEASP:= VLVDCFG.T_DEASP;
 ACTCFG.T_OPNSP:= VLVDCFG.T_OPNSP;
-ACTCFG.POS_PV:= VLVDCFG.POS;
+ACTCFG.POS:= VLVDCFG.POS;
 ACTCFG.STEP1:= VLVDCFG.STEP1;
 ACTCFG.CNTPER:= VLVDCFG.CNTPER;
 ACTCFG.CNTALM:= VLVDCFG.CNTALM;
@@ -1855,7 +1855,7 @@ ACTCFG.CMDHMI:=VLVDHMI.CMD;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_PRE" version="0.10" dateTime="dt#2022-03-22-15:43:49">
+	<FBSource nameOfFBType="ACT_PRE" version="0.10" dateTime="dt#2022-05-28-14:15:50">
 		<attribute name="TypeCodeCheckSumString" value="B9C6"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="58F3"></attribute>
 		<inOutParameters>
@@ -1969,8 +1969,8 @@ IF dt1&lt;1 THEN dt1:=1; END_IF;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_CMDCTRL" version="0.08" dateTime="dt#2022-03-22-15:34:27">
-		<attribute name="TypeCodeCheckSumString" value="4767"></attribute>
+	<FBSource nameOfFBType="ACT_CMDCTRL" version="0.11" dateTime="dt#2022-06-12-19:05:50">
+		<attribute name="TypeCodeCheckSumString" value="4592"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="B4F1"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="ACTTR_CFG">
@@ -2124,6 +2124,7 @@ CASE CMDINT OF
         STA.STA_DISP := FALSE;
     16#0313:(* включити місцевий режим*)
         STA.STA_MANBXOUT := true;
+	STA.STA_MANBX := true;
         (*#CMD.CRMT:= TRUE; //чи потрібен з програми?*)
     16#0314:(* відключити місцевий режим*)
         STA.STA_MANBXOUT := false;
@@ -2140,14 +2141,20 @@ CASE CMDINT OF
         ACTCFG.TQ_LAST :=0;
 END_CASE;
 
+(*проходження команд розблокувати-заблокувати з буфера та НМІ*)
+IF ACTCFG.CMDHMI = 16#0006 OR (ACTBUF.CMDHMI = 16#0006 AND STA.STA_INBUF) THEN CMD.CMD_BLCK:= TRUE; END_IF;
+IF ACTCFG.CMDHMI = 16#0007 OR (ACTBUF.CMDHMI = 16#0007 AND STA.STA_INBUF) THEN CMD.CMD_DBLCK:= TRUE; END_IF;
+
 CMDINT:=0;
 ACTCFG.CMDHMI:=0;
-ACTBUF.CMDHMI:=0;
+if STA.STA_INBUF then
+  ACTBUF.CMDHMI:=0;
+end_if;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_POST" version="0.09" dateTime="dt#2022-03-22-15:38:50">
-		<attribute name="TypeCodeCheckSumString" value="EF6C"></attribute>
+	<FBSource nameOfFBType="ACT_POST" version="0.14" dateTime="dt#2022-06-14-19:47:42">
+		<attribute name="TypeCodeCheckSumString" value="2C50"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="7336"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="ACTTR_CFG">
@@ -2342,7 +2349,10 @@ IF STA.STA_INBUF THEN
     ACTBUF.ALMHMI2:= ACTCFG.ALMHMI2 ;
     ACTBUF.STEP1:= ACTCFG.STEP1 ;
     ACTBUF.T_STEP1:= ACTCFG.T_STEP1;
-    ACTBUF.POS_PV := ACTCFG.POS_PV;
+    ACTBUF.POS := ACTCFG.POS;
+    IF NOT STA.STA_DISP THEN
+      ACTBUF.CPOS := ACTCFG.CPOS;
+    END_IF;
     (*"BUF".ACTBUF.POS_PV :=   #ACTCFG.POS_PV ;*)
     (*"BUF".ACTBUF.POS_SP :=   #ACTCFG.POS_SP ;*)
     ACTBUF.STA:=ACTCFG.STA;
@@ -2363,6 +2373,7 @@ END_IF;
 //запис інформації в контурі, якщо він привязаний
 "RW_LOOP_SEL"(direct:='w', ACT:=#ACTCFG);
 *)
+
 ACTCFG.T_PREV := PLCCFG.TQMS;
 ACTCFG.T_STEP1 := ACTCFG.T_STEP1 + dt1;
 IF ACTCFG.T_STEP1 &gt; 16#7FFF_FFFF THEN
@@ -2373,8 +2384,8 @@ END_IF;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_to_VLVD" version="0.09" dateTime="dt#2022-03-22-10:31:16">
-		<attribute name="TypeCodeCheckSumString" value="6647"></attribute>
+	<FBSource nameOfFBType="ACT_to_VLVD" version="0.10" dateTime="dt#2022-05-28-14:16:05">
+		<attribute name="TypeCodeCheckSumString" value="9EE0"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="6000"></attribute>
 		<inOutParameters>
 			<variables name="VLVDCFG" typeName="VLVD_CFG">
@@ -2394,7 +2405,7 @@ VLVDCFG.CMD:= ACTCFG.CMD;
 VLVDCFG.PRM:= ACTCFG.PRM;
 VLVDCFG.T_DEASP:= ACTCFG.T_DEASP;
 VLVDCFG.T_OPNSP:= ACTCFG.T_OPNSP;
-VLVDCFG.POS:= ACTCFG.POS_PV;
+VLVDCFG.POS:= ACTCFG.POS;
 VLVDCFG.STEP1:= ACTCFG.STEP1;
 VLVDCFG.CNTPER:= ACTCFG.CNTPER;
 VLVDCFG.CNTALM:= ACTCFG.CNTALM;

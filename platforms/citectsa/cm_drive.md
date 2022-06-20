@@ -177,3 +177,94 @@
 **Single VSD Drive with Forward/Reverse Capability**
 
 ![img](media/SA_FP_VSD_Drive_FwdRev_885x372.png)
+
+## Адаптація PACFramework 
+
+Існуючий тип `Drive` адаптується до `DRV_HMI`
+
+### Перелік елементів типу обладнання DRV_HMI
+
+| Елемент     | Опис                                                         | Тип     | IODevice | Примітка                |
+| ----------- | ------------------------------------------------------------ | ------- | -------- | ----------------------- |
+| STA         | біти стану                                                   | INT     | PLC      | DRV_HMI.STA             |
+| CMD         | команда керування                                            | INT     |          |                         |
+| ALM         | біти тривог                                                  | INT     |          |                         |
+| SPD         | позиція ВМ (0-10000) - ЗВОРОТНІЙ ЗВЯЗОК                      | INT     |          |                         |
+| OP          | позиція ВМ (0-100%) - ЗАДАНЕ ЗНАЧЕННЯ                        | INT     | PLC      | назва тега DRV_HMI_CPOS |
+| FB          | індикатор зворотного зв'язку (Feedback Indicator)            | REAL    | Cicode   | DRV_HMI.POS             |
+| PV          | вимірювальне значення (вбудований вимірювач в привод)        | REAL    | Cicode   |                         |
+| PVTrack     | значення PV для стеження (Tracker)                           | REAL    | INTERNAL |                         |
+| OPTrack     | значення OP для стеження                                     | REAL    | INTERNAL |                         |
+| CtrlMode    | код що показує режим ВМ: 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | INTERNAL |                         |
+| CtrlModeDef | режим ВМ за замовченням (без відображення): 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | INTERNAL |                         |
+| Running     | стан робота                                                  | DIGITAL | PLC      |                         |
+| Stopped     | стан зупин                                                   | DIGITAL | PLC      |                         |
+| Fwd         | стан роботи в прямому напряму                                | DIGITAL | PLC      |                         |
+| Rev         | стан роботи в реверсному напряму                             | DIGITAL | PLC      |                         |
+| Maint       | режим обслуговування                                         | DIGITAL | PLC      |                         |
+| EqStatus    | значення для [індикатору статусу](cm_common.md) визначається функцією | INT     | Cicode   |                         |
+| RunStatus   | значення для [Індикатор стану роботи обладнання](cm_common.md) | INT     | INTERNAL |                         |
+| PRHigh      | верхнє значення практичного діапазону вимірювача             | REAL    | INTERNAL |                         |
+| PRLow       | нижнє значення практичного діапазону вимірювача              | REAL    | INTERNAL |                         |
+| TrackDsp    | відображати трекер                                           | DIGITAL | INTERNAL |                         |
+| FullScale   | відображення індикації повного діапазону ("вусики")          | DIGITAL | INTERNAL |                         |
+| ORHigh      | верхнє значення оптимального діапазону                       | REAL    | INTERNAL |                         |
+| ORLow       | нижнє значення оптимального діапазону                        | REAL    | INTERNAL |                         |
+| OOS         | Out of service якось впливає на [Індикатор стану роботи обладнання](cm_common.md) | DIGITAL | PLC      |                         |
+| OOSDisable  | заборона зміни OOS впливає на [Індикатор стану роботи обладнання](cm_common.md)) | DIGITAL | PLC      |                         |
+| AutoCmd     | команда переведення в автоматичний режим                     | DIGITAL | PLC      |                         |
+| ManCmd      | команда переведення в ручний режим                           | DIGITAL | PLC      |                         |
+| StartCmd    | команда запуску, доступна в ручному режимі                   | DIGITAL | PLC      |                         |
+| StopCmd     | команда зупину, доступна в ручному режимі                    | DIGITAL | PLC      |                         |
+| OOSCmd      | команда на Out of service                                    | DIGITAL | PLC      |                         |
+| MaintCmd    | команда на обслуговування, доступна тільки коли привод в стопі | DIGITAL | PLC      |                         |
+| LocalCmd    |                                                              | DIGITAL | PLC      |                         |
+| RemCmd      |                                                              | DIGITAL | PLC      |                         |
+| FwdCmd      | команда запуску в прямому напряму, доступна в ручному режимі | DIGITAL | PLC      |                         |
+| RevCmd      | команда запуску в реверсному напряму, доступна в ручному режимі | DIGITAL | PLC      |                         |
+| CasCmd      | команда переключення в каскад                                | DIGITAL | PLC      |                         |
+| Sim         | режим імітації (для [індикатору статусу](cm_common.md))      | DIGITAL | PLC      |                         |
+| Calib       | режим калібрування (для [індикатору статусу](cm_common.md))  | DIGITAL | PLC      |                         |
+| RestartReq  |                                                              | DIGITAL | PLC      |                         |
+| TimerExp    | скоро прийде час відбору проби (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      |                         |
+|             |                                                              |         |          |                         |
+|             |                                                              |         |          |                         |
+
+| Елемент     | Опис                                                         | Тип     | IODevice | Примітка                                                     |
+| ----------- | ------------------------------------------------------------ | ------- | -------- | ------------------------------------------------------------ |
+| FB          | індикатор зворотного зв'язку (Feedback Indicator)            | REAL    | PLC      | ?                                                            |
+| OP          | вихідне значення (Output)                                    | REAL    | PLC      | ?                                                            |
+| PV          | плинне значення (Process Variable)                           | REAL    | PLC      | AIVAR_HMI.VAL                                                |
+| PVTarget    | плинне значення для Target meters                            | REAL    | PLC      | ?                                                            |
+| SP          | уставка                                                      | REAL    | PLC      | ?                                                            |
+| ORDsp       | відображати діапазон оптимального значення (Optimal Range Display) | DIGITAL | Internal | без змін                                                     |
+| ORLow       | нижнє значення оптимального діапазону                        | REAL    | Internal | без змін                                                     |
+| ORHigh      | верхнє значення оптимального діапазону                       | REAL    | Internal | без змін                                                     |
+| PR          | практичний діапазон для вимірювачів відхилень Deviation Meter | REAL    | Internal | без змін                                                     |
+| PRLow       | нижнє значення практичного діапазону (Practical Range)       | REAL    | Internal | без змін                                                     |
+| PRHigh      | верхнє значення практичного діапазону                        | REAL    | Internal | без змін                                                     |
+| PVTrack     | значення PV для стеження (Tracker)                           | REAL    | Internal | без змін                                                     |
+| OPTrack     | значення OP для стеження                                     | REAL    | Internal | без змін                                                     |
+| TrackDsp    | відображати трекер                                           | DIGITAL | Internal | без змін                                                     |
+| FullScale   | відображення індикації повного діапазону ("вусики")          | DIGITAL | Internal | без змін                                                     |
+| EqStatus    | значення для [індикатору статусу](cm_common.md) визначається функцією | INT     | Cicode   | без змін                                                     |
+| RunStatus   | значення для [Індикатор стану роботи обладнання](cm_common.md) | INT     | Internal | без змін                                                     |
+| CtrlMode    | код що показує режим регулятору: 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | Cicode   | IODevice змінено на Cicode,                                  |
+| CtrlModeDef | режим регулятору за замовченням (без відображення): 0 – Auto (A); 1 – Manual (M); 2 – Cascade (C); 3 – Local (L); 4 – Special control (computer symbol) | INT     | Cicode   | ?                                                            |
+| Timer       | заданий час таймеру, що показує як давно було виміряне значення | INT     | Internal | IODevice змінено на Internal, не використовується в базовій версії PACFramework |
+| TimerExp    | скоро прийде час відбору проби (для [індикатору статусу](cm_common.md)) | DIGITAL | Internal | IODevice змінено на Internal, не використовується в базовій версії PACFramework |
+| Offscale    | значення за межами масштабу (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      |                                                              |
+| Offspec     | невідповідність лаб. даним Off-spec lab data  (для [індикатору статусу](cm_common.md)) | DIGITAL | Internal | IODevice змінено на Internal, не використовується в базовій версії PACFramework |
+| Tracking    | режим стеження регулятору (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      | ?                                                            |
+| OOS         | Out of service якось??? впливає на [Індикатор стану роботи обладнання](cm_common.md) | DIGITAL | PLC      |                                                              |
+| OOSDisable  | Out of service disable якось??? впливає на [Індикатор стану роботи обладнання](cm_common.md)) | DIGITAL | PLC      |                                                              |
+| Sim         | режим імітації (для [індикатору статусу](cm_common.md))      | DIGITAL | PLC      |                                                              |
+| Calib       | режим калібрування (для [індикатору статусу](cm_common.md))  | DIGITAL | PLC      |                                                              |
+| Init        | режим ініціалізування регулятору (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      |                                                              |
+| Dev         | deviation??? (для [індикатору статусу](cm_common.md))        | DIGITAL | PLC      |                                                              |
+| Clamped     | Clamped??? (для [індикатору статусу](cm_common.md))          | DIGITAL | PLC      |                                                              |
+| ManCMD      | Команда переключення в ручний                                | DIGITAL | Internal | IODevice змінено на Internal,                                |
+| AutoCMD     | Команда переключення в автомат                               | DIGITAL | Internal |                                                              |
+| CasCMD      | Команда переключення в каскад                                | DIGITAL | Internal |                                                              |
+|             |                                                              |         |          |                                                              |
+
