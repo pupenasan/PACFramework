@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <FBExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-6-14-21:39:51" content="Function Block source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.95" dateTime="date_and_time#2022-5-31-0:30:50"></contentHeader>
-	<FBSource nameOfFBType="DRV_to_ACT" version="0.03" dateTime="dt#2022-05-28-14:16:06">
-		<attribute name="TypeCodeCheckSumString" value="5B6E"></attribute>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-6-25-18:37:59" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.9" dateTime="date_and_time#2022-6-24-15:27:40"></contentHeader>
+	<FBSource nameOfFBType="DRV_to_ACT" version="0.05" dateTime="dt#2022-06-23-20:36:36">
+		<attribute name="TypeCodeCheckSumString" value="89EC"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="0EDF"></attribute>
 		<inOutParameters>
 			<variables name="DRVCFG" typeName="DRV_CFG">
@@ -32,14 +32,17 @@ ACTCFG.T_PREV:=  DRVCFG.T_PREV;
 ACTCFG.TQ_TOTAL:=DRVCFG.TQ_TOTAL;
 ACTCFG.TQ_LAST:= DRVCFG.TQ_LAST;
 
+
+ACTCFG.STA.STA_MAINT :=   DRVCFG.STA_MAINT;
 ACTCFG.STA.STA_STOPING:=  DRVCFG.STA_STOPING;
 ACTCFG.STA.STA_STRTING:=  DRVCFG.STA_STRTING;
 ACTCFG.STA.STA_STOPED:=   DRVCFG.STA_STOPED;
 ACTCFG.STA.STA_ISANALOG:= DRVCFG.STA_ISANALOG;
-ACTCFG.STA.STA_MANBXOUT:= DRVCFG.STA_b7;
+ACTCFG.STA.STA_ISREVERS:= DRVCFG.STA_ISREVERS;
 ACTCFG.STA.STA_WRKED:=    DRVCFG.STA_WRKED;
 ACTCFG.STA.STA_DISP:=     DRVCFG.STA_DISP;
 ACTCFG.STA.STA_MANBX:=    DRVCFG.STA_MANBX;
+ACTCFG.STA.STA_INIOTBUF:= DRVCFG.STA_INIOTBUF;
 ACTCFG.STA.STA_INBUF:=    DRVCFG.STA_INBUF;
 ACTCFG.STA.STA_FRC:=      DRVCFG.STA_FRC;
 ACTCFG.STA.STA_SML:=      DRVCFG.STA_SML;
@@ -60,8 +63,8 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<DDTSource DDTName="DRV_CFG" version="0.02" dateTime="dt#2022-03-18-16:34:39">
-		<attribute name="TypeSignatureCheckSumString" value="6F31"></attribute>
+	<DDTSource DDTName="DRV_CFG" version="0.04" dateTime="dt#2022-06-23-20:36:35">
+		<attribute name="TypeSignatureCheckSumString" value="DBE8"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>ідентифікатор</comment>
@@ -78,7 +81,8 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 			<variables name="STA_b1" typeName="BOOL">
 				<attribute name="ExtractBit" value="1"></attribute>
 			</variables>
-			<variables name="STA_b2" typeName="BOOL">
+			<variables name="STA_MAINT" typeName="BOOL">
+				<comment>=1 виведений з обслуговування</comment>
 				<attribute name="ExtractBit" value="2"></attribute>
 			</variables>
 			<variables name="STA_STOPING" typeName="BOOL">
@@ -97,7 +101,8 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 				<comment>=1 з аналоговим керуванням (для зурнчості відображення)</comment>
 				<attribute name="ExtractBit" value="6"></attribute>
 			</variables>
-			<variables name="STA_b7" typeName="BOOL">
+			<variables name="STA_ISREVERS" typeName="BOOL">
+				<comment>=1 - пуск з реверсом</comment>
 				<attribute name="ExtractBit" value="7"></attribute>
 			</variables>
 			<variables name="STA_WRKED" typeName="BOOL">
@@ -229,8 +234,8 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="ACTTR_CMD" version="0.02" dateTime="dt#2022-01-17-10:51:27">
-		<attribute name="TypeSignatureCheckSumString" value="1436"></attribute>
+	<DDTSource DDTName="ACTTR_CMD" version="0.03" dateTime="dt#2022-06-23-20:36:25">
+		<attribute name="TypeSignatureCheckSumString" value="AD59"></attribute>
 		<structure>
 			<variables name="CMD1" typeName="INT"></variables>
 			<variables name="CMD_OPN" typeName="BOOL">
@@ -334,10 +339,12 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 				<comment>завантажити в буфер</comment>
 				<attribute name="ExtractBit" value="8"></attribute>
 			</variables>
-			<variables name="CMD_b25" typeName="BOOL">
+			<variables name="CMD_OUTSRVC" typeName="BOOL">
+				<comment>вивести з експлуатації</comment>
 				<attribute name="ExtractBit" value="9"></attribute>
 			</variables>
-			<variables name="CMD_b26" typeName="BOOL">
+			<variables name="CMD_INSRVC" typeName="BOOL">
+				<comment>ввести в експлуатацію</comment>
 				<attribute name="ExtractBit" value="10"></attribute>
 			</variables>
 			<variables name="CMD_b27" typeName="BOOL">
@@ -496,8 +503,8 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="ACTTR_CFG" version="0.08" dateTime="dt#2022-05-28-11:09:36">
-		<attribute name="TypeSignatureCheckSumString" value="4E21"></attribute>
+	<DDTSource DDTName="ACTTR_CFG" version="0.09" dateTime="dt#2022-06-23-20:36:29">
+		<attribute name="TypeSignatureCheckSumString" value="BA86"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>ідентифікатор</comment>
@@ -544,6 +551,7 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 			<variables name="POS" typeName="REAL">
 				<comment>позиціяВМ (0-100%) - ЗВОРОТНІЙ ЗВЯЗОК</comment>
 			</variables>
+			<variables name="rez" typeName="INT"></variables>
 			<variables name="STEP1" typeName="UINT">
 				<comment>крок</comment>
 			</variables>
@@ -612,8 +620,8 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="ACTTR_STA" version="0.02" dateTime="dt#2022-01-17-11:13:50">
-		<attribute name="TypeSignatureCheckSumString" value="CACD"></attribute>
+	<DDTSource DDTName="ACTTR_STA" version="0.03" dateTime="dt#2022-06-23-18:57:05">
+		<attribute name="TypeSignatureCheckSumString" value="B220"></attribute>
 		<structure>
 			<variables name="STA1" typeName="INT"></variables>
 			<variables name="STA_IMSTPD" typeName="BOOL">
@@ -737,7 +745,8 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 				<comment>=1 включене калібрування по швидкості</comment>
 				<attribute name="ExtractBit" value="13"></attribute>
 			</variables>
-			<variables name="STA_b30" typeName="BOOL">
+			<variables name="STA_MAINT" typeName="BOOL">
+				<comment>=1 виведений з обслуговування</comment>
 				<attribute name="ExtractBit" value="14"></attribute>
 			</variables>
 			<variables name="STA_b31" typeName="BOOL">

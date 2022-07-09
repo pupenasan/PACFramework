@@ -55,8 +55,9 @@
 | Calib       | режим калібрування (для [індикатору статусу](cm_common.md))  | DIGITAL | PLC      |
 | RestartReq  |                                                              | DIGITAL | PLC      |
 | TimerExp    | скоро прийде час відбору проби (для [індикатору статусу](cm_common.md)) | DIGITAL | PLC      |
-|             |                                                              |         |          |
-|             |                                                              |         |          |
+| Maint       |                                                              |         |          |
+| Rev         |                                                              |         |          |
+| Fwd         |                                                              |         |          |
 
 ![image-20220417171038847](media/image-20220417171038847.png)
 

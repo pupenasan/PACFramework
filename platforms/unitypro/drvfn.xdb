@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <FBExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-6-14-21:40:12" content="Function Block source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.95" dateTime="date_and_time#2022-5-31-0:30:50"></contentHeader>
-	<FBSource nameOfFBType="DRVFN" version="0.41" dateTime="dt#2022-06-12-20:59:09">
-		<attribute name="TypeCodeCheckSumString" value="E730"></attribute>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-6-25-18:38:47" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.9" dateTime="date_and_time#2022-6-24-15:27:40"></contentHeader>
+	<FBSource nameOfFBType="DRVFN" version="0.48" dateTime="dt#2022-06-24-14:27:00">
+		<attribute name="TypeCodeCheckSumString" value="F25C"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="E188"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="DRV_CFG">
@@ -132,7 +132,6 @@ ACT_CMDCTRL (ACTCFG := ACTCFGu, STA := STA, CMD := CMD, ACTBUF := ACTBUF);
 
 (*переключення в ручний режим при включенні локального ручного і блокування усіх команд*)
 IF (RMT.STA_VALB AND NOT RMT.PRM_DSBL AND ACTCFGu.PRM.PRM_SELLCLENBL) OR STA.STA_MANBXOUT OR STA.STA_MANBX THEN
-    STA.STA_DISP := TRUE;
     (*CMD_RESET*)
     CMD.CMD_OPN:=FALSE;
     CMD.CMD_CLS:=FALSE;
@@ -151,7 +150,7 @@ IF (RMT.STA_VALB AND NOT RMT.PRM_DSBL AND ACTCFGu.PRM.PRM_SELLCLENBL) OR STA.STA
     CMD.CMD_UP:=FALSE;
     CMD.CMD_DWN:=FALSE;
     CMD.CMD_CRMT:=FALSE;
-  (*  CMD.CMD_RESOLUTION:=FALSE;*)
+   (* CMD.CMD_RESOLUTION:=FALSE;*)
     CMD.CMD_REVERS:=FALSE;
     CMD.CMD_CLCL:=FALSE;
     CMD.CMD_DBLCKACTTOGGLE:=FALSE;
@@ -159,8 +158,8 @@ IF (RMT.STA_VALB AND NOT RMT.PRM_DSBL AND ACTCFGu.PRM.PRM_SELLCLENBL) OR STA.STA
     CMD.CMD_STOPDELAY:=FALSE;
     CMD.CMD_P_RESOLUTION:=FALSE;
     CMD.CMD_BUFLOAD:=FALSE;
-    CMD.CMD_b25:=FALSE;
-    CMD.CMD_b26:=FALSE;
+   (* CMD.CMD_OUTSRVC:=FALSE;*)
+   (* CMD.CMD_INSRVC:=FALSE;*)
     CMD.CMD_b27:=FALSE;
     CMD.CMD_b28:=FALSE;
     CMD.CMD_b29:=FALSE;
@@ -210,10 +209,9 @@ CASE ACTCFGu.STEP1 OF
         IF NOT SRUN1 AND NOT ALMS.ALM_ALMSHFT THEN
             ACTCFGu.STEP1 := 5;
             CSTRT.STA_VALB:=FALSE;
+	    STA.STA_ISREVERS:=FALSE;
         END_IF;
-
-
-        
+       
     2:  (*запускається*)
         CSTRT.STA_VALB:=true;
         IF SRUN1 THEN
@@ -233,6 +231,7 @@ CASE ACTCFGu.STEP1 OF
     3:  (*зупиняється*)
         CSTRT.STA_VALB:=FALSE;
         IF NOT SRUN1 THEN
+	    STA.STA_ISREVERS:=FALSE;
             ACTCFGu.STEP1 := 5;
             ACTCFGu.T_STEP1 := 0;
         END_IF;
@@ -248,6 +247,7 @@ CASE ACTCFGu.STEP1 OF
         END_IF;
     6: (*заблоковано*)
         CSTRT.STA_VALB:=FALSE;
+	STA.STA_ISREVERS:=FALSE;
         IF CMD.CMD_DBLCK THEN
             ACTCFGu.STEP1 := 5; (*у стан зупинено*)
             ACTCFGu.T_STEP1 := 0;
@@ -266,12 +266,17 @@ STA.STA_STOPING :=ACTCFGu.STEP1 = 3;
 STA.STA_STRTING :=ACTCFGu.STEP1 = 2;
 STA.STA_STOPED  :=ACTCFGu.STEP1 = 5 OR ACTCFGu.STEP1 = 6;
 STA.STA_WRKED   :=ACTCFGu.STEP1 = 4;
-STA.STA_BLCK    :=ACTCFGu.STEP1 = 6;
+STA.STA_BLCK    :=ACTCFGu.STEP1 = 6 and not STA.STA_MAINT;
 
 
 (*----------------------------- керування ВМ*)
 IF CMD.CMD_STOP THEN
     CSTRT.STA_VALB:=FALSE;
+END_IF;
+IF CMD.CMD_REVERS THEN
+    CMD.CMD_START:= TRUE; 
+    CMD.CMD_STOP:= false;
+    STA.STA_ISREVERS:=TRUE;
 END_IF;
 (*керування start/stop тільки при дозволі керування або тимчасовому розблокуванні*)
 IF (CMD.CMD_RESOLUTION OR PLCCFG.STA_PERM.6) AND NOT STA.STA_BLCK THEN
@@ -293,6 +298,19 @@ IF CMD.CMD_BLCK THEN    (*при команді блокувати переве�
         ACTCFGu.T_STEP1 := 0;
 END_IF;
 
+IF CMD.CMD_OUTSRVC THEN (*при команді вивести з експлуатації перевести в потрібний стан заблоковано і виставляємо відповідний біт*)
+        STA.STA_MAINT := true;
+        ACTCFGu.STEP1 := 6;
+        ACTCFGu.T_STEP1 := 0;
+END_IF;
+
+IF CMD.CMD_INSRVC THEN (*при команді ввести з експлуатації перевести в стан зупинено і зкидаємо відповідний біт*)
+        STA.STA_MAINT := false;
+        ACTCFGu.STEP1 := 5;
+        ACTCFGu.T_STEP1 := 0;
+END_IF;
+
+
 (*-------------------- режими*)
 
 STA.STA_FRC :=LSTP.STA_FRC AND LSTP.ID&lt;&gt;0
@@ -303,6 +321,14 @@ OR RMT.STA_FRC AND RMT.ID&lt;&gt;0
 OR CSTRT.STA_FRC AND CSTRT.ID&lt;&gt;0
 OR SPD.STA_FRC AND SPD.ID&lt;&gt;0
 OR CSPD.STA_FRC AND CSPD.ID&lt;&gt;0;
+
+IF STA.STA_MAINT THEN (*якщо виведено з експлуатації тривоги не відслідковуємо*)
+	ALMS.ALM_ALMSTRT := FALSE;
+	ALMS.ALM_ALMSTP := FALSE;
+	ALMS.ALM_ALMINVRTR := FALSE;
+	ALMS.ALM_ALMPWR := FALSE;
+	ALMS.ALM_ALMSHFT := FALSE;
+END_IF;
 
 ALMS.ALM_ALMPWR:=NOT SPWR1;
 ALMS.ALM_ALM := ALMS.ALM_ALMSTRT OR ALMS.ALM_ALMSTP OR ALMS.ALM_ALMINVRTR OR ALMS.ALM_ALMPWR OR ALMS.ALM_ALMSHFT;
@@ -393,8 +419,8 @@ CSPD.VAL:=ACTCFGu.CPOS;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<DDTSource DDTName="DRV_CFG" version="0.02" dateTime="dt#2022-03-18-16:34:39">
-		<attribute name="TypeSignatureCheckSumString" value="6F31"></attribute>
+	<DDTSource DDTName="DRV_CFG" version="0.04" dateTime="dt#2022-06-23-20:36:35">
+		<attribute name="TypeSignatureCheckSumString" value="DBE8"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>ідентифікатор</comment>
@@ -411,7 +437,8 @@ CSPD.VAL:=ACTCFGu.CPOS;
 			<variables name="STA_b1" typeName="BOOL">
 				<attribute name="ExtractBit" value="1"></attribute>
 			</variables>
-			<variables name="STA_b2" typeName="BOOL">
+			<variables name="STA_MAINT" typeName="BOOL">
+				<comment>=1 виведений з обслуговування</comment>
 				<attribute name="ExtractBit" value="2"></attribute>
 			</variables>
 			<variables name="STA_STOPING" typeName="BOOL">
@@ -430,7 +457,8 @@ CSPD.VAL:=ACTCFGu.CPOS;
 				<comment>=1 з аналоговим керуванням (для зурнчості відображення)</comment>
 				<attribute name="ExtractBit" value="6"></attribute>
 			</variables>
-			<variables name="STA_b7" typeName="BOOL">
+			<variables name="STA_ISREVERS" typeName="BOOL">
+				<comment>=1 - пуск з реверсом</comment>
 				<attribute name="ExtractBit" value="7"></attribute>
 			</variables>
 			<variables name="STA_WRKED" typeName="BOOL">
@@ -562,8 +590,8 @@ CSPD.VAL:=ACTCFGu.CPOS;
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="ACTTR_CMD" version="0.02" dateTime="dt#2022-01-17-10:51:27">
-		<attribute name="TypeSignatureCheckSumString" value="1436"></attribute>
+	<DDTSource DDTName="ACTTR_CMD" version="0.03" dateTime="dt#2022-06-23-20:36:25">
+		<attribute name="TypeSignatureCheckSumString" value="AD59"></attribute>
 		<structure>
 			<variables name="CMD1" typeName="INT"></variables>
 			<variables name="CMD_OPN" typeName="BOOL">
@@ -667,10 +695,12 @@ CSPD.VAL:=ACTCFGu.CPOS;
 				<comment>завантажити в буфер</comment>
 				<attribute name="ExtractBit" value="8"></attribute>
 			</variables>
-			<variables name="CMD_b25" typeName="BOOL">
+			<variables name="CMD_OUTSRVC" typeName="BOOL">
+				<comment>вивести з експлуатації</comment>
 				<attribute name="ExtractBit" value="9"></attribute>
 			</variables>
-			<variables name="CMD_b26" typeName="BOOL">
+			<variables name="CMD_INSRVC" typeName="BOOL">
+				<comment>ввести в експлуатацію</comment>
 				<attribute name="ExtractBit" value="10"></attribute>
 			</variables>
 			<variables name="CMD_b27" typeName="BOOL">
@@ -1911,8 +1941,8 @@ CSPD.VAL:=ACTCFGu.CPOS;
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="ACTTR_CFG" version="0.08" dateTime="dt#2022-05-28-11:09:36">
-		<attribute name="TypeSignatureCheckSumString" value="4E21"></attribute>
+	<DDTSource DDTName="ACTTR_CFG" version="0.09" dateTime="dt#2022-06-23-20:36:29">
+		<attribute name="TypeSignatureCheckSumString" value="BA86"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>ідентифікатор</comment>
@@ -1959,6 +1989,7 @@ CSPD.VAL:=ACTCFGu.CPOS;
 			<variables name="POS" typeName="REAL">
 				<comment>позиціяВМ (0-100%) - ЗВОРОТНІЙ ЗВЯЗОК</comment>
 			</variables>
+			<variables name="rez" typeName="INT"></variables>
 			<variables name="STEP1" typeName="UINT">
 				<comment>крок</comment>
 			</variables>
@@ -2027,8 +2058,8 @@ CSPD.VAL:=ACTCFGu.CPOS;
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="ACTTR_STA" version="0.02" dateTime="dt#2022-01-17-11:13:50">
-		<attribute name="TypeSignatureCheckSumString" value="CACD"></attribute>
+	<DDTSource DDTName="ACTTR_STA" version="0.03" dateTime="dt#2022-06-23-18:57:05">
+		<attribute name="TypeSignatureCheckSumString" value="B220"></attribute>
 		<structure>
 			<variables name="STA1" typeName="INT"></variables>
 			<variables name="STA_IMSTPD" typeName="BOOL">
@@ -2152,7 +2183,8 @@ CSPD.VAL:=ACTCFGu.CPOS;
 				<comment>=1 включене калібрування по швидкості</comment>
 				<attribute name="ExtractBit" value="13"></attribute>
 			</variables>
-			<variables name="STA_b30" typeName="BOOL">
+			<variables name="STA_MAINT" typeName="BOOL">
+				<comment>=1 виведений з обслуговування</comment>
 				<attribute name="ExtractBit" value="14"></attribute>
 			</variables>
 			<variables name="STA_b31" typeName="BOOL">
@@ -2280,8 +2312,8 @@ CSPD.VAL:=ACTCFGu.CPOS;
 			</variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="DRV_to_ACT" version="0.03" dateTime="dt#2022-05-28-14:16:06">
-		<attribute name="TypeCodeCheckSumString" value="5B6E"></attribute>
+	<FBSource nameOfFBType="DRV_to_ACT" version="0.05" dateTime="dt#2022-06-23-20:36:36">
+		<attribute name="TypeCodeCheckSumString" value="89EC"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="0EDF"></attribute>
 		<inOutParameters>
 			<variables name="DRVCFG" typeName="DRV_CFG">
@@ -2310,14 +2342,17 @@ ACTCFG.T_PREV:=  DRVCFG.T_PREV;
 ACTCFG.TQ_TOTAL:=DRVCFG.TQ_TOTAL;
 ACTCFG.TQ_LAST:= DRVCFG.TQ_LAST;
 
+
+ACTCFG.STA.STA_MAINT :=   DRVCFG.STA_MAINT;
 ACTCFG.STA.STA_STOPING:=  DRVCFG.STA_STOPING;
 ACTCFG.STA.STA_STRTING:=  DRVCFG.STA_STRTING;
 ACTCFG.STA.STA_STOPED:=   DRVCFG.STA_STOPED;
 ACTCFG.STA.STA_ISANALOG:= DRVCFG.STA_ISANALOG;
-ACTCFG.STA.STA_MANBXOUT:= DRVCFG.STA_b7;
+ACTCFG.STA.STA_ISREVERS:= DRVCFG.STA_ISREVERS;
 ACTCFG.STA.STA_WRKED:=    DRVCFG.STA_WRKED;
 ACTCFG.STA.STA_DISP:=     DRVCFG.STA_DISP;
 ACTCFG.STA.STA_MANBX:=    DRVCFG.STA_MANBX;
+ACTCFG.STA.STA_INIOTBUF:= DRVCFG.STA_INIOTBUF;
 ACTCFG.STA.STA_INBUF:=    DRVCFG.STA_INBUF;
 ACTCFG.STA.STA_FRC:=      DRVCFG.STA_FRC;
 ACTCFG.STA.STA_SML:=      DRVCFG.STA_SML;
@@ -2338,8 +2373,8 @@ ACTCFG.CMDHMI:=DRVHMI.CMD;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_PRE" version="0.10" dateTime="dt#2022-05-28-14:15:50">
-		<attribute name="TypeCodeCheckSumString" value="B9C6"></attribute>
+	<FBSource nameOfFBType="ACT_PRE" version="0.11" dateTime="dt#2022-06-23-20:36:31">
+		<attribute name="TypeCodeCheckSumString" value="A462"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="58F3"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="ACTTR_CFG">
@@ -2399,7 +2434,7 @@ IF PLCCFG.STA_SCN1 THEN
     ACTCFG.STA.STA_INIOTBUF:=FALSE;
     ACTCFG.STA.STA_SPDMONON:=FALSE;
     ACTCFG.STA.STA_SPDCALIBRON:=FALSE;
-    ACTCFG.STA.STA_b30:=FALSE;
+    ACTCFG.STA.STA_MAINT:=FALSE;
     ACTCFG.STA.STA_b31:=FALSE;
     (*обнулення бітів структури ALM*)
     ACTCFG.ALM.ALM_ALMSTRT:=FALSE;
@@ -2452,8 +2487,8 @@ IF dt1&lt;1 THEN dt1:=1; END_IF;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_CMDCTRL" version="0.11" dateTime="dt#2022-06-12-19:05:50">
-		<attribute name="TypeCodeCheckSumString" value="4592"></attribute>
+	<FBSource nameOfFBType="ACT_CMDCTRL" version="0.15" dateTime="dt#2022-06-24-14:54:45">
+		<attribute name="TypeCodeCheckSumString" value="FE2C"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="B4F1"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="ACTTR_CFG">
@@ -2571,8 +2606,10 @@ CASE CMDINT OF
         CMD.CMD_P_RESOLUTION := TRUE; (*//на один цикл*)  
     16#000D: (*=1 запуск калібрування датчика шивдкості*)
         CMD.CMD_DBLCKACTTOGGLE := true;
-        STA.STA_DBLCKACT := NOT STA.STA_DBLCKACT;      
+        STA.STA_DBLCKACT := NOT STA.STA_DBLCKACT;
+     
     (*E..10 - вільні*)
+
     16#0011:(*Запустити*)
         CMD.CMD_START:= TRUE; 
         CMD.CMD_STOP:= false;
@@ -2608,11 +2645,16 @@ CASE CMDINT OF
     16#0313:(* включити місцевий режим*)
         STA.STA_MANBXOUT := true;
 	STA.STA_MANBX := true;
+	STA.STA_DISP := TRUE;
         (*#CMD.CRMT:= TRUE; //чи потрібен з програми?*)
     16#0314:(* відключити місцевий режим*)
         STA.STA_MANBXOUT := false;
         STA.STA_MANBX := false;
         (*#CMD.CLCL:= TRUE; //чи потрібен з програми?*)
+    16#0315: (*=1 вивести з експлуатації*)
+        CMD.CMD_OUTSRVC := true;
+    16#0316: (*=1 ввести в експлуатацію*)
+        CMD.CMD_INSRVC := true;
     (*керування статистикою*)
     16#0401:(* скинути лічильник тривог 1025*)
         ACTCFG.CNTALM:=0;
@@ -2636,8 +2678,8 @@ end_if;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_POST" version="0.14" dateTime="dt#2022-06-14-19:47:42">
-		<attribute name="TypeCodeCheckSumString" value="2C50"></attribute>
+	<FBSource nameOfFBType="ACT_POST" version="0.18" dateTime="dt#2022-06-23-20:38:19">
+		<attribute name="TypeCodeCheckSumString" value="8474"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="7336"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="ACTTR_CFG">
@@ -2710,8 +2752,8 @@ ACTCFG.CMD.CMD_STARTDELAY:=FALSE;
 ACTCFG.CMD.CMD_STOPDELAY:=FALSE;
 ACTCFG.CMD.CMD_P_RESOLUTION:=FALSE;
 ACTCFG.CMD.CMD_BUFLOAD:=FALSE;
-ACTCFG.CMD.CMD_b25:=FALSE;
-ACTCFG.CMD.CMD_b26:=FALSE;
+ACTCFG.CMD.CMD_OUTSRVC:=FALSE;
+ACTCFG.CMD.CMD_INSRVC:=FALSE;
 ACTCFG.CMD.CMD_b27:=FALSE;
 ACTCFG.CMD.CMD_b28:=FALSE;
 ACTCFG.CMD.CMD_b29:=FALSE;
@@ -2743,8 +2785,8 @@ CMD.CMD_STARTDELAY:=FALSE;
 CMD.CMD_STOPDELAY:=FALSE;
 CMD.CMD_P_RESOLUTION:=FALSE;
 CMD.CMD_BUFLOAD:=FALSE;
-CMD.CMD_b25:=FALSE;
-CMD.CMD_b26:=FALSE;
+CMD.CMD_OUTSRVC:=FALSE;
+CMD.CMD_INSRVC:=FALSE;
 CMD.CMD_b27:=FALSE;
 CMD.CMD_b28:=FALSE;
 CMD.CMD_b29:=FALSE;
@@ -2782,7 +2824,7 @@ ACTCFG.STAHMI2.10:= ACTCFG.STA.STA_ISANALOG;
 ACTCFG.STAHMI2.11:= ACTCFG.STA.STA_INIOTBUF;
 ACTCFG.STAHMI2.12:= ACTCFG.STA.STA_SPDMONON;
 ACTCFG.STAHMI2.13:= ACTCFG.STA.STA_SPDCALIBRON;
-ACTCFG.STAHMI2.14:= ACTCFG.STA.STA_b30;
+ACTCFG.STAHMI2.14:= ACTCFG.STA.STA_MAINT;
 ACTCFG.STAHMI2.15:= ACTCFG.STA.STA_b31;
 
 (*alm bits pack*)
@@ -2867,8 +2909,8 @@ END_IF;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_to_DRV" version="0.05" dateTime="dt#2022-06-14-20:50:18">
-		<attribute name="TypeCodeCheckSumString" value="F460"></attribute>
+	<FBSource nameOfFBType="ACT_to_DRV" version="0.08" dateTime="dt#2022-06-23-20:36:38">
+		<attribute name="TypeCodeCheckSumString" value="F799"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="0EDF"></attribute>
 		<inOutParameters>
 			<variables name="DRVCFG" typeName="DRV_CFG">
@@ -2899,11 +2941,12 @@ DRVCFG.TQ_LAST:= ACTCFG.TQ_LAST;
 
 DRVCFG.STA_b0 :=  false;
 DRVCFG.STA_b1 :=  false;
+DRVCFG.STA_MAINT :=  ACTCFG.STA.STA_MAINT;
 DRVCFG.STA_STOPING := ACTCFG.STA.STA_STOPING;
 DRVCFG.STA_STRTING := ACTCFG.STA.STA_STRTING;
 DRVCFG.STA_STOPED:=   ACTCFG.STA.STA_STOPED;
 DRVCFG.STA_ISANALOG:= ACTCFG.STA.STA_ISANALOG;
-DRVCFG.STA_b7 :=  false;
+DRVCFG.STA_ISREVERS :=  ACTCFG.STA.STA_ISREVERS;
 DRVCFG.STA_WRKED:=    ACTCFG.STA.STA_WRKED;
 DRVCFG.STA_DISP:=     ACTCFG.STA.STA_DISP;
 DRVCFG.STA_MANBX:=    ACTCFG.STA.STA_MANBX;
@@ -2926,12 +2969,12 @@ DRVHMI.CMD:=ACTCFG.CMDHMI;
 
 DRVHMI.STA.0  :=DRVCFG.STA_b0;
 DRVHMI.STA.1  :=DRVCFG.STA_b1;
-DRVHMI.STA.2  :=DRVCFG.STA_b2;
+DRVHMI.STA.2  :=DRVCFG.STA_MAINT;
 DRVHMI.STA.3  :=DRVCFG.STA_STOPING;
 DRVHMI.STA.4  :=DRVCFG.STA_STRTING;
 DRVHMI.STA.5  :=DRVCFG.STA_STOPED;
 DRVHMI.STA.6  :=DRVCFG.STA_ISANALOG;
-DRVHMI.STA.7  :=DRVCFG.STA_b7;
+DRVHMI.STA.7  :=DRVCFG.STA_ISREVERS;
 DRVHMI.STA.8  :=DRVCFG.STA_WRKED;
 DRVHMI.STA.9  :=DRVCFG.STA_DISP;
 DRVHMI.STA.10 :=DRVCFG.STA_MANBX;
