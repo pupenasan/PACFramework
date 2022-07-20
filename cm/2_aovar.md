@@ -72,7 +72,7 @@ CLSID=16#1040
 
 Приклад налаштування функцій аналогових вихідних змінних на HMI наведений на рис.
 
-![](C:\Users\roma_mirkevich\Desktop\Project\git\PacFramework\base\media\1_15.png)
+![](media/1_15.png)
 
 Рис. Приклад налаштування функцій аналогових вихідних змінних на HMI.
 
