@@ -1,4 +1,5 @@
 ﻿# ігнорувати всі файли PowerPoint
 tiaprojects/
 *.xlsx
-*.ctz
+*.ctz #citect
+*.pcwex #plcnext
