@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <STExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-7-16-19:38:8" content="Structured source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.18" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-7-26-13:37:36" content="Structured source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.20" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
 	<program>
 		<identProgram name="mainPFW" type="section" task="MAST"></identProgram>
 		<STSource>(* PACFramework SEControlExpertLIB V1.0.0 
@@ -37,6 +37,11 @@ A_naochs();
 
 A_moduls();
 </STSource>
+	</program>
+	<program>
+		<identProgram name="A_naichs" type="SR" task="MAST"></identProgram>
+		<STSource>
+		</STSource>
 	</program>
 	<program>
 		<identProgram name="A_initacts" type="SR" task="MAST"></identProgram>
@@ -80,20 +85,20 @@ ACT.DRV1.ID:=3; ACT.DRV1.CLSID:=16#2110;
 		<variables name="j" typeName="INT"></variables>
 		<variables name="k" typeName="INT"></variables>
 		<variables name="CHDI" typeName="ARRAY[0..32] OF CH_CFG"></variables>
+		<variables name="CHNAO" typeName="ARRAY[0..1] OF CH_CFG"></variables>
 		<variables name="CHNDI_HMI" typeName="ARRAY[0..1] OF CH_HMI"></variables>
+		<variables name="SUBMODULE" typeName="SUBMODULE"></variables>
 		<variables name="i" typeName="INT"></variables>
 		<variables name="CHNDO" typeName="ARRAY[0..1] OF CH_CFG"></variables>
 		<variables name="CHNDO_HMI" typeName="ARRAY[0..1] OF CH_HMI"></variables>
-		<variables name="SUBMODULE" typeName="SUBMODULE"></variables>
+		<variables name="CHDO" typeName="ARRAY[0..32] OF CH_CFG"></variables>
 		<variables name="MODULES" typeName="ARRAY[0..3] OF MODULE"></variables>
 		<variables name="CHNDI" typeName="ARRAY[0..1] OF CH_CFG"></variables>
-		<variables name="CHNAO" typeName="ARRAY[0..1] OF CH_CFG"></variables>
 		<variables name="CHAI_HMI" typeName="ARRAY[0..8] OF CH_HMI"></variables>
 		<variables name="CHAO_HMI" typeName="ARRAY[0..4] OF CH_HMI"></variables>
 		<variables name="CHAI" typeName="ARRAY[0..8] OF CH_CFG"></variables>
 		<variables name="CHNAO_HMI" typeName="ARRAY[0..1] OF CH_HMI"></variables>
 		<variables name="CHNAI_HMI" typeName="ARRAY[0..1] OF CH_HMI"></variables>
-		<variables name="CHDO" typeName="ARRAY[0..32] OF CH_CFG"></variables>
 		<variables name="CHNAI" typeName="ARRAY[0..1] OF CH_CFG"></variables>
 		<variables name="DIH" typeName="DIH"></variables>
 		<variables name="VARS" typeName="VARS">
@@ -118,7 +123,6 @@ ACT.DRV1.ID:=3; ACT.DRV1.CLSID:=16#2110;
 				</instanceElementDesc>
 			</instanceElementDesc>
 		</variables>
-		<variables name="VARBUF" typeName="VARBUF"></variables>
 		<variables name="DIVARFN" typeName="DIVARFN">
 			<instanceElementDesc name="IDMIN">
 				<value>65000</value>
@@ -127,15 +131,13 @@ ACT.DRV1.ID:=3; ACT.DRV1.CLSID:=16#2110;
 				<value>0</value>
 			</instanceElementDesc>
 		</variables>
+		<variables name="VARBUF" typeName="VARBUF"></variables>
 		<variables name="ACTH" typeName="ACTH"></variables>
 		<variables name="ACTBUF" typeName="ACTTR_CFG"></variables>
-		<variables name="VLVDFN" typeName="VLVDFN"></variables>
 		<variables name="VLVAFN" typeName="VLVAFN"></variables>
 		<variables name="DRVFN" typeName="DRVFN"></variables>
-		<variables name="CH_BUF" typeName="CH_BUF"></variables>
-		<variables name="CHDOFN" typeName="CHDOFN"></variables>
-		<variables name="CHAIFN" typeName="CHAIFN"></variables>
-		<variables name="AIH" typeName="AIH"></variables>
+		<variables name="VLVDFN" typeName="VLVDFN"></variables>
+		<variables name="PLCFN" typeName="PLCFN"></variables>
 		<variables name="DOVARFN" typeName="DOVARFN">
 			<instanceElementDesc name="IDMIN">
 				<value>65000</value>
@@ -154,8 +156,11 @@ ACT.DRV1.ID:=3; ACT.DRV1.CLSID:=16#2110;
 			</instanceElementDesc>
 		</variables>
 		<variables name="AOH" typeName="AOH"></variables>
-		<variables name="PLCFN" typeName="PLCFN"></variables>
+		<variables name="AIH" typeName="AIH"></variables>
+		<variables name="CHAIFN" typeName="CHAIFN"></variables>
+		<variables name="CH_BUF" typeName="CH_BUF"></variables>
 		<variables name="CHDIFN" typeName="CHDIFN"></variables>
+		<variables name="CHDOFN" typeName="CHDOFN"></variables>
 		<variables name="CHAOFN" typeName="CHAOFN"></variables>
 	</dataBlock>
 	<DDTSource DDTName="ACT" version="0.01" dateTime="dt#2022-06-25-18:41:47">
@@ -1779,7 +1784,7 @@ end_if;
 			<variables name="INTS" typeName="ARRAY[4..11] OF INT"></variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="AIVARFN" version="0.29" dateTime="dt#2022-07-16-10:23:03">
+	<FBSource nameOfFBType="AIVARFN" version="0.29" dateTime="dt#2022-07-26-10:44:22">
 		<attribute name="TypeCodeCheckSumString" value="D03A"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="317E"></attribute>
 		<inOutParameters>
@@ -2911,7 +2916,7 @@ end_if;
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="PLC_CFG" version="0.11" dateTime="dt#2022-01-13-12:47:32">
+	<DDTSource DDTName="PLC_CFG" version="0.12" dateTime="dt#2022-07-25-11:17:57">
 		<attribute name="TypeSignatureCheckSumString" value="1691"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
@@ -3158,7 +3163,19 @@ end_if;
 				<comment>кількість наявних каналів AO</comment>
 			</variables>
 			<variables name="NOW" typeName="ARRAY[0..3] OF INT">
-				<comment>плинний час астрономічний час в BCD форматі: NOW[0] seconds,-- (16#ss,--)  NOW[1] hour, minute (16#hhmm)  NOW[2] month, day (16#mmdd)  NOW[3] year (16#yyyy)</comment>
+				<comment>плинний час астрономічний час в BCD форматі</comment>
+				<instanceElementDesc name="[1]">
+					<comment>hour  minute (16#hhmm)</comment>
+				</instanceElementDesc>
+				<instanceElementDesc name="[0]">
+					<comment>seconds,-- (16#ss,--)</comment>
+				</instanceElementDesc>
+				<instanceElementDesc name="[2]">
+					<comment>month, day (16#mmdd)</comment>
+				</instanceElementDesc>
+				<instanceElementDesc name="[3]">
+					<comment>year (16#yyyy)</comment>
+				</instanceElementDesc>
 			</variables>
 			<variables name="SHIFTPARA" typeName="ARRAY[0..3] OF INT">
 				<comment>Години передачі змін (максимум 3 зміни): SHIFT[0] – кількість змін SHIFT[1] – передача 1-ї зміни (BCD 16#hhmm) SHIFT[2] – передача 2-ї зміни (BCD 16#hhmm)  SHIFT[3] – передача 3-ї зміни (BCD 16#hhmm)</comment>
@@ -3662,7 +3679,7 @@ END_FOR;
 			</variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="DIVARFN" version="0.25" dateTime="dt#2022-07-16-10:24:46">
+	<FBSource nameOfFBType="DIVARFN" version="0.25" dateTime="dt#2022-07-26-10:44:22">
 		<attribute name="TypeCodeCheckSumString" value="905B"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="D87F"></attribute>
 		<inOutParameters>
@@ -4624,39 +4641,33 @@ DRVFN(ACTCFG:=ACT.DRV1, ACTHMI:=ACTH.DRV1, RUN:=PFWV.DIVAR_TMP, CSTRT:=PFWV.DOVA
 			</variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="VLVDFN" version="0.60" dateTime="dt#2022-07-16-10:24:47">
-		<attribute name="TypeCodeCheckSumString" value="B3A7"></attribute>
-		<attribute name="TypeSignatureCheckSumString" value="C6A9"></attribute>
+	<FBSource nameOfFBType="VLVAFN" version="0.30" dateTime="dt#2022-07-26-10:44:22">
+		<attribute name="TypeCodeCheckSumString" value="B26E"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="CFD4"></attribute>
 		<inOutParameters>
-			<variables name="ACTCFG" typeName="VLVD_CFG">
-				<comment>CFG ВМ</comment>
+			<variables name="ACTCFG" typeName="VLVA_CFG">
 				<attribute name="PositionPin" value="1"></attribute>
 			</variables>
-			<variables name="ACTHMI" typeName="VLVD_HMI">
-				<comment>HMI ВМ</comment>
+			<variables name="ACTHMI" typeName="VLVA_HMI">
 				<attribute name="PositionPin" value="2"></attribute>
 			</variables>
 			<variables name="SOPN" typeName="DIVAR_CFG">
-				<comment>Датчик Відкрито</comment>
-				<attribute name="PositionPin" value="6"></attribute>
-			</variables>
-			<variables name="SCLS" typeName="DIVAR_CFG">
-				<comment>Датчик Закрито</comment>
-				<attribute name="PositionPin" value="7"></attribute>
-			</variables>
-			<variables name="COPN" typeName="DOVAR_CFG">
-				<comment>керування відкрити</comment>
-				<attribute name="PositionPin" value="12"></attribute>
-			</variables>
-			<variables name="CCLS" typeName="DOVAR_CFG">
-				<comment>керування закрити</comment>
 				<attribute name="PositionPin" value="3"></attribute>
 			</variables>
+			<variables name="SCLS" typeName="DIVAR_CFG">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="POS" typeName="AIVAR_CFG">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+			<variables name="CPOS" typeName="AOVAR_CFG">
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
 			<variables name="PLCCFG" typeName="PLC_CFG">
-				<attribute name="PositionPin" value="14"></attribute>
+				<attribute name="PositionPin" value="7"></attribute>
 			</variables>
 			<variables name="ACTBUF" typeName="ACTTR_CFG">
-				<attribute name="PositionPin" value="15"></attribute>
+				<attribute name="PositionPin" value="8"></attribute>
 			</variables>
 		</inOutParameters>
 		<publicLocalVariables>
@@ -4664,57 +4675,28 @@ DRVFN(ACTCFG:=ACT.DRV1, ACTHMI:=ACTH.DRV1, RUN:=PFWV.DIVAR_TMP, CSTRT:=PFWV.DOVA
 			<variables name="ACTBUFOUT" typeName="ACTTR_CFG"></variables>
 		</publicLocalVariables>
 		<privateLocalVariables>
-			<variables name="ACTCFGu" typeName="ACTTR_CFG">
-				<comment>універсальна структура CFG</comment>
-			</variables>
-			<variables name="STA" typeName="ACTTR_STA">
-				<comment>структура STA</comment>
-			</variables>
-			<variables name="ALMS" typeName="ACTTR_ALM">
-				<comment>структура ALM</comment>
-			</variables>
-			<variables name="CMD" typeName="ACTTR_CMD">
-				<comment>структура CMD</comment>
-			</variables>
-			<variables name="SOPN1" typeName="BOOL">
-				<comment>значення датчика SOPN</comment>
-			</variables>
-			<variables name="SCLS1" typeName="BOOL">
-				<comment>значення датчика SCLS</comment>
-			</variables>
-			<variables name="SRUN1" typeName="BOOL">
-				<comment>значення датчика RUN</comment>
-			</variables>
-			<variables name="SPWR1" typeName="BOOL">
-				<comment>значення датчика PWR</comment>
-			</variables>
-			<variables name="SALM1" typeName="BOOL">
-				<comment>значення датчика ALM</comment>
-			</variables>
-			<variables name="SPOS1" typeName="INT">
-				<comment>значення віртуального датчика позиції</comment>
-			</variables>
-			<variables name="dT1" typeName="UDINT">
-				<comment>різниця часу між викликами блоку в мс</comment>
-			</variables>
-			<variables name="dpos" typeName="REAL">
-				<comment>приріст відкриття/закриття у 0.01% для імітації</comment>
-			</variables>
-			<variables name="VLVD_to_ACT" typeName="VLVD_to_ACT"></variables>
+			<variables name="ACTCFGu" typeName="ACTTR_CFG"></variables>
+			<variables name="STA" typeName="ACTTR_STA"></variables>
+			<variables name="ALMs" typeName="ACTTR_ALM"></variables>
+			<variables name="CMD" typeName="ACTTR_CMD"></variables>
+			<variables name="CMDINT" typeName="UINT"></variables>
+			<variables name="SOPN1" typeName="BOOL"></variables>
+			<variables name="SCLS1" typeName="BOOL"></variables>
+			<variables name="SPOS1" typeName="REAL"></variables>
+			<variables name="dT1" typeName="UDINT"></variables>
+			<variables name="dpos" typeName="REAL"></variables>
+			<variables name="VLVA_to_ACT" typeName="VLVA_to_ACT"></variables>
 			<variables name="ACT_PRE" typeName="ACT_PRE"></variables>
 			<variables name="ACT_CMDCTRL" typeName="ACT_CMDCTRL"></variables>
 			<variables name="ACT_POST" typeName="ACT_POST"></variables>
-			<variables name="ACT_to_VLVD" typeName="ACT_to_VLVD"></variables>
+			<variables name="ACT_to_VLVA" typeName="ACT_to_VLVA"></variables>
 		</privateLocalVariables>
-		<FBProgram name="VLVD">
-			<STSource>(*передача змінних з конкретного типу ВМ в універсальний тип ВМ *)
-VLVD_to_ACT (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
-
+		<FBProgram name="VLVAFN">
+			<STSource>VLVA_to_ACT(VLVACFG:=ACTCFG, VLVAHMI:=ACTHMI, ACTCFG:=ACTCFGu);
 (*попередня обробка: ініт STA, ALM, CMD, INBUF, SML, dt *)
-ACT_PRE (ACTCFG := ACTCFGu, STA := STA, ALMs := ALMS, CMD := CMD, dt1 := dT1, PLCCFG := PLCCFG, ACTBUF := ACTBUF);
-
-(*ініціалізація змінної на першому циклі обробки*)
-IF PLCCFG.STA_SCN1 THEN (*first scan*)
+ACT_PRE (ACTCFG := ACTCFGu, STA := STA, ALMs := ALMs, CMD := CMD, dt1 := dT1, PLCCFG := PLCCFG, ACTBUF := ACTBUF);
+(*значення за замовченням*)
+IF PLCCFG.STA_SCN1  THEN (*first scan*)
     IF ACTCFGu.T_OPNSP &lt;= 0 THEN (*якщо уставка часу выдкриття не виставлена*)
         ACTCFGu.T_OPNSP := 500; (*5 секунд*)
     END_IF;
@@ -4732,260 +4714,136 @@ IF PLCCFG.STA_SCN1 THEN (*first scan*)
     END_IF;
 END_IF;
 
-(* --------------------- блок параметрів*)
-(*параметри перевірка наявності/використання датчиків на вході*)
-ACTCFGu.PRM.PRM_MANCFG:=false;(*відключення ручного конфігурування параметрів IO*)
+(* --------------------- блок параметрів
+//параметри перевірка наявності/використання датчиків на вході*)
+ACTCFGu.PRM.PRM_MANCFG:=false;(*у цьому проекті не буде ручного конфігурування параметрів IO*)
 ACTCFGu.PRM.PRM_ZCLSENBL := NOT SCLS.PRM_DSBL AND SCLS.ID &lt;&gt; 0;
 ACTCFGu.PRM.PRM_ZOPNENBL := NOT SOPN.PRM_DSBL AND SOPN.ID &lt;&gt; 0;
-ACTCFGu.PRM.PRM_ZPOSENBL := FALSE; (*відключення позиціонера*)
-ACTCFGu.PRM.PRM_PULSCTRLENBL := ACTCFGu.CLSID=16#2014; (*параметри імпульсного керування*)
+ACTCFGu.PRM.PRM_ALMENBL := false;
+ACTCFGu.PRM.PRM_ZWRKENBL := false;
+ACTCFGu.PRM.PRM_ZPOSENBL := NOT POS.PRM_DSBL AND POS.ID &lt;&gt; 0;
+ACTCFGu.PRM.PRM_PWRENBL := false;
+ACTCFGu.PRM.PRM_BTNSTPENBL := false;
+ACTCFGu.PRM.PRM_ALMENBL := false;
+ACTCFGu.PRM.PRM_SELLCLENBL := false;
+(*параметри імпульсного керування*)
+ACTCFGu.PRM.PRM_PULSCTRLENBL := FALSE;
 
-(*------------------- блок для режиму імітації*)
-(*режим імітації підлеглих від хозяїна*)
-SOPN.STA_SML := STA.STA_SML;        
-SCLS.STA_SML := STA.STA_SML;        
-COPN.STA_SML := STA.STA_SML; 
-CCLS.STA_SML := STA.STA_SML;       
+(*------------------- блок для режиму імітації
+//режим імітації підлеглих від хозяїна*)
+SOPN.STA_SML := STA.STA_SML;
+SCLS.STA_SML := STA.STA_SML;
 
-(*логіка для режиму імітації *) 
+(*логіка для режиму імітації  *)
 IF STA.STA_SML THEN
-    dpos:= UDINT_TO_REAL(dT1*100)/UDINT_TO_REAL((UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100));(*%*)
-    IF ACTCFGu.STEP1=2  THEN
-        ACTCFGu.POS := ACTCFGu.POS + dpos; (*0-10000*)
-    END_IF;
-    IF ACTCFGu.STEP1=3 THEN
-        ACTCFGu.POS := ACTCFGu.POS - dpos; (*0-10000*)
-    END_IF;
+    ACTCFGu.POS:=ACTCFG.CPOS;
     IF ACTCFGu.POS&lt;0.0 THEN ACTCFGu.POS:=0.0; END_IF;
-    IF ACTCFGu.POS&gt;100.0 THEN ACTCFGu.POS:=100.0; END_IF;  
+    IF ACTCFGu.POS&gt;100.0 THEN ACTCFGu.POS:=100.0; END_IF;
     
     (*імітація датчиків *)
     IF NOT SOPN.STA_FRC THEN
-       SOPN.STA_VALB:= STA.STA_OPNING AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100 OR STA.STA_OPND; 
-    END_IF;
+            SOPN.STA_VALB:= ACTCFGu.POS&gt;99.0;
+        END_IF;
     IF NOT SCLS.STA_FRC THEN
-       SCLS.STA_VALB:= STA.STA_CLSING AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100 OR STA.STA_CLSD; 
-    END_IF;          
+            SCLS.STA_VALB:= ACTCFGu.POS&lt;3.0;
+    END_IF;
+   
 END_IF;
 
-(*-------------------- блок обробки команд *)
-(*стандартний обробник команд*)
-ACT_CMDCTRL (ACTCFG := ACTCFGu, STA := STA, CMD := CMD, ACTBUF := ACTBUF);
+(*-------------------- блок обробки команд
+//стандартний обробник команд*)
+ACT_CMDCTRL(ACTCFG:=ACTCFGu, CMD:=CMD, STA:=STA, ACTBUF := ACTBUF);
+
+
 
 (* -------------------  блок обробки станів датчиків відкриття/закриття, або їх заміна на логіку*)
-IF NOT ACTCFGu.PRM.PRM_ZOPNENBL THEN
-    SOPN1:= STA.STA_OPNING AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100
-    OR STA.STA_OPND;
-    IF PLCCFG.STA_SCN1 THEN SOPN1:=false; END_IF;
+IF NOT ACTCFGu.PRM.PRM_ZPOSENBL THEN       (*// ЯКЩО НЕМА СИГНАЛ ЗВОРОТНЬОГО ЗВЯЗКУ ПОЛОЖЕННЯ*)
+    SPOS1:=CPOS.VAL;                   (* // ТО ПОЛОЖЕННЯ ПРИРІВНЮЄМО ЗАДАНОМУ ЗНАЧЕННЮ*)
 ELSE
-    SOPN1:=SOPN.STA_VALB;
+    SPOS1:=POS.VAL;                   (* // ІНАКШЕ БЕРЕЗ ЗНАЧЕННЯ З ДАТЧИКА*)
 END_IF;
-IF NOT ACTCFGu.PRM.PRM_ZCLSENBL THEN
-    SCLS1:=STA.STA_CLSING AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100
-    OR STA.STA_CLSD;
-    IF PLCCFG.STA_SCN1 THEN SCLS1:=TRUE; END_IF;
+IF NOT ACTCFGu.PRM.PRM_ZOPNENBL THEN       (*// ЯКЩО НЕМА КІНЦЕВИКА ВІДКРИТО*)
+    SOPN1:= SPOS1&gt;=3.0;                     (* // ТО ЗНАЧЕННЯ ВІДКРИТОСТІ БЕРЕМ ЯКЩО ПОЗИЦІЯ БІЛЬШЕ 3*)
 ELSE
-    SCLS1:=SCLS.STA_VALB;
+    SOPN1:=SOPN.STA_VALB;                 (* // ІНАКШЕ БЕРЕЗ ЗНАЧЕННЯ З ДАТЧИКА*)
+END_IF;
+IF NOT ACTCFGu.PRM.PRM_ZCLSENBL THEN     (*  // ЯКЩО НЕМА КІНЦЕВИКА ЗАКРИТО*)
+    SCLS1:=SPOS1&lt;3.0;                      (* // ТО ЗНАЧЕННЯ ВІДКРИТОСТІ БЕРЕМ ЯКЩО ПОЗИЦІЯ МЕНШЕ 3*)
+ELSE
+    SCLS1:=SCLS.STA_VALB;                 (* // ІНАКШЕ БЕРЕЗ ЗНАЧЕННЯ З ДАТЧИКА*)
 END_IF;
 
-IF NOT ACTCFGu.PRM.PRM_ZPOSENBL THEN
-    SPOS1:=-10000;
-END_IF;
 
-(*//----------------- автомат станів позиції та тривог позиції та основне керування
-//0 -  ініціалізація, 1- зупинено в проміжному стані, 4 - зупинений у відкритому стані, 5 - зупинений в закритому стані  
-//7 - рухається в довільному напрямку (ручний зі щита),  2 - відкривається , 3 - закривається  
-//керування автоматом станів див в наступному блоці
-//керування виходами COPN, CCLS згідно логіки*)
+(*----------------- автомат станів позиції та тривог позиції  *)
 CASE ACTCFGu.STEP1 OF
     0:(*ініціалізація*)
         ACTCFGu.STEP1 := 1;
         ACTCFGu.T_STEP1 := 0;
     1, 4, 5: (*зупинений, 1 - зупинено в проміжному стані 4 - зупинений у відкритому стані, 5 - зупинений в закритому стані*)
-        IF SOPN1 AND NOT SCLS1 and not ALMS.ALM_ALMSHFT THEN
-            IF ACTCFGu.STEP1&lt;&gt;4 THEN ACTCFGu.T_STEP1 := 0;END_IF;
+        IF ACTCFGu.POS&gt;3.0 AND ACTCFGu.STEP1 &lt;&gt; 4 THEN
             ACTCFGu.STEP1 := 4;
-	    ALMS.ALM_ALMSHFT:=FALSE; 
-            ALMS.ALM_ALMCLS := FALSE;
-            ALMS.ALM_ALMOPN := FALSE;
-        END_IF;
-
-        IF SCLS1 AND NOT SOPN1 and not ALMS.ALM_ALMSHFT THEN
-            IF ACTCFGu.STEP1&lt;&gt;5 THEN ACTCFGu.T_STEP1 := 0;END_IF;
-            ACTCFGu.STEP1 := 5;
-	    ALMS.ALM_ALMSHFT:=FALSE;
-            ALMS.ALM_ALMCLS := FALSE;
-            ALMS.ALM_ALMOPN := FALSE;
-        END_IF;
-
-        IF ((ACTCFGu.STEP1 = 4 AND NOT SOPN1) OR (ACTCFGu.STEP1 = 5 AND SOPN1)) OR (SOPN1 AND SCLS1) THEN
-            ALMS.ALM_ALMSHFT:=true;
-                ELSE
-            ALMS.ALM_ALMSHFT:=false;
-        END_IF;
-
-    2:  (*відкривається*)
-        IF SOPN1 AND NOT SCLS1 THEN
-            ACTCFGu.STEP1 := 4; (*у стан відкрито*)
             ACTCFGu.T_STEP1 := 0;
-        END_IF; 
-	       
-        ALMS.ALM_ALMOPN := FALSE; 
-	ALMS.ALM_ALMCLS := FALSE;
-	ALMS.ALM_ALMSHFT:= FALSE;
-
-        IF ACTCFGu.T_STEP1 &gt;= (UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100 + UINT_TO_UDINT(ACTCFGu.T_DEASP)*100) THEN
-            ALMS.ALM_ALMOPN := TRUE;
-            ALMS.ALM_ALMCLS := FALSE;
-            IF SCLS1 AND NOT SOPN1 THEN
-                ACTCFGu.STEP1 := 5; (*у стан закрито*)
-                ACTCFGu.T_STEP1 := 0;
-            END_IF;
         END_IF;
-
-    3:(*закривається*)
-        IF SCLS1 AND NOT SOPN1 THEN
+        IF ACTCFGu.POS&lt;3.0 AND ACTCFGu.STEP1 &lt;&gt; 5  THEN
             ACTCFGu.STEP1 := 5;
             ACTCFGu.T_STEP1 := 0;
         END_IF;
-
-        ALMS.ALM_ALMOPN := FALSE; 
-	ALMS.ALM_ALMCLS := FALSE;
-	ALMS.ALM_ALMSHFT:= FALSE;
-
-        IF ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100 +  UINT_TO_UDINT(ACTCFGu.T_DEASP)*100 THEN
-            ALMS.ALM_ALMCLS := TRUE;
-            ALMS.ALM_ALMOPN := FALSE;
-            IF SOPN1 AND NOT SCLS1 THEN (*у стан відкрито*) 
-                ACTCFGu.STEP1 := 4;
-                ACTCFGu.T_STEP1 := 0;
-            END_IF;
-        END_IF;
-
-    7: (*рухається в довільному напрямку (ручний зі щита) чи помилка довільного зсуву*)
-        ALMS.ALM_ALMSHFT:=true;
-        ACTCFGu.STEP1 := 1;
-        ACTCFGu.T_STEP1 := 0;
-        
     ELSE  (*невизначеність*)
         ACTCFGu.STEP1 := 0;
 END_CASE;
-
 (*автомат станів побітово*)
-STA.STA_IMSTPD:= ACTCFGu.STEP1 = 1;
-STA.STA_MANRUNING:= ACTCFGu.STEP1 = 7;
-STA.STA_OPNING:= ACTCFGu.STEP1 = 2;
-STA.STA_CLSING := ACTCFGu.STEP1 = 3;
+STA.STA_IMSTPD:= ACTCFGu.STEP1 = 0 OR ACTCFGu.STEP1 = 1;
 STA.STA_OPND:= ACTCFGu.STEP1 = 4;
 STA.STA_CLSD:= ACTCFGu.STEP1 = 5;
 
-(*-------- блокуання приводу*)
-(*умова блокуання *)
-IF CMD.CMD_BLCK THEN
-    STA.STA_BLCK:=TRUE;
-    ALMS.ALM_ALMSTP:=false;
-END_IF; 
 
-(*умова розблокуання *)
-IF CMD.CMD_DBLCK THEN
-    STA.STA_BLCK:=FALSE;
-    ALMS.ALM_ALMSTP:=false;
-END_IF; 
 
-(*умова блокуання , умова спрацьовує тільки при початку блокування *)
-IF (ALMS.ALM_ALMPWR OR CMD.CMD_PROTECT) AND NOT STA.STA_BLCK THEN 
-   STA.STA_BLCK:=true;
-END_IF;
+(*----------------------------- керування ВМ*)
 
-(*стан блокування*)
-IF STA.STA_BLCK THEN
-    COPN.STA_VALB:= FALSE;
-    CCLS.STA_VALB:= FALSE;
-END_IF;
-
-(*-----------------------------*)
-
-(*------------------------виходи керування *)
-(*керування OPN/CLS тільки при дозволі керування або тимчасовому розблокуванні та при відсутності блокування*)
+(*керування OPN/CLS тільки при дозволі керування або тимчасовому розблокуванні*)
 IF (CMD.CMD_RESOLUTION OR PLCCFG.STA_PERM.6) AND NOT STA.STA_BLCK THEN
-    IF CMD.CMD_CLS THEN CMD.CMD_OPN:=FALSE; END_IF;(*CLS має пріоритет над OPN*)
-    IF CMD.CMD_CLS AND ACTCFGu.STEP1 &lt;&gt; 5 AND ACTCFGu.STEP1 &lt;&gt; 3 THEN
-        ACTCFGu.STEP1 := 3;
-        ACTCFGu.T_STEP1 := 0;
-        ACTCFGu.CNTPER := ACTCFGu.CNTPER + 1;
-	COPN.STA_VALB:= FALSE;
-	CCLS.STA_VALB:= TRUE;
-    END_IF;
-    IF CMD.CMD_OPN AND ACTCFGu.STEP1 &lt;&gt; 4 AND ACTCFGu.STEP1 &lt;&gt; 2 THEN
-        ACTCFGu.STEP1 := 2;
-        ACTCFGu.T_STEP1 := 0;
-        ACTCFGu.CNTPER := ACTCFGu.CNTPER + 1;
-	COPN.STA_VALB:= TRUE;
-	CCLS.STA_VALB:= FALSE;
-    END_IF;
+    ;
+ELSE
+    ACTCFG.CPOS:=0.0;
+    ACTHMI.CPOS:=0.0;
 END_IF;
-
 
 (*-------------------- режими*)
 
-(*місцевий режим керування*)
-STA.STA_MANBX := CMD.CMD_CLCL; 
-(*у місцевому режимі керування відключати усі виходи і перевести в ручний режим*)
-IF STA.STA_MANBX THEN
-    COPN.STA_VALB:=FALSE;
-    CCLS.STA_VALB:= FALSE;
-    STA.STA_DISP:=true;
-END_IF;
+STA.STA_FRC := CPOS.STA_FRC AND CPOS.ID&lt;&gt;0
+OR POS.STA_FRC AND POS.ID&lt;&gt;0
+OR SOPN.STA_FRC AND SOPN.ID&lt;&gt;0
+OR SCLS.STA_FRC AND SCLS.ID&lt;&gt;0;
 
-STA.STA_FRC := COPN.STA_FRC AND COPN.ID&lt;&gt;0
-    OR CCLS.STA_FRC AND CCLS.ID&lt;&gt;0 
-    OR SOPN.STA_FRC AND SOPN.ID&lt;&gt;0  
-    OR SCLS.STA_FRC AND SCLS.ID&lt;&gt;0;
+(*------------------- зведення ксатомних тривог, режимів, бітів*)
 
-(*------------------- зведення кастомних тривог, режимів, бітів*)
-IF ALMS.ALM_ALMOPN THEN
-    PLCCFG.ALM_ALM := TRUE;
-    IF NOT ACTCFGu.ALM.ALM_ALMOPN THEN
-        PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
-    END_IF;
-END_IF;
-IF ALMS.ALM_ALMCLS THEN
-    PLCCFG.ALM_ALM := TRUE;
-    IF NOT ACTCFGu.ALM.ALM_ALMCLS THEN
-        PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
-    END_IF;
-END_IF;
-IF ALMS.ALM_ALMOPN2 THEN
-    PLCCFG.ALM_ALM := TRUE;
-    IF NOT ACTCFGu.ALM.ALM_ALMOPN2 THEN
-        PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
-    END_IF;
-END_IF;
-IF ALMS.ALM_ALMCLS2 THEN
-    PLCCFG.ALM_ALM := TRUE;
-    IF NOT ACTCFGu.ALM.ALM_ALMCLS2 THEN
-        PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
-    END_IF;
-END_IF;
-IF ALMS.ALM_ALMSHFT THEN
-    PLCCFG.ALM_ALM := TRUE;
-    IF NOT ACTCFGu.ALM.ALM_ALMSHFT THEN
-        PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
-    END_IF;
-END_IF;
+ALMs.ALM_ALM := false;
+
+ACTCFG.POS := SPOS1;
+ 
+
+(*заключна обробка: зведення в PLC.CFG, STA, ALM, CMD, INBUF, SML, dt *) 
+ACT_POST(ACTCFG:=ACTCFGu, STA:=STA, ALMs:=ALMs, CMD:=CMD, dt1 := dT1, ACTBUF := ACTBUF, PLCCFG := PLCCFG);
 
 
-ALMS.ALM_ALM := ALMS.ALM_ALMOPN OR ALMS.ALM_ALMCLS OR ALMS.ALM_ALMOPN2 OR ALMS.ALM_ALMCLS2 OR ALMS.ALM_ALMSHFT OR ALMS.ALM_ALMSTPBTN OR ALMS.ALM_ALMPWR OR STA.STA_BLCK;
+ACT_to_VLVA(VLVACFG:=ACTCFG, VLVAHMI:=ACTHMI, ACTCFG:=ACTCFGu);
 
-(*заключна обробка: зведення в PLC.CFG, STA, ALM, CMD, INBUF, SML, dt *)
-ACT_POST (ACTCFG := ACTCFGu, STA := STA, ALMs := ALMS, CMD := CMD, dt1 := dt1, ACTBUF := ACTBUF, PLCCFG := PLCCFG);
 
-ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
+(*------------------- вибір джерела завдання*)
+IF ACTCFGu.STA.STA_INBUF AND ACTCFGu.STA.STA_DISP THEN
+    ACTCFGu.CPOS := ACTBUF.CPOS;
+    ACTHMI.CPOS := ACTCFGu.CPOS;
+    ACTCFG.CPOS := ACTCFGu.CPOS;
+ELSIF NOT ACTCFGu.STA.STA_INBUF AND ACTCFGu.STA.STA_DISP THEN
+    ACTCFGu.CPOS := ACTHMI.CPOS;
+    ACTHMI.CPOS := ACTCFGu.CPOS;
+    ACTCFG.CPOS := ACTCFGu.CPOS;
+ELSE
+    ACTCFGu.CPOS := ACTCFG.CPOS;
+    ACTHMI.CPOS := ACTCFGu.CPOS;
+    ACTCFG.CPOS := ACTCFGu.CPOS;
+END_IF;
+CPOS.VAL:=ACTCFGu.CPOS;
 
 (*реалізація читання конфігураційних даних в буфер out*)
 IF (uint_to_word(ACTCFG.CLSID) AND 16#FFF0)=(uint_to_word(ACTBUFIN.CLSID) AND 16#FFF0) AND ACTCFG.ID=ACTBUFIN.ID AND ACTBUFIN.CMDHMI = 16#100 then
@@ -4995,7 +4853,6 @@ IF (uint_to_word(ACTCFG.CLSID) AND 16#FFF0)=(uint_to_word(ACTBUFIN.CLSID) AND 16
    ACTBUFOUT.MSG := 201;
 
    ACTBUFOUT.T_DEASP := ACTCFG.T_DEASP;
-   ACTBUFOUT.T_OPNSP := ACTCFG.T_OPNSP;
 
    ACTBUFIN.CMDHMI :=0; 
 end_if;  
@@ -5009,85 +4866,59 @@ IF (uint_to_word(ACTCFG.CLSID) AND 16#FFF0)=(uint_to_word(ACTBUFIN.CLSID) AND 16
    ACTBUFOUT:=ACTBUFIN;
 
    ACTCFG.T_DEASP := ACTBUFIN.T_DEASP;
-   ACTCFG.T_OPNSP := ACTBUFIN.T_OPNSP;
 
    ACTBUFOUT.MSG := 201;
 
    ACTBUFIN.CMDHMI :=0; 
 end_if;  
+
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="VLVD_to_ACT" version="0.07" dateTime="dt#2022-07-16-10:19:12">
-		<attribute name="TypeCodeCheckSumString" value="410A"></attribute>
-		<attribute name="TypeSignatureCheckSumString" value="6000"></attribute>
+	<FBSource nameOfFBType="VLVA_to_ACT" version="0.03" dateTime="dt#2022-07-16-10:19:11">
+		<attribute name="TypeCodeCheckSumString" value="5B81"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="629E"></attribute>
 		<inOutParameters>
-			<variables name="VLVDCFG" typeName="VLVD_CFG">
+			<variables name="VLVACFG" typeName="VLVA_CFG">
 				<attribute name="PositionPin" value="1"></attribute>
 			</variables>
-			<variables name="VLVDHMI" typeName="VLVD_HMI">
+			<variables name="VLVAHMI" typeName="VLVA_HMI">
 				<attribute name="PositionPin" value="2"></attribute>
 			</variables>
 			<variables name="ACTCFG" typeName="ACTTR_CFG">
 				<attribute name="PositionPin" value="3"></attribute>
 			</variables>
 		</inOutParameters>
-		<FBProgram name="VLVD_to_ACT">
-			<STSource>ACTCFG.ID:= VLVDCFG.ID;
-ACTCFG.CLSID:= VLVDCFG.CLSID;
-ACTCFG.CMD:= VLVDCFG.CMD;
-ACTCFG.PRM:= VLVDCFG.PRM;
-ACTCFG.T_DEASP:= VLVDCFG.T_DEASP;
-ACTCFG.T_OPNSP:= VLVDCFG.T_OPNSP;
-ACTCFG.POS:= VLVDCFG.POS;
-ACTCFG.STEP1:= VLVDCFG.STEP1;
-ACTCFG.CNTPER:= VLVDCFG.CNTPER;
-ACTCFG.CNTALM:= VLVDCFG.CNTALM;
-ACTCFG.T_STEP1:= VLVDCFG.T_STEP1;
-ACTCFG.T_PREV:= VLVDCFG.T_PREV;
+		<FBProgram name="VLVA_to_ACT">
+			<STSource>ACTCFG.ID:= VLVACFG.ID;
+ACTCFG.CLSID:= VLVACFG.CLSID;
+ACTCFG.CMD:= VLVACFG.CMD;
+ACTCFG.PRM:= VLVACFG.PRM;
+ACTCFG.T_DEASP:= VLVACFG.T_DEASP;
+ACTCFG.POS:= VLVACFG.POS;
+ACTCFG.CPOS:= VLVACFG.CPOS;
+ACTCFG.STEP1:= VLVACFG.STEP1;
+ACTCFG.CNTPER:= VLVACFG.CNTPER;
+ACTCFG.CNTALM:= VLVACFG.CNTALM;
+ACTCFG.T_STEP1:= VLVACFG.T_STEP1;
+ACTCFG.T_PREV:= VLVACFG.T_PREV;
 
-ACTCFG.STA.STA_IMSTPD:= VLVDCFG.STA_IMSTPD;
-ACTCFG.STA.STA_MANRUNING:= VLVDCFG.STA_MANRUNING;
-ACTCFG.STA.STA_DBLCKACT:= VLVDCFG.STA_DBLCKACT;
-ACTCFG.STA.STA_OPNING:= VLVDCFG.STA_OPNING;
-ACTCFG.STA.STA_CLSING:= VLVDCFG.STA_CLSING;
-ACTCFG.STA.STA_OPND:= VLVDCFG.STA_OPND;
-ACTCFG.STA.STA_CLSD:= VLVDCFG.STA_CLSD;
-ACTCFG.STA.STA_MANBXOUT:= VLVDCFG.STA_MANBXOUT;
-ACTCFG.STA.STA_WRKED:= VLVDCFG.STA_WRKED;
-ACTCFG.STA.STA_DISP:= VLVDCFG.STA_DISP;
-ACTCFG.STA.STA_MANBX:= VLVDCFG.STA_MANBX;
-ACTCFG.STA.STA_INBUF:= VLVDCFG.STA_INBUF;
-ACTCFG.STA.STA_INIOTBUF:= VLVDCFG.STA_INIOTBUF;
-ACTCFG.STA.STA_FRC:= VLVDCFG.STA_FRC;
-ACTCFG.STA.STA_SML:= VLVDCFG.STA_SML;
-ACTCFG.STA.STA_BLCK:= VLVDCFG.STA_BLCK;
-ACTCFG.STA.STA_STOPING:=VLVDCFG.ALM_STOPING;
+ACTCFG.STA.STA_OPND:= VLVACFG.STA_OPND;
+ACTCFG.STA.STA_CLSD:= VLVACFG.STA_CLSD;
+ACTCFG.STA.STA_DISP:= VLVACFG.STA_DISP;
+ACTCFG.STA.STA_MANBX:= VLVACFG.STA_MANBX;
+ACTCFG.STA.STA_INBUF:= VLVACFG.STA_INBUF;
+ACTCFG.STA.STA_FRC:= VLVACFG.STA_FRC;
+ACTCFG.STA.STA_SML:= VLVACFG.STA_SML;
+ACTCFG.STA.STA_BLCK:= VLVACFG.STA_BLCK;
 
-ACTCFG.ALM.ALM_ALMOPN:= VLVDCFG.ALM_ALMOPN;
-ACTCFG.ALM.ALM_ALMCLS:= VLVDCFG.ALM_ALMCLS;
-ACTCFG.ALM.ALM_ALMSHFT:= VLVDCFG.ALM_ALMSHFT;
-ACTCFG.ALM.ALM_ALMOPN2:= VLVDCFG.ALM_ALMOPN2;
-ACTCFG.ALM.ALM_ALMCLS2:= VLVDCFG.ALM_ALMCLS2;
-ACTCFG.ALM.ALM_ALM:= VLVDCFG.ALM_ALM;
-ACTCFG.ALM.ALM_WRN:= VLVDCFG.ALM_WRN;
-ACTCFG.ALM.ALM_ALMSTP:= VLVDCFG.ALM_ALMSTP;
-ACTCFG.ALM.ALM_ALMBELL:= VLVDCFG.ALM_ALMBELL;
-ACTCFG.ALM.ALM_ALMPWR:= VLVDCFG.ALM_ALMPWR1;
-ACTCFG.ALM.ALM_ALMSTPBTN := VLVDCFG.ALM_ALMSTPBTN;
-ACTCFG.ALM.ALM_b27 := false;
-ACTCFG.ALM.ALM_b28 := VLVDCFG.ALM_SEN;
-ACTCFG.ALM.ALM_b29 := VLVDCFG.ALM_b13;
-ACTCFG.ALM.ALM_b30 := VLVDCFG.ALM_b14;
-ACTCFG.ALM.ALM_b31 := VLVDCFG.ALM_b15;
-
-ACTCFG.CMDHMI:=VLVDHMI.CMD;
+ACTCFG.CMDHMI:=VLVAHMI.CMD;
 
 
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_PRE" version="0.12" dateTime="dt#2022-07-16-19:36:14">
+	<FBSource nameOfFBType="ACT_PRE" version="0.12" dateTime="dt#2022-07-26-10:44:22">
 		<attribute name="TypeCodeCheckSumString" value="5DAC"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="58F3"></attribute>
 		<inOutParameters>
@@ -5394,7 +5225,7 @@ end_if;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_POST" version="0.19" dateTime="dt#2022-07-16-19:36:14">
+	<FBSource nameOfFBType="ACT_POST" version="0.19" dateTime="dt#2022-07-26-10:44:22">
 		<attribute name="TypeCodeCheckSumString" value="746B"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="7336"></attribute>
 		<inOutParameters>
@@ -5626,358 +5457,6 @@ END_IF;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="ACT_to_VLVD" version="0.11" dateTime="dt#2022-07-16-19:36:14">
-		<attribute name="TypeCodeCheckSumString" value="5938"></attribute>
-		<attribute name="TypeSignatureCheckSumString" value="6000"></attribute>
-		<inOutParameters>
-			<variables name="VLVDCFG" typeName="VLVD_CFG">
-				<attribute name="PositionPin" value="1"></attribute>
-			</variables>
-			<variables name="VLVDHMI" typeName="VLVD_HMI">
-				<attribute name="PositionPin" value="2"></attribute>
-			</variables>
-			<variables name="ACTCFG" typeName="ACTTR_CFG">
-				<attribute name="PositionPin" value="3"></attribute>
-			</variables>
-		</inOutParameters>
-		<FBProgram name="ACT_to_VLVD">
-			<STSource>(*  PACFramework SEControlExpertLIB V1.0.0 *)
-VLVDCFG.ID:= ACTCFG.ID;
-VLVDCFG.CLSID:= ACTCFG.CLSID;
-VLVDCFG.CMD:= ACTCFG.CMD;
-VLVDCFG.PRM:= ACTCFG.PRM;
-VLVDCFG.T_DEASP:= ACTCFG.T_DEASP;
-VLVDCFG.T_OPNSP:= ACTCFG.T_OPNSP;
-VLVDCFG.POS:= ACTCFG.POS;
-VLVDCFG.STEP1:= ACTCFG.STEP1;
-VLVDCFG.CNTPER:= ACTCFG.CNTPER;
-VLVDCFG.CNTALM:= ACTCFG.CNTALM;
-VLVDCFG.T_STEP1:= ACTCFG.T_STEP1;
-VLVDCFG.T_PREV:= ACTCFG.T_PREV;
-
-VLVDCFG.STA_IMSTPD:= ACTCFG.STA.STA_IMSTPD;
-VLVDCFG.STA_MANRUNING:= ACTCFG.STA.STA_MANRUNING;
-VLVDCFG.STA_DBLCKACT:= ACTCFG.STA.STA_DBLCKACT;
-VLVDCFG.STA_OPNING:= ACTCFG.STA.STA_OPNING;
-VLVDCFG.STA_CLSING:= ACTCFG.STA.STA_CLSING;
-VLVDCFG.STA_OPND:= ACTCFG.STA.STA_OPND;
-VLVDCFG.STA_CLSD:= ACTCFG.STA.STA_CLSD;
-VLVDCFG.STA_MANBXOUT:= ACTCFG.STA.STA_MANBXOUT;
-VLVDCFG.STA_WRKED:= ACTCFG.STA.STA_WRKED;
-VLVDCFG.STA_DISP:= ACTCFG.STA.STA_DISP;
-VLVDCFG.STA_MANBX:= ACTCFG.STA.STA_MANBX;
-VLVDCFG.STA_INBUF:= ACTCFG.STA.STA_INBUF;
-VLVDCFG.STA_INIOTBUF :=ACTCFG.STA.STA_INIOTBUF;
-VLVDCFG.STA_FRC:= ACTCFG.STA.STA_FRC;
-VLVDCFG.STA_SML:= ACTCFG.STA.STA_SML;
-VLVDCFG.STA_BLCK:= ACTCFG.STA.STA_BLCK;
-
-VLVDCFG.ALM_ALMOPN:= ACTCFG.ALM.ALM_ALMOPN;
-VLVDCFG.ALM_ALMCLS:= ACTCFG.ALM.ALM_ALMCLS;
-VLVDCFG.ALM_ALMSHFT:= ACTCFG.ALM.ALM_ALMSHFT;
-VLVDCFG.ALM_ALMOPN2:= ACTCFG.ALM.ALM_ALMOPN2;
-VLVDCFG.ALM_ALMCLS2:= ACTCFG.ALM.ALM_ALMCLS2;
-VLVDCFG.ALM_ALM:= ACTCFG.ALM.ALM_ALM;
-VLVDCFG.ALM_WRN:= ACTCFG.ALM.ALM_WRN;
-VLVDCFG.ALM_ALMSTP:= ACTCFG.ALM.ALM_ALMSTP;
-VLVDCFG.ALM_ALMBELL:= ACTCFG.ALM.ALM_ALMBELL;
-VLVDCFG.ALM_ALMPWR1:= ACTCFG.ALM.ALM_ALMPWR;
-VLVDCFG.ALM_ALMSTPBTN:=ACTCFG.ALM.ALM_ALMSTPBTN;
-VLVDCFG.ALM_STOPING:=ACTCFG.STA.STA_STOPING;(*бітів STA не вистачило*)
-VLVDCFG.ALM_SEN:=false;
-VLVDCFG.ALM_b13:=false;
-VLVDCFG.ALM_b14:=false;
-VLVDCFG.ALM_b15:=false;
-
-VLVDHMI.CMD:=ACTCFG.CMDHMI;
-
-VLVDHMI.STA := VLVDCFG.STA;
-
-VLVDHMI.ALM :=VLVDCFG.ALM;
-
-
-VLVDHMI.POS := REAL_TO_INT(VLVDCFG.POS);
-
-</STSource>
-		</FBProgram>
-	</FBSource>
-	<FBSource nameOfFBType="VLVAFN" version="0.30" dateTime="dt#2022-07-16-10:24:45">
-		<attribute name="TypeCodeCheckSumString" value="B26E"></attribute>
-		<attribute name="TypeSignatureCheckSumString" value="CFD4"></attribute>
-		<inOutParameters>
-			<variables name="ACTCFG" typeName="VLVA_CFG">
-				<attribute name="PositionPin" value="1"></attribute>
-			</variables>
-			<variables name="ACTHMI" typeName="VLVA_HMI">
-				<attribute name="PositionPin" value="2"></attribute>
-			</variables>
-			<variables name="SOPN" typeName="DIVAR_CFG">
-				<attribute name="PositionPin" value="3"></attribute>
-			</variables>
-			<variables name="SCLS" typeName="DIVAR_CFG">
-				<attribute name="PositionPin" value="4"></attribute>
-			</variables>
-			<variables name="POS" typeName="AIVAR_CFG">
-				<attribute name="PositionPin" value="5"></attribute>
-			</variables>
-			<variables name="CPOS" typeName="AOVAR_CFG">
-				<attribute name="PositionPin" value="6"></attribute>
-			</variables>
-			<variables name="PLCCFG" typeName="PLC_CFG">
-				<attribute name="PositionPin" value="7"></attribute>
-			</variables>
-			<variables name="ACTBUF" typeName="ACTTR_CFG">
-				<attribute name="PositionPin" value="8"></attribute>
-			</variables>
-		</inOutParameters>
-		<publicLocalVariables>
-			<variables name="ACTBUFIN" typeName="ACTTR_CFG"></variables>
-			<variables name="ACTBUFOUT" typeName="ACTTR_CFG"></variables>
-		</publicLocalVariables>
-		<privateLocalVariables>
-			<variables name="ACTCFGu" typeName="ACTTR_CFG"></variables>
-			<variables name="STA" typeName="ACTTR_STA"></variables>
-			<variables name="ALMs" typeName="ACTTR_ALM"></variables>
-			<variables name="CMD" typeName="ACTTR_CMD"></variables>
-			<variables name="CMDINT" typeName="UINT"></variables>
-			<variables name="SOPN1" typeName="BOOL"></variables>
-			<variables name="SCLS1" typeName="BOOL"></variables>
-			<variables name="SPOS1" typeName="REAL"></variables>
-			<variables name="dT1" typeName="UDINT"></variables>
-			<variables name="dpos" typeName="REAL"></variables>
-			<variables name="VLVA_to_ACT" typeName="VLVA_to_ACT"></variables>
-			<variables name="ACT_PRE" typeName="ACT_PRE"></variables>
-			<variables name="ACT_CMDCTRL" typeName="ACT_CMDCTRL"></variables>
-			<variables name="ACT_POST" typeName="ACT_POST"></variables>
-			<variables name="ACT_to_VLVA" typeName="ACT_to_VLVA"></variables>
-		</privateLocalVariables>
-		<FBProgram name="VLVAFN">
-			<STSource>VLVA_to_ACT(VLVACFG:=ACTCFG, VLVAHMI:=ACTHMI, ACTCFG:=ACTCFGu);
-(*попередня обробка: ініт STA, ALM, CMD, INBUF, SML, dt *)
-ACT_PRE (ACTCFG := ACTCFGu, STA := STA, ALMs := ALMs, CMD := CMD, dt1 := dT1, PLCCFG := PLCCFG, ACTBUF := ACTBUF);
-(*значення за замовченням*)
-IF PLCCFG.STA_SCN1  THEN (*first scan*)
-    IF ACTCFGu.T_OPNSP &lt;= 0 THEN (*якщо уставка часу выдкриття не виставлена*)
-        ACTCFGu.T_OPNSP := 500; (*5 секунд*)
-    END_IF;
-    IF ACTCFGu.T_DEASP &lt;= 0 THEN (*якщо уставка затримки часу тривоги не виставлена*)
-        ACTCFGu.T_DEASP := 200; (*2 секунди*)
-    END_IF;
-    (*технологічні тривоги для датчиків не використовуються*)
-    IF SOPN.ID &lt;&gt; 0 THEN
-        SOPN.PRM_ISALM := false; (*ISALM*)
-        SOPN.PRM_ISWRN := false; (*ISWRN*)
-    END_IF;
-    IF SCLS.ID &lt;&gt; 0 THEN
-        SCLS.PRM_ISALM := false; (*ISALM*)
-        SCLS.PRM_ISWRN := false; (*ISWRN*)
-    END_IF;
-END_IF;
-
-(* --------------------- блок параметрів
-//параметри перевірка наявності/використання датчиків на вході*)
-ACTCFGu.PRM.PRM_MANCFG:=false;(*у цьому проекті не буде ручного конфігурування параметрів IO*)
-ACTCFGu.PRM.PRM_ZCLSENBL := NOT SCLS.PRM_DSBL AND SCLS.ID &lt;&gt; 0;
-ACTCFGu.PRM.PRM_ZOPNENBL := NOT SOPN.PRM_DSBL AND SOPN.ID &lt;&gt; 0;
-ACTCFGu.PRM.PRM_ALMENBL := false;
-ACTCFGu.PRM.PRM_ZWRKENBL := false;
-ACTCFGu.PRM.PRM_ZPOSENBL := NOT POS.PRM_DSBL AND POS.ID &lt;&gt; 0;
-ACTCFGu.PRM.PRM_PWRENBL := false;
-ACTCFGu.PRM.PRM_BTNSTPENBL := false;
-ACTCFGu.PRM.PRM_ALMENBL := false;
-ACTCFGu.PRM.PRM_SELLCLENBL := false;
-(*параметри імпульсного керування*)
-ACTCFGu.PRM.PRM_PULSCTRLENBL := FALSE;
-
-(*------------------- блок для режиму імітації
-//режим імітації підлеглих від хозяїна*)
-SOPN.STA_SML := STA.STA_SML;
-SCLS.STA_SML := STA.STA_SML;
-
-(*логіка для режиму імітації  *)
-IF STA.STA_SML THEN
-    ACTCFGu.POS:=ACTCFG.CPOS;
-    IF ACTCFGu.POS&lt;0.0 THEN ACTCFGu.POS:=0.0; END_IF;
-    IF ACTCFGu.POS&gt;100.0 THEN ACTCFGu.POS:=100.0; END_IF;
-    
-    (*імітація датчиків *)
-    IF NOT SOPN.STA_FRC THEN
-            SOPN.STA_VALB:= ACTCFGu.POS&gt;99.0;
-        END_IF;
-    IF NOT SCLS.STA_FRC THEN
-            SCLS.STA_VALB:= ACTCFGu.POS&lt;3.0;
-    END_IF;
-   
-END_IF;
-
-(*-------------------- блок обробки команд
-//стандартний обробник команд*)
-ACT_CMDCTRL(ACTCFG:=ACTCFGu, CMD:=CMD, STA:=STA, ACTBUF := ACTBUF);
-
-
-
-(* -------------------  блок обробки станів датчиків відкриття/закриття, або їх заміна на логіку*)
-IF NOT ACTCFGu.PRM.PRM_ZPOSENBL THEN       (*// ЯКЩО НЕМА СИГНАЛ ЗВОРОТНЬОГО ЗВЯЗКУ ПОЛОЖЕННЯ*)
-    SPOS1:=CPOS.VAL;                   (* // ТО ПОЛОЖЕННЯ ПРИРІВНЮЄМО ЗАДАНОМУ ЗНАЧЕННЮ*)
-ELSE
-    SPOS1:=POS.VAL;                   (* // ІНАКШЕ БЕРЕЗ ЗНАЧЕННЯ З ДАТЧИКА*)
-END_IF;
-IF NOT ACTCFGu.PRM.PRM_ZOPNENBL THEN       (*// ЯКЩО НЕМА КІНЦЕВИКА ВІДКРИТО*)
-    SOPN1:= SPOS1&gt;=3.0;                     (* // ТО ЗНАЧЕННЯ ВІДКРИТОСТІ БЕРЕМ ЯКЩО ПОЗИЦІЯ БІЛЬШЕ 3*)
-ELSE
-    SOPN1:=SOPN.STA_VALB;                 (* // ІНАКШЕ БЕРЕЗ ЗНАЧЕННЯ З ДАТЧИКА*)
-END_IF;
-IF NOT ACTCFGu.PRM.PRM_ZCLSENBL THEN     (*  // ЯКЩО НЕМА КІНЦЕВИКА ЗАКРИТО*)
-    SCLS1:=SPOS1&lt;3.0;                      (* // ТО ЗНАЧЕННЯ ВІДКРИТОСТІ БЕРЕМ ЯКЩО ПОЗИЦІЯ МЕНШЕ 3*)
-ELSE
-    SCLS1:=SCLS.STA_VALB;                 (* // ІНАКШЕ БЕРЕЗ ЗНАЧЕННЯ З ДАТЧИКА*)
-END_IF;
-
-
-(*----------------- автомат станів позиції та тривог позиції  *)
-CASE ACTCFGu.STEP1 OF
-    0:(*ініціалізація*)
-        ACTCFGu.STEP1 := 1;
-        ACTCFGu.T_STEP1 := 0;
-    1, 4, 5: (*зупинений, 1 - зупинено в проміжному стані 4 - зупинений у відкритому стані, 5 - зупинений в закритому стані*)
-        IF ACTCFGu.POS&gt;3.0 AND ACTCFGu.STEP1 &lt;&gt; 4 THEN
-            ACTCFGu.STEP1 := 4;
-            ACTCFGu.T_STEP1 := 0;
-        END_IF;
-        IF ACTCFGu.POS&lt;3.0 AND ACTCFGu.STEP1 &lt;&gt; 5  THEN
-            ACTCFGu.STEP1 := 5;
-            ACTCFGu.T_STEP1 := 0;
-        END_IF;
-    ELSE  (*невизначеність*)
-        ACTCFGu.STEP1 := 0;
-END_CASE;
-(*автомат станів побітово*)
-STA.STA_IMSTPD:= ACTCFGu.STEP1 = 0 OR ACTCFGu.STEP1 = 1;
-STA.STA_OPND:= ACTCFGu.STEP1 = 4;
-STA.STA_CLSD:= ACTCFGu.STEP1 = 5;
-
-
-
-(*----------------------------- керування ВМ*)
-
-(*керування OPN/CLS тільки при дозволі керування або тимчасовому розблокуванні*)
-IF (CMD.CMD_RESOLUTION OR PLCCFG.STA_PERM.6) AND NOT STA.STA_BLCK THEN
-    ;
-ELSE
-    ACTCFG.CPOS:=0.0;
-    ACTHMI.CPOS:=0.0;
-END_IF;
-
-(*-------------------- режими*)
-
-STA.STA_FRC := CPOS.STA_FRC AND CPOS.ID&lt;&gt;0
-OR POS.STA_FRC AND POS.ID&lt;&gt;0
-OR SOPN.STA_FRC AND SOPN.ID&lt;&gt;0
-OR SCLS.STA_FRC AND SCLS.ID&lt;&gt;0;
-
-(*------------------- зведення ксатомних тривог, режимів, бітів*)
-
-ALMs.ALM_ALM := false;
-
-ACTCFG.POS := SPOS1;
- 
-
-(*заключна обробка: зведення в PLC.CFG, STA, ALM, CMD, INBUF, SML, dt *) 
-ACT_POST(ACTCFG:=ACTCFGu, STA:=STA, ALMs:=ALMs, CMD:=CMD, dt1 := dT1, ACTBUF := ACTBUF, PLCCFG := PLCCFG);
-
-
-ACT_to_VLVA(VLVACFG:=ACTCFG, VLVAHMI:=ACTHMI, ACTCFG:=ACTCFGu);
-
-
-(*------------------- вибір джерела завдання*)
-IF ACTCFGu.STA.STA_INBUF AND ACTCFGu.STA.STA_DISP THEN
-    ACTCFGu.CPOS := ACTBUF.CPOS;
-    ACTHMI.CPOS := ACTCFGu.CPOS;
-    ACTCFG.CPOS := ACTCFGu.CPOS;
-ELSIF NOT ACTCFGu.STA.STA_INBUF AND ACTCFGu.STA.STA_DISP THEN
-    ACTCFGu.CPOS := ACTHMI.CPOS;
-    ACTHMI.CPOS := ACTCFGu.CPOS;
-    ACTCFG.CPOS := ACTCFGu.CPOS;
-ELSE
-    ACTCFGu.CPOS := ACTCFG.CPOS;
-    ACTHMI.CPOS := ACTCFGu.CPOS;
-    ACTCFG.CPOS := ACTCFGu.CPOS;
-END_IF;
-CPOS.VAL:=ACTCFGu.CPOS;
-
-(*реалізація читання конфігураційних даних в буфер out*)
-IF (uint_to_word(ACTCFG.CLSID) AND 16#FFF0)=(uint_to_word(ACTBUFIN.CLSID) AND 16#FFF0) AND ACTCFG.ID=ACTBUFIN.ID AND ACTBUFIN.CMDHMI = 16#100 then
-   (* MSG 200-Ok 400-Error
-   // 200 - Дані записані
-   // 201 - Дані прочитані   *)
-   ACTBUFOUT.MSG := 201;
-
-   ACTBUFOUT.T_DEASP := ACTCFG.T_DEASP;
-
-   ACTBUFIN.CMDHMI :=0; 
-end_if;  
-
-(*реалізація запису конфігураційних даних з буфер in в технологічну змінну*)
-IF (uint_to_word(ACTCFG.CLSID) AND 16#FFF0)=(uint_to_word(ACTBUFIN.CLSID) AND 16#FFF0) AND ACTCFG.ID=ACTBUFIN.ID AND ACTBUFIN.CMDHMI = 16#101 then
-   (* MSG 200-Ok 400-Error
-   // 200 - Дані записані
-   // 201 - Дані прочитані *)
-   
-   ACTBUFOUT:=ACTBUFIN;
-
-   ACTCFG.T_DEASP := ACTBUFIN.T_DEASP;
-
-   ACTBUFOUT.MSG := 201;
-
-   ACTBUFIN.CMDHMI :=0; 
-end_if;  
-
-</STSource>
-		</FBProgram>
-	</FBSource>
-	<FBSource nameOfFBType="VLVA_to_ACT" version="0.03" dateTime="dt#2022-07-16-10:19:11">
-		<attribute name="TypeCodeCheckSumString" value="5B81"></attribute>
-		<attribute name="TypeSignatureCheckSumString" value="629E"></attribute>
-		<inOutParameters>
-			<variables name="VLVACFG" typeName="VLVA_CFG">
-				<attribute name="PositionPin" value="1"></attribute>
-			</variables>
-			<variables name="VLVAHMI" typeName="VLVA_HMI">
-				<attribute name="PositionPin" value="2"></attribute>
-			</variables>
-			<variables name="ACTCFG" typeName="ACTTR_CFG">
-				<attribute name="PositionPin" value="3"></attribute>
-			</variables>
-		</inOutParameters>
-		<FBProgram name="VLVA_to_ACT">
-			<STSource>ACTCFG.ID:= VLVACFG.ID;
-ACTCFG.CLSID:= VLVACFG.CLSID;
-ACTCFG.CMD:= VLVACFG.CMD;
-ACTCFG.PRM:= VLVACFG.PRM;
-ACTCFG.T_DEASP:= VLVACFG.T_DEASP;
-ACTCFG.POS:= VLVACFG.POS;
-ACTCFG.CPOS:= VLVACFG.CPOS;
-ACTCFG.STEP1:= VLVACFG.STEP1;
-ACTCFG.CNTPER:= VLVACFG.CNTPER;
-ACTCFG.CNTALM:= VLVACFG.CNTALM;
-ACTCFG.T_STEP1:= VLVACFG.T_STEP1;
-ACTCFG.T_PREV:= VLVACFG.T_PREV;
-
-ACTCFG.STA.STA_OPND:= VLVACFG.STA_OPND;
-ACTCFG.STA.STA_CLSD:= VLVACFG.STA_CLSD;
-ACTCFG.STA.STA_DISP:= VLVACFG.STA_DISP;
-ACTCFG.STA.STA_MANBX:= VLVACFG.STA_MANBX;
-ACTCFG.STA.STA_INBUF:= VLVACFG.STA_INBUF;
-ACTCFG.STA.STA_FRC:= VLVACFG.STA_FRC;
-ACTCFG.STA.STA_SML:= VLVACFG.STA_SML;
-ACTCFG.STA.STA_BLCK:= VLVACFG.STA_BLCK;
-
-ACTCFG.CMDHMI:=VLVAHMI.CMD;
-
-
-</STSource>
-		</FBProgram>
-	</FBSource>
 	<FBSource nameOfFBType="ACT_to_VLVA" version="0.07" dateTime="dt#2022-07-16-19:36:14">
 		<attribute name="TypeCodeCheckSumString" value="D56F"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="629E"></attribute>
@@ -6085,7 +5564,7 @@ VLVAHMI.POS := REAL_TO_INT(VLVACFG.POS)*100;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="DRVFN" version="0.50" dateTime="dt#2022-07-16-10:24:48">
+	<FBSource nameOfFBType="DRVFN" version="0.50" dateTime="dt#2022-07-26-10:44:23">
 		<attribute name="TypeCodeCheckSumString" value="E91F"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="D19E"></attribute>
 		<inOutParameters>
@@ -6693,453 +6172,764 @@ DRVHMI.SPD := REAL_TO_INT(DRVCFG.SPD)*100;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<program>
-		<identProgram name="A_dochs" type="SR" task="MAST"></identProgram>
-		<STSource>FOR i := 1 TO PLC.DOCNT DO
-    (*на першому циклі ініціалізуємо змінні ID + CLSID*)
-    IF PLC.STA_SCN1 THEN
-        CHDO[i].ID := INT_TO_UINT(i);
-        IF CHDO[i].CLSID = 0 THEN CHDO[i].CLSID := 16#0020;END_IF;
-    END_IF;
-END_FOR;
-(*для кожного каналу виклик ФБ з вказівкою змінної каналу*)
-CHDOFN (CHCFG := CHDO[1],  CHHMI := CHDO_HMI[1],  PLCCFG := PLC, CHBUF := CH_BUF, RAW =&gt; %M1(*%Q0.1.16*));
-</STSource>
-	</program>
-	<DDTSource DDTName="CH_BUF" version="0.01" dateTime="dt#2022-01-04-12:22:37">
-		<attribute name="TypeSignatureCheckSumString" value="FD87"></attribute>
-		<structure>
-			<variables name="ID" typeName="UINT">
-				<comment>Унікальний ідентифікатор</comment>
-			</variables>
-			<variables name="CLSID" typeName="UINT">
-				<comment>ідентифікатор класу</comment>
-			</variables>
-			<variables name="STA" typeName="INT">
-				<comment>біти статусу</comment>
-			</variables>
-			<variables name="CMD" typeName="INT">
-				<comment>командне слово</comment>
-			</variables>
-			<variables name="VAL" typeName="INT">
-				<comment>значення змінної</comment>
-			</variables>
-			<variables name="VARID" typeName="UINT">
-				<comment>ID привязаної змінної</comment>
-			</variables>
-		</structure>
-	</DDTSource>
-	<FBSource nameOfFBType="CHDOFN" version="0.06" dateTime="dt#2022-07-16-10:19:15">
-		<attribute name="TypeCodeCheckSumString" value="3E55"></attribute>
-		<attribute name="TypeSignatureCheckSumString" value="B92F"></attribute>
+	<FBSource nameOfFBType="VLVDFN" version="0.60" dateTime="dt#2022-07-26-10:44:22">
+		<attribute name="TypeCodeCheckSumString" value="B3A7"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="C6A9"></attribute>
 		<inOutParameters>
-			<variables name="CHCFG" typeName="CH_CFG">
+			<variables name="ACTCFG" typeName="VLVD_CFG">
+				<comment>CFG ВМ</comment>
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="ACTHMI" typeName="VLVD_HMI">
+				<comment>HMI ВМ</comment>
 				<attribute name="PositionPin" value="2"></attribute>
 			</variables>
-			<variables name="CHHMI" typeName="CH_HMI">
+			<variables name="SOPN" typeName="DIVAR_CFG">
+				<comment>Датчик Відкрито</comment>
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
+			<variables name="SCLS" typeName="DIVAR_CFG">
+				<comment>Датчик Закрито</comment>
+				<attribute name="PositionPin" value="7"></attribute>
+			</variables>
+			<variables name="COPN" typeName="DOVAR_CFG">
+				<comment>керування відкрити</comment>
+				<attribute name="PositionPin" value="12"></attribute>
+			</variables>
+			<variables name="CCLS" typeName="DOVAR_CFG">
+				<comment>керування закрити</comment>
 				<attribute name="PositionPin" value="3"></attribute>
 			</variables>
 			<variables name="PLCCFG" typeName="PLC_CFG">
-				<attribute name="PositionPin" value="4"></attribute>
+				<attribute name="PositionPin" value="14"></attribute>
 			</variables>
-			<variables name="CHBUF" typeName="CH_BUF">
-				<attribute name="PositionPin" value="5"></attribute>
+			<variables name="ACTBUF" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="15"></attribute>
 			</variables>
 		</inOutParameters>
-		<outputParameters>
-			<variables name="RAW" typeName="BOOL">
-				<attribute name="PositionPin" value="1"></attribute>
-			</variables>
-		</outputParameters>
+		<publicLocalVariables>
+			<variables name="ACTBUFIN" typeName="ACTTR_CFG"></variables>
+			<variables name="ACTBUFOUT" typeName="ACTTR_CFG"></variables>
+		</publicLocalVariables>
 		<privateLocalVariables>
-			<variables name="CMD" typeName="INT"></variables>
-			<variables name="INBUF" typeName="BOOL"></variables>
-			<variables name="ULNK" typeName="BOOL"></variables>
-			<variables name="MERR" typeName="BOOL"></variables>
-			<variables name="BRK" typeName="BOOL"></variables>
-			<variables name="SHRT" typeName="BOOL"></variables>
-			<variables name="SML" typeName="BOOL"></variables>
-			<variables name="FRC" typeName="BOOL"></variables>
-			<variables name="BAD" typeName="BOOL"></variables>
-			<variables name="VRAW" typeName="BOOL"></variables>
-			<variables name="VAL" typeName="BOOL"></variables>
-			<variables name="PNG" typeName="BOOL"></variables>
-			<variables name="NBD" typeName="BOOL"></variables>
-			<variables name="CMDLOAD" typeName="BOOL"></variables>
+			<variables name="ACTCFGu" typeName="ACTTR_CFG">
+				<comment>універсальна структура CFG</comment>
+			</variables>
+			<variables name="STA" typeName="ACTTR_STA">
+				<comment>структура STA</comment>
+			</variables>
+			<variables name="ALMS" typeName="ACTTR_ALM">
+				<comment>структура ALM</comment>
+			</variables>
+			<variables name="CMD" typeName="ACTTR_CMD">
+				<comment>структура CMD</comment>
+			</variables>
+			<variables name="SOPN1" typeName="BOOL">
+				<comment>значення датчика SOPN</comment>
+			</variables>
+			<variables name="SCLS1" typeName="BOOL">
+				<comment>значення датчика SCLS</comment>
+			</variables>
+			<variables name="SRUN1" typeName="BOOL">
+				<comment>значення датчика RUN</comment>
+			</variables>
+			<variables name="SPWR1" typeName="BOOL">
+				<comment>значення датчика PWR</comment>
+			</variables>
+			<variables name="SALM1" typeName="BOOL">
+				<comment>значення датчика ALM</comment>
+			</variables>
+			<variables name="SPOS1" typeName="INT">
+				<comment>значення віртуального датчика позиції</comment>
+			</variables>
+			<variables name="dT1" typeName="UDINT">
+				<comment>різниця часу між викликами блоку в мс</comment>
+			</variables>
+			<variables name="dpos" typeName="REAL">
+				<comment>приріст відкриття/закриття у 0.01% для імітації</comment>
+			</variables>
+			<variables name="VLVD_to_ACT" typeName="VLVD_to_ACT"></variables>
+			<variables name="ACT_PRE" typeName="ACT_PRE"></variables>
+			<variables name="ACT_CMDCTRL" typeName="ACT_CMDCTRL"></variables>
+			<variables name="ACT_POST" typeName="ACT_POST"></variables>
+			<variables name="ACT_to_VLVD" typeName="ACT_to_VLVD"></variables>
 		</privateLocalVariables>
-		<FBProgram name="CHDOFN">
-			<STSource>
-CMD := CHCFG.CMD;
-(*розпаковка з STA*)
-VRAW := CHCFG.STA_VRAW;
-VAL := CHCFG.STA_VALB;
-BAD := CHCFG.STA_BAD;(*керується ззовні*)
-PNG := CHCFG.STA_PNG;
-ULNK := CHCFG.STA_ULNK;
-MERR := CHCFG.STA_MERR;(*керується ззовні*)
-BRK := CHCFG.STA_BRK;(*керується ззовні*)
-SHRT := CHCFG.STA_SHRT;(*керується ззовні*)
-NBD := CHCFG.STA_NBD;(*керується ззовні*)
-INBUF := CHCFG.STA_INBUF;
-FRC := CHCFG.STA_FRC;
-SML := CHCFG.STA_SML;
-CMDLOAD := CHCFG.STA_CMDLOAD; (*керується бітом*)
+		<FBProgram name="VLVD">
+			<STSource>(*передача змінних з конкретного типу ВМ в універсальний тип ВМ *)
+VLVD_to_ACT (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
 
-INBUF := (CHCFG.ID = CHBUF.ID) AND (CHCFG.CLSID = CHBUF.CLSID);
-CMDLOAD := CHHMI.STA.15;
-CMD := 0;
+(*попередня обробка: ініт STA, ALM, CMD, INBUF, SML, dt *)
+ACT_PRE (ACTCFG := ACTCFGu, STA := STA, ALMs := ALMS, CMD := CMD, dt1 := dT1, PLCCFG := PLCCFG, ACTBUF := ACTBUF);
 
+(*ініціалізація змінної на першому циклі обробки*)
+IF PLCCFG.STA_SCN1 THEN (*first scan*)
+    IF ACTCFGu.T_OPNSP &lt;= 0 THEN (*якщо уставка часу выдкриття не виставлена*)
+        ACTCFGu.T_OPNSP := 500; (*5 секунд*)
+    END_IF;
+    IF ACTCFGu.T_DEASP &lt;= 0 THEN (*якщо уставка затримки часу тривоги не виставлена*)
+        ACTCFGu.T_DEASP := 200; (*2 секунди*)
+    END_IF;
+    (*технологічні тривоги для датчиків не використовуються*)
+    IF SOPN.ID &lt;&gt; 0 THEN
+        SOPN.PRM_ISALM := false; (*ISALM*)
+        SOPN.PRM_ISWRN := false; (*ISWRN*)
+    END_IF;
+    IF SCLS.ID &lt;&gt; 0 THEN
+        SCLS.PRM_ISALM := false; (*ISALM*)
+        SCLS.PRM_ISWRN := false; (*ISWRN*)
+    END_IF;
+END_IF;
 
-(* обробник команд*)
-(* широкомовне форсування/дефорсування*) 
-IF PLCCFG.CMD=16#4301 THEN
-    FRC := true; (*форсувати один/усі об'єкти типу*)
+(* --------------------- блок параметрів*)
+(*параметри перевірка наявності/використання датчиків на вході*)
+ACTCFGu.PRM.PRM_MANCFG:=false;(*відключення ручного конфігурування параметрів IO*)
+ACTCFGu.PRM.PRM_ZCLSENBL := NOT SCLS.PRM_DSBL AND SCLS.ID &lt;&gt; 0;
+ACTCFGu.PRM.PRM_ZOPNENBL := NOT SOPN.PRM_DSBL AND SOPN.ID &lt;&gt; 0;
+ACTCFGu.PRM.PRM_ZPOSENBL := FALSE; (*відключення позиціонера*)
+ACTCFGu.PRM.PRM_PULSCTRLENBL := ACTCFGu.CLSID=16#2014; (*параметри імпульсного керування*)
+
+(*------------------- блок для режиму імітації*)
+(*режим імітації підлеглих від хозяїна*)
+SOPN.STA_SML := STA.STA_SML;        
+SCLS.STA_SML := STA.STA_SML;        
+COPN.STA_SML := STA.STA_SML; 
+CCLS.STA_SML := STA.STA_SML;       
+
+(*логіка для режиму імітації *) 
+IF STA.STA_SML THEN
+    dpos:= UDINT_TO_REAL(dT1*100)/UDINT_TO_REAL((UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100));(*%*)
+    IF ACTCFGu.STEP1=2  THEN
+        ACTCFGu.POS := ACTCFGu.POS + dpos; (*0-10000*)
+    END_IF;
+    IF ACTCFGu.STEP1=3 THEN
+        ACTCFGu.POS := ACTCFGu.POS - dpos; (*0-10000*)
+    END_IF;
+    IF ACTCFGu.POS&lt;0.0 THEN ACTCFGu.POS:=0.0; END_IF;
+    IF ACTCFGu.POS&gt;100.0 THEN ACTCFGu.POS:=100.0; END_IF;  
+    
+    (*імітація датчиків *)
+    IF NOT SOPN.STA_FRC THEN
+       SOPN.STA_VALB:= STA.STA_OPNING AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100 OR STA.STA_OPND; 
+    END_IF;
+    IF NOT SCLS.STA_FRC THEN
+       SCLS.STA_VALB:= STA.STA_CLSING AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100 OR STA.STA_CLSD; 
+    END_IF;          
 END_IF;
-IF PLCCFG.CMD=16#4302 THEN
-    FRC := false; (*дефорсувати об'єкт типу*)
+
+(*-------------------- блок обробки команд *)
+(*стандартний обробник команд*)
+ACT_CMDCTRL (ACTCFG := ACTCFGu, STA := STA, CMD := CMD, ACTBUF := ACTBUF);
+
+(* -------------------  блок обробки станів датчиків відкриття/закриття, або їх заміна на логіку*)
+IF NOT ACTCFGu.PRM.PRM_ZOPNENBL THEN
+    SOPN1:= STA.STA_OPNING AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100
+    OR STA.STA_OPND;
+    IF PLCCFG.STA_SCN1 THEN SOPN1:=false; END_IF;
+ELSE
+    SOPN1:=SOPN.STA_VALB;
 END_IF;
-(*вибір джерела команди згідно пріоритету*)
-IF CMDLOAD THEN (*з HMI CMDLOAD*)
-    CMD := 16#0100;  (*// записати в буфер*)
-ELSIF INBUF AND CHBUF.CMD &lt;&gt; 0 THEN (*з буферу*)
-    CMD := CHBUF.CMD;
-ELSIF CHCFG.CMD&lt;&gt;0 THEN
-    CMD := CHCFG.CMD;
+IF NOT ACTCFGu.PRM.PRM_ZCLSENBL THEN
+    SCLS1:=STA.STA_CLSING AND ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100
+    OR STA.STA_CLSD;
+    IF PLCCFG.STA_SCN1 THEN SCLS1:=TRUE; END_IF;
+ELSE
+    SCLS1:=SCLS.STA_VALB;
 END_IF;
-(*commands*)
-CASE CMD OF
-    16#1: (*записати 1*)
-        IF FRC AND INBUF THEN
-            CHBUF.VAL := 1;
+
+IF NOT ACTCFGu.PRM.PRM_ZPOSENBL THEN
+    SPOS1:=-10000;
+END_IF;
+
+(*//----------------- автомат станів позиції та тривог позиції та основне керування
+//0 -  ініціалізація, 1- зупинено в проміжному стані, 4 - зупинений у відкритому стані, 5 - зупинений в закритому стані  
+//7 - рухається в довільному напрямку (ручний зі щита),  2 - відкривається , 3 - закривається  
+//керування автоматом станів див в наступному блоці
+//керування виходами COPN, CCLS згідно логіки*)
+CASE ACTCFGu.STEP1 OF
+    0:(*ініціалізація*)
+        ACTCFGu.STEP1 := 1;
+        ACTCFGu.T_STEP1 := 0;
+    1, 4, 5: (*зупинений, 1 - зупинено в проміжному стані 4 - зупинений у відкритому стані, 5 - зупинений в закритому стані*)
+        IF SOPN1 AND NOT SCLS1 and not ALMS.ALM_ALMSHFT THEN
+            IF ACTCFGu.STEP1&lt;&gt;4 THEN ACTCFGu.T_STEP1 := 0;END_IF;
+            ACTCFGu.STEP1 := 4;
+	    ALMS.ALM_ALMSHFT:=FALSE; 
+            ALMS.ALM_ALMCLS := FALSE;
+            ALMS.ALM_ALMOPN := FALSE;
         END_IF;
-    16#2: (*записати 0*)
-        IF FRC AND INBUF THEN
-            CHBUF.VAL:=0;
+
+        IF SCLS1 AND NOT SOPN1 and not ALMS.ALM_ALMSHFT THEN
+            IF ACTCFGu.STEP1&lt;&gt;5 THEN ACTCFGu.T_STEP1 := 0;END_IF;
+            ACTCFGu.STEP1 := 5;
+	    ALMS.ALM_ALMSHFT:=FALSE;
+            ALMS.ALM_ALMCLS := FALSE;
+            ALMS.ALM_ALMOPN := FALSE;
         END_IF;
-    16#3: (*TOGGLE*)
-        IF FRC AND INBUF THEN
-            IF VRAW THEN
-                CHBUF.VAL:=0;
-            ELSE
-                CHBUF.VAL:=1;
+
+        IF ((ACTCFGu.STEP1 = 4 AND NOT SOPN1) OR (ACTCFGu.STEP1 = 5 AND SOPN1)) OR (SOPN1 AND SCLS1) THEN
+            ALMS.ALM_ALMSHFT:=true;
+                ELSE
+            ALMS.ALM_ALMSHFT:=false;
+        END_IF;
+
+    2:  (*відкривається*)
+        IF SOPN1 AND NOT SCLS1 THEN
+            ACTCFGu.STEP1 := 4; (*у стан відкрито*)
+            ACTCFGu.T_STEP1 := 0;
+        END_IF; 
+	       
+        ALMS.ALM_ALMOPN := FALSE; 
+	ALMS.ALM_ALMCLS := FALSE;
+	ALMS.ALM_ALMSHFT:= FALSE;
+
+        IF ACTCFGu.T_STEP1 &gt;= (UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100 + UINT_TO_UDINT(ACTCFGu.T_DEASP)*100) THEN
+            ALMS.ALM_ALMOPN := TRUE;
+            ALMS.ALM_ALMCLS := FALSE;
+            IF SCLS1 AND NOT SOPN1 THEN
+                ACTCFGu.STEP1 := 5; (*у стан закрито*)
+                ACTCFGu.T_STEP1 := 0;
             END_IF;
         END_IF;
-    16#0100: (*прочитати конфігурацію в буфер*)
-        CHBUF.ID:= CHCFG.ID;
-        CHBUF.CLSID:=CHCFG.CLSID;
+
+    3:(*закривається*)
+        IF SCLS1 AND NOT SOPN1 THEN
+            ACTCFGu.STEP1 := 5;
+            ACTCFGu.T_STEP1 := 0;
+        END_IF;
+
+        ALMS.ALM_ALMOPN := FALSE; 
+	ALMS.ALM_ALMCLS := FALSE;
+	ALMS.ALM_ALMSHFT:= FALSE;
+
+        IF ACTCFGu.T_STEP1 &gt;= UINT_TO_UDINT(ACTCFGu.T_OPNSP)*100 +  UINT_TO_UDINT(ACTCFGu.T_DEASP)*100 THEN
+            ALMS.ALM_ALMCLS := TRUE;
+            ALMS.ALM_ALMOPN := FALSE;
+            IF SOPN1 AND NOT SCLS1 THEN (*у стан відкрито*) 
+                ACTCFGu.STEP1 := 4;
+                ACTCFGu.T_STEP1 := 0;
+            END_IF;
+        END_IF;
+
+    7: (*рухається в довільному напрямку (ручний зі щита) чи помилка довільного зсуву*)
+        ALMS.ALM_ALMSHFT:=true;
+        ACTCFGu.STEP1 := 1;
+        ACTCFGu.T_STEP1 := 0;
         
-        CHBUF.STA.0 := CHCFG.STA_VRAW;
-        CHBUF.STA.1 := CHCFG.STA_VALB;
-        CHBUF.STA.2 := CHCFG.STA_BAD;
-        CHBUF.STA.3 := CHCFG.STA_b3;
-        CHBUF.STA.4 := CHCFG.STA_PNG;
-        CHBUF.STA.5 := CHCFG.STA_ULNK;
-        CHBUF.STA.6 := CHCFG.STA_MERR;
-        CHBUF.STA.7 := CHCFG.STA_BRK;
-        CHBUF.STA.8 := CHCFG.STA_SHRT;
-        CHBUF.STA.9 := CHCFG.STA_NBD;
-        CHBUF.STA.10 := CHCFG.STA_b10;
-        CHBUF.STA.11 := CHCFG.STA_INIOTBUF;
-        CHBUF.STA.12 := CHCFG.STA_INBUF;
-        CHBUF.STA.13 := CHCFG.STA_FRC;
-        CHBUF.STA.14 := CHCFG.STA_SML;
-        CHBUF.STA.15 := CHCFG.STA_CMDLOAD;
-        
-        CHBUF.VAL:=CHCFG.VAL;
-        CHBUF.VARID:=CHCFG.VARID;
-    16#0300: (*перемкнути форсування*)
-        FRC := NOT FRC;
-    16#0301: (*форсувати один/усі об'єкти типу*)
-        FRC := true;
-    16#0302: (*дефорсувати один/усі об'єкти типу*)
-        FRC := false;
+    ELSE  (*невизначеність*)
+        ACTCFGu.STEP1 := 0;
 END_CASE;
 
-(*запис значення змінної*)
-IF FRC AND INBUF THEN (*режим форсування з занятим буфером*)
-    CHCFG.VAL := BOOL_TO_INT (CHBUF.VAL&gt;0);
-    VRAW := INT_TO_REAL(CHCFG.VAL) &gt; 0.5;
-ELSIF FRC AND NOT INBUF THEN (*режим форсування без занятого буферу*)
-    ;(*без змін*)
-ELSIF NOT FRC THEN (*не режим форсування*)
-    VRAW := VAL;
-    IF VAL THEN
-        CHCFG.VAL := 1;
-    ELSE
-        CHCFG.VAL := 0;
+(*автомат станів побітово*)
+STA.STA_IMSTPD:= ACTCFGu.STEP1 = 1;
+STA.STA_MANRUNING:= ACTCFGu.STEP1 = 7;
+STA.STA_OPNING:= ACTCFGu.STEP1 = 2;
+STA.STA_CLSING := ACTCFGu.STEP1 = 3;
+STA.STA_OPND:= ACTCFGu.STEP1 = 4;
+STA.STA_CLSD:= ACTCFGu.STEP1 = 5;
+
+(*-------- блокуання приводу*)
+(*умова блокуання *)
+IF CMD.CMD_BLCK THEN
+    STA.STA_BLCK:=TRUE;
+    ALMS.ALM_ALMSTP:=false;
+END_IF; 
+
+(*умова розблокуання *)
+IF CMD.CMD_DBLCK THEN
+    STA.STA_BLCK:=FALSE;
+    ALMS.ALM_ALMSTP:=false;
+END_IF; 
+
+(*умова блокуання , умова спрацьовує тільки при початку блокування *)
+IF (ALMS.ALM_ALMPWR OR CMD.CMD_PROTECT) AND NOT STA.STA_BLCK THEN 
+   STA.STA_BLCK:=true;
+END_IF;
+
+(*стан блокування*)
+IF STA.STA_BLCK THEN
+    COPN.STA_VALB:= FALSE;
+    CCLS.STA_VALB:= FALSE;
+END_IF;
+
+(*-----------------------------*)
+
+(*------------------------виходи керування *)
+(*керування OPN/CLS тільки при дозволі керування або тимчасовому розблокуванні та при відсутності блокування*)
+IF (CMD.CMD_RESOLUTION OR PLCCFG.STA_PERM.6) AND NOT STA.STA_BLCK THEN
+    IF CMD.CMD_CLS THEN CMD.CMD_OPN:=FALSE; END_IF;(*CLS має пріоритет над OPN*)
+    IF CMD.CMD_CLS AND ACTCFGu.STEP1 &lt;&gt; 5 AND ACTCFGu.STEP1 &lt;&gt; 3 THEN
+        ACTCFGu.STEP1 := 3;
+        ACTCFGu.T_STEP1 := 0;
+        ACTCFGu.CNTPER := ACTCFGu.CNTPER + 1;
+	COPN.STA_VALB:= FALSE;
+	CCLS.STA_VALB:= TRUE;
+    END_IF;
+    IF CMD.CMD_OPN AND ACTCFGu.STEP1 &lt;&gt; 4 AND ACTCFGu.STEP1 &lt;&gt; 2 THEN
+        ACTCFGu.STEP1 := 2;
+        ACTCFGu.T_STEP1 := 0;
+        ACTCFGu.CNTPER := ACTCFGu.CNTPER + 1;
+	COPN.STA_VALB:= TRUE;
+	CCLS.STA_VALB:= FALSE;
     END_IF;
 END_IF;
-RAW := VRAW; (*відправляємо на вихід*)
 
-(*ping-pong*)
-ULNK := PNG; (*прийшов ping - є звязок з верхнім рівнем*)
-PNG := false; (*скидання біту PNG звязку з врехнім рівнем PONG*)
-IF NOT ULNK THEN
-    CHCFG.VARID := 0;
+
+(*-------------------- режими*)
+
+(*місцевий режим керування*)
+STA.STA_MANBX := CMD.CMD_CLCL; 
+(*у місцевому режимі керування відключати усі виходи і перевести в ручний режим*)
+IF STA.STA_MANBX THEN
+    COPN.STA_VALB:=FALSE;
+    CCLS.STA_VALB:= FALSE;
+    STA.STA_DISP:=true;
 END_IF;
 
-(*скидання оброблених команд*)
-CMDLOAD := 0;
-CMD := 0;
+STA.STA_FRC := COPN.STA_FRC AND COPN.ID&lt;&gt;0
+    OR CCLS.STA_FRC AND CCLS.ID&lt;&gt;0 
+    OR SOPN.STA_FRC AND SOPN.ID&lt;&gt;0  
+    OR SCLS.STA_FRC AND SCLS.ID&lt;&gt;0;
 
-
-(*загальносистемні біти та лічильники*)
-IF FRC THEN
-    PLCCFG.STA_FRC0 := true;
-    PLCCFG.CNTFRC := PLCCFG.CNTFRC + 1;
-END_IF;
-
-(*упковка в STA*)
-CHCFG.STA_VRAW := VRAW;
-CHCFG.STA_VALB := VAL;
-CHCFG.STA_BAD:=BAD;(*керується ззовні*)
-CHCFG.STA_PNG:=PNG;
-CHCFG.STA_ULNK:=ULNK;
-CHCFG.STA_MERR:=MERR;(*керується ззовні*)
-CHCFG.STA_BRK:=BRK;(*керується ззовні*)
-CHCFG.STA_SHRT:=SHRT;(*керується ззовні*)
-CHCFG.STA_NBD:=NBD;(*керується ззовні*)
-CHCFG.STA_INBUF := INBUF;
-CHCFG.STA_FRC := FRC;
-CHCFG.STA_SML := SML;
-CHCFG.STA_CMDLOAD := CMDLOAD; (*керується бітом*)
-
-
-CHCFG.CMD := CMD;
-
-CHHMI.STA := CHCFG.STA;
-CHHMI.VAL := CHCFG.VAL;
-
-(*оновлення буферу*)
-IF INBUF THEN
-    CHBUF.STA:= CHCFG.STA;
-    CHBUF.VARID := CHCFG.VARID;
-    CHBUF.CMD := 0;
-    IF NOT FRC THEN
-        CHBUF.VAL := CHCFG.VAL;
+(*------------------- зведення кастомних тривог, режимів, бітів*)
+IF ALMS.ALM_ALMOPN THEN
+    PLCCFG.ALM_ALM := TRUE;
+    IF NOT ACTCFGu.ALM.ALM_ALMOPN THEN
+        PLCCFG.ALM_NWALM := TRUE;
+        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
+IF ALMS.ALM_ALMCLS THEN
+    PLCCFG.ALM_ALM := TRUE;
+    IF NOT ACTCFGu.ALM.ALM_ALMCLS THEN
+        PLCCFG.ALM_NWALM := TRUE;
+        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    END_IF;
+END_IF;
+IF ALMS.ALM_ALMOPN2 THEN
+    PLCCFG.ALM_ALM := TRUE;
+    IF NOT ACTCFGu.ALM.ALM_ALMOPN2 THEN
+        PLCCFG.ALM_NWALM := TRUE;
+        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    END_IF;
+END_IF;
+IF ALMS.ALM_ALMCLS2 THEN
+    PLCCFG.ALM_ALM := TRUE;
+    IF NOT ACTCFGu.ALM.ALM_ALMCLS2 THEN
+        PLCCFG.ALM_NWALM := TRUE;
+        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    END_IF;
+END_IF;
+IF ALMS.ALM_ALMSHFT THEN
+    PLCCFG.ALM_ALM := TRUE;
+    IF NOT ACTCFGu.ALM.ALM_ALMSHFT THEN
+        PLCCFG.ALM_NWALM := TRUE;
+        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    END_IF;
+END_IF;
+
+
+ALMS.ALM_ALM := ALMS.ALM_ALMOPN OR ALMS.ALM_ALMCLS OR ALMS.ALM_ALMOPN2 OR ALMS.ALM_ALMCLS2 OR ALMS.ALM_ALMSHFT OR ALMS.ALM_ALMSTPBTN OR ALMS.ALM_ALMPWR OR STA.STA_BLCK;
+
+(*заключна обробка: зведення в PLC.CFG, STA, ALM, CMD, INBUF, SML, dt *)
+ACT_POST (ACTCFG := ACTCFGu, STA := STA, ALMs := ALMS, CMD := CMD, dt1 := dt1, ACTBUF := ACTBUF, PLCCFG := PLCCFG);
+
+ACT_to_VLVD (VLVDCFG := ACTCFG, VLVDHMI := ACTHMI, ACTCFG := ACTCFGu);
+
+(*реалізація читання конфігураційних даних в буфер out*)
+IF (uint_to_word(ACTCFG.CLSID) AND 16#FFF0)=(uint_to_word(ACTBUFIN.CLSID) AND 16#FFF0) AND ACTCFG.ID=ACTBUFIN.ID AND ACTBUFIN.CMDHMI = 16#100 then
+   (* MSG 200-Ok 400-Error
+   // 200 - Дані записані
+   // 201 - Дані прочитані   *)
+   ACTBUFOUT.MSG := 201;
+
+   ACTBUFOUT.T_DEASP := ACTCFG.T_DEASP;
+   ACTBUFOUT.T_OPNSP := ACTCFG.T_OPNSP;
+
+   ACTBUFIN.CMDHMI :=0; 
+end_if;  
+
+(*реалізація запису конфігураційних даних з буфер in в технологічну змінну*)
+IF (uint_to_word(ACTCFG.CLSID) AND 16#FFF0)=(uint_to_word(ACTBUFIN.CLSID) AND 16#FFF0) AND ACTCFG.ID=ACTBUFIN.ID AND ACTBUFIN.CMDHMI = 16#101 then
+   (* MSG 200-Ok 400-Error
+   // 200 - Дані записані
+   // 201 - Дані прочитані *)
+   
+   ACTBUFOUT:=ACTBUFIN;
+
+   ACTCFG.T_DEASP := ACTBUFIN.T_DEASP;
+   ACTCFG.T_OPNSP := ACTBUFIN.T_OPNSP;
+
+   ACTBUFOUT.MSG := 201;
+
+   ACTBUFIN.CMDHMI :=0; 
+end_if;  
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<program>
-		<identProgram name="A_aichs" type="SR" task="MAST"></identProgram>
-		<STSource>FOR i := 1 TO PLC.AICNT DO
-    (*на першому циклі ініціалізуємо змінні ID + CLSID*)
-    IF PLC.STA_SCN1 THEN
-        CHAI[i].ID := INT_TO_UINT(i);
-        IF CHAI[i].CLSID = 0 THEN CHAI[i].CLSID := 16#0030;END_IF;
-    END_IF;
-END_FOR;
-(*для кожного каналу виклик ФБ з вказівкою змінної каналу*)
-CHAIFN (RAWINT := %MW0(*%IW0.2.0*), CHCFG := CHAI[1], CHHMI := CHAI_HMI[1], PLCCFG := PLC, CHBUF := CH_BUF);
-</STSource>
-	</program>
-	<FBSource nameOfFBType="CHAIFN" version="0.11" dateTime="dt#2022-07-16-10:19:13">
-		<attribute name="TypeCodeCheckSumString" value="8E69"></attribute>
-		<attribute name="TypeSignatureCheckSumString" value="B99E"></attribute>
-		<inputParameters>
-			<variables name="RAWINT" typeName="INT">
+	<FBSource nameOfFBType="VLVD_to_ACT" version="0.07" dateTime="dt#2022-07-16-10:19:12">
+		<attribute name="TypeCodeCheckSumString" value="410A"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="6000"></attribute>
+		<inOutParameters>
+			<variables name="VLVDCFG" typeName="VLVD_CFG">
 				<attribute name="PositionPin" value="1"></attribute>
 			</variables>
-		</inputParameters>
-		<inOutParameters>
-			<variables name="CHCFG" typeName="CH_CFG">
+			<variables name="VLVDHMI" typeName="VLVD_HMI">
 				<attribute name="PositionPin" value="2"></attribute>
 			</variables>
-			<variables name="CHHMI" typeName="CH_HMI">
+			<variables name="ACTCFG" typeName="ACTTR_CFG">
 				<attribute name="PositionPin" value="3"></attribute>
 			</variables>
-			<variables name="PLCCFG" typeName="PLC_CFG">
-				<attribute name="PositionPin" value="4"></attribute>
+		</inOutParameters>
+		<FBProgram name="VLVD_to_ACT">
+			<STSource>ACTCFG.ID:= VLVDCFG.ID;
+ACTCFG.CLSID:= VLVDCFG.CLSID;
+ACTCFG.CMD:= VLVDCFG.CMD;
+ACTCFG.PRM:= VLVDCFG.PRM;
+ACTCFG.T_DEASP:= VLVDCFG.T_DEASP;
+ACTCFG.T_OPNSP:= VLVDCFG.T_OPNSP;
+ACTCFG.POS:= VLVDCFG.POS;
+ACTCFG.STEP1:= VLVDCFG.STEP1;
+ACTCFG.CNTPER:= VLVDCFG.CNTPER;
+ACTCFG.CNTALM:= VLVDCFG.CNTALM;
+ACTCFG.T_STEP1:= VLVDCFG.T_STEP1;
+ACTCFG.T_PREV:= VLVDCFG.T_PREV;
+
+ACTCFG.STA.STA_IMSTPD:= VLVDCFG.STA_IMSTPD;
+ACTCFG.STA.STA_MANRUNING:= VLVDCFG.STA_MANRUNING;
+ACTCFG.STA.STA_DBLCKACT:= VLVDCFG.STA_DBLCKACT;
+ACTCFG.STA.STA_OPNING:= VLVDCFG.STA_OPNING;
+ACTCFG.STA.STA_CLSING:= VLVDCFG.STA_CLSING;
+ACTCFG.STA.STA_OPND:= VLVDCFG.STA_OPND;
+ACTCFG.STA.STA_CLSD:= VLVDCFG.STA_CLSD;
+ACTCFG.STA.STA_MANBXOUT:= VLVDCFG.STA_MANBXOUT;
+ACTCFG.STA.STA_WRKED:= VLVDCFG.STA_WRKED;
+ACTCFG.STA.STA_DISP:= VLVDCFG.STA_DISP;
+ACTCFG.STA.STA_MANBX:= VLVDCFG.STA_MANBX;
+ACTCFG.STA.STA_INBUF:= VLVDCFG.STA_INBUF;
+ACTCFG.STA.STA_INIOTBUF:= VLVDCFG.STA_INIOTBUF;
+ACTCFG.STA.STA_FRC:= VLVDCFG.STA_FRC;
+ACTCFG.STA.STA_SML:= VLVDCFG.STA_SML;
+ACTCFG.STA.STA_BLCK:= VLVDCFG.STA_BLCK;
+ACTCFG.STA.STA_STOPING:=VLVDCFG.ALM_STOPING;
+
+ACTCFG.ALM.ALM_ALMOPN:= VLVDCFG.ALM_ALMOPN;
+ACTCFG.ALM.ALM_ALMCLS:= VLVDCFG.ALM_ALMCLS;
+ACTCFG.ALM.ALM_ALMSHFT:= VLVDCFG.ALM_ALMSHFT;
+ACTCFG.ALM.ALM_ALMOPN2:= VLVDCFG.ALM_ALMOPN2;
+ACTCFG.ALM.ALM_ALMCLS2:= VLVDCFG.ALM_ALMCLS2;
+ACTCFG.ALM.ALM_ALM:= VLVDCFG.ALM_ALM;
+ACTCFG.ALM.ALM_WRN:= VLVDCFG.ALM_WRN;
+ACTCFG.ALM.ALM_ALMSTP:= VLVDCFG.ALM_ALMSTP;
+ACTCFG.ALM.ALM_ALMBELL:= VLVDCFG.ALM_ALMBELL;
+ACTCFG.ALM.ALM_ALMPWR:= VLVDCFG.ALM_ALMPWR1;
+ACTCFG.ALM.ALM_ALMSTPBTN := VLVDCFG.ALM_ALMSTPBTN;
+ACTCFG.ALM.ALM_b27 := false;
+ACTCFG.ALM.ALM_b28 := VLVDCFG.ALM_SEN;
+ACTCFG.ALM.ALM_b29 := VLVDCFG.ALM_b13;
+ACTCFG.ALM.ALM_b30 := VLVDCFG.ALM_b14;
+ACTCFG.ALM.ALM_b31 := VLVDCFG.ALM_b15;
+
+ACTCFG.CMDHMI:=VLVDHMI.CMD;
+
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="ACT_to_VLVD" version="0.11" dateTime="dt#2022-07-16-19:36:14">
+		<attribute name="TypeCodeCheckSumString" value="5938"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="6000"></attribute>
+		<inOutParameters>
+			<variables name="VLVDCFG" typeName="VLVD_CFG">
+				<attribute name="PositionPin" value="1"></attribute>
 			</variables>
-			<variables name="CHBUF" typeName="CH_BUF">
-				<attribute name="PositionPin" value="5"></attribute>
+			<variables name="VLVDHMI" typeName="VLVD_HMI">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="ACTCFG" typeName="ACTTR_CFG">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+		</inOutParameters>
+		<FBProgram name="ACT_to_VLVD">
+			<STSource>(*  PACFramework SEControlExpertLIB V1.0.0 *)
+VLVDCFG.ID:= ACTCFG.ID;
+VLVDCFG.CLSID:= ACTCFG.CLSID;
+VLVDCFG.CMD:= ACTCFG.CMD;
+VLVDCFG.PRM:= ACTCFG.PRM;
+VLVDCFG.T_DEASP:= ACTCFG.T_DEASP;
+VLVDCFG.T_OPNSP:= ACTCFG.T_OPNSP;
+VLVDCFG.POS:= ACTCFG.POS;
+VLVDCFG.STEP1:= ACTCFG.STEP1;
+VLVDCFG.CNTPER:= ACTCFG.CNTPER;
+VLVDCFG.CNTALM:= ACTCFG.CNTALM;
+VLVDCFG.T_STEP1:= ACTCFG.T_STEP1;
+VLVDCFG.T_PREV:= ACTCFG.T_PREV;
+
+VLVDCFG.STA_IMSTPD:= ACTCFG.STA.STA_IMSTPD;
+VLVDCFG.STA_MANRUNING:= ACTCFG.STA.STA_MANRUNING;
+VLVDCFG.STA_DBLCKACT:= ACTCFG.STA.STA_DBLCKACT;
+VLVDCFG.STA_OPNING:= ACTCFG.STA.STA_OPNING;
+VLVDCFG.STA_CLSING:= ACTCFG.STA.STA_CLSING;
+VLVDCFG.STA_OPND:= ACTCFG.STA.STA_OPND;
+VLVDCFG.STA_CLSD:= ACTCFG.STA.STA_CLSD;
+VLVDCFG.STA_MANBXOUT:= ACTCFG.STA.STA_MANBXOUT;
+VLVDCFG.STA_WRKED:= ACTCFG.STA.STA_WRKED;
+VLVDCFG.STA_DISP:= ACTCFG.STA.STA_DISP;
+VLVDCFG.STA_MANBX:= ACTCFG.STA.STA_MANBX;
+VLVDCFG.STA_INBUF:= ACTCFG.STA.STA_INBUF;
+VLVDCFG.STA_INIOTBUF :=ACTCFG.STA.STA_INIOTBUF;
+VLVDCFG.STA_FRC:= ACTCFG.STA.STA_FRC;
+VLVDCFG.STA_SML:= ACTCFG.STA.STA_SML;
+VLVDCFG.STA_BLCK:= ACTCFG.STA.STA_BLCK;
+
+VLVDCFG.ALM_ALMOPN:= ACTCFG.ALM.ALM_ALMOPN;
+VLVDCFG.ALM_ALMCLS:= ACTCFG.ALM.ALM_ALMCLS;
+VLVDCFG.ALM_ALMSHFT:= ACTCFG.ALM.ALM_ALMSHFT;
+VLVDCFG.ALM_ALMOPN2:= ACTCFG.ALM.ALM_ALMOPN2;
+VLVDCFG.ALM_ALMCLS2:= ACTCFG.ALM.ALM_ALMCLS2;
+VLVDCFG.ALM_ALM:= ACTCFG.ALM.ALM_ALM;
+VLVDCFG.ALM_WRN:= ACTCFG.ALM.ALM_WRN;
+VLVDCFG.ALM_ALMSTP:= ACTCFG.ALM.ALM_ALMSTP;
+VLVDCFG.ALM_ALMBELL:= ACTCFG.ALM.ALM_ALMBELL;
+VLVDCFG.ALM_ALMPWR1:= ACTCFG.ALM.ALM_ALMPWR;
+VLVDCFG.ALM_ALMSTPBTN:=ACTCFG.ALM.ALM_ALMSTPBTN;
+VLVDCFG.ALM_STOPING:=ACTCFG.STA.STA_STOPING;(*бітів STA не вистачило*)
+VLVDCFG.ALM_SEN:=false;
+VLVDCFG.ALM_b13:=false;
+VLVDCFG.ALM_b14:=false;
+VLVDCFG.ALM_b15:=false;
+
+VLVDHMI.CMD:=ACTCFG.CMDHMI;
+
+VLVDHMI.STA := VLVDCFG.STA;
+
+VLVDHMI.ALM :=VLVDCFG.ALM;
+
+
+VLVDHMI.POS := REAL_TO_INT(VLVDCFG.POS);
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="PLCFN" version="0.23" dateTime="dt#2022-07-25-11:18:03">
+		<attribute name="TypeCodeCheckSumString"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="FA47"></attribute>
+		<inOutParameters>
+			<variables name="PLC" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="1"></attribute>
 			</variables>
 		</inOutParameters>
 		<privateLocalVariables>
-			<variables name="CMD" typeName="INT"></variables>
-			<variables name="INBUF" typeName="BOOL"></variables>
-			<variables name="ULNK" typeName="BOOL"></variables>
-			<variables name="MERR" typeName="BOOL"></variables>
-			<variables name="BRK" typeName="BOOL"></variables>
-			<variables name="SHRT" typeName="BOOL"></variables>
-			<variables name="SML" typeName="BOOL"></variables>
-			<variables name="FRC" typeName="BOOL"></variables>
-			<variables name="BAD" typeName="BOOL"></variables>
-			<variables name="VRAW" typeName="BOOL"></variables>
-			<variables name="VAL" typeName="BOOL"></variables>
-			<variables name="PNG" typeName="BOOL"></variables>
-			<variables name="NBD" typeName="BOOL"></variables>
-			<variables name="CMDLOAD" typeName="BOOL"></variables>
-			<variables name="MIN" typeName="INT"></variables>
-			<variables name="MAX" typeName="INT"></variables>
-			<variables name="MIDLE" typeName="INT"></variables>
+			<variables name="TMBITS_PREV" typeName="INT"></variables>
+			<variables name="TMBITS_CUR" typeName="INT"></variables>
+			<variables name="i" typeName="INT"></variables>
+			<variables name="NOW" typeName="DT"></variables>
+			<variables name="TM200ms" typeName="TON"></variables>
+			<variables name="TM500ms" typeName="TON"></variables>
+			<variables name="Display_NTPC" typeName="Display_NTPC"></variables>
+			<variables name="Calc_NTPC" typeName="Calc_NTPC"></variables>
+			<variables name="STATUS" typeName="INT"></variables>
+			<variables name="ms_cur" typeName="UDINT"></variables>
+			<variables name="ms_prev" typeName="UDINT"></variables>
 		</privateLocalVariables>
-		<FBProgram name="CHAIFN">
-			<STSource>MIN:=0;
-MAX:=10000;
-MIDLE:=5000;
-
-
-
-CMD := CHCFG.CMD;
-(*розпаковка з STA*)
-VRAW := CHCFG.STA_VRAW;
-VAL := CHCFG.STA_VALB;
-BAD := CHCFG.STA_BAD;(*керується ззовні*)
-PNG := CHCFG.STA_PNG;
-ULNK := CHCFG.STA_ULNK;
-MERR := CHCFG.STA_MERR;(*керується ззовні*)
-BRK := CHCFG.STA_BRK;(*керується ззовні*)
-SHRT := CHCFG.STA_SHRT;(*керується ззовні*)
-NBD := CHCFG.STA_NBD;(*керується ззовні*)
-INBUF := CHCFG.STA_INBUF;
-FRC := CHCFG.STA_FRC;
-SML := CHCFG.STA_SML;
-CMDLOAD := CHCFG.STA_CMDLOAD; (*керується бітом*)
-
-INBUF := (CHCFG.ID = CHBUF.ID) AND (CHCFG.CLSID = CHBUF.CLSID);
-CMDLOAD := CHHMI.STA.15;
-CMD := 0;
-
-(* обробник команд*)
-(* широкомовне форсування/дефорсування*) 
-IF PLCCFG.CMD=16#4301 THEN
-    FRC := true; (*форсувати один/усі об'єкти типу*)
+		<FBProgram name="PLC_FN">
+			<STSource>(* PLC_FN PACFramework SEControlExpertLIB V1.0.0 
+Останні зміни 26.07.20 by Oleksanr Pupena
+*)
+IF PLC.STA_CMDACK THEN
+    PLC.CMD := 0;
 END_IF;
-IF PLCCFG.CMD=16#4302 THEN
-    FRC := false; (*дефорсувати об'єкт типу*)
-END_IF;
-(*вибір джерела команди згідно пріоритету*)
-IF CMDLOAD THEN (*з HMI CMDLOAD*)
-    CMD := 16#0100;  (*// записати в буфер*)
-ELSIF INBUF AND CHBUF.CMD &lt;&gt; 0 THEN (*з буферу*)
-    CMD := CHBUF.CMD;
-ELSIF CHCFG.CMD&lt;&gt;0 THEN
-    CMD := CHCFG.CMD;
+PLC.STA_CMDACK := (PLC.CMD &lt;&gt; 0 AND NOT PLC.STA_CMDACK);
+PLC.STA_SCN1 := %S21;
+IF PLC.STA_SCN1 THEN (*при першому скані*)
+    PLC.ID := 1;             (*Ідентифікатор завжди 1*)
+    PLC.CLSID := 16#2100;    (*Клас завжди 16#2100*)
+    PLC.TQ := 0;
+    TMBITS_CUR := 0;
+    TMBITS_PREV := 0;
+    PLC.TQMS := 0;
 END_IF;
 
-(*commands*)
-CASE CMD OF
-    16#1: (*записати MAX*)
-        IF FRC AND INBUF THEN
-            CHBUF.VAL := MAX;
-        END_IF;
-    16#2: (*записати MIN*)
-        IF FRC AND INBUF THEN
-            CHBUF.VAL:=MIN;
-        END_IF;
-    16#3: (*TOGGLE*)
-        IF FRC AND INBUF THEN
-            CHBUF.VAL := MIDLE;
-        END_IF;
-    16#0100: (*прочитати конфігурацію в буфер*)
-        CHBUF.ID:= CHCFG.ID;
-        CHBUF.CLSID:=CHCFG.CLSID;
-        
-        CHBUF.STA.0 := CHCFG.STA_VRAW;
-        CHBUF.STA.1 := CHCFG.STA_VALB;
-        CHBUF.STA.2 := CHCFG.STA_BAD;
-        CHBUF.STA.3 := CHCFG.STA_b3;
-        CHBUF.STA.4 := CHCFG.STA_PNG;
-        CHBUF.STA.5 := CHCFG.STA_ULNK;
-        CHBUF.STA.6 := CHCFG.STA_MERR;
-        CHBUF.STA.7 := CHCFG.STA_BRK;
-        CHBUF.STA.8 := CHCFG.STA_SHRT;
-        CHBUF.STA.9 := CHCFG.STA_NBD;
-        CHBUF.STA.10 := CHCFG.STA_b10;
-        CHBUF.STA.11 := CHCFG.STA_INIOTBUF;
-        CHBUF.STA.12 := CHCFG.STA_INBUF;
-        CHBUF.STA.13 := CHCFG.STA_FRC;
-        CHBUF.STA.14 := CHCFG.STA_SML;
-        CHBUF.STA.15 := CHCFG.STA_CMDLOAD;
-        
-        CHBUF.VAL:=CHCFG.VAL;
-        CHBUF.VARID:=CHCFG.VARID;
-    16#0300: (*перемкнути форсування*)
-        FRC := NOT FRC;
-    16#301: (*форсувати один/усі об'єкти типу*)
-        FRC := true;
-    16#302: (*дефорсувати один/усі об'єкти типу*)
-        FRC := false;
+(*16#301 - включити режим деблокування усіх ВМ; 
+16#302 - відключити режим деблокування усіх ВМ;  
+16#300 - перемкнути режим деблокування усіх ВМ;*)
+CASE PLC.CMD OF
+    16#300:(*768*)
+        PLC.STA_DBLCKALL := NOT PLC.STA_DBLCKALL;
+    16#301:(*769*)
+        PLC.STA_DBLCKALL := true;
+    16#302:(*770*)
+        PLC.STA_DBLCKALL := false;
+    ELSE  
+        ;
 END_CASE;
 
-(*запис значення змінної*)
-IF FRC AND INBUF THEN (*режим форсування з занятим буфером*)
-    CHCFG.VAL := CHBUF.VAL;
-ELSIF FRC AND NOT INBUF THEN (*режим форсування без занятого буферу*)
-    ;(*без змін*)
-ELSIF NOT FRC THEN (*не режим форсування*)
-    CHCFG.VAL  := RAWINT;
-END_IF;
+PLC.STA_PERM.0 := PLC.STA_CON2ERR;
+PLC.STA_PERM.1 := PLC.STA_PLC2STOP;
+PLC.STA_PERM.2 := PLC.STA_BLK;
+PLC.STA_PERM.3 := PLC.STA_ALDIS;
+PLC.STA_PERM.4 := PLC.STA_DIOON;
+PLC.STA_PERM.5 := PLC.STA_DIOERR;
+PLC.STA_PERM.6 := PLC.STA_DBLCKALL;
+PLC.STA_PERM.7 := PLC.STA_FRC0 OR PLC.STA_FRC1 OR PLC.STA_FRC2;
+PLC.STA_PERM.8 := PLC.STA_SMLALL;
+PLC.STA_PERM.9 := PLC.STA_DISP;
+PLC.STA_PERM.10 := PLC.STA_FRC2;
+PLC.STA_PERM.11 := PLC.STA_FRC1;
+PLC.STA_PERM.12 := PLC.STA_SCN1;
+PLC.STA_PERM.13 := PLC.STA_FRC0;
+PLC.STA_PERM.14 := PLC.STA_SML;
+PLC.STA_PERM.15 := PLC.STA_CMDACK;
 
-(*ping-pong*)
-ULNK := PNG; (*прийшов ping - є звязок з верхнім рівнем*)
-PNG := false; (*скидання біту PNG звязку з врехнім рівнем PONG*)
-IF NOT ULNK THEN
-    CHCFG.VARID := 0;
-END_IF;
-
-(*скидання оброблених команд*)
-CMDLOAD := 0;
-CMD := 0;
-
-(*загальносистемні біти та лічильники*)
-IF FRC THEN
-    PLCCFG.STA_FRC0 := true;
-    PLCCFG.CNTFRC := PLCCFG.CNTFRC + 1;
-END_IF;
-
-BAD:= BRK OR SHRT;
-
-(*упковка в STA*)
-CHCFG.STA_VRAW := RAWINT&gt;0;
-CHCFG.STA_VALB:=CHCFG.VAL&gt;0;
-CHCFG.STA_BAD:=BAD;(*керується ззовні*)
-CHCFG.STA_PNG:=PNG;
-CHCFG.STA_ULNK:=ULNK;
-CHCFG.STA_MERR:=MERR;(*керується ззовні*)
-CHCFG.STA_BRK:=BRK;(*керується ззовні*)
-CHCFG.STA_SHRT:=SHRT;(*керується ззовні*)
-CHCFG.STA_NBD:=NBD;(*керується ззовні*)
-CHCFG.STA_INBUF := INBUF;
-CHCFG.STA_FRC := FRC;
-CHCFG.STA_SML := SML;
-CHCFG.STA_CMDLOAD := CMDLOAD; (*керується бітом*)
+PLC.ALM1_PERM.0 := PLC.ALM_ALM;
+PLC.ALM1_PERM.1 := PLC.ALM_NWALM;
+PLC.ALM1_PERM.2 := PLC.ALM_ALMNACK;
+PLC.ALM1_PERM.3 := PLC.ALM_WRN;
+PLC.ALM1_PERM.4 := PLC.ALM_NWWRN;
+PLC.ALM1_PERM.5 := PLC.ALM_WRNNACK;
+PLC.ALM1_PERM.6 := PLC.ALM_BAD;
+PLC.ALM1_PERM.7 := PLC.ALM_NWBAD;
+PLC.ALM1_PERM.8 := PLC.ALM_BADNACK;
+PLC.ALM1_PERM.9 := PLC.ALM_EMCYSTP;
+PLC.ALM1_PERM.10 := PLC.ALM_STP2RUN;
+PLC.ALM1_PERM.11 := PLC.ALM_CON2ERR;
+PLC.ALM1_PERM.12 := PLC.ALM_PLC2STOP;
+PLC.ALM1_PERM.13 := PLC.ALM_DIOERR;
+PLC.ALM1_PERM.14 := PLC.ALM_PLCERR;
+PLC.ALM1_PERM.15 := PLC.ALM_CONHIERR;
 
 
-CHCFG.CMD := CMD;
+(*--------------------------------- таймерні біти та лічильники*)
+TM200ms (); TM500ms ();
+(*плинні значення*)
+TMBITS_CUR.0:=%S5; 
+TMBITS_CUR.1:=TM200ms.q;
+TMBITS_CUR.2:=TM500ms.q;
+TMBITS_CUR.3:=%S6;(*sec*)
+TMBITS_CUR.7:=%S7;(*min*)
 
-CHHMI.STA := CHCFG.STA;
-CHHMI.VAL := CHCFG.VAL;
+(*відловлювання імпульсів необхідних часових періодів*)
+PLC.PLS_P100MS := TMBITS_CUR.0 AND NOT TMBITS_PREV.0; (*100 мс *)
+PLC.PLS_P200MS := TMBITS_CUR.1 AND NOT TMBITS_PREV.1; (*200 мс*)
+PLC.PLS_P500MS := TMBITS_CUR.2 AND NOT TMBITS_PREV.2; (*500 мс*)
+PLC.PLS_P1S := TMBITS_CUR.3 AND NOT TMBITS_PREV.3; (*1 с*)
+PLC.PLS_P60S := TMBITS_CUR.7 AND NOT TMBITS_PREV.7; (*1 хв*)
+(*підрахунок кількості секунд і хвилин*)
+IF PLC.PLS_P1S THEN PLC.TQ := PLC.TQ + 1; END_IF;  (*загальний час з початку 1-го циклу контролера (в секундах)*)
+IF PLC.TQ &gt; 16#7FFF_FFFF THEN PLC.TQ := 16#7FFF_FFFF; END_IF;
+IF PLC.PLS_P60S AND NOT PLC.STA_SCN1 THEN PLC.TQM := PLC.TQM + 1; END_IF; (*загальний час роботи ПЛК з моменту пуску (в хвилинах)*)
+IF PLC.TQM &gt; 16#7FFF_FFFF THEN PLC.TQM := 16#7FFF_FFFF; END_IF;
 
-(*оновлення буферу*)
-IF INBUF THEN
-    CHBUF.STA:= CHCFG.STA;
-    CHBUF.VARID := CHCFG.VARID;
-    CHBUF.CMD := 0;
-    IF NOT FRC THEN
-        CHBUF.VAL := CHCFG.VAL;
+(*розрахунок інших часових періодів*)
+PLC.PLS_P2S := (PLC.TQ MOD 2) = 0 AND PLC.PLS_P1S;(*2 с*)
+PLC.PLS_P5S := (PLC.TQ MOD 5) = 0 AND PLC.PLS_P1S;(*5 с*)
+PLC.PLS_P10S := (PLC.TQ MOD 10) = 0 AND PLC.PLS_P1S;(*10 с*)
+
+(* меандри *)
+PLC.PLS_M1S:=%S6;(*меандр з періодом 2 с (1 с + 1 с) *)
+if PLC.PLS_P1S then PLC.PLS_M2S:=not PLC.PLS_M2S; end_if;(*меандр з періодом 2 с (1 с + 1 с) *)
+
+(* астрономічний час *)
+RRTC_DT (OUT =&gt; NOW); (*в DT форматі*)
+PLC.NOW := DT_TO_ARINT(NOW); (*у вигляді масиву*)
+
+(* початок години *)
+PLC.PLS_NEWHR:= (PLC.NOW[1] AND 16#00FF)=0 (*хвилини*) AND PLC.PLS_P60S (*один раз за хвилину*);
+
+(* початок доби*)
+PLC.PLS_NEWDAY:= PLC.NOW[1]=0 (*години_хвилини*) AND PLC.PLS_P60S (*один раз за хвилину*);
+
+(*початок зміни*)
+IF PLC.SHIFTPARA[0]&lt;1 OR PLC.SHIFTPARA[0]&gt;3 then PLC.SHIFTPARA[0]:=2;END_IF;(*коректність кількості змін*)
+PLC.PLS_NEWSHIFT:=FALSE; (*скидуємо біт початку зміни*)   
+FOR i:=1 to PLC.SHIFTPARA[0] DO
+  (*хоча б одна з устоавок змін спрацювала*)
+   PLC.PLS_NEWSHIFT := PLC.PLS_NEWSHIFT OR (PLC.SHIFTPARA[i]=PLC.NOW[1] (*години хвилин*) AND PLC.PLS_P60S (*один раз за хвилину*));  
+END_FOR;
+
+(*таймери для тих уставок, на які немає системних меандрів
+два рази викликаються для точності
+*)
+TM200ms (not TMBITS_CUR.1, t#200ms);
+TM500ms (not TMBITS_CUR.2, t#500ms);
+
+TMBITS_PREV := TMBITS_CUR;(*збереження попередніх значень*)
+
+(*----------- визначеня зміни*)
+IF PLC.SHIFTPARA[0] &gt; 3 OR PLC.SHIFTPARA[0] &lt; 2 THEN
+    PLC.SHIFTPARA[0] := 3;
+END_IF;(*якщо кількість змін &gt;3 або &lt;1 - робимо 3*)
+IF PLC.NOW[1] &gt;= PLC.SHIFTPARA[1] AND (PLC.NOW[1] &lt; PLC.SHIFTPARA[2] OR PLC.SHIFTPARA[2] = 16#0000) THEN (*1-ша зміна*)
+    PLC.SHIFTNMB := 1;
+ELSE (*2-га або 3-тя*)
+    IF PLC.SHIFTPARA[0] = 2 THEN (*якщо в 2 зміни*)
+        PLC.SHIFTNMB := 2;
+    ELSE (*якщо 3 зміни*)
+        IF PLC.NOW[1] &gt;= PLC.SHIFTPARA[2] AND (PLC.NOW[1] &lt; PLC.SHIFTPARA[3] OR PLC.SHIFTPARA[3] = 16#0000) THEN
+            PLC.SHIFTNMB := 2;
+        ELSE
+            PLC.SHIFTNMB := 3;
+        END_IF;
     END_IF;
 END_IF;
+(*----------- *)
+
+RRTC_DT_MS (OUT1 =&gt; Display_NTPC,
+            OUT2 =&gt; Calc_NTPC,
+            STATUS =&gt; STATUS);
+ms_cur:=Calc_NTPC.Seconds*1000+int_to_udint(Calc_NTPC.fraction_Second);
+PLC.NOWns := int_to_udint(Display_NTPC.Millisecond)*1000;
+(*цикли*)
+PLC.TSK_LTIME :=int_to_uint(%sw30);
+PLC.TSK_MAXTIME :=int_to_uint(%sw31);
+(* лічильник винесено в періодичну задачу 
+PLC.TQMS := PLC.TQMS + UINT_TO_UDINT(PLC.TSK_LTIME);(*//лічильник в мс*)
+
+ms_prev:=ms_cur;
+
+(*скидання статусів і тривог*)
+PLC.STA_BLK := false;
+PLC.STA_ALDIS := false;
+PLC.STA_FRC := false;
+PLC.STA_SMLALL := false;
+PLC.STA_DISP := false;
+PLC.STA_FRC2 := false;
+PLC.STA_FRC1 := false;
+PLC.STA_FRC0 := false;
+PLC.STA_SML := false;
+
+PLC.ALM_ALM := 0;
+PLC.ALM_NWALM := 0;
+PLC.ALM_ALMNACK := 0;
+PLC.ALM_WRN := 0;
+PLC.ALM_NWWRN := 0;
+PLC.ALM_WRNNACK := 0;
+PLC.ALM_BAD := 0;
+PLC.ALM_NWBAD := 0;
+PLC.ALM_BADNACK := 0;
+PLC.ALM_EMCYSTP := 0;
+PLC.ALM_STP2RUN := 0;
+PLC.ALM_CON2ERR := 0;
+PLC.ALM_PLC2STOP := 0;
+PLC.ALM_DIOERR := 0;
+PLC.ALM_PLCERR := 0;
+PLC.ALM_CONHIERR := 0;
+
+(*запамятовування лічильників*)
+PLC.CNTALM_PERM := PLC.CNTALM;
+PLC.CNTWRN_PERM := PLC.CNTWRN;
+PLC.CNTBAD_PERM := PLC.CNTBAD;
+PLC.CNTFRC_PERM := PLC.CNTFRC;
+PLC.CNTMAN_PERM := PLC.CNTMAN;
+
+(*скидання лічильників*)
+PLC.CNTALM := 0;
+PLC.CNTWRN := 0;
+PLC.CNTBAD := 0;
+PLC.CNTFRC := 0;
+PLC.CNTMAN := 0;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<program>
-		<identProgram name="A_aivars" type="SR" task="MAST"></identProgram>
-		<STSource>AIVARFN(CHCFG := CHAI[VARS.T1_LT1.CHID], AIVARCFG := VARS.T1_LT1, AIVARHMI := AIH.T1_LT1, VARBUF := VARBUF, PLCCFG := PLC, CHAI := CHAI); (*приклад*)
-
-</STSource>
-	</program>
-	<DDTSource DDTName="AIH" version="0.03" dateTime="dt#2022-04-26-16:21:57">
-		<attribute name="TypeSignatureCheckSumString" value="91A7"></attribute>
-		<structure>
-			<variables name="T1_LT1" typeName="AIVAR_HMI">
-				<comment>рівень T1</comment>
-			</variables>
-		</structure>
-	</DDTSource>
 	<program>
 		<identProgram name="A_ndochs" type="SR" task="MAST"></identProgram>
 		<STSource>
@@ -7151,7 +6941,7 @@ END_IF;
 
 </STSource>
 	</program>
-	<FBSource nameOfFBType="DOVARFN" version="0.17" dateTime="dt#2022-07-16-10:23:03">
+	<FBSource nameOfFBType="DOVARFN" version="0.17" dateTime="dt#2022-07-26-10:44:23">
 		<attribute name="TypeCodeCheckSumString" value="351E"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="F214"></attribute>
 		<inOutParameters>
@@ -7585,7 +7375,7 @@ end_if;
 
 </STSource>
 	</program>
-	<FBSource nameOfFBType="AOVARFN" version="0.29" dateTime="dt#2022-07-16-10:23:00">
+	<FBSource nameOfFBType="AOVARFN" version="0.29" dateTime="dt#2022-07-26-10:44:22">
 		<attribute name="TypeCodeCheckSumString" value="6105"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="351C"></attribute>
 		<inOutParameters>
@@ -8112,228 +7902,247 @@ VARS.T1_VSLD_COPN.ID:=20001; VARS.T1_VSLD_COPN.CHID:=1; VARS.T1_VSLD_COPN.CHIDDF
 VARS.T1_VRHEA_CPOS.ID:=5001; VARS.T1_VRHEA_CPOS.CHID:=1; VARS.T1_VRHEA_CPOS.CHIDDF:=1;
 </STSource>
 	</program>
-	<FBSource nameOfFBType="PLCFN" version="0.19" dateTime="dt#2022-07-16-19:37:39">
-		<attribute name="TypeCodeCheckSumString" value="7E03"></attribute>
-		<attribute name="TypeSignatureCheckSumString" value="FA47"></attribute>
-		<inOutParameters>
-			<variables name="PLC" typeName="PLC_CFG">
+	<program>
+		<identProgram name="A_aivars" type="SR" task="MAST"></identProgram>
+		<STSource>AIVARFN(CHCFG := CHAI[VARS.T1_LT1.CHID], AIVARCFG := VARS.T1_LT1, AIVARHMI := AIH.T1_LT1, VARBUF := VARBUF, PLCCFG := PLC, CHAI := CHAI); (*приклад*)
+
+</STSource>
+	</program>
+	<DDTSource DDTName="AIH" version="0.03" dateTime="dt#2022-04-26-16:21:57">
+		<attribute name="TypeSignatureCheckSumString" value="91A7"></attribute>
+		<structure>
+			<variables name="T1_LT1" typeName="AIVAR_HMI">
+				<comment>рівень T1</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<program>
+		<identProgram name="A_aichs" type="SR" task="MAST"></identProgram>
+		<STSource>FOR i := 1 TO PLC.AICNT DO
+    (*на першому циклі ініціалізуємо змінні ID + CLSID*)
+    IF PLC.STA_SCN1 THEN
+        CHAI[i].ID := INT_TO_UINT(i);
+        IF CHAI[i].CLSID = 0 THEN CHAI[i].CLSID := 16#0030;END_IF;
+    END_IF;
+END_FOR;
+(*для кожного каналу виклик ФБ з вказівкою змінної каналу*)
+CHAIFN (RAWINT := %MW0(*%IW0.2.0*), CHCFG := CHAI[1], CHHMI := CHAI_HMI[1], PLCCFG := PLC, CHBUF := CH_BUF);
+</STSource>
+	</program>
+	<FBSource nameOfFBType="CHAIFN" version="0.11" dateTime="dt#2022-07-26-10:44:22">
+		<attribute name="TypeCodeCheckSumString" value="8E69"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="B99E"></attribute>
+		<inputParameters>
+			<variables name="RAWINT" typeName="INT">
 				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="CHCFG" typeName="CH_CFG">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="CHHMI" typeName="CH_HMI">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="CHBUF" typeName="CH_BUF">
+				<attribute name="PositionPin" value="5"></attribute>
 			</variables>
 		</inOutParameters>
 		<privateLocalVariables>
-			<variables name="TMBITS_PREV" typeName="INT"></variables>
-			<variables name="TMBITS_CUR" typeName="INT"></variables>
-			<variables name="i" typeName="INT"></variables>
-			<variables name="NOW" typeName="DT"></variables>
-			<variables name="TM200ms" typeName="TON"></variables>
-			<variables name="TM500ms" typeName="TON"></variables>
-			<variables name="Display_NTPC" typeName="Display_NTPC"></variables>
-			<variables name="Calc_NTPC" typeName="Calc_NTPC"></variables>
-			<variables name="STATUS" typeName="INT"></variables>
-			<variables name="ms_cur" typeName="UDINT"></variables>
-			<variables name="ms_prev" typeName="UDINT"></variables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="INBUF" typeName="BOOL"></variables>
+			<variables name="ULNK" typeName="BOOL"></variables>
+			<variables name="MERR" typeName="BOOL"></variables>
+			<variables name="BRK" typeName="BOOL"></variables>
+			<variables name="SHRT" typeName="BOOL"></variables>
+			<variables name="SML" typeName="BOOL"></variables>
+			<variables name="FRC" typeName="BOOL"></variables>
+			<variables name="BAD" typeName="BOOL"></variables>
+			<variables name="VRAW" typeName="BOOL"></variables>
+			<variables name="VAL" typeName="BOOL"></variables>
+			<variables name="PNG" typeName="BOOL"></variables>
+			<variables name="NBD" typeName="BOOL"></variables>
+			<variables name="CMDLOAD" typeName="BOOL"></variables>
+			<variables name="MIN" typeName="INT"></variables>
+			<variables name="MAX" typeName="INT"></variables>
+			<variables name="MIDLE" typeName="INT"></variables>
 		</privateLocalVariables>
-		<FBProgram name="PLC_FN">
-			<STSource>(*  PACFramework SEControlExpertLIB V1.0.0 *)
-IF PLC.STA_CMDACK THEN
-    PLC.CMD := 0;
+		<FBProgram name="CHAIFN">
+			<STSource>MIN:=0;
+MAX:=10000;
+MIDLE:=5000;
+
+
+
+CMD := CHCFG.CMD;
+(*розпаковка з STA*)
+VRAW := CHCFG.STA_VRAW;
+VAL := CHCFG.STA_VALB;
+BAD := CHCFG.STA_BAD;(*керується ззовні*)
+PNG := CHCFG.STA_PNG;
+ULNK := CHCFG.STA_ULNK;
+MERR := CHCFG.STA_MERR;(*керується ззовні*)
+BRK := CHCFG.STA_BRK;(*керується ззовні*)
+SHRT := CHCFG.STA_SHRT;(*керується ззовні*)
+NBD := CHCFG.STA_NBD;(*керується ззовні*)
+INBUF := CHCFG.STA_INBUF;
+FRC := CHCFG.STA_FRC;
+SML := CHCFG.STA_SML;
+CMDLOAD := CHCFG.STA_CMDLOAD; (*керується бітом*)
+
+INBUF := (CHCFG.ID = CHBUF.ID) AND (CHCFG.CLSID = CHBUF.CLSID);
+CMDLOAD := CHHMI.STA.15;
+CMD := 0;
+
+(* обробник команд*)
+(* широкомовне форсування/дефорсування*) 
+IF PLCCFG.CMD=16#4301 THEN
+    FRC := true; (*форсувати один/усі об'єкти типу*)
 END_IF;
-PLC.STA_CMDACK := (PLC.CMD &lt;&gt; 0 AND NOT PLC.STA_CMDACK);
-PLC.STA_SCN1 := %S21;
-IF PLC.STA_SCN1 THEN (*при першому скані*)
-    PLC.ID := 1;             (*Ідентифікатор завжди 1*)
-    PLC.CLSID := 16#2100;    (*Клас завжди 16#2100*)
-    PLC.TQ := 0;
-    TMBITS_CUR := 0;
-    TMBITS_PREV := 0;
-    PLC.TQMS := 0;
+IF PLCCFG.CMD=16#4302 THEN
+    FRC := false; (*дефорсувати об'єкт типу*)
+END_IF;
+(*вибір джерела команди згідно пріоритету*)
+IF CMDLOAD THEN (*з HMI CMDLOAD*)
+    CMD := 16#0100;  (*// записати в буфер*)
+ELSIF INBUF AND CHBUF.CMD &lt;&gt; 0 THEN (*з буферу*)
+    CMD := CHBUF.CMD;
+ELSIF CHCFG.CMD&lt;&gt;0 THEN
+    CMD := CHCFG.CMD;
 END_IF;
 
-(*16#301 - включити режим деблокування усіх ВМ; 
-16#302 - відключити режим деблокування усіх ВМ;  
-16#300 - перемкнути режим деблокування усіх ВМ;*)
-CASE PLC.CMD OF
-    16#300:(*768*)
-        PLC.STA_DBLCKALL := NOT PLC.STA_DBLCKALL;
-    16#301:(*769*)
-        PLC.STA_DBLCKALL := true;
-    16#302:(*770*)
-        PLC.STA_DBLCKALL := false;
-    ELSE  
-        ;
+(*commands*)
+CASE CMD OF
+    16#1: (*записати MAX*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL := MAX;
+        END_IF;
+    16#2: (*записати MIN*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL:=MIN;
+        END_IF;
+    16#3: (*TOGGLE*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL := MIDLE;
+        END_IF;
+    16#0100: (*прочитати конфігурацію в буфер*)
+        CHBUF.ID:= CHCFG.ID;
+        CHBUF.CLSID:=CHCFG.CLSID;
+        
+        CHBUF.STA.0 := CHCFG.STA_VRAW;
+        CHBUF.STA.1 := CHCFG.STA_VALB;
+        CHBUF.STA.2 := CHCFG.STA_BAD;
+        CHBUF.STA.3 := CHCFG.STA_b3;
+        CHBUF.STA.4 := CHCFG.STA_PNG;
+        CHBUF.STA.5 := CHCFG.STA_ULNK;
+        CHBUF.STA.6 := CHCFG.STA_MERR;
+        CHBUF.STA.7 := CHCFG.STA_BRK;
+        CHBUF.STA.8 := CHCFG.STA_SHRT;
+        CHBUF.STA.9 := CHCFG.STA_NBD;
+        CHBUF.STA.10 := CHCFG.STA_b10;
+        CHBUF.STA.11 := CHCFG.STA_INIOTBUF;
+        CHBUF.STA.12 := CHCFG.STA_INBUF;
+        CHBUF.STA.13 := CHCFG.STA_FRC;
+        CHBUF.STA.14 := CHCFG.STA_SML;
+        CHBUF.STA.15 := CHCFG.STA_CMDLOAD;
+        
+        CHBUF.VAL:=CHCFG.VAL;
+        CHBUF.VARID:=CHCFG.VARID;
+    16#0300: (*перемкнути форсування*)
+        FRC := NOT FRC;
+    16#301: (*форсувати один/усі об'єкти типу*)
+        FRC := true;
+    16#302: (*дефорсувати один/усі об'єкти типу*)
+        FRC := false;
 END_CASE;
 
-PLC.STA_PERM.0 := PLC.STA_CON2ERR;
-PLC.STA_PERM.1 := PLC.STA_PLC2STOP;
-PLC.STA_PERM.2 := PLC.STA_BLK;
-PLC.STA_PERM.3 := PLC.STA_ALDIS;
-PLC.STA_PERM.4 := PLC.STA_DIOON;
-PLC.STA_PERM.5 := PLC.STA_DIOERR;
-PLC.STA_PERM.6 := PLC.STA_DBLCKALL;
-PLC.STA_PERM.7 := PLC.STA_FRC0 OR PLC.STA_FRC1 OR PLC.STA_FRC2;
-PLC.STA_PERM.8 := PLC.STA_SMLALL;
-PLC.STA_PERM.9 := PLC.STA_DISP;
-PLC.STA_PERM.10 := PLC.STA_FRC2;
-PLC.STA_PERM.11 := PLC.STA_FRC1;
-PLC.STA_PERM.12 := PLC.STA_SCN1;
-PLC.STA_PERM.13 := PLC.STA_FRC0;
-PLC.STA_PERM.14 := PLC.STA_SML;
-PLC.STA_PERM.15 := PLC.STA_CMDACK;
+(*запис значення змінної*)
+IF FRC AND INBUF THEN (*режим форсування з занятим буфером*)
+    CHCFG.VAL := CHBUF.VAL;
+ELSIF FRC AND NOT INBUF THEN (*режим форсування без занятого буферу*)
+    ;(*без змін*)
+ELSIF NOT FRC THEN (*не режим форсування*)
+    CHCFG.VAL  := RAWINT;
+END_IF;
 
-PLC.ALM1_PERM.0 := PLC.ALM_ALM;
-PLC.ALM1_PERM.1 := PLC.ALM_NWALM;
-PLC.ALM1_PERM.2 := PLC.ALM_ALMNACK;
-PLC.ALM1_PERM.3 := PLC.ALM_WRN;
-PLC.ALM1_PERM.4 := PLC.ALM_NWWRN;
-PLC.ALM1_PERM.5 := PLC.ALM_WRNNACK;
-PLC.ALM1_PERM.6 := PLC.ALM_BAD;
-PLC.ALM1_PERM.7 := PLC.ALM_NWBAD;
-PLC.ALM1_PERM.8 := PLC.ALM_BADNACK;
-PLC.ALM1_PERM.9 := PLC.ALM_EMCYSTP;
-PLC.ALM1_PERM.10 := PLC.ALM_STP2RUN;
-PLC.ALM1_PERM.11 := PLC.ALM_CON2ERR;
-PLC.ALM1_PERM.12 := PLC.ALM_PLC2STOP;
-PLC.ALM1_PERM.13 := PLC.ALM_DIOERR;
-PLC.ALM1_PERM.14 := PLC.ALM_PLCERR;
-PLC.ALM1_PERM.15 := PLC.ALM_CONHIERR;
+(*ping-pong*)
+ULNK := PNG; (*прийшов ping - є звязок з верхнім рівнем*)
+PNG := false; (*скидання біту PNG звязку з врехнім рівнем PONG*)
+IF NOT ULNK THEN
+    CHCFG.VARID := 0;
+END_IF;
+
+(*скидання оброблених команд*)
+CMDLOAD := 0;
+CMD := 0;
+
+(*загальносистемні біти та лічильники*)
+IF FRC THEN
+    PLCCFG.STA_FRC0 := true;
+    PLCCFG.CNTFRC := PLCCFG.CNTFRC + 1;
+END_IF;
+
+BAD:= BRK OR SHRT;
+
+(*упковка в STA*)
+CHCFG.STA_VRAW := RAWINT&gt;0;
+CHCFG.STA_VALB:=CHCFG.VAL&gt;0;
+CHCFG.STA_BAD:=BAD;(*керується ззовні*)
+CHCFG.STA_PNG:=PNG;
+CHCFG.STA_ULNK:=ULNK;
+CHCFG.STA_MERR:=MERR;(*керується ззовні*)
+CHCFG.STA_BRK:=BRK;(*керується ззовні*)
+CHCFG.STA_SHRT:=SHRT;(*керується ззовні*)
+CHCFG.STA_NBD:=NBD;(*керується ззовні*)
+CHCFG.STA_INBUF := INBUF;
+CHCFG.STA_FRC := FRC;
+CHCFG.STA_SML := SML;
+CHCFG.STA_CMDLOAD := CMDLOAD; (*керується бітом*)
 
 
-(*--------------------------------- таймерні біти та лічильники*)
-TM200ms (); TM500ms ();
-(*плинні значення*)
-TMBITS_CUR.0:=%S5; 
-TMBITS_CUR.1:=TM200ms.q;
-TMBITS_CUR.2:=TM500ms.q;
-TMBITS_CUR.3:=%S6;(*sec*)
-TMBITS_CUR.7:=%S7;(*min*)
+CHCFG.CMD := CMD;
 
-(*відловлювання імпульсів необхідних часових періодів*)
-PLC.PLS_P100MS := TMBITS_CUR.0 AND NOT TMBITS_PREV.0; (*100 мс *)
-PLC.PLS_P200MS := TMBITS_CUR.1 AND NOT TMBITS_PREV.1; (*200 мс*)
-PLC.PLS_P500MS := TMBITS_CUR.2 AND NOT TMBITS_PREV.2; (*500 мс*)
-PLC.PLS_P1S := TMBITS_CUR.3 AND NOT TMBITS_PREV.3; (*1 с*)
-PLC.PLS_P60S := TMBITS_CUR.7 AND NOT TMBITS_PREV.7; (*1 хв*)
-(*підрахунок кількості секунд і хвилин*)
-IF PLC.PLS_P1S THEN PLC.TQ := PLC.TQ + 1; END_IF;  (*загальний час з початку 1-го циклу контролера (в секундах)*)
-IF PLC.TQ &gt; 16#7FFF_FFFF THEN PLC.TQ := 16#7FFF_FFFF; END_IF;
-IF PLC.PLS_P60S AND NOT PLC.STA_SCN1 THEN PLC.TQM := PLC.TQM + 1; END_IF; (*загальний час роботи ПЛК з моменту пуску (в хвилинах)*)
-IF PLC.TQM &gt; 16#7FFF_FFFF THEN PLC.TQM := 16#7FFF_FFFF; END_IF;
+CHHMI.STA := CHCFG.STA;
+CHHMI.VAL := CHCFG.VAL;
 
-(*розрахунок інших часових періодів*)
-PLC.PLS_P2S := (PLC.TQ MOD 2) = 0 AND PLC.PLS_P1S;(*2 с*)
-PLC.PLS_P5S := (PLC.TQ MOD 5) = 0 AND PLC.PLS_P1S;(*5 с*)
-PLC.PLS_P10S := (PLC.TQ MOD 10) = 0 AND PLC.PLS_P1S;(*10 с*)
-
-(* меандри *)
-IF TM500ms.Q THEN PLC.PLS_M1S:= not PLC.PLS_M1S; END_IF;  (*меандр з періодом 1 с (0.5 с + 0.5 с)*)
-PLC.PLS_M2S:=%S6;(*меандр з періодом 2 с (1 с + 1 с) *)
-
-(* астрономічний час *)
-RRTC_DT (OUT =&gt; NOW); (*в DT форматі*)
-PLC.NOW := DT_TO_ARINT(NOW); (*у вигляді масиву*)
-
-(* початок години *)
-PLC.PLS_NEWHR:= (PLC.NOW[1] AND 16#00FF)=0 (*хвилини*) AND PLC.PLS_P60S (*один раз за хвилину*);
-
-(* початок доби*)
-PLC.PLS_NEWDAY:= PLC.NOW[1]=0 (*години_хвилини*) AND PLC.PLS_P60S (*один раз за хвилину*);
-
-(*початок зміни*)
-IF PLC.SHIFTPARA[0]&lt;1 OR PLC.SHIFTPARA[0]&gt;3 then PLC.SHIFTPARA[0]:=2;END_IF;(*коректність кількості змін*)
-PLC.PLS_NEWSHIFT:=FALSE; (*скидуємо біт початку зміни*)   
-FOR i:=1 to PLC.SHIFTPARA[0] DO
-  (*хоча б одна з устоавок змін спрацювала*)
-   PLC.PLS_NEWSHIFT := PLC.PLS_NEWSHIFT OR (PLC.SHIFTPARA[i]=PLC.NOW[1] (*години хвилин*) AND PLC.PLS_P60S (*один раз за хвилину*));  
-END_FOR;
-
-(*таймери для тих уставок, на які немає системних меандрів
-два рази викликаються для точності
-*)
-TM200ms (not TMBITS_CUR.1, t#200ms);
-TM500ms (not TMBITS_CUR.2, t#500ms);
-
-TMBITS_PREV := TMBITS_CUR;(*збереження попередніх значень*)
-
-(*----------- визначеня зміни*)
-IF PLC.SHIFTPARA[0] &gt; 3 OR PLC.SHIFTPARA[0] &lt; 2 THEN
-    PLC.SHIFTPARA[0] := 3;
-END_IF;(*якщо кількість змін &gt;3 або &lt;1 - робимо 3*)
-IF PLC.NOW[1] &gt;= PLC.SHIFTPARA[1] AND (PLC.NOW[1] &lt; PLC.SHIFTPARA[2] OR PLC.SHIFTPARA[2] = 16#0000) THEN (*1-ша зміна*)
-    PLC.SHIFTNMB := 1;
-ELSE (*2-га або 3-тя*)
-    IF PLC.SHIFTPARA[0] = 2 THEN (*якщо в 2 зміни*)
-        PLC.SHIFTNMB := 2;
-    ELSE (*якщо 3 зміни*)
-        IF PLC.NOW[1] &gt;= PLC.SHIFTPARA[2] AND (PLC.NOW[1] &lt; PLC.SHIFTPARA[3] OR PLC.SHIFTPARA[3] = 16#0000) THEN
-            PLC.SHIFTNMB := 2;
-        ELSE
-            PLC.SHIFTNMB := 3;
-        END_IF;
+(*оновлення буферу*)
+IF INBUF THEN
+    CHBUF.STA:= CHCFG.STA;
+    CHBUF.VARID := CHCFG.VARID;
+    CHBUF.CMD := 0;
+    IF NOT FRC THEN
+        CHBUF.VAL := CHCFG.VAL;
     END_IF;
 END_IF;
-(*----------- *)
-
-RRTC_DT_MS (OUT1 =&gt; Display_NTPC,
-            OUT2 =&gt; Calc_NTPC,
-            STATUS =&gt; STATUS);
-ms_cur:=Calc_NTPC.Seconds*1000+int_to_udint(Calc_NTPC.fraction_Second);
-PLC.NOWns := int_to_udint(Display_NTPC.Millisecond)*1000;
-(*цикли*)
-(*PLC.TSK_LTIME :=int_to_uint(%sw30);*)
-PLC.TSK_LTIME :=udint_to_uint(ms_cur - ms_prev);
-PLC.TSK_MAXTIME :=int_to_uint(%sw31);
-PLC.TQMS := PLC.TQMS + UINT_TO_UDINT(PLC.TSK_LTIME);(*//лічильник в мс*)
-ms_prev:=ms_cur;
-
-(*скидання статусів і тривог*)
-PLC.STA_BLK := false;
-PLC.STA_ALDIS := false;
-PLC.STA_FRC := false;
-PLC.STA_SMLALL := false;
-PLC.STA_DISP := false;
-PLC.STA_FRC2 := false;
-PLC.STA_FRC1 := false;
-PLC.STA_FRC0 := false;
-PLC.STA_SML := false;
-
-PLC.ALM_ALM := 0;
-PLC.ALM_NWALM := 0;
-PLC.ALM_ALMNACK := 0;
-PLC.ALM_WRN := 0;
-PLC.ALM_NWWRN := 0;
-PLC.ALM_WRNNACK := 0;
-PLC.ALM_BAD := 0;
-PLC.ALM_NWBAD := 0;
-PLC.ALM_BADNACK := 0;
-PLC.ALM_EMCYSTP := 0;
-PLC.ALM_STP2RUN := 0;
-PLC.ALM_CON2ERR := 0;
-PLC.ALM_PLC2STOP := 0;
-PLC.ALM_DIOERR := 0;
-PLC.ALM_PLCERR := 0;
-PLC.ALM_CONHIERR := 0;
-
-(*запамятовування лічильників*)
-PLC.CNTALM_PERM := PLC.CNTALM;
-PLC.CNTWRN_PERM := PLC.CNTWRN;
-PLC.CNTBAD_PERM := PLC.CNTBAD;
-PLC.CNTFRC_PERM := PLC.CNTFRC;
-PLC.CNTMAN_PERM := PLC.CNTMAN;
-
-(*скидання лічильників*)
-PLC.CNTALM := 0;
-PLC.CNTWRN := 0;
-PLC.CNTBAD := 0;
-PLC.CNTFRC := 0;
-PLC.CNTMAN := 0;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<program>
-		<identProgram name="A_naichs" type="SR" task="MAST"></identProgram>
-		<STSource>
-		</STSource>
-	</program>
+	<DDTSource DDTName="CH_BUF" version="0.01" dateTime="dt#2022-01-04-12:22:37">
+		<attribute name="TypeSignatureCheckSumString" value="FD87"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>Унікальний ідентифікатор</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>ідентифікатор класу</comment>
+			</variables>
+			<variables name="STA" typeName="INT">
+				<comment>біти статусу</comment>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>командне слово</comment>
+			</variables>
+			<variables name="VAL" typeName="INT">
+				<comment>значення змінної</comment>
+			</variables>
+			<variables name="VARID" typeName="UINT">
+				<comment>ID привязаної змінної</comment>
+			</variables>
+		</structure>
+	</DDTSource>
 	<program>
 		<identProgram name="A_dichs" type="SR" task="MAST"></identProgram>
 		<STSource>FOR i := 1 TO PLC.DICNT DO
@@ -8347,7 +8156,7 @@ END_FOR;
 CHDIFN (RAW := %M0(*%i0.1.0*),  CHCFG := CHDI[1],  CHHMI := CHDI_HMI[1],  PLCCFG := PLC, CHBUF := CH_BUF);
 </STSource>
 	</program>
-	<FBSource nameOfFBType="CHDIFN" version="0.07" dateTime="dt#2022-07-16-10:19:15">
+	<FBSource nameOfFBType="CHDIFN" version="0.07" dateTime="dt#2022-07-26-10:44:23">
 		<attribute name="TypeCodeCheckSumString" value="C9FC"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="0BB1"></attribute>
 		<inputParameters>
@@ -8540,6 +8349,212 @@ END_IF;
 		</FBProgram>
 	</FBSource>
 	<program>
+		<identProgram name="A_dochs" type="SR" task="MAST"></identProgram>
+		<STSource>FOR i := 1 TO PLC.DOCNT DO
+    (*на першому циклі ініціалізуємо змінні ID + CLSID*)
+    IF PLC.STA_SCN1 THEN
+        CHDO[i].ID := INT_TO_UINT(i);
+        IF CHDO[i].CLSID = 0 THEN CHDO[i].CLSID := 16#0020;END_IF;
+    END_IF;
+END_FOR;
+(*для кожного каналу виклик ФБ з вказівкою змінної каналу*)
+CHDOFN (CHCFG := CHDO[1],  CHHMI := CHDO_HMI[1],  PLCCFG := PLC, CHBUF := CH_BUF, RAW =&gt; %M1(*%Q0.1.16*));
+</STSource>
+	</program>
+	<FBSource nameOfFBType="CHDOFN" version="0.06" dateTime="dt#2022-07-26-10:44:23">
+		<attribute name="TypeCodeCheckSumString" value="3E55"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="B92F"></attribute>
+		<inOutParameters>
+			<variables name="CHCFG" typeName="CH_CFG">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="CHHMI" typeName="CH_HMI">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="CHBUF" typeName="CH_BUF">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+		</inOutParameters>
+		<outputParameters>
+			<variables name="RAW" typeName="BOOL">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</outputParameters>
+		<privateLocalVariables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="INBUF" typeName="BOOL"></variables>
+			<variables name="ULNK" typeName="BOOL"></variables>
+			<variables name="MERR" typeName="BOOL"></variables>
+			<variables name="BRK" typeName="BOOL"></variables>
+			<variables name="SHRT" typeName="BOOL"></variables>
+			<variables name="SML" typeName="BOOL"></variables>
+			<variables name="FRC" typeName="BOOL"></variables>
+			<variables name="BAD" typeName="BOOL"></variables>
+			<variables name="VRAW" typeName="BOOL"></variables>
+			<variables name="VAL" typeName="BOOL"></variables>
+			<variables name="PNG" typeName="BOOL"></variables>
+			<variables name="NBD" typeName="BOOL"></variables>
+			<variables name="CMDLOAD" typeName="BOOL"></variables>
+		</privateLocalVariables>
+		<FBProgram name="CHDOFN">
+			<STSource>
+CMD := CHCFG.CMD;
+(*розпаковка з STA*)
+VRAW := CHCFG.STA_VRAW;
+VAL := CHCFG.STA_VALB;
+BAD := CHCFG.STA_BAD;(*керується ззовні*)
+PNG := CHCFG.STA_PNG;
+ULNK := CHCFG.STA_ULNK;
+MERR := CHCFG.STA_MERR;(*керується ззовні*)
+BRK := CHCFG.STA_BRK;(*керується ззовні*)
+SHRT := CHCFG.STA_SHRT;(*керується ззовні*)
+NBD := CHCFG.STA_NBD;(*керується ззовні*)
+INBUF := CHCFG.STA_INBUF;
+FRC := CHCFG.STA_FRC;
+SML := CHCFG.STA_SML;
+CMDLOAD := CHCFG.STA_CMDLOAD; (*керується бітом*)
+
+INBUF := (CHCFG.ID = CHBUF.ID) AND (CHCFG.CLSID = CHBUF.CLSID);
+CMDLOAD := CHHMI.STA.15;
+CMD := 0;
+
+
+(* обробник команд*)
+(* широкомовне форсування/дефорсування*) 
+IF PLCCFG.CMD=16#4301 THEN
+    FRC := true; (*форсувати один/усі об'єкти типу*)
+END_IF;
+IF PLCCFG.CMD=16#4302 THEN
+    FRC := false; (*дефорсувати об'єкт типу*)
+END_IF;
+(*вибір джерела команди згідно пріоритету*)
+IF CMDLOAD THEN (*з HMI CMDLOAD*)
+    CMD := 16#0100;  (*// записати в буфер*)
+ELSIF INBUF AND CHBUF.CMD &lt;&gt; 0 THEN (*з буферу*)
+    CMD := CHBUF.CMD;
+ELSIF CHCFG.CMD&lt;&gt;0 THEN
+    CMD := CHCFG.CMD;
+END_IF;
+(*commands*)
+CASE CMD OF
+    16#1: (*записати 1*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL := 1;
+        END_IF;
+    16#2: (*записати 0*)
+        IF FRC AND INBUF THEN
+            CHBUF.VAL:=0;
+        END_IF;
+    16#3: (*TOGGLE*)
+        IF FRC AND INBUF THEN
+            IF VRAW THEN
+                CHBUF.VAL:=0;
+            ELSE
+                CHBUF.VAL:=1;
+            END_IF;
+        END_IF;
+    16#0100: (*прочитати конфігурацію в буфер*)
+        CHBUF.ID:= CHCFG.ID;
+        CHBUF.CLSID:=CHCFG.CLSID;
+        
+        CHBUF.STA.0 := CHCFG.STA_VRAW;
+        CHBUF.STA.1 := CHCFG.STA_VALB;
+        CHBUF.STA.2 := CHCFG.STA_BAD;
+        CHBUF.STA.3 := CHCFG.STA_b3;
+        CHBUF.STA.4 := CHCFG.STA_PNG;
+        CHBUF.STA.5 := CHCFG.STA_ULNK;
+        CHBUF.STA.6 := CHCFG.STA_MERR;
+        CHBUF.STA.7 := CHCFG.STA_BRK;
+        CHBUF.STA.8 := CHCFG.STA_SHRT;
+        CHBUF.STA.9 := CHCFG.STA_NBD;
+        CHBUF.STA.10 := CHCFG.STA_b10;
+        CHBUF.STA.11 := CHCFG.STA_INIOTBUF;
+        CHBUF.STA.12 := CHCFG.STA_INBUF;
+        CHBUF.STA.13 := CHCFG.STA_FRC;
+        CHBUF.STA.14 := CHCFG.STA_SML;
+        CHBUF.STA.15 := CHCFG.STA_CMDLOAD;
+        
+        CHBUF.VAL:=CHCFG.VAL;
+        CHBUF.VARID:=CHCFG.VARID;
+    16#0300: (*перемкнути форсування*)
+        FRC := NOT FRC;
+    16#0301: (*форсувати один/усі об'єкти типу*)
+        FRC := true;
+    16#0302: (*дефорсувати один/усі об'єкти типу*)
+        FRC := false;
+END_CASE;
+
+(*запис значення змінної*)
+IF FRC AND INBUF THEN (*режим форсування з занятим буфером*)
+    CHCFG.VAL := BOOL_TO_INT (CHBUF.VAL&gt;0);
+    VRAW := INT_TO_REAL(CHCFG.VAL) &gt; 0.5;
+ELSIF FRC AND NOT INBUF THEN (*режим форсування без занятого буферу*)
+    ;(*без змін*)
+ELSIF NOT FRC THEN (*не режим форсування*)
+    VRAW := VAL;
+    IF VAL THEN
+        CHCFG.VAL := 1;
+    ELSE
+        CHCFG.VAL := 0;
+    END_IF;
+END_IF;
+RAW := VRAW; (*відправляємо на вихід*)
+
+(*ping-pong*)
+ULNK := PNG; (*прийшов ping - є звязок з верхнім рівнем*)
+PNG := false; (*скидання біту PNG звязку з врехнім рівнем PONG*)
+IF NOT ULNK THEN
+    CHCFG.VARID := 0;
+END_IF;
+
+(*скидання оброблених команд*)
+CMDLOAD := 0;
+CMD := 0;
+
+
+(*загальносистемні біти та лічильники*)
+IF FRC THEN
+    PLCCFG.STA_FRC0 := true;
+    PLCCFG.CNTFRC := PLCCFG.CNTFRC + 1;
+END_IF;
+
+(*упковка в STA*)
+CHCFG.STA_VRAW := VRAW;
+CHCFG.STA_VALB := VAL;
+CHCFG.STA_BAD:=BAD;(*керується ззовні*)
+CHCFG.STA_PNG:=PNG;
+CHCFG.STA_ULNK:=ULNK;
+CHCFG.STA_MERR:=MERR;(*керується ззовні*)
+CHCFG.STA_BRK:=BRK;(*керується ззовні*)
+CHCFG.STA_SHRT:=SHRT;(*керується ззовні*)
+CHCFG.STA_NBD:=NBD;(*керується ззовні*)
+CHCFG.STA_INBUF := INBUF;
+CHCFG.STA_FRC := FRC;
+CHCFG.STA_SML := SML;
+CHCFG.STA_CMDLOAD := CMDLOAD; (*керується бітом*)
+
+
+CHCFG.CMD := CMD;
+
+CHHMI.STA := CHCFG.STA;
+CHHMI.VAL := CHCFG.VAL;
+
+(*оновлення буферу*)
+IF INBUF THEN
+    CHBUF.STA:= CHCFG.STA;
+    CHBUF.VARID := CHCFG.VARID;
+    CHBUF.CMD := 0;
+    IF NOT FRC THEN
+        CHBUF.VAL := CHCFG.VAL;
+    END_IF;
+END_IF;
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<program>
 		<identProgram name="A_aochs" type="SR" task="MAST"></identProgram>
 		<STSource>FOR i := 1 TO PLC.AOCNT DO
     (*на першому циклі ініціалізуємо змінні ID + CLSID*)
@@ -8552,7 +8567,7 @@ END_FOR;
 CHAOFN (CHCFG := CHAO[1], CHHMI := CHAO_HMI[1], PLCCFG := PLC, CHBUF := CH_BUF, RAWINT =&gt; %MW0(*%QW0.2.4*));
 </STSource>
 	</program>
-	<FBSource nameOfFBType="CHAOFN" version="0.07" dateTime="dt#2022-07-16-10:19:15">
+	<FBSource nameOfFBType="CHAOFN" version="0.07" dateTime="dt#2022-07-26-10:44:23">
 		<attribute name="TypeCodeCheckSumString" value="D7B2"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="CE5F"></attribute>
 		<inOutParameters>
