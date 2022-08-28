@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DDTExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-26-14:59:44" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<DDTSource DDTName="DOH" version="0.01" dateTime="dt#2022-04-28-15:20:11">
+		<attribute name="TypeSignatureCheckSumString" value="0412"></attribute>
+		<structure>
+			<variables name="REZDO1" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="T1_VSLD_COPN" typeName="DOVAR_HMI">
+				<comment>клапан набору Т1 відкрити/закрити</comment>
+			</variables>
+			<variables name="T1_VSUNL_COPN" typeName="DOVAR_HMI">
+				<comment>клапан зливу Т1 відкрити/закрити</comment>
+			</variables>
+			<variables name="T2_VSLD_COPN" typeName="DOVAR_HMI">
+				<comment>клапан набору Т2 відкрити/закрити</comment>
+			</variables>
+			<variables name="T2_VSUNL_COPN" typeName="DOVAR_HMI">
+				<comment>клапан зливу T2 відкрити/закрити</comment>
+			</variables>
+			<variables name="D1_VSLD_COPN" typeName="DOVAR_HMI">
+				<comment>клапан набору D1 відкрити/закрити</comment>
+			</variables>
+			<variables name="D2_VSLD_COPN" typeName="DOVAR_HMI">
+				<comment>клапан набору D2 відкрити/закрити</comment>
+			</variables>
+			<variables name="D1_VSUNL_COPN" typeName="DOVAR_HMI">
+				<comment>клапан зливу D1 відкрити/закрити</comment>
+			</variables>
+			<variables name="D2_VSUNL_COPN" typeName="DOVAR_HMI">
+				<comment>клапан зливу D2 відкрити/закрити</comment>
+			</variables>
+			<variables name="P1_VST1T2_COPN" typeName="DOVAR_HMI">
+				<comment>3-ходовий клапан (0 - на T1, 1 - на T2)</comment>
+			</variables>
+			<variables name="T1_GSMIX_CSTRT" typeName="DOVAR_HMI">
+				<comment>Пускач двигуна мішалки Т1</comment>
+			</variables>
+			<variables name="T2_GSMIX_CSTRT" typeName="DOVAR_HMI">
+				<comment>Пускач двигуна мішалки Т2</comment>
+			</variables>
+			<variables name="REZDO2" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO3" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO4" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO5" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO6" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO7" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO8" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO9" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO10" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO11" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO12" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO13" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO14" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO15" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO16" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO17" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO18" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO19" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO20" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDO21" typeName="DOVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DOVAR_HMI" version="0.01" dateTime="dt#2022-01-06-17:24:59">
+		<attribute name="TypeSignatureCheckSumString" value="7BFE"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT">
+				<comment>статус</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+</DDTExchangeFile>

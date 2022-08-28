@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DDTExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-26-14:59:31" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<DDTSource DDTName="AOH" version="0.01" dateTime="dt#2022-04-28-15:20:11">
+		<attribute name="TypeSignatureCheckSumString" value="C719"></attribute>
+		<structure>
+			<variables name="T1_VRHEA_CPOS" typeName="AOVAR_HMI">
+				<comment>клапан нагрівання T1</comment>
+			</variables>
+			<variables name="T2_VRHEA_CPOS" typeName="AOVAR_HMI">
+				<comment>клапан нагрівання T2</comment>
+			</variables>
+			<variables name="T1_SCMIX_CSPD" typeName="AOVAR_HMI">
+				<comment>задана швидкість перемішування Т1</comment>
+			</variables>
+			<variables name="T2_SCMIX_CSPD" typeName="AOVAR_HMI">
+				<comment>задана швидкість перемішування Т2</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="AOVAR_HMI" version="0.01" dateTime="dt#2022-01-06-17:23:18">
+		<attribute name="TypeSignatureCheckSumString" value="92BD"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT">
+				<comment>біти стану</comment>
+			</variables>
+			<variables name="VALPROC" typeName="INT">
+				<comment>значення у % від шкали вимірювання (0-10000)</comment>
+			</variables>
+			<variables name="VAL" typeName="REAL">
+				<comment>масштабоване значення</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+</DDTExchangeFile>

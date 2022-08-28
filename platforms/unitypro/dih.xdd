@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<DDTExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-26-14:59:37" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<DDTSource DDTName="DIH" version="0.01" dateTime="dt#2022-04-28-15:20:11">
+		<attribute name="TypeSignatureCheckSumString" value="811E"></attribute>
+		<structure>
+			<variables name="T1_VSLD_SOPN" typeName="DIVAR_HMI">
+				<comment>клапан набору Т1 відкритий</comment>
+			</variables>
+			<variables name="T2_VSLD_SOPN" typeName="DIVAR_HMI">
+				<comment>клапан набору Т2 відкритий</comment>
+			</variables>
+			<variables name="REZDI1" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI2" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="T1_VSLD_SCLS" typeName="DIVAR_HMI">
+				<comment>клапан набору Т1 закритий</comment>
+			</variables>
+			<variables name="T2_VSLD_SCLS" typeName="DIVAR_HMI">
+				<comment>клапан набору Т2 закритий</comment>
+			</variables>
+			<variables name="T1_VSUNL_SCLS" typeName="DIVAR_HMI">
+				<comment>клапан зливу Т1 закритий</comment>
+			</variables>
+			<variables name="T2_VSUNL_SCLS" typeName="DIVAR_HMI">
+				<comment>клапан зливу T2 закритий</comment>
+			</variables>
+			<variables name="D1_VSLD_SCLS" typeName="DIVAR_HMI">
+				<comment>клапан набору D1 закритий</comment>
+			</variables>
+			<variables name="D2_VSLD_SCLS" typeName="DIVAR_HMI">
+				<comment>клапан набору D2 закритий</comment>
+			</variables>
+			<variables name="D1_VSUNL_SCLS" typeName="DIVAR_HMI">
+				<comment>клапан зливу D1 закритий</comment>
+			</variables>
+			<variables name="D2_VSUNL_SCLS" typeName="DIVAR_HMI">
+				<comment>клапан зливу D2 закритий</comment>
+			</variables>
+			<variables name="D1_LSH" typeName="DIVAR_HMI">
+				<comment>сигналізатор верхнього рівня D1</comment>
+			</variables>
+			<variables name="D1_LSL" typeName="DIVAR_HMI">
+				<comment>сигналізатор нижнього рівня D1</comment>
+			</variables>
+			<variables name="D2_LSH" typeName="DIVAR_HMI">
+				<comment>сигналізатор верхнього рівня D2</comment>
+			</variables>
+			<variables name="D2_LSL" typeName="DIVAR_HMI">
+				<comment>сигналізатор нижнього рівня D2</comment>
+			</variables>
+			<variables name="P1_VST1T2_SCLS" typeName="DIVAR_HMI">
+				<comment>3-ходовий клапан в позиції T1</comment>
+			</variables>
+			<variables name="P1_VST1T2_SOPN" typeName="DIVAR_HMI">
+				<comment>3-ходовий клапан в позиції T2 </comment>
+			</variables>
+			<variables name="T2_GSMIX_RUN" typeName="DIVAR_HMI">
+				<comment>Контакт пускача двигуна мішалки Т2</comment>
+			</variables>
+			<variables name="T1_GSMIX_RUN" typeName="DIVAR_HMI">
+				<comment>Контакт пускача двигуна мішалки Т1</comment>
+			</variables>
+			<variables name="REZDI3" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI4" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI5" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI6" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI7" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI8" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI9" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI10" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI11" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI12" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI13" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+			<variables name="REZDI14" typeName="DIVAR_HMI">
+				<comment>rez</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="DIVAR_HMI" version="0.01" dateTime="dt#2022-01-06-17:23:59">
+		<attribute name="TypeSignatureCheckSumString" value="7BFE"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT">
+				<comment>статус</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+</DDTExchangeFile>
