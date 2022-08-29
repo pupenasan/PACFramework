@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <STExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-7-26-13:37:36" content="Structured source file" DTDVersion="41"></fileHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-29-12:5:21" content="Structured source file" DTDVersion="41"></fileHeader>
 	<contentHeader name="Project" version="0.0.20" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
 	<program>
 		<identProgram name="mainPFW" type="section" task="MAST"></identProgram>
@@ -5564,8 +5564,8 @@ VLVAHMI.POS := REAL_TO_INT(VLVACFG.POS)*100;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="DRVFN" version="0.50" dateTime="dt#2022-07-26-10:44:23">
-		<attribute name="TypeCodeCheckSumString" value="E91F"></attribute>
+	<FBSource nameOfFBType="DRVFN" version="0.52" dateTime="dt#2022-08-29-11:56:40">
+		<attribute name="TypeCodeCheckSumString" value="DFB3"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="D19E"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="DRV_CFG">
@@ -5906,38 +5906,43 @@ END_IF;
 (*------------------- зведення ксатомних тривог, режимів, бітів*)
 IF ALMs.ALM_ALMSTRT THEN
     PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1;
     IF NOT ACTCFGu.ALM.ALM_ALMSTRT THEN
         PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
 
 IF ALMS.ALM_ALMSTP THEN
     PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1;
     IF NOT ACTCFGu.ALM.ALM_ALMSTP THEN
         PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
 IF ALMS.ALM_ALMSHFT THEN
     PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1;
     IF NOT ACTCFGu.ALM.ALM_ALMSHFT THEN
         PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
 IF ALMS.ALM_ALMINVRTR THEN
     PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1; 
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1;
     IF NOT ACTCFGu.ALM.ALM_ALMINVRTR THEN
         PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
 IF ALMS.ALM_ALMPWR THEN
     PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1;
     IF NOT ACTCFGu.ALM.ALM_ALMPWR THEN
         PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
 
@@ -6172,8 +6177,8 @@ DRVHMI.SPD := REAL_TO_INT(DRVCFG.SPD)*100;
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="VLVDFN" version="0.60" dateTime="dt#2022-07-26-10:44:22">
-		<attribute name="TypeCodeCheckSumString" value="B3A7"></attribute>
+	<FBSource nameOfFBType="VLVDFN" version="0.62" dateTime="dt#2022-08-29-11:56:40">
+		<attribute name="TypeCodeCheckSumString" value="E713"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="C6A9"></attribute>
 		<inOutParameters>
 			<variables name="ACTCFG" typeName="VLVD_CFG">
@@ -6493,37 +6498,42 @@ STA.STA_FRC := COPN.STA_FRC AND COPN.ID&lt;&gt;0
 (*------------------- зведення кастомних тривог, режимів, бітів*)
 IF ALMS.ALM_ALMOPN THEN
     PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1; 
     IF NOT ACTCFGu.ALM.ALM_ALMOPN THEN
-        PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+        PLCCFG.ALM_NWALM := TRUE; 
     END_IF;
 END_IF;
 IF ALMS.ALM_ALMCLS THEN
     PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1; 
     IF NOT ACTCFGu.ALM.ALM_ALMCLS THEN
         PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
 IF ALMS.ALM_ALMOPN2 THEN
     PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1; 
     IF NOT ACTCFGu.ALM.ALM_ALMOPN2 THEN
         PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
 IF ALMS.ALM_ALMCLS2 THEN
     PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1; 
     IF NOT ACTCFGu.ALM.ALM_ALMCLS2 THEN
         PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
 IF ALMS.ALM_ALMSHFT THEN
     PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1; 
     IF NOT ACTCFGu.ALM.ALM_ALMSHFT THEN
         PLCCFG.ALM_NWALM := TRUE;
-        ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
     END_IF;
 END_IF;
 
@@ -6710,8 +6720,8 @@ VLVDHMI.POS := REAL_TO_INT(VLVDCFG.POS);
 </STSource>
 		</FBProgram>
 	</FBSource>
-	<FBSource nameOfFBType="PLCFN" version="0.23" dateTime="dt#2022-07-25-11:18:03">
-		<attribute name="TypeCodeCheckSumString"></attribute>
+	<FBSource nameOfFBType="PLCFN" version="0.24" dateTime="dt#2022-08-29-12:04:50">
+		<attribute name="TypeCodeCheckSumString" value="A204"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="FA47"></attribute>
 		<inOutParameters>
 			<variables name="PLC" typeName="PLC_CFG">

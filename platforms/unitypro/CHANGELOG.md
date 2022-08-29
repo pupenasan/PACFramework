@@ -1,6 +1,29 @@
 # Журнал змін SEControlExpertLIB
 
-## V1.0.0 Офіцінний реліз [26.07.20] 
+## V1
+
+### V1.0.1 FIX [29.08.22] 
+
+- VLVDN, DRVFN: 
+  - добавлено: збільшення загальних лічильників тривог `PLCCFG.CNTALM` при тривогах ВМ PLCCFG.CNTALM
+  - змінено: розміщення
+
+```pascal
+IF ALMs.ALM_ALMSTRT THEN
+    PLCCFG.ALM_ALM := TRUE;
+    ACTCFGu.CNTALM := ACTCFGu.CNTALM + 1;
+    PLCCFG.CNTALM:= PLCCFG.CNTALM + 1;
+    IF NOT ACTCFGu.ALM.ALM_ALMSTRT THEN
+        PLCCFG.ALM_NWALM := TRUE;
+    END_IF;
+END_IF;
+```
+
+
+
+### V1.0.0 Офіцінний реліз [26.07.22] 
 
 Випуск першої узгодженої версії бібліотеки
+
+
 
