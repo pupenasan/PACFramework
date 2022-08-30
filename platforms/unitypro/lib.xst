@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <STExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-29-12:5:21" content="Structured source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.20" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-30-15:44:16" content="Structured source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.22" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
 	<program>
 		<identProgram name="mainPFW" type="section" task="MAST"></identProgram>
 		<STSource>(* PACFramework SEControlExpertLIB V1.0.0 
@@ -943,7 +943,7 @@ if (PLC.TQMS - PFWV.writepara_prevtime)&gt;600 then
 		elsif tmpreal&gt;=10.0 then PARASTOHMI.K:=1000;
 		else PARASTOHMI.K:=10000;
 	end_if;
-	PARASTOHMI.INTS[4] := PFWV.AIVAR_TMP.PRM;
+	PARASTOHMI.INTS[4] := AIVARFN.VARBUFOUT.PRM;
 	PARASTOHMI.INTS[5] := real_to_int(AIVARFN.VARBUFOUT.LOENG*int_to_real(PARASTOHMI.K));
 	PARASTOHMI.INTS[6] := real_to_int(AIVARFN.VARBUFOUT.HIENG*int_to_real(PARASTOHMI.K));
 	PARASTOHMI.INTS[7] := real_to_int(AIVARFN.VARBUFOUT.LOSP*int_to_real(PARASTOHMI.K));
@@ -952,6 +952,7 @@ if (PLC.TQMS - PFWV.writepara_prevtime)&gt;600 then
 	PARASTOHMI.INTS[10] := real_to_int(AIVARFN.VARBUFOUT.HIHISP*int_to_real(PARASTOHMI.K));
 	PARASTOHMI.INTS[11] := uint_to_int(AIVARFN.VARBUFOUT.ID);
 	PARASTOHMI.I := PARASTOHMI.I + 1;
+	if int_to_uint(PARASTOHMI.I)&gt;=AIVARFN.IDMAX then PARASTOHMI.I:=0; end_if;
 	AIVARFN.VARBUFIN.ID := int_to_uint(PARASTOHMI.I) + AIVARFN.IDMIN;
 	AIVARFN.VARBUFIN.CMD := 16#100;
 	

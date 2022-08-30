@@ -2,6 +2,20 @@
 
 ## V1
 
+### V1.0.2 FIX [30.08.22]
+
+- SR A_write_parahmi:
+  -  змінено
+
+
+```
+PARASTOHMI.INTS[4] := AIVARFN.VARBUFOUT.PRM;(*змінено*)
+...
+if int_to_uint(PARASTOHMI.I)>=AIVARFN.IDMAX then PARASTOHMI.I:=0; end_if;(*перенесено*)
+```
+
+- 
+
 ### V1.0.1 FIX [29.08.22] 
 
 - VLVDN, DRVFN: 
