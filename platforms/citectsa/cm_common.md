@@ -289,44 +289,35 @@ Equipment Running State Indicators – це компактний індикат�
 
 Структура має передаватися цілісно, щоб поля були консистентними. Враховуючи відсутність в Citect можливостей опису структур в Citect вона передається єдиними масивом, тому в ній використовуються тільки поля INT/UINT з враховунням цих обмежень. Для роботи зі структурою в Citect створюється спеціальний тип Equipment `PARASHMI` який включає ряд елементів що потребуються для роботи зі структурою.  Серед них є елемент AR, який приймає усі поля як єдиний масив, на прикладі показаний як %MW140[12]. Усі ніші поля розписані нижче в цьому розділі.
 
-Алгоритм оновлення в ПЛК працює наступним чином. З певною періодичністю (у прикладі 600 мс), що задається таймером (у прикладі `TON_0`), в буфер відправляються конфгураційні параметри певного обєкту (у прикладі нижче `AIVARTMP`). З кожним спрацюванням таймеру вибраний обєкт змінюється, для цього використовується індексна змінна (у прикладі `PR_INDX`) яка також передається на SCADA/HMI як поле ``PARASHMI.I`. У структуру записуються `ID` та `CLSID` вибраного об'єкту. Враховуючи що параметри типу REAL передаються як INT, для них вибирається коефіцієнт масштабування який такоє передається як `PARASTOHMI.K`.         
+Алгоритм оновлення в ПЛК працює наступним чином. З певною періодичністю (у прикладі 600 мс), в буфер відправляються конфігураційні параметри певного об'єкту (у прикладі нижче `AIVARFN.VARBUFOUT`). З кожним спрацюванням таймеру вибраний об'єкт змінюється, для цього використовується індексна змінна яка передається на SCADA/HMI як поле ``PARASHMI.I`. У структуру записуються `ID` та `CLSID` вибраного об'єкту. Враховуючи що параметри типу REAL передаються як INT, для них вибирається коефіцієнт масштабування який передається як `PARASTOHMI.K`.         
 
 ```c
-(* вибір обєкту за селекторои-номером обєкту для якого передаються параметри *)
-CASE PR_INDX OF 
-	0: AIVARTMP:=VARS.T1_LT1;
-	1: AIVARTMP:=VARS.T1_LT2;
-	2: AIVARTMP:=VARS.T1_TT1;
-	3: AIVARTMP:=VARS.T2_TT1;
-	4: AIVARTMP:=VARS.REZAI1;
-	5: AIVARTMP:=VARS.REZAI2;
-	6: AIVARTMP:=VARS.REZAI3;
-	7: AIVARTMP:=VARS.REZAI4;
-  ELSE
-	PR_INDX:=0;
-END_CASE;
-(*таймер перемикання*)
-TON_0 (IN := not ton_0.q, PT := t#600ms);
-if TON_0.q then
-	PARASTOHMI.ID := AIVARTMP.ID;
-	PARASTOHMI.CLSID := AIVARTMP.CLSID;
-	tmpreal := abs(AIVARTMP.HIENG-AIVARTMP.LOENG);
+AIVARFN.VARBUFIN.CLSID := 16#1030;
+if int_to_uint(PARASTOHMI.I)>=AIVARFN.IDMAX then PARASTOHMI.I:=0; end_if; (*максимальна кількість AIVAR*) 
+ 
+if (PLC.TQMS - PFWV.writepara_prevtime)>600 then
+	PFWV.writepara_prevtime := PLC.TQMS;
+	PARASTOHMI.ID := AIVARFN.VARBUFOUT.ID;
+	PARASTOHMI.CLSID := AIVARFN.VARBUFOUT.CLSID;
+	tmpreal := abs(AIVARFN.VARBUFOUT.HIENG-AIVARFN.VARBUFOUT.LOENG);
 	if tmpreal>=10000.0 then PARASTOHMI.K:=1;
 		elsif tmpreal>=1000.0 then PARASTOHMI.K:=10;
 		elsif tmpreal>=100.0 then PARASTOHMI.K:=100;
 		elsif tmpreal>=10.0 then PARASTOHMI.K:=1000;
 		else PARASTOHMI.K:=10000;
 	end_if;
-	PARASTOHMI.I:=PR_INDX;
-	PARASTOHMI.INTS[4] := AIVARTMP.PRM;
-	PARASTOHMI.INTS[5] := real_to_int(AIVARTMP.LOENG*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[6] := real_to_int(AIVARTMP.HIENG*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[7] := real_to_int(AIVARTMP.LOSP*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[8] := real_to_int(AIVARTMP.HISP*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[9] := real_to_int(AIVARTMP.LOLOSP*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[10] := real_to_int(AIVARTMP.HIHISP*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[11] := uint_to_int(PARASTOHMI.ID);
-	PR_INDX := PR_INDX + 1;
+	PARASTOHMI.INTS[4] := PFWV.AIVAR_TMP.PRM;
+	PARASTOHMI.INTS[5] := real_to_int(AIVARFN.VARBUFOUT.LOENG*int_to_real(PARASTOHMI.K));
+	PARASTOHMI.INTS[6] := real_to_int(AIVARFN.VARBUFOUT.HIENG*int_to_real(PARASTOHMI.K));
+	PARASTOHMI.INTS[7] := real_to_int(AIVARFN.VARBUFOUT.LOSP*int_to_real(PARASTOHMI.K));
+	PARASTOHMI.INTS[8] := real_to_int(AIVARFN.VARBUFOUT.HISP*int_to_real(PARASTOHMI.K));
+	PARASTOHMI.INTS[9] := real_to_int(AIVARFN.VARBUFOUT.LOLOSP*int_to_real(PARASTOHMI.K));
+	PARASTOHMI.INTS[10] := real_to_int(AIVARFN.VARBUFOUT.HIHISP*int_to_real(PARASTOHMI.K));
+	PARASTOHMI.INTS[11] := uint_to_int(AIVARFN.VARBUFOUT.ID);
+	PARASTOHMI.I := PARASTOHMI.I + 1;
+	AIVARFN.VARBUFIN.ID := int_to_uint(PARASTOHMI.I) + AIVARFN.IDMIN;
+	AIVARFN.VARBUFIN.CMD := 16#100;
+	
 end_if;
 ```
 

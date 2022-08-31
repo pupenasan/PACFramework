@@ -13,8 +13,8 @@ Plant.Prod.T1.SCMIX_CSPD;T1_SCMIX_CSPD;AOVAR_HMI;;задана швидкіст�
 Plant.Prod.T2.SCMIX_CSPD;T2_SCMIX_CSPD;AOVAR_HMI;;задана швидкість перемішування Т2;"MIN=0.0;MAX=100.0;EU=%;FMT=##.#;PFW=ID:5004;";T2_SCMIX_CSPD;PLC1;1312
 Plant.Prod.T1.VSLD_SOPN;T1_VSLD_SOPN;DIVAR_HMI;;клапан набору Т1 відкритий;"FMT=##.#;PFW=ID:10001;";T1_VSLD_SOPN;PLC1;900
 Plant.Prod.T2.VSLD_SOPN;T2_VSLD_SOPN;DIVAR_HMI;;клапан набору Т2 відкритий;"FMT=##.#;PFW=ID:10002;";T2_VSLD_SOPN;PLC1;901
-Plant.Prod.V.REZDI1;REZDI1;DIVAR_HMI;;rez;"FMT=##.#;PFW=ID:10019;";REZDI1;PLC1;902
-Plant.Prod.V.REZDI2;REZDI2;DIVAR_HMI;;rez;"FMT=##.#;PFW=ID:10020;";REZDI2;PLC1;903
+Plant.PLC1.V.REZDI1;REZDI1;DIVAR_HMI;;rez;"FMT=##.#;PFW=ID:10019;";REZDI1;PLC1;902
+Plant.PLC1.V.REZDI2;REZDI2;DIVAR_HMI;;rez;"FMT=##.#;PFW=ID:10020;";REZDI2;PLC1;903
 Plant.Prod.D1.VSUNL_SCLS;D1_VSUNL_SCLS;DIVAR_HMI;;клапан зливу D1 закритий;"FMT=##.#;PFW=ID:10003;";D1_VSUNL_SCLS;PLC1;904
 Plant.Prod.D2.VSUNL_SCLS;D2_VSUNL_SCLS;DIVAR_HMI;;клапан зливу D2 закритий;"FMT=##.#;PFW=ID:10004;";D2_VSUNL_SCLS;PLC1;905
 Plant.Prod.T1.VSLD_SCLS;T1_VSLD_SCLS;DIVAR_HMI;;клапан набору Т1 закритий;"FMT=##.#;PFW=ID:10009;";T1_VSLD_SCLS;PLC1;906
