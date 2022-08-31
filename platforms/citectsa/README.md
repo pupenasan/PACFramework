@@ -1,6 +1,6 @@
 # Розгортання PACFramework у проекті Citect Situational Awareness
 
-Обговорення даного матеріалу за [цим посиланням](https://github.com/pupenasan/PACFramework/issues/59)
+Побажання та пропозиції для даного матеріалу можна робити за [цим посиланням](https://github.com/pupenasan/PACFramework/issues/59)
 
 ## Загальні принципи адаптації
 
@@ -46,8 +46,6 @@ PACFramework призначений перш за все для розробки
 
 Усі базові функції PACFramework розміщені у файлі `PFW_base.ci`
 
-- 
-
 ## Приклади розгортання PACFramework
 
 Нижче наведено кілька варіантів прикладів розгортання PACFramework Citect SA, Unity PRO (Modbus TCP)
@@ -55,3 +53,10 @@ PACFramework призначений перш за все для розробки
 1) [Приклад](deployex1.md) розгортання демо-проекту без утиліт автоматизації. 
 2) [Приклад](deployex2.md) розгортання демо-проекту з імітатором з використанням PACFramework tools. 
 
+## Готовий розгорнутий проект
+
+Останню версію готового розгорнутого проекту можна завантажити за наступними посиланнями:
+
+- [ручне розгортання](https://drive.google.com/file/d/1p1hVDR9h16FE8UocH81PuxELDA3lUs9N/view?usp=sharing) PLANT SCADA 2020 R2
+- автоматичне розгортання (PACFramework Tools) PLANT SCADA 2020 R2
+- [демо проект Unity PRO](https://github.com/pupenasan/PACFramework/blob/master/platforms/unitypro/pacexample.xef)
