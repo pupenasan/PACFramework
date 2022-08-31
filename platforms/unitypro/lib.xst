@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <STExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-30-15:44:16" content="Structured source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.22" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-31-22:46:14" content="Structured source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.23" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
 	<program>
 		<identProgram name="mainPFW" type="section" task="MAST"></identProgram>
 		<STSource>(* PACFramework SEControlExpertLIB V1.0.0 
@@ -930,7 +930,6 @@ ACT.DRV1.ID:=3; ACT.DRV1.CLSID:=16#2110;
 передбачається що ідентифікатори AIVAR починаються з 1*)
 
 AIVARFN.VARBUFIN.CLSID := 16#1030;
-if int_to_uint(PARASTOHMI.I)&gt;=AIVARFN.IDMAX then PARASTOHMI.I:=0; end_if; (*максимальна кількість AIVAR*) 
  
 if (PLC.TQMS - PFWV.writepara_prevtime)&gt;600 then
 	PFWV.writepara_prevtime := PLC.TQMS;
@@ -951,8 +950,8 @@ if (PLC.TQMS - PFWV.writepara_prevtime)&gt;600 then
 	PARASTOHMI.INTS[9] := real_to_int(AIVARFN.VARBUFOUT.LOLOSP*int_to_real(PARASTOHMI.K));
 	PARASTOHMI.INTS[10] := real_to_int(AIVARFN.VARBUFOUT.HIHISP*int_to_real(PARASTOHMI.K));
 	PARASTOHMI.INTS[11] := uint_to_int(AIVARFN.VARBUFOUT.ID);
-	PARASTOHMI.I := PARASTOHMI.I + 1;
-	if int_to_uint(PARASTOHMI.I)&gt;=AIVARFN.IDMAX then PARASTOHMI.I:=0; end_if;
+ 	PARASTOHMI.I := PARASTOHMI.I + 1;
+       if int_to_uint(PARASTOHMI.I)&gt;=AIVARFN.IDMAX then PARASTOHMI.I:=0; end_if; (*максимальна кількість AIVAR*)      
 	AIVARFN.VARBUFIN.ID := int_to_uint(PARASTOHMI.I) + AIVARFN.IDMIN;
 	AIVARFN.VARBUFIN.CMD := 16#100;
 	
