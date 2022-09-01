@@ -14,8 +14,6 @@ PARASTOHMI.INTS[4] := AIVARFN.VARBUFOUT.PRM;(*змінено*)
 if int_to_uint(PARASTOHMI.I)>=AIVARFN.IDMAX then PARASTOHMI.I:=0; end_if;(*перенесено*)
 ```
 
-- 
-
 ### V1.0.1 FIX [29.08.22] 
 
 - VLVDN, DRVFN: 
@@ -33,11 +31,8 @@ IF ALMs.ALM_ALMSTRT THEN
 END_IF;
 ```
 
-
-
 ### V1.0.0 Офіцінний реліз [26.07.22] 
 
 Випуск першої узгодженої версії бібліотеки
-
 
 
