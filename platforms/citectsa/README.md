@@ -58,5 +58,5 @@ PACFramework призначений перш за все для розробки
 Останню версію готового розгорнутого проекту можна завантажити за наступними посиланнями:
 
 - [ручне розгортання](https://drive.google.com/file/d/1p1hVDR9h16FE8UocH81PuxELDA3lUs9N/view?usp=sharing) PLANT SCADA 2020 R2
-- автоматичне розгортання (PACFramework Tools) PLANT SCADA 2020 R2
+- [автоматичне розгортання](deployex2.md) (PACFramework Tools) PLANT SCADA 2020 R2
 - [демо проект Unity PRO](https://github.com/pupenasan/PACFramework/blob/master/platforms/unitypro/pacexample.xef)
