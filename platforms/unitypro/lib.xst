@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <STExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-31-22:46:14" content="Structured source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.23" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-9-4-17:34:33" content="Structured source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.24" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
 	<program>
 		<identProgram name="mainPFW" type="section" task="MAST"></identProgram>
 		<STSource>(* PACFramework SEControlExpertLIB V1.0.0 
@@ -935,20 +935,33 @@ if (PLC.TQMS - PFWV.writepara_prevtime)&gt;600 then
 	PFWV.writepara_prevtime := PLC.TQMS;
 	PARASTOHMI.ID := AIVARFN.VARBUFOUT.ID;
 	PARASTOHMI.CLSID := AIVARFN.VARBUFOUT.CLSID;
-	tmpreal := abs(AIVARFN.VARBUFOUT.HIENG-AIVARFN.VARBUFOUT.LOENG);
-	if tmpreal&gt;=10000.0 then PARASTOHMI.K:=1;
-		elsif tmpreal&gt;=1000.0 then PARASTOHMI.K:=10;
-		elsif tmpreal&gt;=100.0 then PARASTOHMI.K:=100;
-		elsif tmpreal&gt;=10.0 then PARASTOHMI.K:=1000;
-		else PARASTOHMI.K:=10000;
+	tmpreal := abs(AIVARFN.VARBUFOUT.HIENG); 
+	if abs (AIVARFN.VARBUFOUT.LOENG)&gt; tmpreal then
+		tmpreal:=AIVARFN.VARBUFOUT.LOENG;
+	end_if;
+	if tmpreal&gt;=3276800.0 then PARASTOHMI.K:=-1000;
+		elsif tmpreal&gt;=327680.0 then PARASTOHMI.K:=-100;
+		elsif tmpreal&gt;=32768.0 then PARASTOHMI.K:=-10;
+		elsif tmpreal&gt;=3276.8 then PARASTOHMI.K:=1;
+		elsif tmpreal&gt;=327.68 then PARASTOHMI.K:=10;
+		elsif tmpreal&gt;=32.768 then PARASTOHMI.K:=100;
+		elsif tmpreal&gt;=3.2768 then PARASTOHMI.K:=1000;
+		elsif tmpreal&gt;=0.32768 then PARASTOHMI.K:=10000;
+		elsif tmpreal&gt;=0.03276 then PARASTOHMI.K:=32000;
+		else PARASTOHMI.K:=1;
+	end_if;
+	if PARASTOHMI.K &gt;= 0 then 
+	 tmpreal := int_to_real(PARASTOHMI.K);
+	else 
+         tmpreal :=1.0/abs(int_to_real(PARASTOHMI.K));
 	end_if;
 	PARASTOHMI.INTS[4] := AIVARFN.VARBUFOUT.PRM;
-	PARASTOHMI.INTS[5] := real_to_int(AIVARFN.VARBUFOUT.LOENG*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[6] := real_to_int(AIVARFN.VARBUFOUT.HIENG*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[7] := real_to_int(AIVARFN.VARBUFOUT.LOSP*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[8] := real_to_int(AIVARFN.VARBUFOUT.HISP*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[9] := real_to_int(AIVARFN.VARBUFOUT.LOLOSP*int_to_real(PARASTOHMI.K));
-	PARASTOHMI.INTS[10] := real_to_int(AIVARFN.VARBUFOUT.HIHISP*int_to_real(PARASTOHMI.K));
+	PARASTOHMI.INTS[5] := real_to_int(AIVARFN.VARBUFOUT.LOENG*tmpreal);
+	PARASTOHMI.INTS[6] := real_to_int(AIVARFN.VARBUFOUT.HIENG*tmpreal);
+	PARASTOHMI.INTS[7] := real_to_int(AIVARFN.VARBUFOUT.LOSP*tmpreal);
+	PARASTOHMI.INTS[8] := real_to_int(AIVARFN.VARBUFOUT.HISP*tmpreal);
+	PARASTOHMI.INTS[9] := real_to_int(AIVARFN.VARBUFOUT.LOLOSP*tmpreal);
+	PARASTOHMI.INTS[10] := real_to_int(AIVARFN.VARBUFOUT.HIHISP*tmpreal);
 	PARASTOHMI.INTS[11] := uint_to_int(AIVARFN.VARBUFOUT.ID);
  	PARASTOHMI.I := PARASTOHMI.I + 1;
        if int_to_uint(PARASTOHMI.I)&gt;=AIVARFN.IDMAX then PARASTOHMI.I:=0; end_if; (*максимальна кількість AIVAR*)      
