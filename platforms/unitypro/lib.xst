@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <STExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-9-4-17:34:33" content="Structured source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.24" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-9-4-21:14:58" content="Structured source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.25" dateTime="date_and_time#2022-4-26-17:49:42"></contentHeader>
 	<program>
 		<identProgram name="mainPFW" type="section" task="MAST"></identProgram>
 		<STSource>(* PACFramework SEControlExpertLIB V1.0.0 
@@ -1797,8 +1797,8 @@ end_if;
 			<variables name="INTS" typeName="ARRAY[4..11] OF INT"></variables>
 		</structure>
 	</DDTSource>
-	<FBSource nameOfFBType="AIVARFN" version="0.29" dateTime="dt#2022-07-26-10:44:22">
-		<attribute name="TypeCodeCheckSumString" value="D03A"></attribute>
+	<FBSource nameOfFBType="AIVARFN" version="0.30" dateTime="dt#2022-09-04-21:13:32">
+		<attribute name="TypeCodeCheckSumString" value="AE43"></attribute>
 		<attribute name="TypeSignatureCheckSumString" value="317E"></attribute>
 		<inOutParameters>
 			<variables name="CHCFG" typeName="CH_CFG">
@@ -2262,25 +2262,25 @@ IF VARENBL THEN (*тільки при активності змінної обр
           LOLO := AIVARCFG.PRM_LOLOENBL;
           IF NOT tmpBRK OR NOT AIVARCFG.PRM_BRKENBL THEN (*вихід із зони*)
              AIVARCFG.STEP1 := 200;
-          ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP) THEN (*тривога*)
+          ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP)*100 THEN (*тривога*)
              BRK := true;
           END_IF;
       200: (*LOLO*)
           LO := AIVARCFG.PRM_LOENBL;
-          LOLO := AIVARCFG.PRM_LOLOENBL AND T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEALL);
-          IF NOT LOLO AND NOT tmpLOLO
-             OR NOT AIVARCFG.PRM_LOLOENBL
-             OR AIVARCFG.VAL &gt; (AIVARCFG.LOLOSP + HYST) THEN (*вихід із зони*)
+          LOLO :=  AIVARCFG.PRM_LOLOENBL AND T_STEPMS &gt;= T_DEALL;
+          IF (NOT LOLO AND NOT tmpLOLO OR NOT AIVARCFG.PRM_LOLOENBL)
+             OR VAL &gt; (AIVARCFG.LOLOSP + HYST) THEN (*вихід із зони*)
              AIVARCFG.STEP1 := 300;
+	     AIVARCFG.T_STEP1 := 0;
           END_IF;
           IF LOLO AND tmpBRK AND AIVARCFG.PRM_BRKENBL THEN
              AIVARCFG.STEP1 := 100;
              AIVARCFG.T_STEP1 := 0;
           END_IF;
       300: (*LO*)
-          LO := AIVARCFG.PRM_LOENBL AND T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEAL);
+          LO := AIVARCFG.PRM_LOENBL AND T_STEPMS &gt;=T_DEAL;
           IF (NOT tmpLO AND NOT LO OR NOT AIVARCFG.PRM_LOENBL)   (*вихід із зони*)
-             OR AIVARCFG.VAL &gt; (AIVARCFG.LOSP + HYST) THEN
+             OR VAL &gt; (AIVARCFG.LOSP + HYST) THEN
              AIVARCFG.STEP1 := 400;
              AIVARCFG.T_STEP1 := 0;
           END_IF;
@@ -2321,35 +2321,35 @@ IF VARENBL THEN (*тільки при активності змінної обр
           IF NOT tmpBRK OR NOT AIVARCFG.PRM_BRKENBL THEN (*вихід із зони*)
              AIVARCFG.STEP1 := 400;
              AIVARCFG.T_STEP1 := 0;
-          ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP) THEN (*тривога*)
+          ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP)*100 THEN (*тривога*)
              AIVARCFG.STEP1 := 100;
           END_IF;
       420: (*norma -&gt; LOLO*)
           IF NOT tmpLOLO OR NOT AIVARCFG.PRM_LOLOENBL THEN (*вихід із зони*)
              AIVARCFG.STEP1 := 400;
              AIVARCFG.T_STEP1 := 0;
-          ELSIF T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEALL) THEN (*тривога*)
+          ELSIF T_STEPMS &gt;= T_DEALL THEN (*тривога*)
              AIVARCFG.STEP1 := 200;
           END_IF;
       460: (*norma -&gt; HIHI*)
           IF NOT tmpHIHI OR NOT AIVARCFG.PRM_HIHIENBL THEN (*вихід із зони*)
              AIVARCFG.STEP1 := 400;
              AIVARCFG.T_STEP1 := 0;
-          ELSIF T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEAHH) THEN (*тривога*)
+          ELSIF T_STEPMS &gt;= T_DEAHH THEN (*тривога*)
              AIVARCFG.STEP1 := 600;
           END_IF;
       470: (*norma -&gt; OVRLD*)
           IF NOT tmpOVRLD OR NOT AIVARCFG.PRM_OVRLENBL THEN (*вихід із зони*)
              AIVARCFG.STEP1 := 400;
              AIVARCFG.T_STEP1 := 0;
-          ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP) THEN (*тривога*)
+          ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP)*100 THEN (*тривога*)
              AIVARCFG.STEP1 := 700;
           END_IF;
       500: (*HI*)
-          HI := AIVARCFG.PRM_HIENBL AND T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEAH);
+          HI := AIVARCFG.PRM_HIENBL AND T_STEPMS &gt;= T_DEAH;
           IF NOT tmpHI AND NOT HI
              OR NOT AIVARCFG.PRM_HIENBL (*вихід із зони*)
-             OR AIVARCFG.VAL &lt; (AIVARCFG.HISP - HYST) THEN
+             OR VAL &lt; (AIVARCFG.HISP - HYST) THEN
              AIVARCFG.STEP1 := 400;
              AIVARCFG.T_STEP1 := 0;
           END_IF;
@@ -2363,10 +2363,10 @@ IF VARENBL THEN (*тільки при активності змінної обр
           END_IF;
       600: (*HIHI*)
           HI := AIVARCFG.PRM_HIENBL;
-          HIHI := AIVARCFG.PRM_HIHIENBL AND T_STEPMS &gt;= UINT_TO_UDINT(AIVARCFG.T_DEAHH);
+          HIHI := AIVARCFG.PRM_HIHIENBL AND T_STEPMS &gt;= T_DEAHH;
           IF NOT tmpHIHI AND NOT HIHI OR
              NOT AIVARCFG.PRM_HIHIENBL OR
-             AIVARCFG.VAL &lt; (AIVARCFG.HIHISP - HYST) THEN (*вихід із зони*)
+             VAL &lt; (AIVARCFG.HIHISP - HYST) THEN (*вихід із зони*)
              AIVARCFG.STEP1 := 500;
           END_IF;
           IF HI AND tmpOVRLD AND AIVARCFG.PRM_OVRLENBL THEN
@@ -2378,7 +2378,7 @@ IF VARENBL THEN (*тільки при активності змінної обр
           HIHI := AIVARCFG.PRM_HIHIENBL;
           IF (NOT tmpOVRLD OR NOT AIVARCFG.PRM_OVRLENBL) THEN (*вихід із зони*)
              AIVARCFG.STEP1 := 600;
-          ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP) THEN (*тривога*)
+          ELSIF T_STEPMS &gt;= INT_TO_UDINT(T_DEAQALSP)*100 THEN (*тривога*)
              OVRLD := true;
           END_IF;
    ELSE
@@ -2696,8 +2696,6 @@ IF (uint_to_word(AIVARCFG.CLSID) AND 16#FFF0)=(uint_to_word(VARBUFIN.CLSID) AND 
 
    VARBUFIN.CMD :=0; 
 end_if;  
-
-
 </STSource>
 		</FBProgram>
 	</FBSource>
