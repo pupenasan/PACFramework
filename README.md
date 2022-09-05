@@ -19,10 +19,15 @@ PACFramework (надалі "**Каркас**") розроблений з ура�
 1. [Основні ідеї](base/README.md)
 2. [Модулі керування (CM, Control Modules)](cm/README.md)
 3. Модулі устатковання (EM, Equipment Modules)
-4. Процедурне керування
+4. [Процедурне керування](proc/README.md)
 5. Системні стандарти HMI (людино-машинного інтерфейсу)
 6. [Рекомендації щодо реалізації PAC Framework на нових платформах PLC/PAC](implem/README.md)  
 7. [Існуючі реалізації](platforms/README.md) 
+
+## Супутні проекти
+
+- [PACFramework Tools](https://github.com/pupenasan/pacframework-tools)
+- [PACFramework IoTGateway](https://github.com/pupenasan/PACFrameworkIoTGateway)
 
 ## Блог
 
