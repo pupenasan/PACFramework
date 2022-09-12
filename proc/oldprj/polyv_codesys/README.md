@@ -1,0 +1,1 @@
+# Полив і фертигація на SoMachine (CodeSys) + Magelis

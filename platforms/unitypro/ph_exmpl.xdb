@@ -1,0 +1,1752 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<FBExchangeFile>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-9-11-9:15:51" content="Function Block source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.23" dateTime="date_and_time#2022-8-28-13:42:17"></contentHeader>
+	<FBSource nameOfFBType="PH_EXMPL" version="0.16" dateTime="dt#2022-09-11-09:04:08">
+		<comment>PFW приклад процедурного елементу</comment>
+		<attribute name="TypeCodeCheckSumString" value="F6B3"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="FF36"></attribute>
+		<inputParameters>
+			<variables name="ID" typeName="UINT">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="CFG" typeName="PROC_CFG">
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+			<variables name="HMI" typeName="PROC_HMI">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="CTRL" typeName="PROC_CTRL">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="PRCBUF" typeName="PROC_CFG">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
+			<variables name="PARA" typeName="PHPARA_EXMPL">
+				<attribute name="PositionPin" value="7"></attribute>
+			</variables>
+			<variables name="INOUT" typeName="PHINOUT_EXMPL">
+				<attribute name="PositionPin" value="8"></attribute>
+			</variables>
+		</inOutParameters>
+		<privateLocalVariables>
+			<variables name="PROC_MACH" typeName="PROC_MACH"></variables>
+			<variables name="CMD_NEXT" typeName="BOOL"></variables>
+			<variables name="PROC_TRANS" typeName="PROC_TRANS_A"></variables>
+			<variables name="PROC_TRANS_M" typeName="PROC_TRANS_M"></variables>
+		</privateLocalVariables>
+		<FBProgram name="PROC">
+			<STSource>(* приклад етапу:
+- IDLE - нічого не робить
+- STARTING - очікує ручного підтвердження: 
+	ок -&gt; RUNNING
+	CANCEL -&gt; COMPLETING   
+- RUNNING 
+  1 - інкрементує INOUT.OUT1, очікує INOUT.IN1&gt;PARA.PARA1 -&gt; 2
+  2 - інкрементує INOUT.OUT2, очікує ручного підтвердження:
+	ok -&gt; 3
+	CANCEL -&gt; HOLDING 
+  3 - декрементує INOUT.OUT1, INOUT.OUT2, очікує INOUT.OUT1&lt;=PARA.PARA2 -&gt; COMPLETING
+- COMPLETING, STOPPING, і в кінцеве положення
+  INOUT.OUT1=0, INOUT.OUT2 = 0
+- COMPLET, STOP: через 5 с RESET 
+*)
+
+(* {PFWEXPORTSTART}{}{PFWEXPORTEND} *)
+
+
+(* виставити умову дозволу*)
+CTRL.ENBL := FALSE;
+
+(*за необхідності фіксації переходів в БД на перехідних коках ставити затримки*)
+(*за необхідності дій в простої, можна вписати в стан*)
+IF CTRL.STA_IDLE THEN
+    CFG.STEP2 := 0; 
+END_IF;
+(*--------------- NORM ------------------*)
+IF CTRL.STA_STARTING THEN
+    CASE CFG.STEP2 OF
+        13000:
+            CFG.STEP2 := 13001; CFG.T_STEP2 := 0;
+        13001: (*крок штатного завершення STARTING*)
+	    PROC_TRANS (COND := true, TOSTEP := 1, CFG := CFG, HMI := HMI, CTRL:=CTRL);
+        ELSE (*перехід на STARTING*)
+            CFG.STEP2 := 13000; CFG.T_STEP2 := 0;
+    END_CASE;
+    (*умова нормального завершення етапу навіть в STARTING*)
+    CTRL.RUNING_CMPLT := CTRL.HL_RUNNING_CMPLT OR CTRL.RUNING_CMPLT;
+END_IF;
+IF CTRL.STA_RUNNING THEN   
+    CASE CFG.STEP2 OF
+        2000:
+            CFG.STEP2 := 2001; CFG.T_STEP2 := 0;
+        2001: (* збільшуємо OUT1, чекаю IN1&gt;PARA1 *)  
+            INOUT.OUT1:=INOUT.OUT1+0.1; 
+	    if INOUT.OUT1&gt;100000.0 then INOUT.OUT1:=100.0; end_if;
+	    PROC_TRANS (COND := INOUT.in1&gt;PARA.PARA1, TOSTEP := 2002, CFG := CFG, HMI := HMI, CTRL:=CTRL); 
+	2002: (* збільшуємо OUT2, перейти до іншого кроку? *)
+	    INOUT.OUT2:=INOUT.OUT2+0.1;
+	    if INOUT.OUT2&gt;100000.0 then INOUT.OUT2:=100.0; end_if;
+	    PROC_TRANS_M (TOSTEPOK := 2003, TOSTEPCANCEL := 0, CFG := CFG, HMI := HMI, CTRL:=CTRL);
+	2003: (* зменшую OUT1,OUT2, чекаю OUT1&lt;=PARA2 *)
+	    INOUT.OUT1:=INOUT.OUT1-0.1;
+	    INOUT.OUT2:=INOUT.OUT2-0.1;  
+	    if INOUT.OUT1&lt;0.0 then INOUT.OUT1:=0.0; end_if;
+	    if INOUT.OUT2&lt;0.0 then INOUT.OUT2:=0.0; end_if;
+            PROC_TRANS (COND := INOUT.OUT2&lt;PARA.PARA2, TOSTEP := 1, CFG := CFG, HMI := HMI, CTRL:=CTRL);
+	    CFG.STEP2 := 2002; CFG.T_STEP2 := 0;
+        ELSE
+	    CTRL.RUNING_CMPLT:=true;
+    END_CASE;
+    
+    (*умова нормального завершення етапу*)
+    CTRL.RUNING_CMPLT := CTRL.HL_RUNNING_CMPLT OR CTRL.RUNING_CMPLT;
+    CTRL.RESTARTING_CMPLT := false;
+END_IF;
+IF CTRL.STA_COMPLETING THEN
+    CASE CFG.STEP2 OF
+        14000:
+            CFG.STEP2 := 14001; CFG.T_STEP2 := 0; (* ініціалізація*)
+        14001:
+            CTRL.COMPLETING_CMPLT := TRUE;
+        ELSE
+            CFG.STEP2 := 14000; CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+IF CTRL.STA_COMPLETE THEN
+    CASE CFG.STEP2 OF
+        8000:
+            CFG.STEP2 := 8001;
+            CFG.T_STEP2 := 0; (* ініціалізація*)
+        8001:
+            IF CFG.T_STEP2 &gt; 5000 THEN
+                CTRL.CMD_RESET := TRUE;
+            END_IF;
+        ELSE
+            CFG.STEP2 := 8000;
+            CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+
+(*------------- pause -------------- *)
+IF CTRL.STA_PAUSING THEN
+    CASE CFG.STEP2 OF
+        3000:
+            CFG.STEP2 := 3001;
+            CFG.T_STEP2 := 0; (* ініціалізація*)
+        3001:
+            CTRL.PAUSING_CMPLT := TRUE;
+            CFG.T_STEP2 := 0;
+        ELSE
+            CFG.STEP2 := 3000;
+            CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+IF CTRL.STA_PAUSED THEN
+    CASE CFG.STEP2 OF
+        4000:
+            CFG.STEP2 := 4001;
+            CFG.T_STEP2 := 0; (* ініціалізація*)
+        4001:
+            ;
+        ELSE
+            CFG.STEP2 := 4000;
+            CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+
+(*----------- stop --------------------*)
+IF CTRL.STA_STOPPING THEN
+    CASE CFG.STEP2 OF
+        9000:
+            CFG.STEP2 := 9001;
+            CFG.T_STEP2 := 0; (* ініціалізація*)
+        9001:
+            CTRL.STOPPING_CMPLT := TRUE;
+            CFG.T_STEP2 := 0;
+        ELSE
+            CFG.STEP2 := 9000;
+            CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+IF CTRL.STA_STOPPED THEN
+    CASE CFG.STEP2 OF
+        10000:
+            CFG.STEP2 := 10001;
+            CFG.T_STEP2 := 0; (* ініціалізація*)
+        10001:
+            IF CFG.T_STEP2 &gt; 5000 THEN
+                CTRL.CMD_RESET := TRUE;
+            END_IF;
+        ELSE
+            CFG.STEP2 := 10000;
+            CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+
+(*------------ HOLD -------------------*)
+IF CTRL.STA_HOLDING THEN
+    CASE CFG.STEP2 OF
+        5000:
+            CFG.STEP2 := 5001;
+            CFG.T_STEP2 := 0; (* ініціалізація*)
+        5001:
+            CTRL.HOLDING_CMPLT := TRUE;
+            CFG.T_STEP2 := 0;
+        ELSE
+            CFG.STEP2 := 5000;
+            CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+IF CTRL.STA_HELD THEN
+    CASE CFG.STEP2 OF
+        6000:
+            CFG.STEP2 := 6001;
+            CFG.T_STEP2 := 0; (* ініціалізація*)
+        6001:
+            ;
+        ELSE
+            CFG.STEP2 := 6000;
+            CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+IF CTRL.STA_RESTARTING THEN
+    CASE CFG.STEP2 OF
+        7000:
+            CFG.STEP2 := 7001;
+            CFG.T_STEP2 := 0; (* ініціалізація*)
+        7001:
+            CTRL.RESTARTING_CMPLT := TRUE;
+            CFG.T_STEP2 := 0;
+        ELSE
+            CFG.STEP2 := 7000;
+            CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+
+(*---------------- abort --------------*)
+IF CTRL.STA_ABORTING THEN
+    CASE CFG.STEP2 OF
+        11000:
+            CFG.STEP2 := 11001;
+            CFG.T_STEP2 := 0; (* ініціалізація*)
+        11001:
+            CTRL.ABORTING_CMPLT := TRUE;
+            CFG.T_STEP2 := 0;
+        ELSE
+            CFG.STEP2 := 11000;
+            CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+IF CTRL.STA_ABORTED THEN
+    CASE CFG.STEP2 OF
+        12000:
+            CFG.STEP2 := 12001;
+            CFG.T_STEP2 := 0; (* ініціалізація*)
+        12001:
+            IF CFG.T_STEP2 &gt; 5000 THEN
+                CTRL.CMD_RESET := TRUE;
+            END_IF;
+        ELSE
+            CFG.STEP2 := 12000;
+            CFG.T_STEP2 := 0;
+    END_CASE;
+END_IF;
+
+
+PROC_MACH (ID := ID,
+           PRCCFG := CFG,
+           PRCHMI := HMI,
+           PRCCTRL := CTRL,
+           PRCBUF := PRCBUF,
+           PLCCFG := PLCCFG);
+
+(*
+0 – ініціалізація (тільки при старті ПЛК)
+1000 – Idle (очікує)
+13000 – Starting (запускається)
+2000 - Running (виконується) 
+14000- Completing (завершується)
+3000 – Pausing (призупиняється)
+4000 – Paused (призупинено)
+5000 – Holding (утримується)
+6000 – Hold (утримуване)
+7000 – Restarting (перезапускається)
+8000 – Complete (завершено)
+9000 – Stopping (зупиняється)
+10000 – Stopped (зупинено)
+11000 – Aborting (переривається)
+12000 – Aborted (перервано)
+
+STA x0-x7 для маскування кнопок керування: TRUE - кнопка активна/видима, дія дозволена, FALSE - кнопка неактивна/невидима, дія не дозволена
+- X5 CANCEL - негативне пітвердження (відміна) ручної операції, керування зовн функцією
+- X6 NEXT - перейти до наступного кроку, керування зовн функцією
+- X7 OK - підтвердити дію, керування зовн функцією
+..інші в стандартній PRC
+
+*)
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<DDTSource DDTName="PROC_CFG" version="0.03" dateTime="dt#2022-09-10-21:46:10">
+		<comment>PFW конфігураційна змінна PROC</comment>
+		<attribute name="TypeSignatureCheckSumString" value="E7D4"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>ІДЕНТИФІКАТОР</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>КЛАС</comment>
+			</variables>
+			<variables name="STA" typeName="INT">
+				<comment>стани</comment>
+			</variables>
+			<variables name="ENCMD_START" typeName="BOOL">
+				<comment>=1, дозвіл на команду HMI START</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="ENCMD_PAUSE" typeName="BOOL">
+				<comment>дозвіл на команду HMI PAUSE</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="ENCMD_RESET" typeName="BOOL">
+				<comment>дозвіл на команду HMI RESET</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="ENCMD_HOLD" typeName="BOOL">
+				<comment>дозвіл на команду HMI HOLD</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="ENCMD_STOP" typeName="BOOL">
+				<comment>дозвіл на команду HMI STOP</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="ENCMD_CANCEL" typeName="BOOL">
+				<comment>дозвіл на команду HMI негативне підтвердження (відміна) ручної операції</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="ENCMD_NEXT" typeName="BOOL">
+				<comment>дозвіл на команду HMI перейти до наступного кроку</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="ENCMD_OK" typeName="BOOL">
+				<comment>дозвіл на команду HMI  підтвердити дію</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="TMAXERR" typeName="BOOL">
+				<comment>помилка максимуму часу виконання, час більше максимуму</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="TMINERR" typeName="BOOL">
+				<comment>помилка мінімуму часу виконання, час менше мінімуму</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_ALM" typeName="BOOL">
+				<comment>наявність помилки процедури</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="SEMI" typeName="BOOL">
+				<comment>=1 напівавтоматичний режим</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>зайнятість буферу</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="MAN" typeName="BOOL">
+				<comment>=1, ручний режим</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>дозвіл на запуск</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="CMD_BUF" typeName="BOOL">
+				<comment>завантажити в буфер</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>команда з іншого джерела</comment>
+			</variables>
+			<variables name="PRM" typeName="INT">
+				<comment>БІТОВІ ПАРАМЕТРИ</comment>
+			</variables>
+			<variables name="rez1" typeName="INT"></variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>КРОК ВСІЄЇ ПРОЦЕДУРИ</comment>
+			</variables>
+			<variables name="STEP2" typeName="UINT">
+				<comment>КРОК В СЕРЕДИНІ ПРОЦЕДУРИ</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>ЧАС КРОКУ ВСІЄЇ ПРОЦЕДУРИ</comment>
+			</variables>
+			<variables name="T_STEP2" typeName="UDINT">
+				<comment>ЧАС КРОКУ В СЕРЕДИНІ ПРОЦЕДУРИ</comment>
+			</variables>
+			<variables name="T_DELAY" typeName="UDINT">
+				<comment>ЗАТРИМКА</comment>
+			</variables>
+			<variables name="TMIN" typeName="UDINT">
+				<comment>МІНІМАЛЬНИЙ ЧАС АКТИВНОСТІ ПРОЦЕДУРИ</comment>
+			</variables>
+			<variables name="TMAX" typeName="UDINT">
+				<comment>МАКСИМАЛЬНИЙ ЧАС АКТИВНОСТІ ПРОЦЕДУРИ</comment>
+			</variables>
+			<variables name="T_PREV" typeName="UDINT">
+				<comment>час в мс з попереднього виклику</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PROC_HMI" version="0.03" dateTime="dt#2022-09-10-21:46:05">
+		<comment>PFW змінна HMI для PROC</comment>
+		<attribute name="TypeSignatureCheckSumString" value="0ECE"></attribute>
+		<structure>
+			<variables name="STA" typeName="INT">
+				<comment>стани</comment>
+			</variables>
+			<variables name="ENCMD_START" typeName="BOOL">
+				<comment>=1, дозвіл на команду HMI START</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="ENCMD_PAUSE" typeName="BOOL">
+				<comment>дозвіл на команду HMI PAUSE</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="ENCMD_RESET" typeName="BOOL">
+				<comment>дозвіл на команду HMI RESET</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="ENCMD_HOLD" typeName="BOOL">
+				<comment>дозвіл на команду HMI HOLD</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="ENCMD_STOP" typeName="BOOL">
+				<comment>дозвіл на команду HMI STOP</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="ENCMD_CANCEL" typeName="BOOL">
+				<comment>дозвіл на команду HMI негативне підтвердження (відміна) ручної операції</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="ENCMD_NEXT" typeName="BOOL">
+				<comment>дозвіл на команду HMI перейти до наступного кроку</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="ENCMD_OK" typeName="BOOL">
+				<comment>дозвіл на команду HMI  підтвердити дію</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="TMAXERR" typeName="BOOL">
+				<comment>помилка максимуму часу виконання, час більше максимуму</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="TMINERR" typeName="BOOL">
+				<comment>помилка мінімуму часу виконання, час менще мінімуму</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_ALM" typeName="BOOL">
+				<comment>наявність помилки процедури</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="SEMI" typeName="BOOL">
+				<comment>=1 напівавтоматичний режим</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="INBUF" typeName="BOOL">
+				<comment>зайнятість буферу</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="MAN" typeName="BOOL">
+				<comment>=1, ручний режим</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>дозвіл на запуск</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="CMD_BUF" typeName="BOOL">
+				<comment>завантажити в буфер</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="CMD" typeName="INT">
+				<comment>команда з HMI</comment>
+			</variables>
+			<variables name="STEP1" typeName="UINT">
+				<comment>стан</comment>
+			</variables>
+			<variables name="STEP2" typeName="UINT">
+				<comment>крок</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="UDINT">
+				<comment>час стану в с</comment>
+			</variables>
+			<variables name="T_STEP2" typeName="UDINT">
+				<comment>час кроку в с</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PROC_CTRL" version="0.02" dateTime="dt#2022-08-25-15:58:47">
+		<comment>PFW змінна керування для PROC</comment>
+		<attribute name="TypeSignatureCheckSumString" value="7665"></attribute>
+		<structure>
+			<variables name="W1" typeName="INT"></variables>
+			<variables name="ENBL" typeName="BOOL">
+				<comment>IN дозвіл на активацію етапу</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="PAUSING_CMPLT" typeName="BOOL">
+				<comment>IN умова переходу на PAUSED виконана</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="RUNING_CMPLT" typeName="BOOL">
+				<comment>IN етап завершився (спрацювала внутрішня умова завершення)</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="HL_RUNNING_CMPLT" typeName="BOOL">
+				<comment>IN cпрацювала зовнішня умова завершення, треба опрацьовувати</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="RESTARTING_CMPLT" typeName="BOOL">
+				<comment>IN умова переходу на RUNNING з HOLD виконана</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="HOLDING_CMPLT" typeName="BOOL">
+				<comment>IN умова переходу на HOLD з RUNNING виконана</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STOPPING_CMPLT" typeName="BOOL">
+				<comment>IN умова переходу на STOP виоконана</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="ABORTING_CMPLT" typeName="BOOL">
+				<comment>IN умова переходу на ABORT виконана</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STARTING_CMPLT" typeName="BOOL">
+				<comment>IN умова переходу на START виконана</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="COMPLETING_CMPLT" typeName="BOOL">
+				<comment>IN умова переходу на COMPLITE виконана</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="W2" typeName="INT"></variables>
+			<variables name="CMD_START" typeName="BOOL">
+				<comment>IN програмна команда START</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="CMD_RESUME" typeName="BOOL">
+				<comment>IN програмна команда RESUME</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="CMD_RESTART" typeName="BOOL">
+				<comment>IN програмна команда RESTART</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="CMD_PAUSE" typeName="BOOL">
+				<comment>IN програмна команда PAUSE</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="CMD_HOLD" typeName="BOOL">
+				<comment>IN програмна команда HOLD</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="CMD_STOP" typeName="BOOL">
+				<comment>IN програмна команда STOP</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="CMD_ABORT" typeName="BOOL">
+				<comment>IN програмна команда ABORT</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="CMD_RESET" typeName="BOOL">
+				<comment>IN програмна команда RESET</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="W3" typeName="INT"></variables>
+			<variables name="STA_RUNNING" typeName="BOOL">
+				<comment>OUT стан RUNNING</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="STA_IDLE" typeName="BOOL">
+				<comment>OUT стан IDLE</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="STA_PAUSING" typeName="BOOL">
+				<comment>OUT стан PAUSING</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="STA_PAUSED" typeName="BOOL">
+				<comment>OUT стан PAUSED</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="STA_HOLDING" typeName="BOOL">
+				<comment>OUT стан HOLDING</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="STA_HELD" typeName="BOOL">
+				<comment>OUT стан HOLD</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STA_RESTARTING" typeName="BOOL">
+				<comment>OUT стан RESTARTING</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="STA_COMPLETE" typeName="BOOL">
+				<comment>OUT стан COMPLETE</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STA_STOPPING" typeName="BOOL">
+				<comment>OUT стан STOPPING</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="STA_STOPPED" typeName="BOOL">
+				<comment>OUT стан STOPPED</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_ABORTING" typeName="BOOL">
+				<comment>OUT стан ABORTING</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="STA_ABORTED" typeName="BOOL">
+				<comment>OUT стан ABORTED</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="STA_STARTING" typeName="BOOL">
+				<comment>OUT стан STARTING</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="STA_COMPLETING" typeName="BOOL">
+				<comment>OUT стан COMPLETING</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="STA_WRK" typeName="BOOL">
+				<comment>OUT  будь яких з робочих станів = STA_RUNNING OR  STA_STARTING OR </comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="STA_NOTWRK" typeName="BOOL">
+				<comment>OUT будь з яких кінцевих станів = STA_COMPLETE OR  STA_STOPPED OR </comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PLC_CFG" version="0.12" dateTime="dt#2022-07-25-11:17:57">
+		<attribute name="TypeSignatureCheckSumString" value="1691"></attribute>
+		<structure>
+			<variables name="ID" typeName="UINT">
+				<comment>?????????? ?????????????</comment>
+			</variables>
+			<variables name="CLSID" typeName="UINT">
+				<comment>16#21xx</comment>
+			</variables>
+			<variables name="STA" typeName="UINT"></variables>
+			<variables name="STA_CON2ERR" typeName="BOOL">
+				<comment>? ??????? ?????? ? ??????? ??? ? ???? (??? ??????? ???????????)</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="STA_PLC2STOP" typeName="BOOL">
+				<comment>???????? ??? ? ????? (??? ??????? ???????????)</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="STA_BLK" typeName="BOOL">
+				<comment>? ???? ? ???? ???????????? ??</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="STA_ALDIS" typeName="BOOL">
+				<comment>? ???? ? ???? ?????????? ???????</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="STA_DIOON" typeName="BOOL">
+				<comment>??? ?????????? ?? ?????? (MODBUS ??? ???????????) ??????? ??????????? ?????/??????</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="STA_DIOERR" typeName="BOOL">
+				<comment>? ??????? ?? DIO</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="STA_DBLCKALL" typeName="BOOL">
+				<comment>??? ??????? ????????????</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="STA_FRC" typeName="BOOL">
+				<comment>???? ? ???? ?????? ????????? ?? ???? ????? ?????</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="STA_SMLALL" typeName="BOOL">
+				<comment>??? ? ?????? ? ????????, ???????? ??? CM ??????? ? ????? ????????</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="STA_DISP" typeName="BOOL">
+				<comment>???? ? ???? ??????? ? ?????? ??????? ??????????</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="STA_FRC2" typeName="BOOL">
+				<comment>? ???? ? ???? ?????????? ???????? ??????? (????? 2), ??????, ??????</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="STA_FRC1" typeName="BOOL">
+				<comment>???? ? ???? ?????? ????????? (????? 1)</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="STA_SCN1" typeName="BOOL">
+				<comment>?????? ????</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="STA_FRC0" typeName="BOOL">
+				<comment>???? ? ???? ?????? ????????? (????? 0)</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="STA_SML" typeName="BOOL">
+				<comment> ???? ? ???? ??’??? ? ?????? ????????</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="STA_CMDACK" typeName="BOOL">
+				<comment>????????????? ???????, ??????? ??????? ????? ???? ???? ?????? ? ???????? ?????</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="CMD" typeName="UINT">
+				<comment>??????? ? HMI</comment>
+			</variables>
+			<variables name="CMDPRG" typeName="UINT">
+				<comment>??????? ? ??????????? ????????? (????????)</comment>
+			</variables>
+			<variables name="PRM1" typeName="UINT">
+				<comment>????????? ?????????</comment>
+			</variables>
+			<variables name="PRM2" typeName="UINT">
+				<comment>????????? ?????????</comment>
+			</variables>
+			<variables name="PLS" typeName="UINT">
+				<comment>?????? ??????? ?? ???????? ?? ????</comment>
+			</variables>
+			<variables name="PLS_P100MS" typeName="BOOL">
+				<comment>100 ??</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="PLS_P200MS" typeName="BOOL">
+				<comment>200 ??</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="PLS_P500MS" typeName="BOOL">
+				<comment>500 ??</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="PLS_P1S" typeName="BOOL">
+				<comment>1 ?</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="PLS_P2S" typeName="BOOL">
+				<comment>2 ?</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="PLS_P5S" typeName="BOOL">
+				<comment>5 ?</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="PLS_P10S" typeName="BOOL">
+				<comment>10 ?</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="PLS_P60S" typeName="BOOL">
+				<comment>1 ??</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="PLS_M1S" typeName="BOOL">
+				<comment>?????? ? ???????? 1 ? (0.5 ? + 0.5 ?)</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="PLS_M2S" typeName="BOOL">
+				<comment>?????? ? ???????? 2 ? (1 ? + 1 ?)</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="PLS_b10" typeName="BOOL">
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="PLS_b11" typeName="BOOL">
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="PLS_NEWMIN" typeName="BOOL">
+				<comment>=1 ?? ???? ???? ???????? ?????? – ??????? ???????</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="PLS_NEWHR" typeName="BOOL">
+				<comment>=1 ?? ???? ???? ???????? ?????? – ??????? ??????</comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="PLS_NEWDAY" typeName="BOOL">
+				<comment>=1 ?? ???? ???? ???????? ?????? – ??????? ????</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="PLS_NEWSHIFT" typeName="BOOL">
+				<comment>=1 ?? ???? ???? ???????? ?????? – ??????? ?????</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="ALM1" typeName="UINT"></variables>
+			<variables name="ALM_ALM" typeName="BOOL">
+				<comment>??????? ???????????? ???????</comment>
+				<attribute name="ExtractBit" value="0"></attribute>
+			</variables>
+			<variables name="ALM_NWALM" typeName="BOOL">
+				<comment>???????? ???? ???????????? ???????</comment>
+				<attribute name="ExtractBit" value="1"></attribute>
+			</variables>
+			<variables name="ALM_ALMNACK" typeName="BOOL">
+				<comment>?????????? ????????????? ???????</comment>
+				<attribute name="ExtractBit" value="2"></attribute>
+			</variables>
+			<variables name="ALM_WRN" typeName="BOOL">
+				<comment>??????? ???????????? ????????????</comment>
+				<attribute name="ExtractBit" value="3"></attribute>
+			</variables>
+			<variables name="ALM_NWWRN" typeName="BOOL">
+				<comment>???????? ???? ???????????? ????????????</comment>
+				<attribute name="ExtractBit" value="4"></attribute>
+			</variables>
+			<variables name="ALM_WRNNACK" typeName="BOOL">
+				<comment>?????????? ?????????????? ????????????</comment>
+				<attribute name="ExtractBit" value="5"></attribute>
+			</variables>
+			<variables name="ALM_BAD" typeName="BOOL">
+				<comment>??????? ??????? ??????????????? ?????</comment>
+				<attribute name="ExtractBit" value="6"></attribute>
+			</variables>
+			<variables name="ALM_NWBAD" typeName="BOOL">
+				<comment>???? ??????? ??????????????? ?????</comment>
+				<attribute name="ExtractBit" value="7"></attribute>
+			</variables>
+			<variables name="ALM_BADNACK" typeName="BOOL">
+				<comment>?????????? ??????? ??????????????? ?????</comment>
+				<attribute name="ExtractBit" value="8"></attribute>
+			</variables>
+			<variables name="ALM_EMCYSTP" typeName="BOOL">
+				<comment>??????? ?????</comment>
+				<attribute name="ExtractBit" value="9"></attribute>
+			</variables>
+			<variables name="ALM_STP2RUN" typeName="BOOL">
+				<comment>? ??????? ? ????? ???? ? ???? ???</comment>
+				<attribute name="ExtractBit" value="10"></attribute>
+			</variables>
+			<variables name="ALM_CON2ERR" typeName="BOOL">
+				<comment>? ??????? ?????? ? ??????? ??? ? ???? (??? ??????? ???????????)</comment>
+				<attribute name="ExtractBit" value="11"></attribute>
+			</variables>
+			<variables name="ALM_PLC2STOP" typeName="BOOL">
+				<comment>???????? ??? ? ????? (??? ??????? ???????????)</comment>
+				<attribute name="ExtractBit" value="12"></attribute>
+			</variables>
+			<variables name="ALM_DIOERR" typeName="BOOL">
+				<comment>? ??????? ?? DIO </comment>
+				<attribute name="ExtractBit" value="13"></attribute>
+			</variables>
+			<variables name="ALM_PLCERR" typeName="BOOL">
+				<comment>? ???????? ??????? (???)</comment>
+				<attribute name="ExtractBit" value="14"></attribute>
+			</variables>
+			<variables name="ALM_CONHIERR" typeName="BOOL">
+				<comment>? ??????? ?????? ? ??????? ??????</comment>
+				<attribute name="ExtractBit" value="15"></attribute>
+			</variables>
+			<variables name="ALM2" typeName="INT">
+				<comment>???? ???????</comment>
+			</variables>
+			<variables name="STEP1" typeName="INT">
+				<comment>???? ???????? ????????</comment>
+			</variables>
+			<variables name="T_STEP1" typeName="INT">
+				<comment>??? ????? ???????? ???????? ???????, ? (?)</comment>
+			</variables>
+			<variables name="MSG" typeName="UDINT">
+				<comment>??? ????? ???????? ???????? ???????, ? (?)</comment>
+			</variables>
+			<variables name="TQ" typeName="UDINT">
+				<comment>????????? ??? ? ??????? 1-?? ????? ?????????? (? ????????)</comment>
+			</variables>
+			<variables name="TQM" typeName="UDINT">
+				<comment>????????? ??? ?????? ??? ? ??????? ????? (? ????????)</comment>
+			</variables>
+			<variables name="DICNT" typeName="INT">
+				<comment>????????? ??????? ??????? DI</comment>
+			</variables>
+			<variables name="DOCNT" typeName="INT">
+				<comment>????????? ??????? ??????? DO</comment>
+			</variables>
+			<variables name="AICNT" typeName="INT">
+				<comment>????????? ??????? ??????? AI</comment>
+			</variables>
+			<variables name="AOCNT" typeName="INT">
+				<comment>????????? ??????? ??????? AO</comment>
+			</variables>
+			<variables name="NOW" typeName="ARRAY[0..3] OF INT">
+				<comment>??????? ??? ????????????? ??? ? BCD ???????</comment>
+				<instanceElementDesc name="[1]">
+					<comment>hour  minute (16#hhmm)</comment>
+				</instanceElementDesc>
+				<instanceElementDesc name="[0]">
+					<comment>seconds,-- (16#ss,--)</comment>
+				</instanceElementDesc>
+				<instanceElementDesc name="[2]">
+					<comment>month, day (16#mmdd)</comment>
+				</instanceElementDesc>
+				<instanceElementDesc name="[3]">
+					<comment>year (16#yyyy)</comment>
+				</instanceElementDesc>
+			</variables>
+			<variables name="SHIFTPARA" typeName="ARRAY[0..3] OF INT">
+				<comment>?????? ???????? ???? (???????? 3 ?????): SHIFT[0] – ????????? ???? SHIFT[1] – ???????? 1-? ????? (BCD 16#hhmm) SHIFT[2] – ???????? 2-? ????? (BCD 16#hhmm)  SHIFT[3] – ???????? 3-? ????? (BCD 16#hhmm)</comment>
+			</variables>
+			<variables name="SHIFTNMB" typeName="UINT">
+				<comment>????? ???????? ?????</comment>
+			</variables>
+			<variables name="CNTALM" typeName="UINT">
+				<comment>????????? ????????? ???????? ?????? "??????"</comment>
+			</variables>
+			<variables name="CNTWRN" typeName="UINT">
+				<comment>????????? ????????????????? ?????? "????????????"</comment>
+			</variables>
+			<variables name="CNTBAD" typeName="UINT">
+				<comment>????????? ????????????????? ?????? "???????????????"</comment>
+			</variables>
+			<variables name="CNTFRC" typeName="UINT">
+				<comment>????????? ??????????????????? ??'?????</comment>
+			</variables>
+			<variables name="CNTMAN" typeName="UINT">
+				<comment>????????? ????????? ?? ? ??????? ??????</comment>
+			</variables>
+			<variables name="TSK_LTIME" typeName="UINT">
+				<comment>??????? (????????) ??? ?????? ? ????????????</comment>
+			</variables>
+			<variables name="TSK_MAXTIME" typeName="UINT">
+				<comment>???????????? ??? ?????? ? ????????????</comment>
+			</variables>
+			<variables name="STA_PERM" typeName="INT">
+				<comment>???????? STA, ???? ??? ?? ??????? ??????? ???????</comment>
+			</variables>
+			<variables name="ALM1_PERM" typeName="INT">
+				<comment>???????? ALM1, ???? ??? ?? ??????? ??????? ???????</comment>
+			</variables>
+			<variables name="CNTALM_PERM" typeName="UINT">
+				<comment>????????? ????????? ???????? ?????? "??????"</comment>
+			</variables>
+			<variables name="CNTWRN_PERM" typeName="UINT">
+				<comment>????????? ????????????????? ?????? "????????????"</comment>
+			</variables>
+			<variables name="CNTBAD_PERM" typeName="UINT">
+				<comment>????????? ????????????????? ?????? "???????????????"</comment>
+			</variables>
+			<variables name="CNTFRC_PERM" typeName="UINT">
+				<comment>????????? ??????????????????? ??'?????</comment>
+			</variables>
+			<variables name="CNTMAN_PERM" typeName="UINT">
+				<comment>????????? ????????? ?? ? ??????? ??????</comment>
+			</variables>
+			<variables name="MODULSCNT" typeName="INT">
+				<comment>????????? ???????</comment>
+			</variables>
+			<variables name="NOWns" typeName="UDINT">
+				<comment>?? (???????????) ??? ???????? ?????????????? ????</comment>
+			</variables>
+			<variables name="TQMS" typeName="UDINT">
+				<comment>????????????? ?????????, ?????????? ??? ?????? ??? ????? ????????????</comment>
+			</variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PHPARA_EXMPL" version="0.01" dateTime="dt#2022-08-23-14:18:53">
+		<comment>PFW для прикладу параметрів PROC</comment>
+		<attribute name="TypeSignatureCheckSumString" value="4E50"></attribute>
+		<structure>
+			<variables name="PARA1" typeName="REAL"></variables>
+			<variables name="PARA2" typeName="REAL"></variables>
+			<variables name="PARA3" typeName="REAL"></variables>
+		</structure>
+	</DDTSource>
+	<DDTSource DDTName="PHINOUT_EXMPL" version="0.01" dateTime="dt#2022-08-23-14:18:54">
+		<comment>PFW для прикладу вх/вих PROC</comment>
+		<attribute name="TypeSignatureCheckSumString" value="B7A9"></attribute>
+		<structure>
+			<variables name="IN1" typeName="REAL"></variables>
+			<variables name="IN2" typeName="REAL"></variables>
+			<variables name="OUT1" typeName="REAL"></variables>
+			<variables name="OUT2" typeName="REAL"></variables>
+		</structure>
+	</DDTSource>
+	<FBSource nameOfFBType="PROC_MACH" version="0.13" dateTime="dt#2022-09-11-09:04:08">
+		<comment>PFW рушій автомату стану проц.елементу</comment>
+		<attribute name="TypeCodeCheckSumString" value="D964"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="CC19"></attribute>
+		<inputParameters>
+			<variables name="ID" typeName="UINT">
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="PRCCFG" typeName="PROC_CFG">
+				<attribute name="PositionPin" value="2"></attribute>
+				<instanceElementDesc name="STEP1">
+					<comment>стан процедури</comment>
+				</instanceElementDesc>
+				<instanceElementDesc name="STEP2">
+					<comment>крок процедури</comment>
+				</instanceElementDesc>
+				<instanceElementDesc name="T_STEP1">
+					<comment>час стану процедури</comment>
+				</instanceElementDesc>
+				<instanceElementDesc name="T_STEP2">
+					<comment>час кроку процедури</comment>
+				</instanceElementDesc>
+			</variables>
+			<variables name="PRCHMI" typeName="PROC_HMI">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="PRCCTRL" typeName="PROC_CTRL">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="PRCBUF" typeName="PROC_CFG">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+			<variables name="PLCCFG" typeName="PLC_CFG">
+				<attribute name="PositionPin" value="6"></attribute>
+			</variables>
+		</inOutParameters>
+		<publicLocalVariables>
+			<variables name="PRCBUF_IN" typeName="PROC_CFG"></variables>
+			<variables name="PRCBUF_OUT" typeName="PROC_CFG"></variables>
+		</publicLocalVariables>
+		<privateLocalVariables>
+			<variables name="STA" typeName="INT"></variables>
+			<variables name="CMD" typeName="INT"></variables>
+			<variables name="T_STEPHMI" typeName="UINT"></variables>
+			<variables name="AUTO" typeName="BOOL"></variables>
+			<variables name="SEMI" typeName="BOOL"></variables>
+			<variables name="INBUF" typeName="BOOL"></variables>
+			<variables name="MAN" typeName="BOOL"></variables>
+			<variables name="CMD_ABORT" typeName="BOOL"></variables>
+			<variables name="CMD_HOLD" typeName="BOOL"></variables>
+			<variables name="CMD_PAUSE" typeName="BOOL"></variables>
+			<variables name="CMD_RESET" typeName="BOOL"></variables>
+			<variables name="CMD_RESTART" typeName="BOOL"></variables>
+			<variables name="CMD_RESUME" typeName="BOOL"></variables>
+			<variables name="CMD_START" typeName="BOOL"></variables>
+			<variables name="CMD_STOP" typeName="BOOL"></variables>
+			<variables name="CMD_BUF" typeName="BOOL"></variables>
+			<variables name="CMD_CMPLT" typeName="BOOL"></variables>
+			<variables name="TMAXERR" typeName="BOOL"></variables>
+			<variables name="TMINERR" typeName="BOOL"></variables>
+			<variables name="ALM" typeName="BOOL"></variables>
+			<variables name="AMAXENBL" typeName="BOOL"></variables>
+			<variables name="AMINENBL" typeName="BOOL"></variables>
+			<variables name="dt1" typeName="UDINT"></variables>
+		</privateLocalVariables>
+		<FBProgram name="PROC">
+			<STSource>(*  PACFramework SEControlExpertLIB V1.0.0 *)
+
+IF PRCCFG.ID=0 THEN
+  PRCCFG.ID:=ID;
+END_IF;
+
+PRCCFG.CLSID := 16#3000;(*процедура загального вжитку*)
+
+(*пустишка не обробляється*)
+IF ID=0 THEN 
+   PRCCFG.STA:=0;
+   PRCCFG.CMD:=0;
+    RETURN; 
+END_IF;
+
+(* STA
+- x0-x7 для маскування кнопок керування: TRUE - кнопка активна/видима, дія дозволена, FALSE - кнопка неактивна/невидима, дія не дозволена
+X0 START - CMD_START
+X1 PAUSE - CMD_PAUSE
+X2 RESET - CMD_RESET 
+X3 HOLD - CMD_HOLD
+X4 STOP - CMD_STOP
+X5 CANCEL - негативне пітвердження (відміна) ручної операції, керування зовн функцією
+X6 NEXT - перейти до наступного кроку, керування зовн функцією
+X7 OK - підтвердити дію, керування зовн функцією
+- x8-x15 - стани
+X8 TMAXERR – помилка максимуму часу виконання, час більше максимуму 
+X9 TMINERR – помилка мінімуму часу виконання, час менще мінімуму
+X10 ALM – наявність помилки процедури
+X11 SEMI - напівавтоматичний
+X12 INBUF – зайнятість буферу
+X13 MAN – ручний режим
+    AUTO = NOT MAN AND NOT SEMI
+X14 ENBL – дозвіл на запуск
+X15 CMD_BUF (тільки HMI)
+*)
+(* CMD
+1 - CMD_START  
+2 - CMD_RESUME not HMI
+3 - CMD_PAUSE 
+4 - CMD_RESET
+5 - CMD_RESTART not HMI
+6 - CMD_HOLD
+7 - CMD_STOP 
+8 - CMD_ABORT 
+9 - CMD_CMPLT тільки для наладки
+16#100 - прочитати конфігурацію CMD_BUF (256)
+16#101 - записати конфігурацію (257)
+16#102 - перевести в автоматичний режим
+16#103 - перевести в ручний режим
+16#104 - переключити ручний режим
+16#105 - переключити в напівавтоматичний (програмний) режим
+16#0200 – NEXT (HMI - перейти до наступного кроку T_STEP2, пропустити умову переходу) X6 обробляється ззовні  
+16#0300 – OK (HMI - команди підтвердження дій) X7
+16#0301 - CANCEL (HMI - негативне пітвердження (відміна) ручної операції) X5 
+2000...3000 (16#7D0 - 16#BB8) - перейти на відповідний крок 
+*)
+
+STA :=PRCCFG.STA;
+(*якщо немає дозволу на керування убрати усі активності кнопок *)
+IF NOT PRCCTRL.ENBL THEN
+   STA :=STA AND 16#FF00;
+END_IF;
+TMAXERR:=STA.8;
+TMINERR:=STA.9;
+ALM:=STA.10;
+SEMI :=STA.11;
+MAN :=STA.13;
+CMD_BUF :=PRCHMI.STA.15 OR PRCHMI.CMD=16#0100;
+AUTO := NOT MAN AND NOT SEMI;
+INBUF:=(PRCCFG.ID=PRCBUF.ID);
+
+(*PRM*)
+AMAXENBL:=PRCCFG.PRM.7;
+AMINENBL:=PRCCFG.PRM.8;
+
+(*----- обробка команд ------------*)
+CMD:=0;
+if PRCCFG.CMD&lt;&gt;0 then CMD:=PRCCFG.CMD; end_if;(*команда з іншого джерела*)
+if PRCHMI.CMD&lt;&gt;0 then CMD:=PRCHMI.CMD; end_if;(*команда з HMI*)
+IF PRCBUF.CMD&lt;&gt;0 and INBUF THEN CMD:=PRCBUF.CMD; END_IF;(*команда з буферу*)
+(*команди HMI за умови їх активності*)
+IF NOT ((CMD=1 AND STA.0)   (*CMD_START +*)   
+ OR CMD=2    (*CMD_RESUME - як правило не використовується*)
+ OR (CMD=3 AND STA.1)   (*CMD_PAUSE *)
+ OR (CMD=4 AND STA.2) (*CMD_RESET*)
+ OR CMD=5 (*CMD_RESTART - як правило не використовується*)
+ OR (CMD=6 AND STA.3)  (*CMD_HOLD*)
+ OR (CMD=7 AND STA.4) (*CMD_STOP +*)
+ (*OR CMD=8 CMD_ABORT - за замовченням відключена з HMI програмно*)
+ OR CMD=9 (*CMD_CMPLT - тільки для наладки*)
+ OR CMD&gt;10) (* інші команди пропускаються без перевірки*)
+     THEN 
+     CMD:=0;
+END_IF;
+IF CMD_BUF THEN CMD:=16#0100; END_IF; (*завнтажити в буфер*) 
+(* загальна команда PLC OR HMI*)
+CMD_ABORT :=PRCCTRL.CMD_ABORT OR CMD=8;
+CMD_HOLD :=PRCCTRL.CMD_HOLD OR CMD=6;
+CMD_PAUSE :=PRCCTRL.CMD_PAUSE OR CMD=3;
+CMD_RESET :=PRCCTRL.CMD_RESET OR CMD=4 OR CMD=1; (*з HMI по RESET і START*)
+CMD_RESTART :=PRCCTRL.CMD_RESTART OR CMD=5 OR CMD=1; (*з HMI по RESTART і START*)
+CMD_RESUME :=PRCCTRL.CMD_RESUME OR CMD=2 OR CMD=1; (*з HMI по RESUME і START*)
+CMD_START :=PRCCTRL.CMD_START OR CMD=1;
+CMD_STOP :=PRCCTRL.CMD_STOP OR CMD=7;
+CMD_CMPLT := CMD=9;(*тільки для наладки*)
+
+CASE CMD OF
+ 16#0100: (*прочитати конфігурацію*)
+    PRCBUF:=PRCCFG;
+ 16#0101: (*записати конфігурацію*)
+   PRCCFG.PRM :=PRCBUF.PRM;
+   PRCCFG.T_DELAY :=PRCBUF.T_DELAY;
+   PRCCFG.TMAX :=PRCBUF.TMAX;
+   PRCCFG.TMIN :=PRCBUF.TMIN;
+ 16#0102:
+  MAN:= false;
+ 16#0103:
+  MAN:= true;
+ 16#104:
+  MAN:= NOT MAN; 
+END_CASE;
+(*----------------------------*)
+
+(*за основу взятий секундний лічильник, як більш точний на великих діапазонах*)
+dt1 := (PLCCFG.TQ - PRCCFG.T_PREV)*1000;
+
+(* -------------- обробник автомату станів *)
+IF CMD_ABORT THEN PRCCFG.STEP1:=11; END_IF;  
+CASE PRCCFG.STEP1 OF   
+ 0:(* - ініціалізація*)
+   PRCCFG.STEP1:=1;    
+ 1:(* – Idle (очікування)*)
+      PRCCFG.T_STEP1:=0;
+      TMAXERR:=FALSE;
+      TMINERR:=FALSE; 
+    IF CMD_START AND PRCCTRL.ENBL THEN 
+       PRCCFG.STEP1:=13; PRCCFG.STEP2:=13000;
+       PRCCFG.T_STEP2:=0;
+    END_IF;
+   PRCCTRL.PAUSING_CMPLT := FALSE;
+   PRCCTRL.RUNING_CMPLT := FALSE;
+   PRCCTRL.STARTING_CMPLT := false;
+   PRCCTRL.COMPLETING_CMPLT := false;
+   PRCCTRL.HL_RUNNING_CMPLT := FALSE;
+   PRCCTRL.RESTARTING_CMPLT := FALSE;
+   PRCCTRL.HOLDING_CMPLT := FALSE;
+   PRCCTRL.STOPPING_CMPLT := FALSE;
+   PRCCTRL.ABORTING_CMPLT := FALSE;
+    IF PRCCFG.STEP2&lt;1000 OR PRCCFG.STEP2&gt;1999 THEN  
+       PRCCFG.STEP2:=1000; 
+    END_IF;
+   STA:=STA AND 16#FF00; (*деактивувати усі кнопки*)
+   STA.0 :=PRCCTRL.ENBL; (*активувати Пуск, в автоматі скидується нижче*) 
+ 13:(*13 - Starting*)
+    IF PRCCFG.STEP2&lt;13000 OR PRCCFG.STEP2&gt;13999 THEN  
+       PRCCFG.STEP2:=13000; 
+    END_IF;
+    IF PRCCTRL.STARTING_CMPLT OR PRCCTRL.RUNING_CMPLT OR CMD_CMPLT THEN
+       PRCCFG.STEP1:=2;PRCCFG.STEP2:=2000;
+       PRCCFG.T_STEP2:=0;  
+    END_IF;
+    IF CMD_HOLD THEN 
+    	PRCCFG.STEP1:=5; PRCCFG.STEP2:=5000;
+	PRCCFG.T_STEP2:=0;
+     END_IF;
+    IF CMD_STOP THEN 
+    	PRCCFG.STEP1:=9; PRCCFG.STEP2:=9000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_ABORT THEN 
+    	PRCCFG.STEP1:=11; PRCCFG.STEP2:=11000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+   STA.0:=FALSE; (*1 -CMD_START  X0=1 - кнопка активна *)
+   STA.1:=FALSE;(*1 3 -CMD_PAUSE X1 *)
+   STA.2:=FALSE;(*1 4 -CMD_RESET X2 *)
+   STA.3:=FALSE;(*1 6 -CMD_HOLD X3 *)
+   STA.4:=TRUE;(*1 7 -CMD_STOP X4 *)
+ 2:(*2 - Running*)  
+   PRCCTRL.PAUSING_CMPLT := FALSE;
+   PRCCTRL.STARTING_CMPLT := false;
+   PRCCTRL.COMPLETING_CMPLT := false;
+   PRCCTRL.RESTARTING_CMPLT := FALSE;
+   PRCCTRL.HOLDING_CMPLT := FALSE;
+   PRCCTRL.STOPPING_CMPLT := FALSE;
+   PRCCTRL.ABORTING_CMPLT := FALSE;
+    IF PRCCFG.STEP2&lt;2000 OR PRCCFG.STEP2&gt;2999 THEN  
+       PRCCFG.STEP2:=2000; 
+    END_IF;
+    IF PRCCTRL.RUNING_CMPLT  OR CMD_CMPLT THEN
+       PRCCFG.STEP1:=14;PRCCFG.STEP2:=14000;
+       PRCCFG.T_STEP2:=0;  
+        IF AMINENBL AND PRCCFG.T_STEP1&lt;PRCCFG.TMIN THEN
+           TMINERR:=TRUE;
+        END_IF; 
+    END_IF;
+    IF CMD_PAUSE THEN 
+    	PRCCFG.STEP1:=3; PRCCFG.STEP2:=3000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_HOLD THEN 
+    	PRCCFG.STEP1:=5; PRCCFG.STEP2:=5000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_STOP THEN 
+    	PRCCFG.STEP1:=9; PRCCFG.STEP2:=9000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_ABORT THEN 
+    	PRCCFG.STEP1:=11; PRCCFG.STEP2:=11000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF AMAXENBL AND PRCCFG.T_STEP1&gt;=PRCCFG.TMAX THEN
+       TMAXERR:=TRUE;
+    END_IF;
+
+   STA.0:=FALSE; (*1 -CMD_START  X0=1 - кнопка активна *) 
+   STA.1:=TRUE;(*3 -CMD_PAUSE X1 *)
+   STA.2:=FALSE;(*4 -CMD_RESET X2 *)
+   STA.3:=TRUE;(*6 -CMD_HOLD X3 *)
+   STA.4:=TRUE;(*7 -CMD_STOP X4 *)
+14:(* Completing *)
+   PRCCTRL.RUNING_CMPLT:=false;
+    IF PRCCFG.STEP2&lt;14000 OR PRCCFG.STEP2&gt;14999 THEN  
+       PRCCFG.STEP2:=14000; 
+    END_IF;
+    IF PRCCTRL.COMPLETING_CMPLT OR CMD_CMPLT  THEN
+       PRCCFG.STEP1:=8; PRCCFG.STEP2:=8000;
+       PRCCFG.T_STEP2:=0;  
+    END_IF;
+    IF CMD_STOP THEN 
+    	PRCCFG.STEP1:=9; PRCCFG.STEP2:=9000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_ABORT THEN 
+    	PRCCFG.STEP1:=11;PRCCFG.STEP2:=11000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_START THEN 
+       PRCCFG.STEP1:=13;PRCCFG.STEP2:=13000;
+       PRCCFG.T_STEP2:=0;
+    END_IF;
+   STA.0:=FALSE; (*1 -CMD_START  X0=1 - кнопка активна*) 
+   STA.1:=FALSE;(*3 -CMD_PAUSE X1 *)
+   STA.2:=FALSE;(*4 -CMD_RESET X2 *)
+   STA.3:=TRUE;(*6 -CMD_HOLD X3 *)
+   STA.4:=TRUE;(*7 -CMD_STOP X4 *)
+3:(*3 – Pausing *)
+    IF PRCCFG.STEP2&lt;3000 OR PRCCFG.STEP2&gt;3999 THEN  
+       PRCCFG.STEP2:=3000; 
+    END_IF;
+    IF PRCCTRL.PAUSING_CMPLT OR CMD_CMPLT THEN 
+       PRCCFG.STEP1:=4;PRCCFG.STEP2:=4000;
+       PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_HOLD THEN 
+    	PRCCFG.STEP1:=5; PRCCFG.STEP2:=5000;
+	PRCCFG.T_STEP2:=0;
+    END_IF;
+    IF CMD_STOP THEN 
+    	PRCCFG.STEP1:=9; PRCCFG.STEP2:=9000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_ABORT THEN 
+    	PRCCFG.STEP1:=11;PRCCFG.STEP2:=11000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+   STA.0:=FALSE; (*1 -CMD_START  X0=1 - кнопка активна *)
+   STA.1:=FALSE;(*3 -CMD_PAUSE X1 *)
+   STA.2:=FALSE;(*4 -CMD_RESET X2 *)
+   STA.3:=TRUE;(*6 -CMD_HOLD X3 *)
+   STA.4:=TRUE;(*7 -CMD_STOP X4 *)   
+4:(*4 – Paused *)
+   PRCCTRL.PAUSING_CMPLT:=false;
+    IF PRCCFG.STEP2&lt;4000 OR PRCCFG.STEP2&gt;4999 THEN  
+       PRCCFG.STEP2:=4000; 
+    END_IF;  
+   IF CMD_RESUME OR CMD_RESTART OR CMD_START THEN 
+   	PRCCFG.STEP1:=2;PRCCFG.STEP2:=2000;
+	PRCCFG.T_STEP2:=0;
+   END_IF;
+   IF PRCCTRL.RUNING_CMPLT THEN (*додано 18.05*)
+        PRCCFG.STEP1 := 14; PRCCFG.STEP2:=14000;
+        PRCCFG.T_STEP2:=0;
+   END_IF;
+    IF CMD_HOLD THEN 
+    	PRCCFG.STEP1:=5; PRCCFG.STEP2:=5000;
+	PRCCFG.T_STEP2:=0;
+    END_IF;
+    IF CMD_STOP THEN 
+    	PRCCFG.STEP1:=9;PRCCFG.STEP2:=9000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_ABORT THEN 
+    	PRCCFG.STEP1:=11;PRCCFG.STEP2:=11000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;   
+   STA.0:=TRUE; (*1 -CMD_START  X0=1 - кнопка активна *)
+   STA.1:=FALSE;(*3 -CMD_PAUSE X1 *)
+   STA.2:=FALSE;(*4 -CMD_RESET X2 *)
+   STA.3:=TRUE;(*6 -CMD_HOLD X3 *)
+   STA.4:=TRUE;(*7 -CMD_STOP X4 *)
+5:(*5 – Holding*)
+    IF PRCCFG.STEP2&lt;5000 OR PRCCFG.STEP2&gt;5999 THEN  
+       PRCCFG.STEP2:=5000; 
+    END_IF;   
+    IF PRCCTRL.HOLDING_CMPLT  OR CMD_CMPLT THEN 
+       PRCCFG.STEP1:=6; PRCCFG.STEP2:=6000;
+       PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_STOP THEN 
+    	PRCCFG.STEP1:=9; PRCCFG.STEP2:=9000;
+	PRCCFG.T_STEP2:=0;
+    END_IF;
+    IF CMD_ABORT THEN 
+    	PRCCFG.STEP1:=11;PRCCFG.STEP2:=11000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+       
+   STA.0:=FALSE; (*1 -CMD_START  X0=1 - кнопка активна *)
+   STA.1:=FALSE;(*3 -CMD_PAUSE X1*)
+   STA.2:=FALSE;(*4 -CMD_RESET X2*)
+   STA.3:=FALSE;(*6 -CMD_HOLD X3*)
+   STA.4:=TRUE;(*7 -CMD_STOP X4*)
+6:(*6 – Held*)
+   PRCCTRL.HOLDING_CMPLT:=false;
+   PRCCFG.T_STEP1:=0; 
+    IF PRCCFG.STEP2&lt;6000 OR PRCCFG.STEP2&gt;6999 THEN  
+       PRCCFG.STEP2:=6000; 
+    END_IF;    
+    IF CMD_RESTART THEN 
+    	PRCCFG.STEP1:=7;PRCCFG.STEP2:=7000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;   
+    IF CMD_STOP THEN 
+    	PRCCFG.STEP1:=9;PRCCFG.STEP2:=9000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_ABORT THEN 
+    	PRCCFG.STEP1:=11;PRCCFG.STEP2:=11000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF PRCCTRL.RUNING_CMPLT  OR CMD_CMPLT THEN
+       PRCCFG.STEP1:=14;PRCCFG.STEP2:=14000;
+       PRCCFG.T_STEP2:=0;
+    END_IF;
+ 
+   STA.0:=TRUE; (*1 -CMD_START  X0=1 - кнопка активна*) 
+   STA.1:=FALSE;(*3 -CMD_PAUSE X1*)
+   STA.2:=FALSE;(*4 -CMD_RESET X2*)
+   STA.3:=FALSE;(*6 -CMD_HOLD X3*)
+   STA.4:=TRUE;(*7 -CMD_STOP X4*)
+7:(*7 – Restarting*)
+    IF PRCCFG.STEP2&lt;7000 OR PRCCFG.STEP2&gt;7999 THEN  
+       PRCCFG.STEP2:=7000; 
+    END_IF;
+    IF PRCCTRL.RESTARTING_CMPLT  OR CMD_CMPLT THEN 
+       PRCCFG.STEP1:=2;PRCCFG.STEP2:=2000;
+       PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_HOLD THEN 
+    	PRCCFG.STEP1:=5; PRCCFG.STEP2:=5000;
+	PRCCFG.T_STEP2:=0;
+    END_IF;
+    IF CMD_STOP THEN 
+    	PRCCFG.STEP1:=9; PRCCFG.STEP2:=9000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_ABORT THEN 
+    	PRCCFG.STEP1:=11;PRCCFG.STEP2:=11000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;       
+   STA.0:=FALSE; (*1 -CMD_START  X0=1 - кнопка активна*) 
+   STA.1:=FALSE;(*3 -CMD_PAUSE X1*)
+   STA.2:=FALSE;(*4 -CMD_RESET X2*)
+   STA.3:=FALSE;(*6 -CMD_HOLD X3*)
+   STA.4:=TRUE;(*7 -CMD_STOP X4*)
+8:(*8 – Complete*)
+   PRCCTRL.COMPLETING_CMPLT:=false;
+    IF PRCCFG.STEP2&lt;8000 OR PRCCFG.STEP2&gt;8999 THEN  
+       PRCCFG.STEP2:=8000; 
+    END_IF;
+    IF CMD_RESET THEN 
+    	PRCCFG.STEP1:=1; PRCCFG.STEP2:=1000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF; 
+
+   STA:=STA AND 16#FF00; (*деактивувати усі кнопки*)
+   STA.0:=FALSE; (*1 -CMD_START  X0=1 - кнопка активна*) 
+   STA.1:=FALSE;(*3 -CMD_PAUSE X1*)
+   STA.2:=FALSE;(*4 -CMD_RESET X2*)
+   STA.3:=FALSE;(*6 -CMD_HOLD X3*)
+   STA.4:=TRUE;(*7 -CMD_STOP X4*)
+9:(*9 – Stopping*)
+    IF PRCCFG.STEP2&lt;9000 OR PRCCFG.STEP2&gt;9999 THEN  
+       PRCCFG.STEP2:=9000; 
+    END_IF; 
+    IF CMD_ABORT THEN 
+    	PRCCFG.STEP1:=11;PRCCFG.STEP2:=11000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF PRCCTRL.STOPPING_CMPLT OR CMD_CMPLT THEN 
+       PRCCFG.STEP1:=10;PRCCFG.STEP2:=10000;
+       PRCCFG.T_STEP2:=0; 
+    END_IF;
+    IF CMD_START THEN (* в стопінгу відслідковувати старт для повторного пуску*)
+       CMD_STOP:=FALSE;        
+       PRCCFG.STEP1:=13;PRCCFG.STEP2:=13000;
+       PRCCFG.T_STEP2:=0;
+    END_IF;
+   STA:=STA AND 16#FF00; (*деактивувати кнопку ПУСК   
+10:(*10 – Stopped*)
+   PRCCTRL.STOPPING_CMPLT:=false;
+    IF PRCCFG.STEP2&lt;10000 OR PRCCFG.STEP2&gt;10999 THEN  
+       PRCCFG.STEP2:=10000; 
+    END_IF;
+    IF CMD_RESET THEN 
+    	PRCCFG.STEP1:=1;PRCCFG.STEP2:=1000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+   STA:=STA AND 16#FFFE; (*деактивувати кнопку ПУСК  *)
+   STA.0:=FALSE; (*1 -CMD_START  X0=1 - кнопка активна *)
+   STA.1:=FALSE;(*3 -CMD_PAUSE X1*)
+   STA.2:=TRUE;(*4 -CMD_RESET X2*)
+   STA.3:=FALSE;(*6 -CMD_HOLD X3*)
+   STA.4:=FALSE;(*7 -CMD_STOP X4*)   
+ 11:(*11 - Aborting*)
+    IF PRCCFG.STEP2&lt;11000 OR PRCCFG.STEP2&gt;11999 THEN  
+       PRCCFG.STEP2:=11000; 
+    END_IF;
+    IF PRCCTRL.ABORTING_CMPLT OR PRCCFG.T_STEP2&gt;3000  OR CMD_CMPLT THEN 
+       PRCCFG.STEP1:=12;PRCCFG.STEP2:=12000;
+       PRCCFG.T_STEP2:=0; 
+    END_IF;
+   STA:=STA AND 16#FF00; (*деактивувати кнопку ПУСК *)       
+12:(*12 - Aborted*)
+    IF PRCCFG.STEP2&lt;11000 OR PRCCFG.STEP2&gt;11999 THEN  
+       PRCCFG.STEP2:=11000; 
+    END_IF; 
+    IF CMD_RESET OR CMD_START THEN 
+    	PRCCFG.STEP1:=1;PRCCFG.STEP2:=1000;
+	PRCCFG.T_STEP2:=0; 
+    END_IF;
+ELSE
+   PRCCFG.STEP1:=0;PRCCFG.STEP2:=0;
+   STA:=STA AND 16#FF00; (*деактивувати кнопку ПУСК*)
+   STA.0:=TRUE; (*1 -CMD_START  X0=1 - кнопка активна*)
+   STA.2:=TRUE;(*4 -CMD_RESET X2     *)
+END_CASE;
+(*---------------- *)
+
+(*деактивування кнопок в автоматичному режимі*) 
+IF AUTO THEN
+   STA.0:=FALSE; (*1 -CMD_START  X0=1 - кнопка активна*) 
+   STA.1:=FALSE;(*3 -CMD_PAUSE X1*)
+   STA.2:=FALSE;(*4 -CMD_RESET X2*)
+   STA.3:=FALSE;(*6 -CMD_HOLD X3*)
+   STA.4:=FALSE;(*7 -CMD_STOP X4*)
+END_IF;
+
+
+PRCCTRL.STA_IDLE:=(PRCCFG.STEP1=1);
+PRCCTRL.STA_RUNNING:=(PRCCFG.STEP1=2);
+PRCCTRL.STA_PAUSING:=(PRCCFG.STEP1=3);
+PRCCTRL.STA_PAUSED:=(PRCCFG.STEP1=4);
+PRCCTRL.STA_HOLDING:=(PRCCFG.STEP1=5);
+PRCCTRL.STA_HELD:=(PRCCFG.STEP1=6);
+PRCCTRL.STA_RESTARTING:=(PRCCFG.STEP1=7);
+PRCCTRL.STA_COMPLETE:=(PRCCFG.STEP1=8);
+PRCCTRL.STA_STOPPING:=(PRCCFG.STEP1=9);
+PRCCTRL.STA_STOPPED:=(PRCCFG.STEP1=10);
+PRCCTRL.STA_ABORTING:=(PRCCFG.STEP1=11);
+PRCCTRL.STA_ABORTED:=(PRCCFG.STEP1=12);
+PRCCTRL.STA_STARTING:=(PRCCFG.STEP1=13);
+PRCCTRL.STA_COMPLETING:=(PRCCFG.STEP1=14);
+PRCCTRL.STA_WRK :=PRCCTRL.STA_RUNNING OR PRCCTRL.STA_STARTING OR PRCCTRL.STA_COMPLETING OR PRCCTRL.STA_RESTARTING;
+PRCCTRL.STA_NOTWRK :=PRCCTRL.STA_COMPLETE OR PRCCTRL.STA_STOPPED OR PRCCTRL.STA_ABORTED OR PRCCTRL.STA_IDLE; 
+
+PRCCTRL.CMD_ABORT := FALSE;
+PRCCTRL.CMD_HOLD := FALSE;
+PRCCTRL.CMD_PAUSE := FALSE;
+PRCCTRL.CMD_RESET := FALSE;
+PRCCTRL.CMD_RESTART := FALSE;
+PRCCTRL.CMD_RESUME := FALSE;
+PRCCTRL.CMD_START := FALSE;
+PRCCTRL.CMD_STOP := FALSE;
+
+ALM:=TMINERR OR TMAXERR OR ALM;
+STA.8:=TMAXERR;
+STA.9:=TMINERR;
+STA.10:=ALM;
+STA.11:=SEMI;
+STA.12:=INBUF;
+STA.13:=MAN;
+STA.15:=false;
+
+IF INBUF THEN
+    PRCBUF.STA:=STA;
+    PRCBUF.T_STEP1:=PRCCFG.T_STEP1;
+    PRCBUF.T_STEP2:=PRCCFG.T_STEP2;
+    PRCBUF.STEP1:=PRCCFG.STEP1;
+    PRCBUF.STEP2:=PRCCFG.STEP2;
+    PRCBUF.CMD :=0;
+END_IF;
+
+PRCCFG.CMD:=0; 
+PRCHMI.CMD:=0;
+PRCCFG.STA:=STA; 
+PRCHMI.STA :=STA;
+PRCHMI.T_STEP1:=PRCCFG.T_STEP1;
+PRCHMI.STEP1 :=PRCCFG.STEP1;
+
+IF NOT (PRCCTRL.STA_IDLE) THEN
+   PRCHMI.T_STEP2 :=PRCCFG.T_STEP2;
+ELSE
+   PRCHMI.T_STEP2 := 0;
+END_IF;
+PRCHMI.STEP2 :=PRCCFG.STEP2;
+
+PRCCFG.T_PREV := PLCCFG.TQ;
+
+IF PRCCFG.STEP1=2 THEN (*рахувати тільки в стані RUNNING, обнуляється також при холдінгу*)
+   PRCCFG.T_STEP1:=PRCCFG.T_STEP1+ dt1;
+    IF PRCCFG.T_STEP1&gt;16#7fffffff THEN PRCCFG.T_STEP1:=16#7fffffff;END_IF;
+END_IF;
+
+
+PRCCFG.T_STEP2:=PRCCFG.T_STEP2+dt1;
+IF PRCCFG.T_STEP2&gt;16#7fffffff THEN PRCCFG.T_STEP2:=16#7fffffff;END_IF;
+
+
+IF PRCCTRL.STA_IDLE THEN
+   PRCCFG.T_STEP2 := 0;
+END_IF;
+
+(*
+ 0 – ініціалізація (тільки при старті ПЛК)
+ 1000 – Idle (очікує)
+ 13000 – Starting (запускається)
+ 2000 - Running (виконується) 
+ 14000- Completing (завершується)
+ 3000 – Pausing (призупиняється)
+ 4000 – Paused (призупинено)
+ 5000 – Holding (утримується)
+ 6000 – Hold (утримуване)
+ 7000 – Restarting (перезапускається)
+ 8000 – Complete (завершено)
+ 9000 – Stopping (зупиняється)
+ 10000 – Stopped (зупинено)
+ 11000 – Aborting (переривається)
+ 12000 – Aborted (перервано)
+
+*)
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="PROC_TRANS_A" version="0.08" dateTime="dt#2022-09-10-23:38:17">
+		<comment>PFW перехід кроку процедурного елементу</comment>
+		<attribute name="TypeCodeCheckSumString" value="C246"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="44E7"></attribute>
+		<inputParameters>
+			<variables name="COND" typeName="BOOL">
+				<comment>умова переходу</comment>
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="TOSTEP" typeName="UINT">
+				<comment>куди переходити</comment>
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="CFG" typeName="PROC_CFG">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="HMI" typeName="PROC_HMI">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="CTRL" typeName="PROC_CTRL">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+		</inOutParameters>
+		<outputParameters>
+			<variables name="CMDNEXT" typeName="BOOL">
+				<comment>умова спрацювала</comment>
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</outputParameters>
+		<FBProgram name="PROC_TRANS_A">
+			<STSource>(*Дана функція реалізовує перехід при спрацюванні умови в автоматичному режимі або/та при команді `CMD_NEXT` в ручному/напівавтоматичному режимі:
+- повертає логічну одиницю, якщо перехід спрацьовує, і переходить на крок, вказаний в полі `TOSTEP`
+- керує видимістю біту `ENCMD_NEXT` в залежності від режимів
+- відключає включає видимість кнопок `CMD_OK` та `CMD_CANCEL`
+*)
+CFG.ENCMD_NEXT:=false;
+
+if HMI.MAN then 
+   CMDNEXT:= HMI.CMD = 16#200;
+elsif HMI.SEMI then
+   CMDNEXT:= COND AND HMI.CMD = 16#200;
+else (*AUTO*)
+   CMDNEXT:= COND;
+end_if;
+
+CFG.ENCMD_NEXT:=HMI.MAN or HMI.SEMI;
+CFG.ENCMD_OK := false; CFG.ENCMD_CANCEL := false;
+if CMDNEXT then
+   if TOSTEP=1 then (*умова завершення стану*)  
+   	CTRL.PAUSING_CMPLT := CTRL.STA_PAUSING;
+   	CTRL.RUNING_CMPLT := CTRL.STA_RUNNING;
+   	CTRL.STARTING_CMPLT := CTRL.STA_STARTING;
+   	CTRL.COMPLETING_CMPLT := CTRL.STA_COMPLETING;
+   	CTRL.RESTARTING_CMPLT := CTRL.STA_RESTARTING;
+   	CTRL.HOLDING_CMPLT := CTRL.STA_HOLDING;
+   	CTRL.STOPPING_CMPLT := CTRL.STA_STOPPING;
+   	CTRL.ABORTING_CMPLT := CTRL.STA_ABORTING;
+   else 
+	CFG.STEP2 := TOSTEP;
+   end_if;
+   CFG.T_STEP2 := 0;
+   CFG.ENCMD_NEXT := false;
+end_if;
+HMI.ENCMD_NEXT:=CFG.ENCMD_NEXT;(*дозвіл на CMD NEXT з HMI для наступного циклу обробки*)
+HMI.ENCMD_OK := CFG.ENCMD_OK; 
+HMI.ENCMD_CANCEL := CFG.ENCMD_CANCEL;
+
+</STSource>
+		</FBProgram>
+	</FBSource>
+	<FBSource nameOfFBType="PROC_TRANS_M" version="0.06" dateTime="dt#2022-09-10-23:38:16">
+		<attribute name="TypeCodeCheckSumString" value="2AED"></attribute>
+		<attribute name="TypeSignatureCheckSumString" value="896D"></attribute>
+		<inputParameters>
+			<variables name="TOSTEPOK" typeName="UINT">
+				<comment>куди переходити при OK</comment>
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+			<variables name="TOSTEPCANCEL" typeName="UINT">
+				<comment>куди переходити при CANCEL</comment>
+				<attribute name="PositionPin" value="2"></attribute>
+			</variables>
+		</inputParameters>
+		<inOutParameters>
+			<variables name="CFG" typeName="PROC_CFG">
+				<attribute name="PositionPin" value="3"></attribute>
+			</variables>
+			<variables name="HMI" typeName="PROC_HMI">
+				<attribute name="PositionPin" value="4"></attribute>
+			</variables>
+			<variables name="CTRL" typeName="PROC_CTRL">
+				<attribute name="PositionPin" value="5"></attribute>
+			</variables>
+		</inOutParameters>
+		<outputParameters>
+			<variables name="CMDNEXT" typeName="BOOL">
+				<comment>умова спрацювала</comment>
+				<attribute name="PositionPin" value="1"></attribute>
+			</variables>
+		</outputParameters>
+		<privateLocalVariables>
+			<variables name="TOSTEP" typeName="UINT"></variables>
+		</privateLocalVariables>
+		<FBProgram name="PROC_TRANS_M">
+			<STSource>(*Функція реалізовує:
+- включає видимість `CMD_OK`
+- керує видимістю  `ENCMD_CANCEL` в залежності від `TOSTEPCANCEL` (`ENCMD_CANCEL = TOSTEPCANCEL&gt;0`)
+- перехід на крок, вказаний в полі `TOSTEPOK`, якщо відправлена команда `CMD_OK`
+- перехід на крок, вказаний в полі `TOSTEPCANCEL`, якщо відправлена команда `CMD_CANCEL`
+- відмикає видимість біту `ENCMD_NEXT` *)
+
+CFG.ENCMD_NEXT:=false;
+CFG.ENCMD_OK := true; CFG.ENCMD_CANCEL := TOSTEPCANCEL&gt;0;
+TOSTEP := 0;
+if CFG.ENCMD_OK and HMI.CMD = 16#0300  then
+   CMDNEXT:=true;
+   TOSTEP  := TOSTEPOK;
+elsif CFG.ENCMD_CANCEL and HMI.CMD = 16#0301 then
+   CMDNEXT:=true;
+   TOSTEP := TOSTEPCANCEL;
+end_if;
+
+if CMDNEXT then   
+   if TOSTEP=1 then (*умова завершення стану*)  
+	CTRL.PAUSING_CMPLT := CTRL.STA_PAUSING;
+	CTRL.RUNING_CMPLT := CTRL.STA_RUNNING;
+	CTRL.STARTING_CMPLT := CTRL.STA_STARTING;
+	CTRL.COMPLETING_CMPLT := CTRL.STA_COMPLETING;
+	CTRL.RESTARTING_CMPLT := CTRL.STA_RESTARTING;
+	CTRL.HOLDING_CMPLT := CTRL.STA_HOLDING;
+	CTRL.STOPPING_CMPLT := CTRL.STA_STOPPING;
+	CTRL.ABORTING_CMPLT := CTRL.STA_ABORTING;
+   else 
+	CFG.STEP2 := TOSTEP;
+   end_if;
+   CFG.T_STEP2 := 0;
+   CFG.ENCMD_OK := false;CFG.ENCMD_CANCEL:=false;
+end_if;
+(*16#0300 – команда підтвердження дій CMD_OK
+16#0301 - CANCEL (HMI - негативне пітвердження (відміна) ручної операції)*)
+
+HMI.ENCMD_NEXT:=CFG.ENCMD_NEXT;(*дозвіл на CMD NEXT з HMI для наступного циклу обробки*)
+HMI.ENCMD_OK := CFG.ENCMD_OK; 
+HMI.ENCMD_CANCEL := CFG.ENCMD_CANCEL;
+</STSource>
+		</FBProgram>
+	</FBSource>
+</FBExchangeFile>
