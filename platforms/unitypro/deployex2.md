@@ -382,8 +382,8 @@ MODULES[3].STRTNMB[3] := 0;
 
 - [AIH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/aih.xdd) 
 - [DIH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/dih.xdd) 
-- [AOH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/aih.xdd) 
-- [DOH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/aih.xdd) 
+- [AOH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/aoh.xdd) 
+- [DOH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/doh.xdd) 
 
 - [ ] Зробіть компіляцію проекту.
 
