@@ -363,7 +363,7 @@ MODULES[3].STRTNMB[3] := 0;
 **Спосіб 1 (імпорт)**
 
 - [ ] від'єднайтеся від ПЛК
-- [ ] за [цим посиланням](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/vars.ddt) завантажте експортний варіант `vars.ddt`
+- [ ] за [цим посиланням](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/vars.xdd) завантажте експортний варіант `vars.xdd`
 
 - [ ] імпортуйте його в проект заміною старого
 
@@ -380,10 +380,10 @@ MODULES[3].STRTNMB[3] := 0;
 
 - [ ] Аналогічні дії зробіть для типів AIH, DIH, AOH, DOH відповідно для змінних HMI. Для 1-го способу файли можна знайти за наступними посиаланнями:
 
-- [AIH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/aih.ddt) 
-- [DIH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/dih.ddt) 
-- [AOH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/aih.ddt) 
-- [DOH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/aih.ddt) 
+- [AIH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/aih.xdd) 
+- [DIH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/dih.xdd) 
+- [AOH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/aih.xdd) 
+- [DOH](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/aih.xdd) 
 
 - [ ] Зробіть компіляцію проекту.
 
@@ -655,8 +655,8 @@ AOVARFN(CHCFG := CHAO[VARS.T2_SCMIX_CSPD.CHID], AOVARCFG := VARS.T2_SCMIX_CSPD, 
 ### Створення змінних для ВМ 
 
 - [ ] від'єднайтеся від ПЛК
-- [ ] додайте конфігураційні змінні для ВМ з Таблиць 1-3 в типі даних ACT або завантажте з [репозиторію](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro) та імпортуйте в проект готовий тип `act.ddt`
-- [ ] додайте конфігураційні змінні для ВМ з Таблиць 1-3 в типі даних ACTH або завантажте з [репозиторію](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro) та імпортуйте в проект готовий тип `acth.ddt`
+- [ ] додайте конфігураційні змінні для ВМ з Таблиць 1-3 в типі даних ACT або завантажте з [репозиторію](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/act.xdd) та імпортуйте в проект готовий тип `act.xdd`
+- [ ] додайте конфігураційні змінні для ВМ з Таблиць 1-3 в типі даних ACTH або завантажте з [репозиторію](https://github.com/pupenasan/PACFramework/tree/master/platforms/unitypro/acth.xdd) та імпортуйте в проект готовий тип `acth.xdd`
 
 ### Створення програми ініціалізації ВМ  
 

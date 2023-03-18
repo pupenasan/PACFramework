@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DDTExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-26-14:40:22" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.000"></contentHeader>
-	<DDTSource DDTName="VARS" version="0.01" dateTime="dt#2022-04-28-15:20:11">
-		<attribute name="TypeSignatureCheckSumString" value="B28D"></attribute>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2023-3-18-17:55:58" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.23" dateTime="date_and_time#2022-8-28-13:42:17"></contentHeader>
+	<DDTSource DDTName="VARS" version="0.02" dateTime="dt#2022-08-28-09:13:40">
+		<attribute name="TypeSignatureCheckSumString" value="68BF"></attribute>
 		<structure>
 			<variables name="T1_LT1" typeName="AIVAR_CFG">
 				<comment>рівень T1</comment>
 			</variables>
-			<variables name="T1_LT2" typeName="AIVAR_CFG">
+			<variables name="T2_LT1" typeName="AIVAR_CFG">
 				<comment>рівень T2</comment>
 			</variables>
 			<variables name="T1_TT1" typeName="AIVAR_CFG">
@@ -703,8 +703,8 @@
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="DIVAR_CFG" version="0.05" dateTime="dt#2022-03-21-18:21:11">
-		<attribute name="TypeSignatureCheckSumString" value="B476"></attribute>
+	<DDTSource DDTName="DIVAR_CFG" version="0.06" dateTime="dt#2022-07-16-10:24:43">
+		<attribute name="TypeSignatureCheckSumString" value="87BE"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>Унікальний ідентифікатор</comment>
@@ -751,7 +751,7 @@
 				<comment>=1 - задіяна тривога </comment>
 				<attribute name="ExtractBit" value="8"></attribute>
 			</variables>
-			<variables name="SPDMONON" typeName="BOOL">
+			<variables name="STA_SPDMONON" typeName="BOOL">
 				<comment>=1 - включений контроль швидкості (SPDMON) </comment>
 				<attribute name="ExtractBit" value="9"></attribute>
 			</variables>

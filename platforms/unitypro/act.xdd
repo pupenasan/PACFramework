@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DDTExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-28-10:21:6" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.000"></contentHeader>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2023-3-18-18:0:8" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.23" dateTime="date_and_time#2022-8-28-13:42:17"></contentHeader>
 	<DDTSource DDTName="ACT" version="0.01" dateTime="dt#2022-04-28-15:20:11">
 		<attribute name="TypeSignatureCheckSumString" value="86AE"></attribute>
 		<structure>
@@ -46,7 +46,7 @@
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="VLVA_CFG" version="0.02" dateTime="dt#2022-03-22-15:06:18">
+	<DDTSource DDTName="VLVA_CFG" version="0.02" dateTime="dt#2022-06-25-18:41:46">
 		<attribute name="TypeSignatureCheckSumString" value="1285"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
@@ -198,8 +198,8 @@
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="ACTTR_CMD" version="0.02" dateTime="dt#2022-01-17-10:51:27">
-		<attribute name="TypeSignatureCheckSumString" value="1436"></attribute>
+	<DDTSource DDTName="ACTTR_CMD" version="0.03" dateTime="dt#2022-06-23-20:36:25">
+		<attribute name="TypeSignatureCheckSumString" value="AD59"></attribute>
 		<structure>
 			<variables name="CMD1" typeName="INT"></variables>
 			<variables name="CMD_OPN" typeName="BOOL">
@@ -303,10 +303,12 @@
 				<comment>завантажити в буфер</comment>
 				<attribute name="ExtractBit" value="8"></attribute>
 			</variables>
-			<variables name="CMD_b25" typeName="BOOL">
+			<variables name="CMD_OUTSRVC" typeName="BOOL">
+				<comment>вивести з експлуатації</comment>
 				<attribute name="ExtractBit" value="9"></attribute>
 			</variables>
-			<variables name="CMD_b26" typeName="BOOL">
+			<variables name="CMD_INSRVC" typeName="BOOL">
+				<comment>ввести в експлуатацію</comment>
 				<attribute name="ExtractBit" value="10"></attribute>
 			</variables>
 			<variables name="CMD_b27" typeName="BOOL">
@@ -445,8 +447,8 @@
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="DRV_CFG" version="0.02" dateTime="dt#2022-03-18-16:34:39">
-		<attribute name="TypeSignatureCheckSumString" value="6F31"></attribute>
+	<DDTSource DDTName="DRV_CFG" version="0.04" dateTime="dt#2022-06-23-20:36:35">
+		<attribute name="TypeSignatureCheckSumString" value="DBE8"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">
 				<comment>ідентифікатор</comment>
@@ -463,7 +465,8 @@
 			<variables name="STA_b1" typeName="BOOL">
 				<attribute name="ExtractBit" value="1"></attribute>
 			</variables>
-			<variables name="STA_b2" typeName="BOOL">
+			<variables name="STA_MAINT" typeName="BOOL">
+				<comment>=1 виведений з обслуговування</comment>
 				<attribute name="ExtractBit" value="2"></attribute>
 			</variables>
 			<variables name="STA_STOPING" typeName="BOOL">
@@ -482,7 +485,8 @@
 				<comment>=1 з аналоговим керуванням (для зурнчості відображення)</comment>
 				<attribute name="ExtractBit" value="6"></attribute>
 			</variables>
-			<variables name="STA_b7" typeName="BOOL">
+			<variables name="STA_ISREVERS" typeName="BOOL">
+				<comment>=1 - пуск з реверсом</comment>
 				<attribute name="ExtractBit" value="7"></attribute>
 			</variables>
 			<variables name="STA_WRKED" typeName="BOOL">
@@ -614,7 +618,7 @@
 			</variables>
 		</structure>
 	</DDTSource>
-	<DDTSource DDTName="VLVD_CFG" version="0.05" dateTime="dt#2022-03-22-10:31:15">
+	<DDTSource DDTName="VLVD_CFG" version="0.05" dateTime="dt#2022-06-25-18:41:47">
 		<attribute name="TypeSignatureCheckSumString" value="3F77"></attribute>
 		<structure>
 			<variables name="ID" typeName="UINT">

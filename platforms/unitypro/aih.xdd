@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <DDTExchangeFile>
-	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2022-8-26-14:59:24" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
-	<contentHeader name="Project" version="0.0.000"></contentHeader>
-	<DDTSource DDTName="AIH" version="0.01" dateTime="dt#2022-04-28-15:20:11">
-		<attribute name="TypeSignatureCheckSumString" value="858D"></attribute>
+	<fileHeader company="Schneider Automation" product="Unity Pro XL V13.1 - 180823C" dateTime="date_and_time#2023-3-18-17:57:0" content="Derived Data Type source file" DTDVersion="41"></fileHeader>
+	<contentHeader name="Project" version="0.0.23" dateTime="date_and_time#2022-8-28-13:42:17"></contentHeader>
+	<DDTSource DDTName="AIH" version="0.02" dateTime="dt#2022-08-28-09:13:40">
+		<attribute name="TypeSignatureCheckSumString" value="11EC"></attribute>
 		<structure>
 			<variables name="T1_LT1" typeName="AIVAR_HMI">
 				<comment>рівень T1</comment>
 			</variables>
-			<variables name="T1_LT2" typeName="AIVAR_HMI">
+			<variables name="T2_LT1" typeName="AIVAR_HMI">
 				<comment>рівень T2</comment>
 			</variables>
 			<variables name="T1_TT1" typeName="AIVAR_HMI">
