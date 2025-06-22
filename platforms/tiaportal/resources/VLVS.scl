@@ -1,0 +1,264 @@
+﻿FUNCTION "VLVS" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_IN_OUT 
+      ACTCFG : "VLVS_CFG";   // CFG ВМ
+      ACTHMI : "VLVS_HMI";   // HMI ВМ
+      PWR : "DIVAR_CFG";   // контакт Контроль живлення схеми управл
+      RUN : "DIVAR_CFG";   // контакт Хід
+      SOPN : "DIVAR_CFG";   // Датчик Відкрито
+      SCLS : "DIVAR_CFG";   // Датчик Закрито
+      ALM : "DIVAR_CFG";   // стан Аварія
+      RMT : "DIVAR_CFG";   // стан місцевий/дистанційний
+      POS : "AIVAR_CFG";   // Положення РО
+      CUP : "DOVAR_CFG";   // команда Більше
+      CDN : "DOVAR_CFG";   // команда Менше
+   END_VAR
+
+   VAR_TEMP 
+      ACTCFGu : "ACTTR_CFG";   // універсальна структура CFG
+      STA : "ACTTR_STA";   // структура STA
+      ALMs : "ACTTR_ALM";   // структура ALM
+      CMD : "ACTTR_CMD";   // структура CMD
+      LOOP : "ACTTR_CMD";
+      "dT" : UDInt;   // різниця часу між викликами блоку в мс
+      dpos : Real;   // приріст відкриття/закриття у 0.01% для імітації
+      ZERO : Array[0..3] of Byte;   // масив нулів для обнулення структур
+      BufferPos : DInt;   // позиція для Deserialize
+      rez : Int;   // для результату Deserialize
+      SOPN1 : Bool;   // значення датчика SOPN
+      SCLS1 : Bool;   // значення датчика SCLS
+      SRUN1 : Bool;   // значення датчика RUN
+      SPWR1 : Bool;   // значення датчика PWR
+      SALM1 : Bool;   // значення датчика ALM
+      SPOS1 : Real;   // значення датчика POS
+   END_VAR
+
+
+BEGIN
+	"VLVS_to_ACT"(VLVSCFG:=#ACTCFG, VLVSHMI:=#ACTHMI, ACTCFG:=#ACTCFGu);
+	//попередня обробка: ініт STA, ALM, CMD, INBUF, SML, dt 
+	"ACT_PRE"(ACTCFG:=#ACTCFGu, STA:=#STA, ALMs:=#ALMs, CMD:=#CMD, dt:=#dT);
+	//значення за замовченням
+	IF "SYS".PLCCFG.STA.SCN1 THEN (*first scan*)
+	    IF #ACTCFGu.T_OPNSP <= 0 THEN (*якщо уставка часу выдкриття не виставлена*)
+	        #ACTCFGu.T_OPNSP := 10; (*1 секунда*)
+	    END_IF;
+	    IF #ACTCFGu.T_DEASP <= 0 THEN (*якщо уставка затримки часу тривоги не виставлена*)
+	        #ACTCFGu.T_DEASP := 10; (*1 секунда*)
+	    END_IF;
+	    (*технологічні тривоги для датчиків не використовуються*)
+	
+	END_IF;
+	
+	// --------------------- блок параметрів
+	(*параметри перевірка наявності/використання датчиків на вході*)
+	#ACTCFGu.PRM.PRM_MANCFG:=false;//у цьому проекті не буде ручного конфігурування параметрів IO
+	#ACTCFGu.PRM.PRM_ZCLSENBL := NOT #SCLS.PRM.PRM_DSBL AND #SCLS.ID <> 0;
+	#ACTCFGu.PRM.PRM_ZOPNENBL := NOT #SOPN.PRM.PRM_DSBL AND #SOPN.ID <> 0;
+	#ACTCFGu.PRM.PRM_ZWRKENBL := NOT #RUN.PRM.PRM_DSBL AND #RUN.ID <> 0;
+	#ACTCFGu.PRM.PRM_ZPOSENBL := NOT #POS.PRM.PRM_DSBL AND #POS.ID<>0;
+	#ACTCFGu.PRM.PRM_PWRENBL := NOT #PWR.PRM.PRM_DSBL AND #PWR.ID <> 0;
+	#ACTCFGu.PRM.PRM_ALMENBL := NOT #ALM.PRM.PRM_DSBL AND #ALM.ID <> 0;
+	#ACTCFGu.PRM.PRM_SELLCLENBL := NOT #RMT.PRM.PRM_DSBL AND #RMT.ID <> 0;
+	
+	
+	//------------------- блок для режиму імітації
+	//режим імітації підлеглих від хозяїна
+	#RUN.STA.SML := #STA.SML;     
+	#PWR.STA.SML := #STA.SML;      
+	#SOPN.STA.SML := #STA.SML;        
+	#SCLS.STA.SML := #STA.SML;        
+	#ALM.STA.SML := #STA.SML;
+	#RMT.STA.SML := #STA.SML;           
+	#CUP.STA.SML := #STA.SML;        
+	#CDN.STA.SML := #STA.SML;
+	#POS.STA.SML := #STA.SML;
+	//логіка для режиму імітації  
+	IF #STA.SML THEN
+	    #dpos:= UDINT_TO_REAL(#dT)*100.0/(UDINT_TO_REAL(#ACTCFGu.T_OPNSP)*100.0);//%
+	    IF #CUP.STA.VALB THEN
+	        #ACTCFGu.POS := #ACTCFGu.POS + #dpos; //0-100
+	    END_IF;
+	    IF #CDN.STA.VALB THEN
+	        #ACTCFGu.POS := #ACTCFGu.POS - #dpos; //0-100
+	    END_IF;
+	    IF NOT #SOPN.STA.FRC THEN #SOPN.STA.VALB:=#ACTCFGu.POS>=99.9; END_IF;
+	    IF NOT #SCLS.STA.FRC THEN #SCLS.STA.VALB:=#ACTCFGu.POS<=0.1; END_IF;
+	    IF #ACTCFGu.POS>100.0 THEN #ACTCFGu.POS:=100.0; END_IF;
+	    IF #ACTCFGu.POS<0.0 THEN #ACTCFGu.POS:=0.0; END_IF;
+	    IF NOT #POS.STA.FRC THEN #POS.VAL:=#ACTCFGu.POS; END_IF;
+	    IF NOT #PWR.STA.FRC THEN #PWR.STA.VALB:=true; END_IF; //живлення є
+	    IF NOT #ALM.STA.FRC THEN #ALM.STA.VALB := false; END_IF;//тривоги немає
+	    IF NOT #RMT.STA.FRC THEN #RMT.STA.VALB := true; END_IF;//дистанційний режим     
+	END_IF;
+	
+	
+	//-------------------- блок обробки команд
+	//стандартний обробник команд
+	"ACT_CMDCTRL"(ACTCFG:=#ACTCFGu, CMD:=#CMD, STA:=#STA);
+	
+	//-------------------  блок обробки станів датчиків роботи/зупину, або їх заміна на логіку
+	IF NOT #ACTCFGu.PRM.PRM_ZOPNENBL THEN //датчик відсутній
+	    #SOPN1:=false;
+	ELSE
+	    #SOPN1:=#SOPN.STA.VALB;
+	END_IF;
+	IF NOT #ACTCFGu.PRM.PRM_ZCLSENBL THEN
+	    #SCLS1:=false;
+	ELSE
+	    #SCLS1:=#SCLS.STA.VALB;
+	END_IF;
+	IF NOT #ACTCFGu.PRM.PRM_ZWRKENBL THEN
+	    #SRUN1:=#STA.CLSING OR #STA.OPNING OR #STA.MANRUNING;
+	ELSE
+	    #SRUN1:=#RUN.STA.VALB;
+	END_IF;
+	IF NOT #ACTCFGu.PRM.PRM_PWRENBL THEN
+	    #SPWR1:=true;
+	ELSE
+	    #SPWR1:=#PWR.STA.VALB;
+	END_IF;
+	IF NOT #ACTCFGu.PRM.PRM_ALMENBL THEN
+	    #SALM1:=FALSE;
+	ELSE
+	    #SALM1:=#ALM.STA.VALB;
+	END_IF;
+	(* у цьому блоці не використовується
+	IF NOT #ACTCFGu.PRM.PRM_ZPOSENBL THEN
+	    #SPOS1:=-10000;
+	ELSE
+	    #SPOS1:=#POS.VAL;
+	END_IF;*)
+	//---
+	
+	//----------------- автомат станів позиції та тривог позиції та основне керування
+	//команди CUP і CDN проходять завжди?
+	CASE #ACTCFGu.STEP1 OF
+	    0:(*ініціалізація*)
+	        #ACTCFGu.STEP1 := 1;
+	        #ACTCFGu.T_STEP1 := 0;
+	    1, 4, 5: (*зупинений, 1 - зупинено в проміжному стані 4 - зупинений у відкритому стані, 5 - зупинений в закритому стані*)
+	        IF #SOPN1 AND NOT #SCLS1 THEN
+	            IF #ACTCFGu.STEP1<>4 THEN #ACTCFGu.T_STEP1 := 0;END_IF;
+	            #ACTCFGu.STEP1 := 4;
+	        END_IF;
+	        IF #SCLS1 AND NOT #SOPN1 THEN
+	            IF #ACTCFGu.STEP1<>5 THEN #ACTCFGu.T_STEP1 := 0;END_IF;
+	            #ACTCFGu.STEP1 := 5;
+	        END_IF;
+	        //здвиг (показують датчики)
+	        IF (#ACTCFGu.STEP1 = 4 AND NOT #SOPN1 OR (#ACTCFGu.STEP1 = 5 AND NOT #SCLS1)) THEN
+	            #ACTCFGu.T_STEP1 := 0;
+	            IF #SRUN1 THEN
+	                #ACTCFGu.STEP1 := 7; //рухається в невизначеному напрямку (ручний зі щита)
+	            ELSE
+	                #ACTCFGu.STEP1 := 1; //зупинений в проміжному стані
+	            END_IF;
+	        END_IF;
+	    7: //рухається в довільному напрямку (ручний зі щита)
+	        IF NOT #SRUN1 THEN
+	            #ACTCFGu.STEP1 := 1;
+	            #ACTCFGu.T_STEP1 := 0;
+	        END_IF;
+	    2:  (*відкривається*)
+	        IF #SOPN1 AND NOT #SCLS1 THEN
+	            #ACTCFGu.STEP1 := 4; //у стан відкрито
+	            #ACTCFGu.T_STEP1 := 0;
+	        ELSIF NOT #CUP.STA.VALB THEN
+	            #ACTCFGu.STEP1 := 1;
+	            #ACTCFGu.T_STEP1 := 0; 
+	        END_IF;        
+	    3:(*закривається*)
+	        IF #SCLS1 AND NOT #SOPN1 THEN
+	            #ACTCFGu.STEP1 := 5;
+	            #ACTCFGu.T_STEP1 := 0;
+	        ELSIF NOT #CDN.STA.VALB THEN
+	            #ACTCFGu.STEP1 := 1;
+	            #ACTCFGu.T_STEP1 := 0; 
+	        END_IF;
+	    ELSE  (*невизначеність*)
+	        #ACTCFGu.STEP1 := 0;
+	END_CASE;
+	//автомат станів побітово
+	#STA.IMSTPD:= #ACTCFGu.STEP1 = 1;
+	#STA.MANRUNING:= #ACTCFGu.STEP1 = 7;
+	#STA.OPNING:= #ACTCFGu.STEP1 = 2;
+	#STA.CLSING := #ACTCFGu.STEP1 = 3;
+	#STA.OPND:= #ACTCFGu.STEP1 = 4;
+	#STA.CLSD:= #ACTCFGu.STEP1 = 5; 
+	//---
+	
+	//----------------------------- керування
+	//-------- блокуання приводу
+	//умова розблокуання 
+	IF #CMD.DBLCK THEN
+	    #STA.BLCK:=FALSE;
+	END_IF; 
+	//умова блокуання  
+	IF #ALMs.ALMPWR1 OR #ALMs.ALM OR #CMD.PROTECT THEN 
+	   #STA.BLCK:=true;
+	END_IF;
+	//керування CUP/CDN тільки при дозволі керування або тимчасовому розблокуванні
+	IF (#CMD.RESOLUTION OR #STA.DBLCKACT OR "SYS".PLCCFG.STA.DBLCKALL) AND NOT #STA.BLCK THEN
+	    IF #CMD.UP AND #ACTCFGu.STEP1 <> 4 THEN
+	        IF #ACTCFGu.STEP1 <> 2 THEN 
+	            #ACTCFGu.STEP1 := 2;
+	            #ACTCFGu.T_STEP1 := 0;
+	        END_IF;
+	        #ACTCFGu.CNTPER := #ACTCFGu.#CNTPER + 1;
+	        #CUP.STA.VALB:=true;
+	    ELSE 
+	        #CUP.STA.VALB:=FALSE;
+	    END_IF;
+	    IF #CMD.DWN AND #ACTCFGu.STEP1 <> 5 THEN
+	        IF #ACTCFGu.STEP1 <> 3 THEN
+	            #ACTCFGu.STEP1 := 3;
+	            #ACTCFGu.T_STEP1 := 0;
+	        END_IF;
+	        #ACTCFGu.CNTPER := #ACTCFGu.CNTPER + 1;
+	        #CDN.STA.VALB:=true; 
+	        #CUP.STA.VALB:=FALSE;//закривання має пріоритет
+	    ELSE
+	        #CDN.STA.VALB:=FALSE;
+	    END_IF;
+	ELSE
+	    #CUP.STA.VALB:=FALSE;
+	    #CDN.STA.VALB:=FALSE;
+	END_IF;
+	//---
+	
+	//-------------------- режими
+	#STA.MANBX := NOT #RMT.STA.VALB AND #RMT.STA.ENBL; 
+	#STA.FRC := #CUP.STA.FRC AND #CUP.ID<>0 
+	    OR #CDN.STA.FRC AND #CDN.ID<>0 
+	    OR #SOPN.STA.FRC AND #SOPN.ID<>0  
+	    OR #SCLS.STA.FRC AND #SCLS.ID<>0
+	    OR #RUN.STA.FRC AND #RUN.ID<>0
+	    OR #PWR.STA.FRC AND #PWR.ID<>0
+	    OR #ALM.STA.FRC AND #ALM.ID<>0
+	    OR #RMT.STA.FRC AND #RMT.ID<>0;
+	//---
+	//у місцевому режимі керування відключати усі виходи
+	IF #STA.MANBX THEN
+	    #CUP.STA.VALB:=FALSE;
+	    #CDN.STA.VALB:=FALSE; 
+	END_IF;
+	
+	//------------------- зведення кастомних тривог, режимів, бітів
+	//по відсутності живлення
+	#ALMs.ALMPWR1 := #PWR.STA.ALM;
+	#ALMs.ALM := #ALMs.ALMPWR1 OR #ALM.STA.ALM;
+	#STA.WRKED := #SPWR1;
+	//---
+	
+	//заключна обробка: зведення в PLC.CFG, STA, ALM, CMD, INBUF, SML, dt 
+	"ACT_POST"(ACTCFG:=#ACTCFGu, STA:=#STA, ALMs:=#ALMs, CMD:=#CMD, dt:=#dT);
+	
+	"ACT_to_VLVS"(VLVSCFG:=#ACTCFG, VLVSHMI:=#ACTHMI, ACTCFG:=#ACTCFGu);
+	                         
+	
+	
+	
+END_FUNCTION
+

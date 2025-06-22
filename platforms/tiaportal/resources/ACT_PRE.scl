@@ -1,0 +1,44 @@
+﻿FUNCTION "ACT_PRE" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_IN_OUT 
+      ACTCFG : "ACTTR_CFG";
+      STA : "ACTTR_STA";
+      ALMs : "ACTTR_ALM";
+      CMD : "ACTTR_CMD";
+      "dt" : UDInt;
+   END_VAR
+
+   VAR_TEMP 
+      rez : Int;
+      ZERO : Array[0..3] of Byte;
+      BufferPos : DInt;
+   END_VAR
+
+
+BEGIN
+	(*початкова обробка для усіх ВМ: інціалізація, присвоєння у внутрішні STA, ALM; визначення INBUF, SML, #dt *)
+	(*first scan*)
+	IF "SYS".PLCCFG.STA.SCN1 THEN 
+	    #ZERO[0]:=0;#ZERO[1]:=0; #ZERO[2]:=0; #ZERO[3]:=0; #BufferPos := 0;
+	    //обнулення бітів структури STA
+	    #rez := Deserialize(SRC_ARRAY:=#ZERO, DEST_VARIABLE=> #ACTCFG.STA, POS:=#BufferPos);
+	    //обнулення бітів структури ALM
+	    #rez := Deserialize(SRC_ARRAY:=#ZERO, DEST_VARIABLE=> #ACTCFG.ALM, POS:=#BufferPos);
+	    IF #ACTCFG.T_OPNSP = 0 THEN #ACTCFG.T_OPNSP:=50; END_IF;  
+	END_IF;
+	//читання інформації з контурів, якщо вони привязані
+	"RW_LOOP_SEL"(direct:='r', ACT:=#ACTCFG);
+	
+	#STA := #ACTCFG.STA;
+	#ALMs := #ACTCFG.ALM;
+	#CMD := #ACTCFG.CMD;
+	#ALMs.ALMBELL:= false; //дзвінок знімається через один цикл
+	#STA.INBUF := (#ACTCFG.ID = "BUF".ACTBUF.ID AND "BUF".ACTBUF.ID <> 0 AND #ACTCFG.CLSID = "BUF".ACTBUF.CLSID);(*знаходиться в буфері конфігурування*)
+	#STA.SML := "SYS".PLCCFG.STA.SMLALL;(*режим імітації*)
+	#dt := "SYS".PLCCFG.TQMS - #ACTCFG.T_PREV; //різниця між викликами в мс
+	IF #dt<1 THEN #dt:=1; END_IF;
+	
+	
+END_FUNCTION
+

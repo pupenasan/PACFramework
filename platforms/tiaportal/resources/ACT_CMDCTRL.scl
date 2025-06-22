@@ -1,0 +1,166 @@
+﻿FUNCTION "ACT_CMDCTRL" : Void
+{ S7_Optimized_Access := 'TRUE' }
+VERSION : 0.1
+   VAR_IN_OUT 
+      ACTCFG : "ACTTR_CFG";
+      STA : "ACTTR_STA";
+      CMD : "ACTTR_CMD";
+   END_VAR
+
+   VAR_TEMP 
+      CMDINT : UInt;
+      INIoTBUF : Bool;
+   END_VAR
+
+
+BEGIN
+	(*блок обробляє команди з HMI та IOT, формує на основі них CMD, змінює статусні біти стану, обнуляє автоматичні команди в ручному режимі *)
+	(*вибір джерела конфігураційної/керівної команди HMI згідно пріоритету якщо команди надійшли одночасно*)
+	IF #ACTCFG.CMDHMI > 16#80 THEN (*конфіг кмд з HMI*)
+	    #CMDINT := #ACTCFG.CMDHMI;
+	ELSIF #STA.INBUF AND "BUF".ACTBUF.CMDHMI > 16#80 THEN (*конфіг кмд з буферу*)
+	    #CMDINT := "BUF".ACTBUF.CMDHMI;
+	ELSIF #ACTCFG.CMDHMI < 16#80 AND #ACTCFG.CMDHMI > 0 AND #STA.DISP THEN(*керування клапаном з елементу в ручному режимі*)
+	    #CMDINT := #ACTCFG.CMDHMI;
+	ELSIF #STA.INBUF AND "BUF".ACTBUF.CMDHMI < 16#80 AND "BUF".ACTBUF.CMDHMI > 0 AND #STA.DISP THEN (* керування клапаном з буферу в ручному режимі*)
+	    #CMDINT := "BUF".ACTBUF.CMDHMI; (* команда звідти інакше ігнорити*)
+	ELSE
+	    #CMDINT := 0;
+	END_IF;
+	
+	//---------------------- команди з IoT буферу, для керування тільки в ручному режимі  
+	//16#2xxx - команди для ВМ
+	#INIoTBUF:= ("IOTDB".IOTBUF.ACT.ID = #ACTCFG.ID);
+	#STA.INIOTBUF := #INIoTBUF;
+	IF ("IOTDB".IOTBUF.CMD AND 16#F000) = 16#2000 AND ("IOTDB".IOTBUF.ID = #ACTCFG.ID) THEN
+	    "IOTDB".IOTBUF.ACTH_ID := #ACTCFG.ID; //для запису в BUF
+	    IF #STA.DISP THEN 
+	        CASE "IOTDB".IOTBUF.CMD OF
+	            16#2001: //відкрити
+	                #CMDINT:=16#1;
+	            16#2002: //закрити
+	                #CMDINT:=16#2;
+	            16#2003: //перемкнути
+	                #CMDINT:=16#3;
+	        END_CASE;
+	    END_IF;
+	    CASE "IOTDB".IOTBUF.CMD OF
+	        16#2011: //завантажити буфер
+	            "IOTDB".IOTBUF.ACT := #ACTCFG;
+	        16#2012: //запис з буферу в змінну
+	            ;//
+	        16#2031: //переведення в ручний
+	            #CMDINT:=16#0301;
+	        16#2032: //переведення в автомат
+	            #CMDINT:=16#0302;
+	        16#2033: //тогл режиму
+	            #CMDINT:=16#0303;
+	    END_CASE;
+	
+	    "IOTDB".IOTBUF.CMD:=0; "IOTDB".IOTBUF.ID:=0;
+	END_IF;
+	// #INIoTBUF Тепер в "ACT" POST 
+	//------------
+	
+	//у рчуному режимі усі автоматичні команди керування обнуляються
+	IF #STA.DISP THEN
+	    #CMD.OPN:=FALSE;
+	    #CMD.CLS:=FALSE;
+	    #CMD.TOGGLE:=false;
+	    #CMD.START:=false;
+	    #CMD.STOP:=false;
+	    #CMD.REVERS:=false;
+	    #CMD.TOGGLE:=FALSE;
+	END_IF;
+	
+	(*команди операторського керування
+	16#0001 - CMD_OPN
+	16#0002 - CMD_CLS
+	16#0004 - CMD_ALMRST
+	16#0008 - CMD_DBLK
+	16#0010 - CMD_STOP
+	*)
+	
+	(* команди HMI*)
+	CASE #CMDINT OF
+	    16#0001://відкрити 
+	        #CMD.OPN := TRUE;
+	        #CMD.CLS := FALSE;
+	    16#0002://закрити 
+	        #CMD.CLS := TRUE;
+	        #CMD.OPN := FALSE;
+	    16#0003://перемкнути
+	        #CMD.TOGGLE := TRUE;
+	    16#0004:// Підтвердити тривогу
+	        #CMD.ALMACK:= TRUE; 
+	    16#0005://Скинути тривоги 
+	        #CMD.ALMRESET:= TRUE; 
+	    16#0006:
+	        #CMD.BLCK:= TRUE; //Заблокувати
+	    16#0007:
+	        #CMD.DBLCK:= TRUE; //Розблокувати
+	    16#0008:
+	        #CMD.STOPTUN:= TRUE;//Зупинити автоналаштування
+	    16#0009:
+	        #CMD.TUNING:= TRUE;//Запустити автоналаштування 
+	    16#000A:
+	        #CMD.PROTECT:= TRUE;//Включити алгоритм захисту 
+	    16#000B: //=1 дозвіл на керування
+	        #CMD.RESOLUTION:= TRUE; //на один цикл
+	    16#000C: //=1 запуск калібрування датчика шивдкості
+	        #CMD.P_RESOLUTION := TRUE; //на один цикл  
+	    16#000D: //=1 запуск калібрування датчика шивдкості
+	        #CMD.DBLCKACTTOGGLE := true;
+	        #STA.DBLCKACT := NOT #STA.DBLCKACT;      
+	    //E..10 - вільні
+	    16#0011://Запустити
+	        #CMD.START:= TRUE; 
+	        #CMD.STOP:= false;
+	    16#0012: //Зупинити
+	        #CMD.STOP:= TRUE;
+	        #CMD.START:= false;
+	    16#0013://19
+	        #CMD.REVERS:= TRUE;//Включити реверс 
+	    //14-20 - вільні
+	    16#0021:
+	        #CMD.UP:= TRUE; //Більше
+	    16#0022: 
+	        #CMD.DWN:= TRUE; //Менше
+	    //23-9F - вільні
+	    //починаючи з 16#0080 тільки для роботи з буфера і керування режимом
+	    16#0100: (*прочитати конфігурацію*)
+	        #CMD.BUFLOAD:=true;
+	        "BUF".ACTBUF := #ACTCFG;
+	    16#0101: (*записати конфігурацію*)
+	        #ACTCFG.PRM := "BUF".ACTBUF.PRM;
+	        #ACTCFG.T_DEASP := "BUF".ACTBUF.T_DEASP;
+	        #ACTCFG.T_OPNSP := "BUF".ACTBUF.T_OPNSP;
+	        #ACTCFG.STOP_DELAY := "BUF".ACTBUF.STOP_DELAY;
+	        //запис конфігураційних параметрів в контур, якщо він є
+	        "RW_LOOP_SEL"(direct:='c', ACT:=#ACTCFG);
+	    //102-2FF вільні
+	    16#0300: (*перемкнути ручний/автомат*)
+	        #STA.DISP := NOT #STA.DISP;
+	    16#0301: (*РУЧНИЙ РЕЖИМ*)
+	        #STA.DISP := TRUE;
+	    16#0302: (*АВТО РЕЖИМ*)
+	        #STA.DISP := FALSE;
+	    16#0313:// включити місцевий режим
+	        #STA.MANBXOUT := true;
+	        //#CMD.CRMT:= TRUE; //чи потрібен з програми?
+	    16#0314:// відключити місцевий режим
+	        #STA.MANBXOUT := false;
+	        #STA.MANBX := false;
+	        //#CMD.CLCL:= TRUE; //чи потрібен з програми?
+	    //керування статистикою
+	    16#0401:// скинути лічильник тривог 1025
+	        #ACTCFG.CNTALM:=0;
+	    16#0402:// скинути лічильник спрацювань/переміщень 1026
+	        #ACTCFG.CNTPER:=0;
+	    16#0403:// скинути лічильник спрацювань/переміщень 1027
+	        #ACTCFG.TQ_TOTAL:=0;
+	    16#0404:// скинути лічильник спрацювань/переміщень 1028
+	        #ACTCFG.TQ_LAST :=0;
+	END_CASE;
+END_FUNCTION
+

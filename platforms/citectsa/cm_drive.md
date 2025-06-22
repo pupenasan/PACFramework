@@ -77,15 +77,15 @@
 
 **Mode Indicator** - односимвольний код, який показує режим роботи клапана (`EquipmentName.CtrlMode`, `EquipmentName.CtrlModeDef`). 
 
-​        ![img](G:\san\AKIT\ДИСЦИП\ЛМІ\GitVer\citect\sa2020\salib\media\Drives_Mode1.png)    
+​        ![img](media/Drives_Mode1.png)    
 
 Індикатор режиму доступний також для відображення групи приводів.
 
-​        ![img](G:\san\AKIT\ДИСЦИП\ЛМІ\GitVer\citect\sa2020\salib\media\Drives_Mode2.png)    
+​        ![img](media/Drives_Mode2.png)    
 
 Для композитних джинів що відображають ПЧ (variable speed drive VSD), він також включає кілька елементів: OP, OPTrack.
 
-![img](G:\san\AKIT\ДИСЦИП\ЛМІ\GitVer\citect\sa2020\salib\media\Drives_Common_Elements_VSD.png)            
+![img](media/Drives_Common_Elements_VSD.png)            
 
 
 
