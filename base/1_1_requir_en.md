@@ -1,6 +1,4 @@
-[PACFramework](../README_EN.md) > [1. Main ideas](README_EN.md)
-
-This text was translated using Google Translate. You can comment on the translation in [this topic](https://github.com/pupenasan/PACFramework/issues/52)
+[PACFramework](../README_EN.md) > [1. Core Concepts](README_EN.md)
 
 ## 1.1 Prerequisites and main ideas
 
@@ -90,6 +88,6 @@ The selection of duplicate parts and their rules for implementation in the appli
 
 In addition, given the iterative development process, the constant change of requirements and initial data, it is necessary to automate development processes. The first step is to standardize the representation of software objects, the second - to create software to automate the conversion of project data (list of process variables, actuators, etc.) into program code.
 
-<-- [Section 1: Main ideas](README_EN.md)
+<-- [Section 1: Core Concepts](README_EN.md)
 
 --> [1.2 Basic technologies based on the framework](1_2_tech_en.md)

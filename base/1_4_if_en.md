@@ -1,94 +1,90 @@
-[PACFramework](../README_EN.md) > [1. Main ideas](README_EN.md)
+[PACFramework](../README_EN.md) > [1. Core Concepts](README_EN.md)
 
-This text was translated using Google Translate. You can comment on the translation in [this topic](https://github.com/pupenasan/PACFramework/issues/52)
+## 1.4 General Requirements for Implementing PACFramework Function Block Interfaces
 
-## 1.4 General requirements for the implementation of the PACFramework software interface
+### Structure of Function/Procedure and Function Block Interfaces
 
-### Structure interface of functions/procedures and function blocks
+Each function/procedure/function block (FB) that implements a CM or other object contains internal state data and interface data for other subsystems (e.g., SCADA/HMI).
 
-Each function/procedure/FB that implements a CM or other object includes internal status data and interface data for other subsystems (eg SCADA/HMI).
-
-Interface data is divided into 2 types:
+Interface data is divided into two types:
 
 - real-time data (RT HMI)
-
 - configuration data (CFG)
 
-Real-time data contains all the necessary information for continuous monitoring of CM status and control, including:
+Real-time data contains all information needed for continuous CM status monitoring and control, including:
 
-- to display on the HMI
+- display on HMI
+- alarm subsystems
+- trends and logs
+- CM state control (including configuration control)
 
-- for Alarm subsystems
+Configuration data (CFG) contains all information necessary to configure the CM or other object. Exchange of configuration data with SCADA/HMI occurs during:
 
-- for Trend and Log
+- setup/parameter checking of the CM
+- in-depth CM diagnostics
+- use of CM service modes (forcing, simulation, maintenance bypass)
 
-- for CM state management (including configuration management)
+### HMI Variables (HMI), Configuration Variables (CFG), and Buffer Handling
 
-The configuration data contains (CFG) all the information needed to configure the CM or other object. Exchange of configuration data with SCADA/HMI occurs at:
+Due to the large amount of configuration data, traffic with other subsystems should be minimized to reduce network load and SCADA system costs, especially for tag-based licensing. To achieve this, configuration data exchange between SCADA/HMI and PLC can be handled via an intermediate buffer shared by all CMs of the same type (see section 1.2.5).
 
-- setting/checking CM parameters
+Splitting data into real-time (**HMI**) and configuration (**CFG**) data is optional and requires duplicating certain data on the PLC. It may also necessitate strict access separation from SCADA/HMI.
 
-- in-depth diagnostics of CM
+The type of configuration variable stored in the PLC may differ from the type used for buffer transport. The buffer variable typically contains more fields to transport different data types of the same level.
 
-- use of CM service modes (forcing, simulation, out of service)
+### Status (STA) and Command (CMD) Variables
 
-### HMI Variables (HMI), Configuration (CFG) Variables, and Buffer Management
+CM HMI data may include:
 
-Due to the large amount of configuration data, it is desirable to minimize their traffic with other subsystems. This reduces the load on communications and reduces the cost of SCADA systems that use tag-based licensing. To do this, data exchange between SCADA/HMI and PLC configuration data can be implemented via an intermediate buffer common to all CM types of the same type (see 1.2.5).
+- **STA** – a 16-bit status word containing bit sets for all state machines (STATUS) and modes (MODES) of the CM.
+- **CMD** – a 16-bit command word for controlling CM states, modes, and configuration; each command is encoded with a unique numeric value across all CM types.
 
-Division of data into real-time data (**HMI**) and configuration data (**CFG**) is optional and requires duplication of certain data on the controller. Division may also be accompanied by the need for a rigid distribution of access by SCADA/HMI.
+The 16-bit word format is chosen for compatibility with most modern IEC 61131-3 platforms. **The command word (CMD) must be reset at the destination, meaning the CM for which it is intended should reset it. Exceptions include broadcast commands, where a reset mechanism is needed after all recipients process the command.**
 
-The type of configuration variables to be stored in the PLC may differ from the type of buffer variable used for transport. The buffer variable usually contains more fields in advance to be used to transport different types of data at the same level.
+To ensure hierarchical control, all internal variables representing CMs used in other CMs/EMs/UNITs are passed as `INOUT` or by reference, significantly saving PLC memory.
 
-### Status Variables (STA) and Commands (CMD)
+For convenience, configuration data may also include STA and CMD (referred to as STA_CFG and CMD_CFG) used only within the PLC program. The STA sent to the HMI (STA_HMI) copies the configuration STA and is read-only, while the CMD sent from the HMI (CMD_HMI) is treated as an operator command. CMD_CFG and STA_CFG variables can be bit arrays.
 
-HMI CM data may include the words:
+Since LVL0 (channels) and LVL1 (process variables) CMs may only require a single “read configuration” command (READ_CFG, which also links the CM to the buffer), **STA and CMD bits can be combined into a single STA_HMI variable** to save SCADA/HMI tags, with one bit toggled in the HMI to trigger a read command. This configuration has been tested repeatedly and proven effective.
 
-- **STA** - status word (16-bit), which includes bit sets for all state machines (STATUS) and modes (MODES) CM
+Configuration data for CMs within a group must have:
 
-- **CMD** - control word (16-bit), which is intended to control the state and modes of CM, as well as its configuration; each command is encoded by a separate numeric value unique within all CM types
+- **ID** (object identifier within the group)
+- **CLSID** (class identifier)
 
-The 16-bit word format is chosen to be compatible with most modern IEC 61131-3 platforms. The command word (CMD) must be reset directly at the destination. In this way, the command resets the CM to which it is assigned. An exception may be when the command is broadcast, then it is necessary to provide a mechanism for resetting the command after receiving them by all recipients.
+These identifiers allow access through a shared **buffer**, which provides access to an element's configuration data by its number. The buffer is a global variable accessible to all functions or FB instances. The CM instance with a matching number manages the buffer. Upon a READ_CFG command, the buffer is updated with CM_CFG data, including ID and CLSID, thereby linking the CM to the buffer.
 
-To ensure hierarchical control, all internal CM-responsible variables used in other CM/EM/UNIT are passed there as INOUT, or by reference. This saves a lot of memory for the controller.
+The framework supports **broadcast commands**, which are sent via the CMD variable of the PLC class (see PLC class) and received by all object instances of that type, not just the one owning the buffer. Use cases include:
 
-For convenience, configuration data may also include STA and CMD (hereinafter STA_CFG and CMD_CFG), which are used only in the PLC program. Thus, the STA transmitted to the HMI (hereinafter STA_HMI) copies the configuration STA and cannot be changed (read only), and the CMD transmitted from the HMI (hereinafter CMD_HMI) is the operator's command and is processed accordingly. The variables CMD_CFG and STA_CFG can be bit structures.
+- restoring default configurations,
+- enabling/disabling simulation mode,
+- setting all objects of a class to manual/automatic,
+- etc.
 
-Given that for CM channels (LVL0) and process variables (LVL1) can be used only one command "read configuration" (READ\_CFG, it also connects CM to the buffer) to save SCADA/HMI tags can be combine the STA and CMD bits into one STA variable (STA\_HMI), one of the bits of which will change in the HMI for the read command. This configuration has been repeatedly tested and has shown its efficiency and feasibility.
+Broadcast commands may use a 4XXX(HEX) format (14th bit set). As every CM of the type must process the command, it should only be reset after a full PLC cycle (assuming all CMs are processed within one cycle). For implementation details, see the PLC class.
 
-CM configuration data belonging to a specific group must have **ID** (object ID in the group) and **CLSID** (object class identifier), which can be accessed via a shared buffer. **Buffer** provides access to the configuration data of the element (CM) by its number. A buffer is a public variable that is publicly available for all functions or instances of function blocks. The buffer is processed by the CM instance whose number matches the number in the buffer. Thus, at the read command (READ\_CFG) the buffer is updated with CM\_CFG data including ID and CLSID. Thus reading leads to binding of CM to the buffer.
+CMD variables for LVL0 and LVL1 CMs are used only for SCADA/HMI-to-controller or inter-device communication, while LVL2 and higher-level CMDs are also used in user programs, requiring consideration of command sources:
 
-The framework involves the use of broadcast commands. All broadcast commands are transmitted via the PLC of class CMD (see PLC class). These commands are accepted by all objects of the type, not just those that have a buffer. This may be required, for example, for functions:
+- CMD_HMI (SCADA/HMI),
+- CMD_BUF (buffer),
+- CMD_CFG (program).
 
-- setting the default configuration;
+Priority may depend on CM operating mode and command type (e.g., buffer read commands may have lower or higher priority than control commands).
 
-- set/disable simulation mode;
+### Data Type Requirements
 
-- installation of all objects of a class in manual / automatic
+For HMI exchange, the following data types are recommended:
 
-- ...
-
-Broadcast commands can be in 4XXX (HEX) format, ie with a single 14th bit. Given that the command must accept each element of type CM, it should be reset only after the complete completion of the PLC cycle (it is assumed that all CMs are processed within one cycle). Details of implementation see PLC class.
-
-Commands (CMD) for CM levels LVL0 and LVL1 are used only for exchange between SCADA/HMI and controllers, or exchange between devices. LVL2 and higher level commands are also used in the user program. In this case, commands from different sources CMD\_HMI (SCADA/HMI), CMD\_BUF (buffer) and CMD\_CFG (software) must be considered. The priority of a command may depend on the mode of operation of the CM, the type of command (for example, reading to the buffer has priority over the control command or vice versa).
-
-### Requirements for data types
-
-It is recommended that you use the following data types to share with the HMI:
-
-- INT/UINT (16)
-
-- DINT/UDINT (32)
-
-- REAL (32)
-
+- INT/UINT (16-bit)
+- DINT/UDINT (32-bit)
+- REAL (32-bit)
 - ARRAY of INT/DINT/REAL
 
-It is not recommended to use BOOL memory area and individual BOOL variables to exchange with HMI. It is recommended to use bit sets (but not structures), such as STA bits. Instead of the TIME type, you can use UDINT (ms) or convert it to REAL. It is recommended to use other types only as an exception, if conversion to the given types cannot be performed.
+Using BOOL memory areas and standalone BOOL variables for HMI exchange is not recommended. Instead, use bit sets (but not structures), e.g., STA bits. Use UDINT (ms) or REAL as a substitute for TIME types. Other types should only be used if conversion to the recommended types is not feasible.
 
-It is desirable to provide alignment at the level of 4 bytes.
+It is advisable to align variables to 4-byte boundaries.
 
-Ensuring these requirements will make it possible to easily transfer the frame elements between different platforms.
+Meeting these requirements will ensure easy portability of framework elements across different platforms
 
 <-- [1.3 Equipment Hierarchy in the PACFramework](1_3_equip_en.md)
 

@@ -1,16 +1,14 @@
-[PACFramework](../README_EN.md) > [1. Main ideas](README_EN.md)
+[PACFramework](../README_EN.md) > [1. Core Concepts](README_EN.md)
 
-This text was translated using Google Translate. You can comment on the translation in [this topic](https://github.com/pupenasan/PACFramework/issues/52)
+## 1.2 Core Technologies Behind the Framework
 
-## 1.2 Main technologies at the heart of the framework
+The Framework is built upon a set of foundational technologies, which are described in this section. Specifically:
 
-The framework is based on certain technologies, which are described in this section. In particular:
+- the equipment object model in accordance with ISA-88, ISA-95, and ISA-106
+- state-based control: state machines, modes, and their propagation as defined in ISA-88
+- alarm state machine based on ISA-18.2
 
-- equipment object model in accordance with ISA-88, ISA-95 and ISA-106
-- state-oriented control: state machines, modes and its assignment in accordance with ISA-88
-- ISA-18.2 alarm state machine
-
-This section describes these concepts.
+This section provides an overview of these concepts.
 
 ### Equipment 
 
@@ -141,21 +139,45 @@ An algorithm that describes for a particular function the behavior of the transi
 
 State machines are a classic formalization and modeling mechanism, which is used in many industries, including automation. For example, in Fig.1.2.2 shows a diagram of the classical state machine of alarm, described in the standard IEC-62682 with some simplifications. Alarm states are represented in the figure by circles with descriptions that include a combination of statuses: alarm status and confirmation status. In this case, the state of alarm is a generalizing indicator that depends on the current status value and the previous state. Arrows on Fig.1.2.2 correspond to transitions between states with the specified conditions of these transitions.
 
-
-
-![](media/2.png) 
+![image-20250624181140218](media/image-20250624181140218.png) 
 
 Fig. 1.2.2. Simplified alarm machine
 
 Despite the fact that there are only four states of alarm, the diagram looks quite simple. But the IEC 62682 standard provides three more possible locking states that can be accessed from any other state. The diagram is shown in Fig. 1.2.3., But all transitions will not be shown there.
 
-![](media/3.png) 
+![image-20250625201442603](media/image-20250625201442603.png)
 
 Fig.1.2.3. Complete automatic alarm system according to IEC-62682
 
 Consider the state diagram for the operational function of the valve. In the simplest case, the valve has two states - "OPEN" and "CLOSED". Depending on the presence of limit position sensors, the valve can be described by the state machines shown in Fig.1.2.4. The dashes on the arrows show the operation transaction conditions. At first glance, each of these options is self-sufficient. However, each of them has a number of drawbacks.
 
-![](media/4.png) 
+```mermaid
+stateDiagram-v2
+    state "With two limit switches: LS_OPEN and LS_CLOSED" as TWO {
+        [*] --> OPEN_2
+        state "OPEN" as OPEN_2
+        state "CLOSED" as CLOSED_2
+        OPEN_2 --> CLOSED_2 : LS_CLOSED = true
+        CLOSED_2 --> OPEN_2 : LS_OPEN = true
+    }
+
+    state "With one limit switch LS_CLOSED" as ONE {
+        [*] --> OPEN_1
+        state "OPEN" as OPEN_1
+        state "CLOSED" as CLOSED_1
+        OPEN_1 --> CLOSED_1 : LS_CLOSED = false
+        CLOSED_1 --> OPEN_1 : LS_CLOSED = true
+    }
+    
+    state "Without limit switches" as NONE {
+        [*] --> OPEN_0
+        state "OPEN" as OPEN_0
+        state "CLOSED" as CLOSED_0
+        OPEN_0 --> CLOSED_0 : command CLOSE
+        CLOSED_0 --> OPEN_0 : command OPEN
+    }
+
+```
 
 Fig.1.2.4. Examples of the simplest versions of the automatic state for the valve
 
@@ -163,24 +185,65 @@ In the case of two limit sensors, in the case of one of them failing, neither of
 
 Obviously, in the above states with limit position sensors must be provided as conditions for the transition of the control command. The latter refers to commands on the hardware object, not on its hardware (ie the actuator). Also, to simplify the construction of the automatic alarm states, it is necessary to introduce additional transition states "OPENING" and "CLOSING". In addition, you should have the state "UNDEFINED" if a specific position cannot be identified. From this state it is possible to begin at initialization of the control program, or to pass there at malfunction of limit sensors(both in unit). In this case, the state diagram of the operational functional element will look like in Fig. 1.2.5.
 
-![](media/5.png) 
+```mermaid
+stateDiagram-v2
+
+	state "UNDEFINED" as UNDEFINED
+    state "OPENING" as OPENING
+    state "CLOSING" as CLOSING
+    state "OPEN" as OPEN
+    state "CLOSED" as CLOSED
+
+    [*] --> UNDEFINED : program initialization
+    UNDEFINED --> OPEN : LS_OPEN = true
+    UNDEFINED --> CLOSED : LS_CLOSED = true
+    UNDEFINED --> OPENING : LS_CLOSED = false && CMD_OPEN
+    UNDEFINED --> CLOSING : LS_OPEN = false && CMD_CLOSE
+    
+    OPENING --> OPEN : LS_OPEN = true && LS_CLOSED = false
+	OPENING --> UNDEFINED : LS_OPEN = true && LS_CLOSE = true
+    OPENING --> CLOSING : CMD_CLOSE
+    OPENING --> CLOSED : LS_CLOSED = true && LS_OPEN = false
+
+    OPEN --> CLOSING : CMD_CLOSE
+	OPEN --> UNDEFINED : LS_OPEN = true && LS_CLOSE = true
+    OPEN --> CLOSED : LS_CLOSED = true && LS_OPEN = false
+    
+    CLOSING --> CLOSED : LS_OPEN = false && LS_CLOSED = true
+ 	CLOSING --> UNDEFINED : LS_OPEN = true && LS_CLOSE = true 
+    CLOSING --> OPENING : CMD_OPEN
+    CLOSING --> OPEN : LS_CLOSED = false && LS_OPEN = true
+     
+    CLOSED --> OPENING : CMD_OPEN
+	CLOSED --> UNDEFINED : LS_OPEN = true && LS_CLOSE = true
+    CLOSED --> OPEN : LS_CLOSED = false && LS_OPEN = true
+```
 
 Fig. 1.2.5. An example of an extended state machine for the operational functional element of the valve
 
 Above is an example of defining and managing states, but nothing is said about actions on a real object. In each of these states, you can perform certain control actions. For example, in the "OPEN" state, enable the discrete output of the controller that controls the valve. In addition, you can turn on a timer that will indicate the time of activity of the state, which can be used to control alarms. The mechanism of action formation on the basis of states simplifies control as in a certain state for control object we are interested in not all sensors values but only the part needed for the given state.
 
-By using the operational functional diagram of the valve element, you can describe the control algorithm, which in turn can be based on other state machines. Other functional elements of the same valve can use this machine to form the logic of their machines. For example, consider the state machines for one of the functional elements of the alarm "DOES NOT CLOSED". For simplicity, we will consider only the status of the alarm activity, ie without taking into account the status of confirmation and blocking (see Fig. 1.2.6). Two dashes in a row on the line of transition means that both conditions must be true for the transition to take place. As can be seen from the diagram, the alarm occurs when the valve is in the operating state "CLOSING" and the time of this state is more than the maximum allowed.
+By using the operational functional diagram of the valve element, you can describe the control algorithm, which in turn can be based on other state machines. Other functional elements of the same valve can use this machine to form the logic of their machines. For example, consider the state machines for one of the functional elements of the alarm "NOT CLOSED". For simplicity, we will consider only the status of the alarm activity, ie without taking into account the status of confirmation and blocking (see Fig. 1.2.6). Two dashes in a row on the line of transition means that both conditions must be true for the transition to take place. As can be seen from the diagram, the alarm occurs when the valve is in the operating state "CLOSING" and the time of this state is more than the maximum allowed.
 
-![](media/6.png) 
+```mermaid
+stateDiagram-v2
+    [*] --> NO_ALARM
+
+    state "NO ALARM 'NOT CLOSED'" as NO_ALARM
+    state "ALRM 'NOT CLOSED'" as NOT_CLOSED
+
+    NO_ALARM --> NOT_CLOSED : state = 'CLOSING' & T>Tmax
+    NOT_CLOSED --> NO_ALARM : state <> 'CLOSING'
+```
 
 Fig. 1.2.6. Diagram of the simplified state machine for the alarm "DOES NOT CLOSED"
 
-As you can see, the automatic state of the alarm elements is closely related to the operational ones. Therefore, in some cases, the state machines of different functional elements are shown linked in one diagram. However, it should be understood that if two state machines from Fig. 1.2.5 and from Fig.1.2.4 are combined in one diagram, at one point in time could be active two states, such as "CLOSES" and "DOES NOT CLOSED", which may not be obvious from the graphic image. However, in some cases, several state machines can be combined into one, as shown for example for a frequency converter. In any case, the software implementation can be based on the states of operational functions, in which the state control of other functional elements will be implemented.
+As you can see, the automatic state of the alarm elements is closely related to the operational ones. Therefore, in some cases, the state machines of different functional elements are shown linked in one diagram. However, it should be understood that if two state machines from Fig. 1.2.5 and from Fig.1.2.4 are combined in one diagram, at one point in time could be active two states, such as "CLOSING" and "NOT CLOSED", which may not be obvious from the graphic image. However, in some cases, several state machines can be combined into one, as shown for example for a frequency converter. In any case, the software implementation can be based on the states of operational functions, in which the state control of other functional elements will be implemented.
 
 For this the example with the valve, equipment can be described by several interdependent state machines:
 
 - working;
-- 4 alarm state machines ("DOES NOT OPENED", "DOES NOT CLOSED", "RANDOM SHIFT", "SENSOR ERROR");
+- 4 alarm state machines ("NOT OPENED", "NOT CLOSED", "RANDOM SHIFT", "SENSOR ERROR");
 - blocking;
 - operating modes;
 - imitation.
@@ -191,17 +254,35 @@ Standard state machines are provided for equipment in the PACFramework. For proc
 
 According to ISA-88 **mode** indicates how operational functions are managed. After all, "modes" are separately selected states that affect the nature of the execution (algorithms) of equipment functions, and sometimes - and their state machines.
 
-For equipment, the ISA-88 standard recommends the use of two modes: MANUAL and AUTOMATIC. In MANUAL mode, the equipment operational state is indicated by commands from the HMI, in AUTOMATIC - from the control algorithm. In practice, there may be more modes. For example, for the above-mentioned valve, in Fig. 1.2.7. the diagram with additional modes "MANUAL IN PLACE" and "LOCKED" is shown. In "MANUAL IN PLACE" mode, the valve is controlled by a bypass cabinet located near the valve. In "LOCKED" mode, the "CLOSE" command is always given to the valve.
+For equipment, the ISA-88 standard recommends the use of two modes: MANUAL and AUTOMATIC. In MANUAL mode, the equipment operational state is indicated by commands from the HMI, in AUTOMATIC - from the control algorithm. In practice, there may be more modes. For example, for the above-mentioned valve, in Fig. 1.2.7. the diagram with additional modes "LOCAL MANUAL" and "LOCKED" is shown. In "LOCAL MANUAL" mode, the valve is controlled by a bypass cabinet located near the valve. In "LOCKED" mode, the "CLOSE" command is always given to the valve.
+
+```mermaid
+stateDiagram-v2
+    state "from any state" as ANYSTATE
+    state "LOCAL MANUAL" as LOCAL_MAN
+    state "MANUAL" as MANUAL
+    state "AUTO" as AUTO
+    state "LOCKED" as LOCKED
+
+	ANYSTATE --> LOCAL_MAN : switch "MAN"
+    LOCAL_MAN --> MANUAL : switch "AUTO"
+    
+    MANUAL --> AUTO : CMD_AUTO from HMI
+    MANUAL --> LOCKED : CMD_LOCK from HMI of control logic
+    
+    AUTO --> MANUAL : CMD_MAN from HMI
+	AUTO --> LOCKED : CMD_LOCK from HMI of control logic
+
+    LOCKED --> MANUAL : CMD_UNLOCK HMI
+```
 
 
-
- ![](media/7.png)
 
 Fig. 1.2.7. Automatic state of equipment modes switching for valve type
 
-In this case, the state machine, shown in Fig.1.2.5, will be given control commands from various sources. However, in some cases, the state machines of some functions may vary depending on the mode of equipment. For example, the diagram in Figure 1.2.5 does not provide control of the OPEN and CLOSE commands in the "MANUAL IN PLACE" mode, as these commands cannot be traced by the system. Therefore, for this mode you should think of another machine.
+In this case, the state machine, shown in Fig.1.2.5, will be given control commands from various sources. However, in some cases, the state machines of some functions may vary depending on the mode of equipment. For example, the diagram in Figure 1.2.5 does not provide control of the OPEN and CLOSE commands in the "LOCAL MANUAL" mode, as these commands cannot be traced by the system. Therefore, for this mode you should think of another machine.
 
-Above are examples of states that are mutually exclusive. For example, the states OPEN and CLOSE in Fig. 1.2.5 can never be active at the same time. For the example with 4 modes, everything is not so clear, because for example the mode MANUAL (from HMI) and MANUAL IN PLACE (from bypass) can occur simultaneously. It is necessary to clearly set priorities  in the program that manages states. In this case, "MANUAL IN PLACE" has priority, because the commands from the controller are ignored.
+Above are examples of states that are mutually exclusive. For example, the states OPEN and CLOSE in Fig. 1.2.5 can never be active at the same time. For the example with 4 modes, everything is not so clear, because for example the mode MANUAL (from HMI) and LOCAL MANUAL (from bypass) can occur simultaneously. It is necessary to clearly set priorities  in the program that manages states. In this case, "LOCAL MANUAL" has priority, because the commands from the controller are ignored.
 
 Note that when defining the state machine, it is easier to identify uncertainty and contradictions in the technical task. This is another reason for the formalization of them, espessially by using a chart.
 
@@ -239,9 +320,19 @@ The decomposition criteria can be described from different points of view and ap
 
 If the equipment-object in turn consists of a set of other equipment, then each element in its composition will have its own individual functional states, modes, alarms, which will form this set for a higher-level object. For example, we can consider a pasteurization-cooling unit (PCU), which consists of a pasteurizer, separator and homogenizer. From the point of view of the control system of ICS these three installations carry out specific functions on realization of technological process. And from the point of view of production line management, they are one object - PCU, which produces a product with certain characteristics. At the same time, the homogenizer can be a separate automated machine, which includes a set of equipment with its own set of states and modes.
 
-Hierarchy is based on the principle of subordination, ie it describes how higher-level objects manage/control/monitor lower-level objects. In the example with the valve, it looks like this - the valve object consists of three lower-level objects: the limit position sensors OPENED and CLOSED and the solenoid to open (Fig. 1.2.8). In software development, high-end hardware (such as PCUs) will only interact by commands and statuses with valves, not sensors and solenoids. In turn, the ICS programmer can focus on the implementation of hardware functions, pre-defining the state machines and their interaction at different levels.
+Hierarchy is based on the principle of subordination, ie it describes how higher-level objects manage/control/monitor lower-level objects. In the example with the valve, it looks like this - the valve object consists of three lower-level objects: the limit position sensors LS_OPEN and LS_CLOSED and the command to open solenoid CMD_OPEN (Fig. 1.2.8). In software development, high-end hardware (such as PCUs) will only interact by commands and statuses with valves, not sensors and solenoids. In turn, the ICS programmer can focus on the implementation of hardware functions, pre-defining the state machines and their interaction at different levels.
 
-![](media/10.png) 
+```mermaid
+classDiagram
+    class Valve
+    class LS_OPEN
+    class LS_CLOSED
+    class CMD_OPEN
+
+    Valve *-- LS_OPEN : includes
+    Valve *-- LS_CLOSED : includes
+    Valve *-- CMD_OPEN : includes 
+```
 
 Fig.1.2.8. Equipment hierarchy at the valve level
 
@@ -270,7 +361,7 @@ An example of the states propagation can be emergency states, which propagate up
 
 In IEC 61512 and IEC 62264 the role hierarchy of the equipment looks like in Fig. 1.2.9. According to this hierarchy, each piece of equipment plays a role in the manufacturing process. When integrating upper levels with ICS systems, control and monitoring occurs through states and equipment commands. Equipment of the upper levels of management (enterprise, production site, shop) are considered from the point of view of organizational management (see Fig.1.2.9) and are in the area of operation of ERP level systems. In this case, the word "equipment" should be considered as "capacity". The workshop produces a certain set of products. Production operations are carried out at **work centers** - equipment that manufactures intermediate/finite products. Work centers are the main means of managing production operations, and are managed (planned, dispatched, controlled) systems MOM (Manufacturing Operation Management). In the work centers themselves, the management of operations depends on the type of production. For batch production, this activity is defined by the IEC 61512 standard. Therefore, the implementation of lower-level equipment, starting from the work center, is described in this standard.
 
-![](media/11.png) 
+![image-20250629182014336](media/image-20250629182014336.png) 
 
 Fig. 1.2.9 Role-based equipment hierarchy of enterprise 
 
@@ -278,7 +369,7 @@ It should be pointed that in this model the equipment is considered from the sta
 
 #### Equipment Hierarchy by ISA-88 and IEC-61512 
 
-As mentioned above, the framework is based on the model designated ISA-88 and IEC-61512. In terms of the level of ICS, the highest level of equipment there is the process cell (see Figure 1.2.9). ***The process cell*** defined in ISA-88 corresponds to the Work Center defined in IEC 62264 and ISA 95. While the work center can be defined for different types of production, process cell is defined only in terms of batch processes, which is typical for the ISA-88 standard. The process cell is a logical group that contains the equipment needed to produce one or more batches intermediate/finite product. It means the range of logical control of one set of process equipment within the Area.
+As mentioned above, the framework is based on the model designated ISA-88 and IEC-61512. In terms of the level of ICS, the highest level of equipment there is the process cell (see Figure 1.2.9). The **process cell** defined in ISA-88 corresponds to the Work Center defined in IEC 62264 and ISA 95. While the work center can be defined for different types of production, process cell is defined only in terms of batch processes, which is typical for the ISA-88 standard. The process cell is a logical group that contains the equipment needed to produce one or more batches intermediate/finite product. It means the range of logical control of one set of process equipment within the Area.
 
 The presence of a process cell makes it possible to plan production based on it and develop a strategy for managing the entire process. The process cell includes units, equipment modules and control modules required to create one or more batches. The idea of ISA-88 is that for the process cell there is a **recipe**, which indicates what exactly and with what equipment will be made within it. This recipe is marked by process engineer and includes **procedure** for batch of product and additional parameters. The procedure of the process cell, in turn, is divided into smaller **unit procedure**, which can be divided into **phase** thus forming the so-called "process program". Procedural management is described in [the relevant section](../proc/README_EN.md)
 

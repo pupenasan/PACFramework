@@ -157,7 +157,40 @@
 
 Очевидно в наведених вище станах з датчиками кінцевого положення необхідно передбачити в якості умов переходу команди керування. Під останніми розуміється команди на об’єкт-устатковання, а не на його апаратну частину (тобто виконавчий механізм). Також, для спрощення побудови автомату станів тривожної сигналізації варто ввести додаткові перехідні стани «ВІДКРИВАЄТЬСЯ» та «ЗАКРИВАЄТЬСЯ». Крім того, варто ввести стан «НЕ ВИЗНАЧЕНО», якщо конкретну позицію неможливо ідентифікувати. З цього стану можна починати при ініціалізації програми керування, або переходити туди при несправності датчиків положення (обидва в одиниці). У такому випадку діаграма станів операційного функціонального елементу матиме вигляд як на Рис. 1.2.5.
 
-![](media/5.png) 
+```mermaid
+stateDiagram-v2
+
+	state "UNDEFINED" as UNDEFINED
+    state "OPENING" as OPENING
+    state "CLOSING" as CLOSING
+    state "OPEN" as OPEN
+    state "CLOSED" as CLOSED
+
+    [*] --> UNDEFINED : program initialization
+    UNDEFINED --> OPEN : LS_OPEN = true
+    UNDEFINED --> CLOSED : LS_CLOSED = true
+    UNDEFINED --> OPENING : LS_CLOSED = false & CMD_OPEN
+    UNDEFINED --> CLOSING : LS_OPEN = false & CMD_CLOSE
+    
+    OPENING --> OPEN : LS_OPEN = true && LS_CLOSED = false
+	OPENING --> UNDEFINED : LS_OPEN = true & LS_CLOSE = true
+    OPENING --> CLOSING : CMD_CLOSE
+    OPENING --> CLOSED : LS_CLOSED = true & LS_OPEN = false
+
+    OPEN --> CLOSING : CMD_CLOSE
+	OPEN --> UNDEFINED : LS_OPEN = true & LS_CLOSE = true
+    OPEN --> CLOSED : LS_CLOSED = true & LS_OPEN = false
+    
+    CLOSING --> CLOSED : LS_OPEN = false & LS_CLOSED = true
+ 	CLOSING --> UNDEFINED : LS_OPEN = true & LS_CLOSE = true 
+    CLOSING --> OPENING : CMD_OPEN
+    CLOSING --> OPEN : LS_CLOSED = false & LS_OPEN = true
+     
+    CLOSED --> OPENING : CMD_OPEN
+	CLOSED --> UNDEFINED : LS_OPEN = true & LS_CLOSE = true
+    CLOSED --> OPEN : LS_CLOSED = false & LS_OPEN = true
+ 
+```
 
 Рис. 1.2.5. Приклад розширеного автомату станів для операційного 
  функціонального елементу клапану 

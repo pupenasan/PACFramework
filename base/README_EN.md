@@ -1,32 +1,67 @@
 [PACFramework](../README_EN.md)
 
-This text was translated using Google Translate. You can comment on the translation in [this topic](https://github.com/pupenasan/PACFramework/issues/52)
+# 1. Core Concepts
 
-# 1. Main ideas
+The proposed concepts aim to enable the rapid development of application software for industrial automation and control system (IACS) controllers, taking into account a broad range of typical functional requirements and potential integration with other subsystems.
 
-The proposed concepts are aimed at rapid development of application software for controllers ICS, taking into account the maximum number of standard requirements for functionality and possible integration with other subsystems.
+PFw provides for:
 
-The framework provides:
+- the use of unified principles for developing software for IEC 61131 (and beyond) programmable controllers across different types of systems with medium (around >100 channels) to high channel count and algorithmic complexity;
+- the application of consistent approaches to organizing the control hierarchy;
+- a harmonized set of data types and classes of functions/functional blocks suitable for any system.
 
-- use of uniform principles of software development for programmable controllers IEC 61131 (and not only) for different types of objects of medium (about \> 100 channels) and high channel and algorithmic complexity;
+PFw can be implemented on any hardware, software platform, and programming language that has the capabilities and resources required for its implementation. The proposed interfaces and structures can be modified and extended as needed without violating the overall philosophy.
 
-- the use of common approaches to the organization of the management hierarchy;
+Additional projects built on PFw bring its use closer to DevOps principles and enable integration into IIoT structures:
 
-- agreed set of data types, classes of functions/functional blocks for any objects;
+- PACFramework Tools (PFwTools)
+- PACFramework IoTGateway
 
-The framework can be implemented in any hardware and software and programming languages that have the ability and resources to implement it. The proposed interfaces and structures can be changed and supplemented if necessary without violating the general ideology.
+**PACFramework Tools (PFwTools)** are utilities for rapid system deployment with a basic set of functions, built on Node.js. Project repository: https://github.com/pupenasan/pacframework-tools.
 
-[1.1 Prerequisites and main ideas](1_1_requir_en.md)
+The utilities are designed for:
 
-[1.2 Basic technologies based on the framework](1_2_tech_en.md)
+- automating PLC deployment using project master data
+  - the primary input format is xlsx, with other formats possible as needed (integration with Eplan Electric planned)
+  - JSON is used as an intermediate database format for master data
+  - preliminary validation is performed (naming rules, object links, addressing, etc.)
+- reverse generating project data from the PLC to JSON
+  - for deployment in SCADA/HMI and other projects
+  - for deployment in PACFramework IoTGateway
+  - for transferring to other formats as needed
+- validating the correctness of master data
+- generating master data reports
 
-[1.3 Equipment Hierarchy in the PACFramework](1_3_equip_en.md)
+In parallel with the development of PFw2, work is also ongoing on PFw2Tools, which will be based on Node-RED and will feature a graphical interface instead of a console-based one. PFw2 is designed with PFw2Tools requirements in mind.
 
-[1.4 General requirements for the implementation of the PACFramework interface](1_4_if_en.md)
+![image-20250706122607736](media/image-20250706122607736.png)
 
-[1.5.Recommendations for naming components and frame elements](1_5_naming_en.md)
+Fig. 1.1 PACFramework Tools Concept
 
-[1.6. The concept of classification and customization of objects](classes_en.md)
+**PACFramework IoTGateway (PFwIoTGateway)** is an execution system project developed in the Node-RED environment, designed to work with PLCs based on PFw to perform the following functions:
+
+- providing a web-based human-machine interface for configuring a control system built on PAC Framework
+- IoT gateway functions: data collection, processing, local storage, and interaction with cloud applications and storage systems
+
+PFwIoTGateway can run on any hardware capable of hosting Node-RED. PFwIoTGateway was initially developed as a prototype for a project that was frozen due to Russia’s full-scale invasion of Ukraine, as the facility is currently located in non-government-controlled territory. Considering the ongoing work on PFw2 and the development of Node-RED tools, the new version will differ significantly.
+
+![image-20250706124232683](media/image-20250706124232683.png)
+
+Fig. 1.2 PFwIoTGateway Concept
+
+
+
+1.1 [Prerequisites and Core Ideas](1_1_requir_en.md)
+
+1.2 [Core Technologies Behind the Framework](1_2_tech_en.md)
+
+1.3 [Equipment Hierarchy in the PAC Framework](1_3_equip_en.md)
+
+1.4 [General Requirements for Implementing the PAC Framework Interface](1_4_if_en.md)
+
+1.5 [Naming Guidelines for Framework Components and Elements](1_5_naming_en.md)
+
+1.6 [Object Classification Concept and Customization](classes_en.md)
 
 
 
