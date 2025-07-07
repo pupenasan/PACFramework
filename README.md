@@ -91,5 +91,11 @@ PACFramework (надалі "**PFw**") розроблений з урахуван
 
 ## Вебінари
 
-- [Введение в PACFramework](https://www.tda.in.ua/pacframework)
+- [Запис лекції по PFW Частина 1](https://youtu.be/jRyy9HlWGpA?si=9M1usN2lVnP5HVI1)
+- [Запис лекції по PFW Частина 1](https://youtu.be/31Xp5Wd8yp8?si=qurmfd8RBAbKx-KA)
+- [Запис лекції по PFW Частина 1](https://youtu.be/28hBeoN5yyE?si=fb72uj-lihz5Z6aU)
+- [Запис лекції по PFW Частина 1](https://youtu.be/iJ44pFw_-1U?si=-sxr-Rdcm_KZyxRq)
+- [Запис лекції по PFW Частина 1](https://youtu.be/G8uvuszV5z4?si=JPzxMoklawYnCtTi)
+- [Запис лекції по PFW Частина 1](https://youtu.be/r4iArLSmf_g?si=qGR2BZOkyB2GN5OK)
+- [Старт проєкту PFw2](https://youtu.be/qKhoohImv78)
 
