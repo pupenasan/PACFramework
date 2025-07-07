@@ -64,7 +64,7 @@ This repository:
 2. [Control Modules (CM)](cm/README_EN.md)
 3. [Equipment Modules (EM)]()
 4. [Procedural Control](proc/README_EN.md)
-5. [HMI (Human-Machine Interface) System Standards]()
+5. HMI (Human-Machine Interface) System Standards]
 6. [Recommendations for Implementing PAC Framework on New PLC/PAC Platforms](implem/README_EN.md)
 7. [Available Implementations](platforms/README_EN.md)
 
